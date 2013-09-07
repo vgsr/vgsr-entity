@@ -1,0 +1,187 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: VGSR Entity\n"
+"POT-Creation-Date: 2012-11-07 06:53+0100\n"
+"PO-Revision-Date: 2012-11-07 16:38+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: Dutch\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e;_x\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../vgsr-entity.php:53 ../vgsr-entity.php:218
+msgid "Settings"
+msgstr ""
+
+#: ../vgsr-entity.php:120 ../vgsr-entity.php:123 ../entities/kast.php:66
+#, php-format
+msgid "New %s"
+msgstr ""
+
+#: ../vgsr-entity.php:121
+#, php-format
+msgid "Add new %s"
+msgstr ""
+
+#: ../vgsr-entity.php:122
+#, php-format
+msgid "Edit %s"
+msgstr ""
+
+#: ../vgsr-entity.php:124
+#, php-format
+msgid "All %s"
+msgstr ""
+
+#: ../vgsr-entity.php:125
+#, php-format
+msgid "View %s"
+msgstr ""
+
+#: ../vgsr-entity.php:126
+#, php-format
+msgid "Search %s"
+msgstr ""
+
+#: ../vgsr-entity.php:127
+#, php-format
+msgid "No %s found"
+msgstr ""
+
+#: ../vgsr-entity.php:128
+#, php-format
+msgid "No %s found in trash"
+msgstr ""
+
+#: ../vgsr-entity.php:234
+msgid "Another section title"
+msgstr "Weer een sectie titel"
+
+#: ../vgsr-entity.php:237
+msgid "Parent Page"
+msgstr "Moederpagina"
+
+#: ../vgsr-entity.php:242
+msgid "Some blabla about the settings here below. Fill 'em and enjoy!"
+msgstr "Wat blabla over de instellingen hieronder. Vul ze en veel plezier!"
+
+#: ../vgsr-entity.php:270
+msgid "None"
+msgstr ""
+
+#: ../vgsr-entity.php:273
+#, php-format
+msgid "Pick the parent page you want to have your %s appear on."
+msgstr "Kies de moederpagina waarvan je wil dat je %s er op verschijnen."
+
+#: ../widgets/widget-menu.php:30
+msgid "Display VGSR Entity menu list"
+msgstr "Toon VGSR Entity menu lijst"
+
+#: ../widgets/widget-menu.php:112
+msgid ""
+"This widget will only be shown on a VGSR Entity page and on it's parent page."
+msgstr ""
+"Deze widget is alleen zichtbaar op een VGSR Entity pagina of op haar "
+"moederpagina."
+
+#: ../widgets/widget-menu.php:114
+msgid "There are no settings for this widget"
+msgstr "Er zijn geen instellingen voor deze widget"
+
+#: ../entities/bestuur.php:69
+msgid "Widget menu order"
+msgstr "Widget menu volgorde"
+
+#: ../entities/bestuur.php:85
+msgid "Seniority"
+msgstr "Anci&#235;nniteit"
+
+#: ../entities/bestuur.php:86
+msgid "Reverse seniority"
+msgstr "Omgekeerde anci&#235;nniteit"
+
+#: ../entities/bestuur.php:89
+#, php-format
+msgid "The order in which the %s will be displayed in the Menu Widget."
+msgstr "De volgorde waarop de %s zullen worden getoond in het Menu Widget."
+
+#: ../entities/bestuur.php:102
+msgid "Bestuur Data"
+msgstr "Bestuursgegevens"
+
+#: ../entities/bestuur.php:134 ../entities/bestuur.php:208
+#: ../entities/bestuur.php:302
+msgid "Season"
+msgstr "Seizoen"
+
+#: ../entities/bestuur.php:137
+msgid "The required format is yyyy/yyyy."
+msgstr "Het vereiste format is yyyy/yyyy."
+
+#: ../entities/bestuur.php:208 ../entities/dispuut.php:216
+#: ../entities/dispuut.php:217 ../entities/kast.php:324
+#, php-format
+msgid "The submitted value for %s is not given in the valid format."
+msgstr "De waarde voor %s is niet in het juiste format gegeven."
+
+#: ../entities/dispuut.php:60
+msgid "Dispuut Data"
+msgstr "Dispuutsgegevens"
+
+#: ../entities/dispuut.php:92 ../entities/dispuut.php:216
+#: ../entities/dispuut.php:237 ../entities/kast.php:250
+#: ../entities/kast.php:324 ../entities/kast.php:344
+msgid "Since"
+msgstr "Sinds"
+
+#: ../entities/dispuut.php:95 ../entities/dispuut.php:119
+msgid "The required format is yyyy."
+msgstr "Het vereiste format is yyyy."
+
+#: ../entities/dispuut.php:116 ../entities/dispuut.php:217
+#: ../entities/dispuut.php:248
+msgid "Died"
+msgstr "Opgeheven"
+
+#: ../entities/kast.php:77
+msgid "Recreate Thumbnails"
+msgstr "Maak nieuwe thumbnails"
+
+#: ../entities/kast.php:87
+#, php-format
+msgid ""
+"This is a one time resizing of thumbs for %s. NOTE: This option only "
+"<strong>adds</strong> new image sizes, it doesn't remove old ones."
+msgstr ""
+"Hiermee kan je in een keer thumbnails herschalen voor %s. LET OP: Deze optie "
+"<strong>voegt</strong> alleen nieuwe afbeeldingformaten <strong>toe</"
+"strong>. Het verwijdert niet oude formaten."
+
+#: ../entities/kast.php:218
+msgid "Kast Data"
+msgstr "Kastgegevens"
+
+#: ../entities/kast.php:253
+msgid "The required format is dd/mm/yyyy."
+msgstr "Het vereiste format is dd/mm/yyyy."
+
+#~ msgid ""
+#~ "The submitted value for <strong>Season</strong> is not given in the valid "
+#~ "format."
+#~ msgstr ""
+#~ "De waarde voor <strong>Seizoen</strong> is niet in het juiste format "
+#~ "gegeven."
+
+#~ msgid ""
+#~ "The submitted value for <strong>Since</strong> is not given in the valid "
+#~ "format."
+#~ msgstr ""
+#~ "De waarde voor <strong>Sinds</strong> is niet in het juiste format "
+#~ "gegeven."

@@ -1,0 +1,104 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: VGSR Entity\n"
+"POT-Creation-Date: 2012-11-07 04:53+0100\n"
+"PO-Revision-Date: 2012-11-07 04:53+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../vgsr-entity.php:53 ../vgsr-entity.php:218
+msgid "Settings"
+msgstr ""
+
+#: ../widgets/widget-menu.php:30
+msgid "Display VGSR Entity menu list"
+msgstr ""
+
+#: ../widgets/widget-menu.php:112
+msgid ""
+"This widget will only be shown on a VGSR Entity page and on it's parent page."
+msgstr ""
+
+#: ../widgets/widget-menu.php:114
+msgid "There are no settings for this widget"
+msgstr ""
+
+#: ../entities/bestuur.php:69
+msgid "Widget menu order"
+msgstr ""
+
+#: ../entities/bestuur.php:85
+msgid "Seniority"
+msgstr ""
+
+#: ../entities/bestuur.php:86
+msgid "Reverse seniority"
+msgstr ""
+
+#: ../entities/bestuur.php:89
+#, php-format
+msgid "The order in which the %s will be displayed in the Menu Widget."
+msgstr ""
+
+#: ../entities/bestuur.php:102
+msgid "Bestuur Data"
+msgstr ""
+
+#: ../entities/bestuur.php:134 ../entities/bestuur.php:302
+msgid "Season"
+msgstr ""
+
+#: ../entities/bestuur.php:137
+msgid "The required format is yyyy/yyyy."
+msgstr ""
+
+#: ../entities/bestuur.php:208
+msgid ""
+"The submitted value for <strong>Season</strong> is not given in the valid "
+"format."
+msgstr ""
+
+#: ../entities/dispuut.php:60
+msgid "Dispuut Data"
+msgstr ""
+
+#: ../entities/dispuut.php:92 ../entities/dispuut.php:237
+#: ../entities/kast.php:250 ../entities/kast.php:344
+msgid "Since"
+msgstr ""
+
+#: ../entities/dispuut.php:95 ../entities/dispuut.php:119
+msgid "The required format is yyyy."
+msgstr ""
+
+#: ../entities/dispuut.php:116 ../entities/dispuut.php:248
+msgid "Died"
+msgstr ""
+
+#: ../entities/dispuut.php:216 ../entities/kast.php:324
+msgid ""
+"The submitted value for <strong>Since</strong> is not given in the valid "
+"format."
+msgstr ""
+
+#: ../entities/dispuut.php:217
+msgid ""
+"The submitted value for <strong>Died</strong> is not given in the valid "
+"format."
+msgstr ""
+
+#: ../entities/kast.php:218
+msgid "Kast Data"
+msgstr ""
+
+#: ../entities/kast.php:253
+msgid "The required format is dd/mm/yyyy."
+msgstr ""
