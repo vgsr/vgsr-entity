@@ -8,129 +8,134 @@
  */
 
 // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( !class_exists( 'VGSR_Entity' ) )
-	require( plugin_dir_path( __FILE__ ) .'vgsr-entity.php' );
+// Include Entity Base Class
+if ( ! class_exists( 'VGSR_Entity' ) )
+	require( plugin_dir_path( __FILE__ ) . 'vgsr-entity.php' );
 
-if ( !class_exists( 'VGSR_Entity_Dispuut' ) ) :
+if ( ! class_exists( 'VGSR_Dispuut' ) ) :
 
 /**
- * Plugin class
+ * VGSR Dispuut Entity Class
+ *
+ * @since 0.1
  */
-class VGSR_Entity_Dispuut extends VGSR_Entity {
+class VGSR_Dispuut extends VGSR_Entity {
 
 	/**
-	 * Construct Dispuut
+	 * Construct Dispuut Entity
+	 *
+	 * @since 0.1
 	 */
-	function __construct(){
+	public function __construct(){
 		parent::__construct( array( 
 			'single' => 'Dispuut', 
-			'multi'  => 'Disputen' 
-			) );
-	}
-
-	/** 
-	 * Setup class globals 
-	 */
-	function setup_globals(){
-		// Do stuff
+			'plural' => 'Disputen' 
+		) );
 	}
 
 	/**
-	 * Setup class actions
+	 * Setup default Dispuut actions and filters
 	 *
-	 * @uses add_filter()
-	 * @return void
+	 * @since 0.1
 	 */
-	function setup_actions(){
-		add_action( 'save_post',             array( $this, 'metabox_since_and_died_save' ) );
+	public function setup_actions(){
+		add_action( 'save_post', array( $this, 'metabox_since_and_died_save' ) );
 	}
 
 	/**
-	 * Add metaboxes to the edit dispuut screen
+	 * Add metaboxes to the Dispuut edit screen
 	 * 
-	 * @return void
+	 * @since 0.1
+	 *
+	 * @uses add_meta_box()
 	 */
-	function metabox_cb(){
+	public function add_metabox(){
 
-		// Add Dispuut Data meta box
+		// Add Dispuut Data metabox
 		add_meta_box(
-			'vgsr-entity-'. $this->type,
+			"vgsr-entity-{$this->type}",
 			__('Dispuut Data', 'vgsr-entity'),
 			array( $this, 'metabox_display' ),
 			$this->type,
 			'side'
-			);
+		);
 	}
 
 	/**
 	 * Output dispuut meta box
 	 * 
+	 * @since 0.1
+	 * 
+	 * @uses get_post_meta()
+	 * @uses wp_nonce_field()
+	 * @uses do_action() Calls 'vgsr_{$this->type}_metabox' hook with the post object
+	 * 
 	 * @param object $post The current post
-	 * @return void
 	 */
-	function metabox_display( $post ){
+	public function metabox_display( $post ){
 		global $vgsr_entity;
 
 		/** Since Meta **/
 
-			// Get stored meta value
-			$value = get_post_meta( $post->ID, 'vgsr_entity_dispuut_since', true );
+		// Get stored meta value
+		$value = get_post_meta( $post->ID, 'vgsr_entity_dispuut_since', true );
 
-			// If no value served set it empty
-			if ( !$value )
-				$value = '';
+		// If no value served set it empty
+		if ( ! $value )
+			$value = '';
 
-			// Output nonce verification field
-			wp_nonce_field( $vgsr_entity->file, 'vgsr_entity_dispuut_since_nonce' );
+		// Output nonce verification field
+		wp_nonce_field( $vgsr_entity->file, 'vgsr_entity_dispuut_since_nonce' );
 
-			// Start field
-			echo '<p id="vgsr_entity_dispuut_since">';
+		// Start field
+		echo '<p id="vgsr_entity_dispuut_since">';
 
-			// Output input field
-			echo '<label><strong>'. __('Since', 'vgsr-entity') .': </strong><input type="text" name="vgsr_entity_dispuut_since" value="'. $value .'" /></label>';
+		// Output input field
+		echo '<label><strong>'. __('Since', 'vgsr-entity') .': </strong><input type="text" name="vgsr_entity_dispuut_since" value="'. $value .'" /></label>';
 
-			// Output field information
-			echo '<span class="howto">'. __('The required format is yyyy.', 'vgsr-entity') .'</span>';
+		// Output field information
+		echo '<span class="howto">'. __('The required format is yyyy.', 'vgsr-entity') .'</span>';
 
-			// End field
-			echo '</p>';
+		// End field
+		echo '</p>';
 		
 		/** Died Meta **/
 
-			// Get stored meta value
-			$value = get_post_meta( $post->ID, 'vgsr_entity_dispuut_died', true );
+		// Get stored meta value
+		$value = get_post_meta( $post->ID, 'vgsr_entity_dispuut_died', true );
 
-			// If no value served set it empty
-			if ( !$value )
-				$value = '';
+		// If no value served set it empty
+		if ( !$value )
+			$value = '';
 
-			// Output nonce verification field
-			wp_nonce_field( $vgsr_entity->file, 'vgsr_entity_dispuut_died_nonce' );
+		// Output nonce verification field
+		wp_nonce_field( $vgsr_entity->file, 'vgsr_entity_dispuut_died_nonce' );
 
-			// Start field
-			echo '<p id="vgsr_entity_dispuut_died">';
+		// Start field
+		echo '<p id="vgsr_entity_dispuut_died">';
 
-			// Output input field
-			echo '<label><strong>'. __('Died', 'vgsr-entity') .': </strong><input type="text" name="vgsr_entity_dispuut_died" value="'. $value .'" /></label>';
+		// Output input field
+		echo '<label><strong>'. __('Died', 'vgsr-entity') .': </strong><input type="text" name="vgsr_entity_dispuut_died" value="'. $value .'" /></label>';
 
-			// Output field information
-			echo '<span class="howto">'. __('The required format is yyyy.', 'vgsr-entity') .'</span>';
+		// Output field information
+		echo '<span class="howto">'. __('The required format is yyyy.', 'vgsr-entity') .'</span>';
 
-			// End field
-			echo '</p>';
-		
-		do_action( 'vgsr_entity_'. $this->type .'_metabox', $post );
+		// End field
+		echo '</p>';
+	
+		do_action( "vgsr_{$this->type}_metabox", $post );
 	}
 
 	/**
 	 * Save dispuut since and died meta field
 	 * 
+	 * @since 0.1
+	 * 
 	 * @param int $post_id The post ID
-	 * @return void
 	 */
-	function metabox_since_and_died_save( $post_id ){
+	public function metabox_since_and_died_save( $post_id ){
 		global $vgsr_entity;
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
@@ -141,11 +146,13 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 		$cpt_obj = get_post_type_object( $this->type );
 
-		if ( !current_user_can( $cpt_obj->cap->edit_posts ) || !current_user_can( $cpt_obj->cap->edit_post, $post_id ) )
+		if (   ! current_user_can( $cpt_obj->cap->edit_posts          ) 
+			|| ! current_user_can( $cpt_obj->cap->edit_post, $post_id ) 
+			)
 			return;
 
-		if ( !wp_verify_nonce( $_POST['vgsr_entity_dispuut_since_nonce'], $vgsr_entity->file ) 
-			&& !wp_verify_nonce( $_POST['vgsr_entity_dispuut_died_nonce'], $vgsr_entity->file ) 
+		if (   ! wp_verify_nonce( $_POST['vgsr_entity_dispuut_since_nonce'], $vgsr_entity->file ) 
+			&& ! wp_verify_nonce( $_POST['vgsr_entity_dispuut_died_nonce'],  $vgsr_entity->file ) 
 			)
 			return;
 
@@ -154,7 +161,7 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 		$inputs = array(
 			'since' => sanitize_text_field( $_POST['vgsr_entity_dispuut_since'] ),
 			'died'  => sanitize_text_field( $_POST['vgsr_entity_dispuut_died'] )
-			);
+		);
 
 		// Loop over the inputs
 		foreach ( $inputs as $field => $input ) :
@@ -166,16 +173,15 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 			}
 
 			// Does the inserted input match our requirements? - Checks for 1900 - 2099
-			if ( !preg_match( '/^(19\d{2}|20\d{2})$/', $input, $matches ) ){
+			if ( ! preg_match( '/^(19\d{2}|20\d{2})$/', $input, $matches ) ){
 
 				// Alert the user
 				add_filter( 'redirect_post_location', array( $this, 'metabox_'. $field .'_save_redirect' ) );
 
 				$input = false;
-			}
 
 			// Update post meta
-			else {
+			} else {
 				update_post_meta( $post_id, 'vgsr_entity_dispuut_'. $field, $input );
 			}
 
@@ -184,33 +190,37 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 	/**
 	 * Add query arg to the redirect location after save_post()
+	 *
+	 * @since 0.1
 	 * 
 	 * @param string $location The redrirect location
 	 * @return string $location
 	 */
-	function metabox_since_save_redirect( $location ){
+	public function metabox_since_save_redirect( $location ){
 		return add_query_arg( 'dispuut-error', '1', $location );
 	}
 
 	/**
 	 * Add query arg to the redirect location after save_post()
+	 *
+	 * @since 0.1
 	 * 
 	 * @param string $location The redrirect location
 	 * @return string $location
 	 */
-	function metabox_died_save_redirect( $location ){
+	public function metabox_died_save_redirect( $location ){
 		return add_query_arg( 'dispuut-error', '2', $location );
 	}
 
 	/**
-	 * Output the admin message for the given dispuut error
+	 * Setup Dispuut admin error messages
 	 *
+	 * @since 0.1
+	 * 
 	 * @param array $messages
 	 * @return array $messages
 	 */
-	function admin_messages( $messages ){
-
-		// The messages to pick from
+	public function admin_messages( $messages ){
 		$messages[1] = sprintf( __('The submitted value for %s is not given in the valid format.', 'vgsr-entity'), '<strong>'. __('Since', 'vgsr-entity') .'</strong>' );
 		$messages[2] = sprintf( __('The submitted value for %s is not given in the valid format.', 'vgsr-entity'), '<strong>'. __('Died', 'vgsr-entity') .'</strong>' );
 
@@ -219,11 +229,13 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 	/**
 	 * Returns the meta fields for post type dispuut
+	 *
+	 * @since 0.1
 	 * 
 	 * @param array $meta Meta fields
 	 * @return array $meta
 	 */
-	function entity_meta( $meta ){
+	public function entity_meta( $meta ){
 		global $post;
 
 		// Setup value for since meta
@@ -231,10 +243,10 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 			// Meta icon
 			$meta['since'] = array(
-				'icon'  => 'icon-calendar',
+				'icon'   => 'icon-calendar',
 				'before' => __('Since', 'vgsr-entity') .': ',
-				'value' => $since
-				);
+				'value'  => $since
+			);
 		}
 
 		// Setup value for died meta
@@ -242,25 +254,28 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 			// Meta icon
 			$meta['died'] = array(
-				'icon'  => 'icon-cancel',
+				'icon'   => 'icon-cancel',
 				'before' => __('Died', 'vgsr-entity') .': ',
-				'value' => $died
-				);
+				'value'  => $died
+			);
 		}
 
 		return $meta;
 	}
-
 }
 
 endif; // class_exists
 
 /**
- * Setup VGSR Dispuut
+ * Setup VGSR Dispuut Entity
+ *
+ * @since 0.1
+ *
+ * @uses VGSR_Dispuut
  */
 function vgsr_entity_dispuut(){
 	global $vgsr_entity;
 
-	$vgsr_entity->dispuut = new VGSR_Entity_Dispuut();
+	$vgsr_entity->dispuut = new VGSR_Dispuut();
 }
 

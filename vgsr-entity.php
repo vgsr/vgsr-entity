@@ -1,41 +1,119 @@
 <?php
 
 /**
+ * VGSR Entity Main Classes
+ *
+ * @package VGSR Entity
+ * @subpackage Main
+ */
+
+/**
  * Plugin Name: VGSR Entity
- * Plugin URI: http://www.offereinspictures.nl/wp-plugins/vgsr-entity/
- * Description: Plugin voor VGSR entiteiten zoals besturen, disputen, kasten, commissies
- * Version: 0.0.1
- * Author: Laurens Offereins
- * Author URI: http://www.offereinspictures.nl
+ * Description: Post types voor VGSR besturen, disputen en kasten
+ * Plugin URI:  https://github.com/vgsr/vgsr-entity
+ * Author:      Laurens Offereins
+ * Author URI:  https://github.com/lmoffereins
+ * Version:     0.1
  */
 
 // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( !class_exists( 'VGSR_Entity' ) ) :
+if ( ! class_exists( 'VGSR_Entity' ) ) :
 
+/**
+ * VGSR Entity base class
+ *
+ * @since 0.1
+ */
 class VGSR_Entity {
 
-	static $type;
-	static $hook;
-	static $labels;
-	static $page;
-	static $settings_title;
-	static $parent;
-	static $thumbsize;
+	/**
+	 * The entity post type
+	 * 
+	 * @since 0.1
+	 * @var string
+	 */
+	public $type = '';
 
-	static $settings_page;
-	static $settings_section;
+	/**
+	 * The entity admin page 
+	 *
+	 * @since 0.1
+	 * @var string
+	 */
+	public $page = '';
+
+	/**
+	 * The entity post type labels
+	 *
+	 * @since 0.1
+	 * @var array {
+	 *  @type string $single Post type single label
+	 *  @type string $plural Post type plural label
+	 * }
+	 */
+	public $labels = array();
+
+	/**
+	 * The entity settings page hook
+	 *
+	 * @since 0.1
+	 * @var string
+	 */
+	public $hook = '';
+
+	/**
+	 * The entity parent page option name
+	 *
+	 * @since 0.1
+	 * @var string
+	 */
+	public $parent_option = '';
+
+	/**
+	 * The entity post thumbnail size
+	 *
+	 * @since 0.1
+	 * @var string
+	 */
+	public $thumbsize = '';
+
+	/**
+	 * The entity settings page
+	 *
+	 * @since 0.1
+	 * @var string
+	 */
+	public $settings_page = '';
+
+	/**
+	 * The entity main settings section
+	 *
+	 * @since 0.1
+	 * @var string
+	 */
+	public $settings_section = '';
 
 	/**
 	 * Construct the VGSR Entity
+	 *
+	 * @since 0.1
 	 */
-	function __construct( $labels ){
-		$this->labels = $labels;
+	public function __construct( $labels ) {
+
+		// Setup labels
+		$this->labels = (object) wp_parse_args( $labels, array( 
+			'single' => '',
+			'plural' => ''
+		) );
+
+		// Bail when labels are msising
+		if ( empty( $this->labels->single ) || empty( $this->labels->plural ) )
+			wp_die( __('The VGSR entity is missing some of the post type labels', 'vgsr-entity'), 'vgsr-entity-missing-labels' );
 
 		// Setup defaults
 		$this->entity_globals();
-		$this->entity_requires();
 		$this->entity_actions();
 
 		// Setup child class
@@ -46,276 +124,310 @@ class VGSR_Entity {
 
 	/**
 	 * Create class globals
+	 *
+	 * @since 0.1
 	 */
-	function entity_globals(){
-		$this->type           = strtolower( $this->labels['single'] );
-		$this->hook           = 'edit.php?post_type='. $this->type;
-		$this->settings_title = $this->labels['single'] .' '. __('Settings');
-		$this->parent         = '_'. $this->type .'-parent-page';
+	private function entity_globals() {
+
+		// Build post type from single type label
+		$this->type           = strtolower( $this->labels->single );
+		$this->page           = 'edit.php?post_type=' . $this->type;
+
+		// Post type parent page option value
+		$this->parent_option  = "_{$this->type}-parent-page";
+
+		// Default thumbsize. @todo When theme does not support post-thumbnail image size
 		$this->thumbsize      = 'post-thumbnail';
+
+		// Setup settings page title
+		$this->settings_title = $this->labels->single . ' ' . __('Settings');
 	}
 
 	/**
-	 * Make sure we include all necessary files
+	 * Setup default base entity actions and filters
+	 *
+	 * @since 0.1
 	 */
-	function entity_requires(){
-		// require();
-	}
+	private function entity_actions() {
 
-	/**
-	 * Hook class functions into WP actions
-	 */
-	function entity_actions(){
 		// Actions
-		add_action( 'init',          array( $this, 'setup_globals'         ) );
-		add_action( 'init',          array( $this, 'register_cpt'          ) );
-		add_action( 'admin_init',    array( $this, 'register_settings'     ) );
-		add_action( 'admin_menu',    array( $this, 'admin_menu'            ) );
-		add_action( 'admin_notices', array( $this, 'admin_notices'         ) );
+		add_action( 'vgsr_entity_init', array( $this, 'register_post_type'       ) );
+		add_action( 'admin_init',       array( $this, 'entity_register_settings' ) );
+		add_action( 'admin_menu',       array( $this, 'entity_admin_menu'        ) );
+		add_action( 'admin_notices',    array( $this, 'entity_admin_notices'     ) );
 
-		// Plugin actions
-		add_filter( 'vgsr_entity_'. $this->type .'_meta', array( $this, 'entity_meta' ) );
-		add_filter( $this->type .'_admin_messages', array( $this, 'admin_messages' ) );
+		// Plugin hooks
+		add_filter( "vgsr_{$this->type}_meta",      array( $this, 'entity_meta'               )    );
+		add_filter( "{$this->type}_admin_messages", array( $this, 'admin_messages'            )    );
+		add_action( "{$this->type}_settings_load",  array( $this, 'entity_parent_page_update' ), 1 );
 
-		// Filters
-		add_filter( 'vgsr_entity-'. $this->type .'-register_cpt', array( $this, 'edit_register_cpt' ) );
-		add_filter( 'the_content',            array( $this, 'parent_page_add_children'   ) );
-		add_filter( 'wp_insert_post_parent',  array( $this, 'type_parent_page_save_post' ), 10, 4 );
+		// WP hooks
+		add_filter( 'the_content',           array( $this, 'entity_parent_page_children'  )        );
+		add_filter( 'wp_insert_post_parent', array( $this, 'entity_parent_page_save_post' ), 10, 2 );
 	}
 
-	function setup_globals(){
-		// Set child globals
-	}
+	/**
+	 * Define child class globals
+	 *
+	 * @since 0.1
+	 */
+	public function setup_globals() { /* Overwrite this method in a child class */ }
 
-	function setup_requires(){
-		// Set child globals
-	}
+	/**
+	 * Include child class files
+	 *
+	 * @since 0.1
+	 */
+	public function setup_requires() { /* Overwrite this method in a child class */ }
 
-	function setup_actions(){
-		// Set child globals
-	}
+	/**
+	 * Setup child class actions and filters
+	 *
+	 * @since 0.1
+	 */
+	public function setup_actions() { /* Overwrite this method in a child class */ }
 
-	/** Setup custom post type *****************************************/
+	/** Setup Entity Post Type *****************************************/
 
 	/**
 	 * Register the post type
 	 *
+	 * @since 0.1
+	 *
 	 * @uses register_post_type()
-	 * @uses apply_filters() To call vgsr_entity-{$post_type}-register_cpt
+	 * @uses apply_filters() To call vgsr_{$post_type}_register_cpt
 	 *                        filter to enable post type arguments filtering
-	 * @return void
 	 */
-	public function register_cpt(){
+	public function register_post_type() {
 		global $vgsr_entity;
-
-		extract( $this->labels );
-
-		$ev = strtolower( $single );
-		$mv = strtolower( $multi );
 
 		// Create post type labels
 		$labels = array(
-			'name'                 => $multi,
-			'singular_name'        => $single,
-			'add_new'              => sprintf( __('New %s'), $ev ),
-			'add_new_item'         => sprintf( __('Add new %s'), $ev ),
-			'edit_item'            => sprintf( __('Edit %s'), $ev ),
-			'new_item'             => sprintf( __('New %s'), $ev ),
-			'all_items'            => sprintf( __('All %s'), $mv ),
-			'view_item'            => sprintf( __('View %s'), $ev ),
-			'search_items'         => sprintf( __('Search %s'), $mv ),
-			'not_found'            => sprintf( __('No %s found'), $mv ),
-			'not_found_in_trash'   => sprintf( __('No %s found in trash'), $mv ), 
-			'parent_item_colon'    => '',
-			'menu_name'            => $multi
-			);
+			'name'                 => $this->labels->plural,
+			'singular_name'        => $this->labels->single,
+			'add_new'              => sprintf( __('New %s'),               $this->labels->single ),
+			'add_new_item'         => sprintf( __('Add new %s'),           $this->labels->single ),
+			'edit_item'            => sprintf( __('Edit %s'),              $this->labels->single ),
+			'new_item'             => sprintf( __('New %s'),               $this->labels->single ),
+			'all_items'            => sprintf( __('All %s'),               $this->labels->plural ),
+			'view_item'            => sprintf( __('View %s'),              $this->labels->single ),
+			'search_items'         => sprintf( __('Search %s'),            $this->labels->plural ),
+			'not_found'            => sprintf( __('No %s found'),          $this->labels->plural ),
+			'not_found_in_trash'   => sprintf( __('No %s found in trash'), $this->labels->plural ), 
+			'menu_name'            => $this->labels->plural
+		);
 
 		// Setup post type arguments
 		$args = array(
 			'labels'               => $labels,
 			'public'               => true,
-			'menu_icon'            => null, // url to the admin menu icon
+			// 'menu_icon'            => null,
 			'menu_position'        => $vgsr_entity->menu_position,
 			'hierarchical'         => false,
-			'rewrite'              => array( 'slug' => $this->type_parent_page_slug() ),
+			'rewrite'              => array( 
+				'slug' => $this->entity_parent_page_slug() 
+			),
 			'capability_type'      => 'page',
 			'supports'             => array(
-									'title'
-									, 'editor'
-									, 'author'
-									, 'thumbnail'
-									, 'revisions'
-									, 'page-attributes' // To set menu order
-									),
-			'register_meta_box_cb' => array( $this, 'metabox_cb' )
-			);
+				'title', 
+				'editor', 
+				'author', 
+				'thumbnail', 
+				'revisions', 
+				'page-attributes' // To set menu order
+			),
+			'register_meta_box_cb' => array( $this, 'add_metabox' )
+		);
 
-		// Register post type
-		register_post_type( $this->type, apply_filters( 'vgsr_entity-'. $this->type .'-register_cpt', $args ) );
+		// Register this entity post type
+		register_post_type( 
+			$this->type, 
+			apply_filters( "vgsr_{$this->type}_register_cpt", $args )
+		);
 	}
 
 	/**
-	 * Mirror method for filtering register_post_type args
-	 * 
-	 * @param array $args
-	 * @return array
-	 */
-	function edit_register_cpt( $args ){
-		return $args;
-	}
-
-	function metabox_cb(){
-		// add_meta_box();
-	}
-
-	/**
-	 * Output the admin messages if requested after save post
+	 * Add metabox callback for entity CPT
 	 *
-	 * @uses apply_filters() To call the {$this->type}_admin_messages filter
-	 * @return void
+	 * @since 0.1
 	 */
-	function admin_notices(){
+	public function add_metabox() { /* Overwrite this method in a child class */ }
 
-		// Only continue if error is sent
-		if ( !isset( $_REQUEST[$this->type .'-error'] ) || empty( $_REQUEST[$this->type .'-error'] ) )
-			return;
-
-		// Get the message num
-		$num = trim( $_REQUEST[$this->type .'-error'] );
-
-		// The messages to pick from
-		$messages = apply_filters( $this->type .'_admin_messages', array(
-			0 => '' // Default empty
-			) );
-
-		// Message must exist
-		if ( !isset( $messages[$num] ) )
-			return;
-
-		// Output message
-		echo '<div class="error message"><p>'. $messages[$num] .'</p></div>';
-	}
+	/** Entity Settings Page *******************************************/
 
 	/**
-	 * Dummy function
-	 * 
-	 * @param array $messages
-	 * @return array $messages
-	 */
-	function admin_messages( $messages ){
-		return $messages;
-	}
-
-	/**
-	 * Setup the entity admin menu settings page
+	 * Register the entity admin menu with associated hooks
+	 *
+	 * @since 0.1
 	 *
 	 * @uses add_submenu_page()
 	 * @uses add_action() To call some actions on page load
 	 *                     head and footer
-	 * @return void
 	 */
-	function admin_menu(){
-		$this->page = add_submenu_page( $this->hook, $this->settings_title, __('Settings'), 'manage_options', $this->type .'-settings', array( $this, 'settings_page' ) );
+	public function entity_admin_menu() {
+		$this->hook = add_submenu_page( $this->page, $this->settings_title, __('Settings'), 'manage_options', $this->type . '-settings', array( $this, 'settings_page' ) );
 
-		// Setup page specific hooks
-		add_action( 'load-'. $this->page,                array( $this, 'page_actions'             ), 9 );
-		add_action( 'admin_print_scripts-'. $this->page, array( $this, 'page_styles'              ), 10);
-		add_action( 'admin_print_styles-'. $this->page,  array( $this, 'page_scripts'             ), 10);
-		add_action( 'admin_footer-'. $this->page,        array( $this, 'footer_scripts'           ) );
-
-		// Additional actions
-		add_action( 'load-'. $this->page,                array( $this, 'type_parent_page_process' ), 8 );
+		// Setup settings specific hooks
+		add_action( 'load-'                . $this->hook, array( $this, 'entity_settings_load'    ), 9  );
+		add_action( 'admin_print_scripts-' . $this->hook, array( $this, 'entity_settings_styles'  ), 10 );
+		add_action( 'admin_print_styles-'  . $this->hook, array( $this, 'entity_settings_scripts' ), 10 );
+		add_action( 'admin_footer-'        . $this->hook, array( $this, 'entity_settings_footer'  )     );
 	}
 
-	function register_settings(){
-		$this->settings_page    = $this->type .'-settings';
-		$this->settings_section = 'vgsr-entity-'. $this->settings_page;
-
-		add_settings_section( $this->settings_section, __('Another section title', 'vgsr-entity'), array( $this, 'settings_information' ), $this->settings_page );
-
-		// Type parent page
-		add_settings_field( $this->parent, $this->labels['multi'] .' '. __('Parent Page', 'vgsr-entity'), array( $this, 'type_parent_page_field' ), $this->settings_page, $this->settings_section );
-		register_setting( $this->settings_page, $this->parent, 'intval' );
+	/**
+	 * Create admin page load hook
+	 *
+	 * @since 0.x
+	 */
+	public function entity_settings_load() {
+		do_action( "vgsr_{$this->type}_settings_load" );
 	}
 
-	function settings_information(){
-		echo '<p>'. __('Some blabla about the settings here below. Fill \'em and enjoy!', 'vgsr-entity') .'</p>';
+	/**
+	 * Create admin page styles hook
+	 * 
+	 * @since 0.x
+	 */
+	public function entity_settings_styles() {
+		do_action( "vgsr_{$this->type}_settings_styles" );
 	}
 
-	function settings_page(){
-		$this->settings_page = $this->type .'-settings';
-
-		// Display settings page
-		?><div class="wrap">
-
-			<?php screen_icon(); ?>
-			<h2><?php echo $this->settings_title; ?></h2>
-			<?php settings_errors(); ?>
-
-			<form method="post" action="options.php">
-				<?php settings_fields( $this->settings_page ); ?>
-				<?php do_settings_sections( $this->settings_page ); ?>
-				<?php submit_button(); ?>
-			</form>
-
-		</div><?php		
+	/**
+	 * Create admin settings scripts hook
+	 * 
+	 * @since 0.x
+	 */
+	public function entity_settings_scripts() {
+		do_action( "vgsr_{$this->type}_settings_scripts" );
 	}
 
-	// Output parent page field
-	function type_parent_page_field(){
-		$args = array(
-			'name'             => $this->parent,
-			'selected'         => get_option( $this->parent ),
-			'echo'             => false,
+	/**
+	 * Create admin footer scripts hook
+	 * 
+	 * @since 0.x
+	 */
+	public function entity_settings_footer() {
+		do_action( "vgsr_{$this->type}_settings_footer" );
+	}
+
+	/**
+	 * Output entity settings page 
+	 *
+	 * @since 0.1
+	 *
+	 * @uses settings_errors()
+	 * @uses settings_fields()
+	 * @uses do_settings_sections()
+	 */
+	public function settings_page() {
+		?>
+			<div class="wrap">
+
+				<?php screen_icon(); ?>
+				<h2><?php echo $this->settings_title; ?></h2>
+				<?php settings_errors(); ?>
+
+				<form method="post" action="options.php">
+					<?php settings_fields( $this->settings_page ); ?>
+					<?php do_settings_sections( $this->settings_page ); ?>
+					<?php submit_button(); ?>
+				</form>
+
+			</div>
+		<?php
+	}
+
+	/**
+	 * Register entity settings
+	 *
+	 * @since 0.1
+	 * 
+	 * @uses add_settings_section()
+	 * @uses add_settings_field()
+	 * @uses register_setting()
+	 */
+	public function entity_register_settings() {
+		$this->settings_page    = "vgsr_{$this->type}_settings";
+		$this->settings_section = "vgsr_{$this->type}_options_main";
+
+		// Register main settings section
+		add_settings_section( 
+			$this->settings_section, 
+			sprintf( __('Main %s Settings', 'vgsr-entity'), $this->labels->plural ),
+			array( $this, 'main_settings_info' ), 
+			$this->settings_page 
+		);
+
+		// Entity post type parent page
+		add_settings_field( $this->parent_option, sprintf( __('%s Parent Page', 'vgsr-entity'), $this->labels->plural ), array( $this, 'entity_parent_page_settings_field' ), $this->settings_page, $this->settings_section );
+		register_setting( $this->settings_page, $this->parent_option, 'intval' );
+	}
+
+	/**
+	 * Output main settings section info
+	 *
+	 * @since 0.1
+	 */
+	public function main_settings_info() { /* Nothing to display */ }
+
+	/**
+	 * Output entity parent page settings field
+	 *
+	 * @since 0.1
+	 *
+	 * @uses wp_dropdown_pages()
+	 */
+	public function entity_parent_page_settings_field() {
+
+		// Output page dropdown
+		wp_dropdown_pages( array(
+			'name'             => $this->parent_option,
+			'selected'         => get_option( $this->parent_option ),
+			'echo'             => true,
 			'show_option_none' => __('None')
-			);
+		) );
 
-		echo '<label>'. wp_dropdown_pages( $args ) .' <span class="description">'. sprintf( __('Pick the parent page you want to have your %s appear on.', 'vgsr-entity'), $this->labels['multi'] ) .'</span></label>';
+		?>
+			<label><span class="description"><?php echo sprintf( __('Select the parent page you want to have your %s to appear on. ', 'vgsr-entity'), $this->labels->plural ); ?></span></label>
+		<?php
 	}
 
 	/**
 	 * Rewrite permalink setup if post parent changes
 	 *
-	 * @uses VGSR_Entitites::rewrite_flush()
-	 * @return void
+	 * @since 0.1
+	 *
+	 * @uses get_posts()
+	 * @uses wp_update_post()
 	 */
-	function type_parent_page_process(){
+	public function entity_parent_page_update() {
 
-		// Get values
-		$new_id  = intval( get_option( $this->parent ) );
-		$checkie = get_posts( array( 'post_type' => $this->type, 'numberposts' => 1 ) );
-		$old_id  = $checkie[0]->post_parent;
+		// Get random entity post
+		$post = get_posts( array( 'post_type' => $this->type, 'numberposts' => 1 ) );
 
-		// Only continue if the values are different
-		if ( $new_id != $old_id ){
-			$posts = get_posts( array( 'post_type' => $this->type, 'numberposts' => -1 ) );
+		// Compare entity parent page ID with updated ID
+		if ( $post[0]->post_parent != get_option( $this->parent_option ) ) {
 
-			// Loop over all posts
-			foreach ( $posts as $post ){
+			// Loop all entity posts
+			foreach ( get_posts( array( 'post_type' => $this->type, 'numberposts' => -1 ) ) as $post ) {
 
-				// Set the new post parent
-				$post->post_parent = $new_id;
-
-				// Update the posts
+				// Update the post parent
+				$post->post_parent = $new_pid;
 				wp_update_post( $post );
 			}
-
-			// Flush rewrite rules for new page parent
-			global $vgsr_entity;
-			$vgsr_entity->rewrite_flush();
 		}
 	}
 
 	/**
-	 * Save entity parent page ID as post parent
+	 * Return entity parent page ID as post parent on post save
+	 *
+	 * @since 0.1
 	 * 
 	 * @param int $parent_id The parent page ID
 	 * @param int $post_id The post ID
-	 * @param unknown $args1
-	 * @param unknown $args2
 	 * @return int The parent ID
 	 */
-	function type_parent_page_save_post( $parent_id, $post_id, $args1, $args2 ){
+	public function entity_parent_page_save_post( $parent_id, $post_id ) {
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return $parent_id;
@@ -325,143 +437,140 @@ class VGSR_Entity {
 
 		$cpt_obj = get_post_type_object( $this->type );
 
-		if ( !current_user_can( $cpt_obj->cap->edit_posts ) || !current_user_can( $cpt_obj->cap->edit_post, $post_id ) )
+		if (   ! current_user_can( $cpt_obj->cap->edit_posts          ) 
+			|| ! current_user_can( $cpt_obj->cap->edit_post, $post_id ) 
+			)
 			return $parent_id;
 
-		$parent_page_id = (int) get_option( $this->parent );
+		$entity_ppid = (int) get_option( $this->parent_option );
 
-		if ( $parent_id !== $parent_page_id )
+		if ( $parent_id != $entity_ppid )
 			return $parent_id;
 
-		return $parent_page_id;
+		return $entity_ppid;
 	}
 
 	/**
-	 * Returns the slug for the custom post type
+	 * Return the slug for the entity parent page
+	 *
+	 * @since 0.1
 	 * 
-	 * @return string Slug
+	 * @return string Parent page slug
 	 */
-	function type_parent_page_slug(){
-
-		// Get parent page option
-		$parent_id = get_option( $this->parent );
-
-		// Setup return var
+	public function entity_parent_page_slug() {
 		$slug = '';
 
-		// Do we have a parent page?
-		if ( $_post = get_post( $parent_id ) ){
-
-			// Get the parent slug
+		// Find entity parent page
+		if ( $_post = get_post( get_option( $this->parent_option ) ) ) {
 			$slug = $_post->post_name;
 
 			// Loop over all next parents
-			while ( !empty( $_post->post_parent ) ){
+			while ( ! empty( $_post->post_parent ) ) {
 
 				// Get next parent
 				$_post = get_post( $_post->post_parent );
 
 				// Prepend parent slug
-				$slug = $_post->post_name .'/'. $slug;
+				$slug = $_post->post_name . '/' . $slug;
 			}
 		}
 
 		return $slug;
 	}
 
-	function page_actions(){
-		// Page actions before page load
-	}
-
-	function page_styles(){
-		// Page styles
-	}
-
-	function page_scripts(){
-		// Page scripts
-	}
-
-	function footer_scripts(){
-		// Page footer scripts
-	}
-
 	/**
 	 * Append entity parent page content with entity children
+	 *
+	 * @since 0.1
 	 * 
 	 * @param string $content The post content
 	 * @return string $content
 	 */
-	function parent_page_add_children( $content ){
+	public function entity_parent_page_children( $content ) {
 		global $post;
 
-		if ( $post->ID === (int) get_option( $this->parent ) )
-			return $content . $this->parent_page_list_children();
-		else
-			return $content;
+		if ( (int) get_option( $this->parent_option ) == $post->ID )
+			$content .= $this->parent_page_list_children();
+
+		return $content;
 	}
 
 	/**
-	 * Returns a list of all parent page entity children with
-	 * their respective post thumbnails.
+	 * Return entity posts HTML markup
 	 * 
-	 * @return string $retval The list of children
+	 * Creates a list of all posts with their respective post thumbnails.
+	 *
+	 * @since 0.1
+	 *
+	 * @uses get_posts()
+	 * @uses setup_postdata()
+	 * @uses get_permalink()
+	 * @uses has_post_thumbnail()
+	 * @uses wp_get_attachment_image_src()
+	 * @uses get_post_thumbnail_id()
+	 * @uses get_children()
+	 * @global array $_wp_additional_image_sizes
+	 * 
+	 * @return string $retval HTML
 	 */
-	function parent_page_list_children(){
+	public function parent_page_list_children() {
 
-		// Get all posts
+		// Get all entity posts
 		$children = get_posts( array(
 			'post_type'   => $this->type,
-			'numberposts' => -1, // We want all!
+			'numberposts' => -1,
 			'orderby'     => 'menu_order',
 			'order'       => 'ASC'
-			) );
+		) );
 
-		$retval = '<ul class="parent-page-children '. $this->type .'-children">';
+		$retval = '<ul class="parent-page-children ' . $this->type . '-children">';
 
 		foreach ( $children as $post ) : setup_postdata( $post );
-			$retval .=	'<li class="parent-child '. $this->type.' '. $this->type.'-type">';
-			$retval .=		'<a href="'. get_permalink( $post->ID ) .'" title="'. $post->post_title .'">';
-			$retval .=			'<span class="parent-child-thumbnail '. $this->type .'-thumbnail">';
+			$retval .=	'<li class="parent-child ' . $this->type. ' ' . $this->type. '-type">';
+			$retval .=		'<a href="' . get_permalink( $post->ID ) . '" title="' . $post->post_title . '">';
+			$retval .=			'<span class="parent-child-thumbnail ' . $this->type . '-thumbnail">';
 
 			// Get the post thumbnail
 			if ( has_post_thumbnail( $post->ID ) ) :
 				$img     = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), $this->thumbsize );
-				$retval .= '<img src="'. $img[0] .'" />';
+				$retval .= '<img src="' . $img[0] . '" />';
 
 			// Get first image attachment
 			elseif ( $att = get_children( array('post_type' => 'attachment', 'post_mime_type' => 'image', 'post_parent' => $post->ID ) ) ) :
 				$att     = reset( $att );
 				$img     = wp_get_attachment_image_src( $att->ID, $this->thumbsize );
-				$retval .= '<img src="'. $img[0] .'" />';
+				$retval .= '<img src="' . $img[0] . '" />';
 
 			// Get dummy image
 			else :
-				if ( is_string( $this->thumbsize ) ){
+				if ( is_string( $this->thumbsize ) ) {
 					global $_wp_additional_image_sizes;
 					$format = $_wp_additional_image_sizes[$this->thumbsize];
 				} else {
 					$format = $this->thumbsize;
 				}
 				
-				if ( is_array( $format ) ){
+				// Setup dummy image size
+				if ( is_array( $format ) ) {
 					if ( isset( $format[0] ) ) // Numerical array
-						$size = $format[0] .'x'. $format[1];
+						$size = $format[0] . 'x' . $format[1];
 					else // Textual string
-						$size = $format['width'] .'x'. $format['height'];
+						$size = $format['width'] . 'x' . $format['height'];
+				} else {
+					$size = '200x200'; // Random default value
 				}
 
-				else
-					$size = '200x200'; // Random default value
+				$retval .= '<img src="http://dummyimage.com/' . $size . '/fefefe/000&text=' .  __('Placeholder', 'vgsr-entity') . '" />';
 
-				$retval .= '<img src="http://dummyimage.com/'. $size .'/eee/000&text=plaatshouder" />';
 			endif;
 
 			$retval .=			'</span>';
-			$retval .=			'<span class="parent-child-title '. $this->type .'-title">' .
-									'<h3>'. $post->post_title .'</h3>' .
+			$retval .=			'<span class="parent-child-title ' . $this->type . '-title">' .
+									'<h3>' . $post->post_title . '</h3>' .
 								'</span>';
 			$retval .=		'</a>';
 			$retval .=	'</li>';
+
 		endforeach;
 
 		$retval .= '</ul>';
@@ -469,94 +578,195 @@ class VGSR_Entity {
 		return $retval;
 	}
 
-	function entity_meta( $meta ){
-		return $meta;
+	/**
+	 * Output the admin messages if requested
+	 *  
+	 * @since 0.1
+	 *
+	 * @uses apply_filters() To call the {$this->type}_admin_messages filter
+	 */
+	public function entity_admin_notices() {
+
+		// Only continue if error is sent
+		if (   ! isset( $_REQUEST[$this->type . '-error'] ) 
+			||   empty( $_REQUEST[$this->type . '-error'] ) 
+			)
+			return;
+
+		// Get the message number
+		$num = trim( $_REQUEST[$this->type . '-error'] );
+
+		// The messages to pick from
+		$messages = apply_filters( $this->type . '_admin_messages', array(
+			0 => '' // Default empty
+		) );
+
+		// Message must exist
+		if ( ! isset( $messages[$num] ) )
+			return;
+
+		// Output message
+		echo '<div class="error message"><p>' . $messages[$num] . '</p></div>';
 	}
 
+	/**
+	 * Return the custom admin messages
+	 *
+	 * Should be overriden in child class.
+	 *
+	 * @since 0.1
+	 * 
+	 * @param array $messages {
+	 *  @type int    Message number
+	 *  @type string Message content
+	 * }
+	 * @return array $messages
+	 */
+	public function admin_messages( $messages ) {
+		return $messages;
+	}
+
+	/**
+	 * Return the entity meta data
+	 *
+	 * @since 0.1
+	 * 
+	 * @param array $meta The entity meta data
+	 * @return array $meta
+	 */
+	public function entity_meta( $meta ) {
+		return $meta;
+	}
 }
 
-endif; // class_exisist VGSR_Entity
+endif; // class_exsits
 
-
-/**
- * This is the main class that loads all entities
- */
-if ( !class_exists( 'VGSR_Entities' ) ) :
+if ( ! class_exists( 'VGSR_Entities' ) ) :
 
 /**
- * Plugin class
+ * Main Plugin Entities Class
+ *
+ * @since 0.1
  */
 class VGSR_Entities {
 
-	public $file          = '';
-	public $plugin_path   = '';
-	public $entities      = array();
+	/**
+	 * The plugin file path
+	 *
+	 * @since 0.1
+	 * @var string
+	 */
+	public $file = '';
+
+	/**
+	 * The plugin directory path
+	 *
+	 * @since 0.1
+	 * @var string
+	 */
+	public $plugin_dir = '';
+
+	/**
+	 * Contains the entities names
+	 *
+	 * @since 0.1
+	 * @var array
+	 */
+	public $entities = array();
+
+	/**
+	 * The entities admin menu position
+	 *
+	 * @since 0.1
+	 * @var int
+	 */
 	public $menu_position = 0;
 
 	/**
-	 * Construct the VGSR Entity plugin class
+	 * Construct the main plugin class
+	 *
+	 * @since 0.1
 	 */
-	public function __construct(){
+	public function __construct() {
 		$this->setup_globals();
 		$this->setup_requires();
 		$this->setup_actions();
 	}
 
 	/**
-	 * Create class globals
+	 * Define default class globals
+	 *
+	 * @since 0.1
 	 */
-	private function setup_globals(){
+	private function setup_globals() {
 		$this->file          = __FILE__;
-		$this->plugin_path   = plugin_dir_path( $this->file );
+		$this->plugin_dir    = plugin_dir_path( $this->file );
 		$this->menu_position = 35;
 
-		// Set all entities
+		// Predefine all entities
 		$this->entities = array( 'bestuur', 'dispuut', 'kast' );
 	}
 
 	/**
-	 * Make sure we include all necessary files
+	 * Include the required files
+	 *
+	 * @since 0.1
 	 */
-	private function setup_requires(){
-		require( $this->plugin_path . 'widgets/widget-menu.php' );
+	private function setup_requires() {
+		require( $this->plugin_dir     . 'widgets/widget-menu.php' );
 
-		foreach ( $this->entities as $e )
-			require( $this->plugin_path . "entities/$e.php" );
+		foreach ( $this->entities as $entity ) {
+			require( $this->plugin_dir . "entities/$entity.php"    );
+		}
 	}
 
 	/**
-	 * Hook class functions into WP actions
+	 * Setup default actions and filters
+	 *
+	 * @since 0.1
 	 */
-	private function setup_actions(){
-		register_activation_hook( $this->file, array( $this, 'rewrite_flush' ) );
+	private function setup_actions() {
 
-		add_action( 'plugins_loaded',     array( $this, 'load_textdomain'    ) );
-		add_action( 'admin_menu',         array( $this, 'admin_menu'         ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts'    ) );
-		add_action( 'widgets_init',       array( $this, 'widgets_init'       ) );
+		add_action( 'plugins_loaded',     array( $this, 'load_textdomain'  ) );
+		add_action( 'init',               array( $this, 'entities_init'    ) );
+		add_action( 'admin_menu',         array( $this, 'admin_menu'       ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts'  ) );
+		add_action( 'widgets_init',       array( $this, 'widgets_init'     ) );
+		add_action( 'template_include',   array( $this, 'template_include' ) );
 
 		foreach ( $this->entities as $e )
-			add_action( 'init', "vgsr_entity_$e", 9 );
+			add_action( 'vgsr_entity_init', "vgsr_entity_$e", 9 );
 
-		add_action( 'template_include',   array( $this, 'template_include'   ) );
+		register_activation_hook( $this->file, array( $this, 'rewrite_flush' ) );
 	}
 
-	/** Setup custom post types ****************************************/
+	/** Functions ******************************************************/
+
+	/**
+	 * Create vgsr_entity_init action
+	 *
+	 * @since 0.2
+	 */
+	public function entities_init() {
+		do_action( 'vgsr_entity_init' );
+	}
 
 	/**
 	 * Set new permalink structure by refreshing the rewrite rules
-	 * on activation.
+	 * on activation
 	 *
+	 * @since 0.1
+	 * 
+	 * @uses VGSR_Entity::register_post_type()
 	 * @uses flush_rewrite_rules()
-	 * @return void
 	 */
-	public function rewrite_flush(){
+	public function rewrite_flush() {
 
 		// Call post type registration
-		foreach ( $this->entities as $e ){
-			$name = 'VGSR_Entity_'. ucfirst( $e );
-			$class = new $name;
-			$class->register_cpt();
+		foreach ( $this->entities as $entity ) {
+			$cname = 'VGSR_' . ucfirst( $entity );
+			$class = new $cname;
+			$class->register_post_type();
 		}
 
 		// Flush rules only on activation
@@ -566,16 +776,18 @@ class VGSR_Entities {
 	/**
 	 * Loads the textdomain file for this plugin
 	 *
+	 * @since 0.1
+	 *
 	 * @uses load_textdomain() To insert the matched language file
 	 * @return mixed Text domain if found, else boolean false
 	 */
 	public function load_textdomain() {
 
 		// Traditional WordPress plugin locale filter
-		$mofile        = sprintf( 'vgsr-entity-%s.mo', get_locale() );
+		$mofile = sprintf( 'vgsr-entity-%s.mo', get_locale() );
 
 		// Setup paths to current locale file
-		$mofile_local  = $this->plugin_path .'languages/'. $mofile;
+		$mofile_local  = $this->plugin_dir . 'languages/' . $mofile;
 		$mofile_global = WP_LANG_DIR . '/vgsr-entity/' . $mofile;
 
 		// Look in global /wp-content/languages/vgsr-entity folder
@@ -594,33 +806,36 @@ class VGSR_Entities {
 	/**
 	 * Filters the admin menu to add a separator
 	 * 
-	 * @return void
+	 * @since 0.1
+	 *
+	 * @uses VGSR_Entities::add_separator()
 	 */
-	public function admin_menu(){
+	public function admin_menu() {
 		$this->add_separator( $this->menu_position - 1 );
 	}
 
 	/**
-	 * Runs through the admin menu to add a separator at position {pos}
-	 *
-	 * @link http://wordpress.stackexchange.com/questions/2666/add-a-separator-to-the-admin-menu
+	 * Runs through the admin menu to add a separator at given position
 	 *
 	 * The separator name can affect the order of the separators,
 	 * therefor the separator{$index} naming is changed.
+	 *
+	 * @link http://wordpress.stackexchange.com/questions/2666/add-a-separator-to-the-admin-menu
 	 * 
+	 * @since 0.1
+	 *
+	 * @global array $menu
 	 * @param int $pos The position after which to add the sep
-	 * @return void
 	 */
-	public function add_separator( $pos ){
+	public function add_separator( $pos ) {
 		global $menu;
 		$index = 1;
 
-		foreach( $menu as $offset => $item ){
-
+		foreach( $menu as $offset => $item ) {
 			if ( substr( $item[2], 0, 9 ) == 'separator' )
 				$index++;
 
-			if ( $offset >= $pos ){
+			if ( $offset >= $pos ) {
 				$menu[$pos] = array( '', 'read', "separator-pos{$index}", '', 'wp-menu-separator' );
 				break;
 			}
@@ -630,30 +845,40 @@ class VGSR_Entities {
 	}
 
 	/**
-	 * Enqueue additional page styles if on post type page and
-	 * on post type parent page.
+	 * Enqueue page scripts
 	 * 
-	 * @return void
+	 * @since 0.1
+	 *
+	 * @uses VGSR_Entities::get_entitiy_parent_id()
+	 * @uses wp_register_style()
+	 * @uses wp_enqueue_style()
 	 */
-	public function enqueue_scripts(){
+	public function enqueue_scripts() {
 		global $post;
 
-		// Return if $post is not set
-		if ( !$post )
+		// Bail when $post is not set
+		if ( ! isset( $post ) || ! $post )
 			return;
 
-		// Return if page is not of given post types or is not post type parent page
-		if ( !in_array( $post->post_type, $this->entities ) && !in_array( $post->ID, $this->get_entity_parent_ids() ) )
+		// Bail when not on entity parent page
+		if (   ! in_array( $post->post_type, $this->entities         ) 
+			&& ! in_array( $post->ID, $this->get_entity_parent_ids() ) 
+			)
 			return;
 
 		wp_register_style( 'vgsr-entity', plugins_url( 'css/style.css', __FILE__ ) );
-		wp_enqueue_style( 'vgsr-entity' );
+		wp_enqueue_style(  'vgsr-entity' );
 	}
 
-	public function get_entity_parent_ids(){
+	/**
+	 * Return all entity parent page IDs
+	 *
+	 * @since 0.1
+	 */
+	public function get_entity_parent_ids() {
 		$parents = array();
 		foreach ( $this->entities as $entity )
-			$parents[$entity] = get_option( $this->{$entity}->parent );
+			$parents[$entity] = get_option( $this->{$entity}->parent_option );
 
 		return $parents;
 	}
@@ -661,27 +886,32 @@ class VGSR_Entities {
 	/**
 	 * Initiate entity widgets
 	 *
-	 * @return void
+	 * @since 0.1
+	 *
+	 * @uses register_widget()
 	 */
-	public function widgets_init(){
-		register_widget( 'VGSR_Entity_Widget_Menu' );
+	public function widgets_init() {
+		register_widget( 'VGSR_Entity_Menu_Widget' );
 	}
 
 	/**
 	 * Intercept the template loader to load the entity template
+	 *
+	 * @since 0.1
 	 * 
 	 * @param string $template The current template match
 	 * @return string $template
 	 */
-	public function template_include( $template ){
+	public function template_include( $template ) {
+		$post_type = get_post_type();
 
-		// Serve single-{entity} template if asked for
-		if ( in_array( get_post_type(), $this->entities ) && is_singular( get_post_type() ) ){
+		// Serve single-{$entity} template if asked for
+		if ( in_array( $post_type, $this->entities ) && is_singular( $post_type ) ) {
 
 			// Get our template path
-			$single = $this->plugin_path . 'templates/single-'. get_post_type() .'.php';
+			$single = $this->plugin_dir . 'templates/single-' . $post_type . ' .php';
 
-			// Only serve our template if it exists
+			// Only serve our template when it exists
 			$template = file_exists( $single ) ? $single : $template;
 		}
 
@@ -691,38 +921,33 @@ class VGSR_Entities {
 	/**
 	 * Outputs the entity meta list
 	 * 
-	 * @return void
+	 * @since 0.1
+	 *
+	 * @uses apply_filters() Calls 'vgsr_{$post_type}_meta' with the meta array
 	 */
-	public function entity_meta(){
+	public function entity_meta() {
 		global $post;
 
-		// Get the meta
-		$meta_fields = apply_filters( "vgsr_entity_{$post->post_type}_meta", array() );
-
-		// Don't output anything if there's no meta
-		if ( empty( $meta_fields ) )
-			return;
-
-		// Start list
-		echo '<ul class="post-meta entity-meta">';
+		// Setup meta list
+		$list = '';
 
 		// Loop over all meta fields
-		foreach ( $meta_fields as $key => $meta ){
+		foreach ( apply_filters( "vgsr_{$post->post_type}_meta", array() ) as $key => $meta ) {
 
-			// Merge defaults
-			$defaults = array(
+			// Merge meta args
+			$meta = wp_parse_args( $meta, array(
 				'icon'   => '',
 				'before' => '',
 				'value'  => '',
 				'after'  => ''
-				);
-			$meta = wp_parse_args( $meta, $defaults );
+			) );
 
-			echo '<li><i class="'. $meta['icon'] .'"></i> '. $meta['before'] . $meta['value'] . $meta['after'] .'</li>';
+			$list .= '<li><i class="' . $meta['icon'] . '"></i> ' . $meta['before'] . $meta['value'] . $meta['after'] . '</li>';
 		}
 		
 		// End list
-		echo '</ul>';
+		if ( ! empty( $list ) )
+			echo '<ul class="post-meta entity-meta">' . $list . '</ul>';
 	}
 }
 
