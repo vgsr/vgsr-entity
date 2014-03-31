@@ -28,7 +28,7 @@ class VGSR_Dispuut extends VGSR_Entity {
 	 *
 	 * @since 0.1
 	 */
-	public function __construct(){
+	public function __construct() {
 		parent::__construct( array( 
 			'single' => 'Dispuut', 
 			'plural' => 'Disputen' 
@@ -40,7 +40,7 @@ class VGSR_Dispuut extends VGSR_Entity {
 	 *
 	 * @since 0.1
 	 */
-	public function setup_actions(){
+	public function setup_actions() {
 		add_action( 'save_post', array( $this, 'metabox_since_and_died_save' ) );
 	}
 
@@ -51,7 +51,7 @@ class VGSR_Dispuut extends VGSR_Entity {
 	 *
 	 * @uses add_meta_box()
 	 */
-	public function add_metabox(){
+	public function add_metabox() {
 
 		// Add Dispuut Data metabox
 		add_meta_box(
@@ -74,7 +74,7 @@ class VGSR_Dispuut extends VGSR_Entity {
 	 * 
 	 * @param object $post The current post
 	 */
-	public function metabox_display( $post ){
+	public function metabox_display( $post ) {
 		global $vgsr_entity;
 
 		/** Since Meta **/
@@ -135,7 +135,7 @@ class VGSR_Dispuut extends VGSR_Entity {
 	 * 
 	 * @param int $post_id The post ID
 	 */
-	public function metabox_since_and_died_save( $post_id ){
+	public function metabox_since_and_died_save( $post_id ) {
 		global $vgsr_entity;
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
@@ -167,13 +167,13 @@ class VGSR_Dispuut extends VGSR_Entity {
 		foreach ( $inputs as $field => $input ) :
 
 			// Died field may be empty
-			if ( 'died' == $field && empty( $input ) ){
+			if ( 'died' == $field && empty( $input ) ) {
 				delete_post_meta( $post_id, 'vgsr_entity_dispuut_'. $field );
 				continue;
 			}
 
 			// Does the inserted input match our requirements? - Checks for 1900 - 2099
-			if ( ! preg_match( '/^(19\d{2}|20\d{2})$/', $input, $matches ) ){
+			if ( ! preg_match( '/^(19\d{2}|20\d{2})$/', $input, $matches ) ) {
 
 				// Alert the user
 				add_filter( 'redirect_post_location', array( $this, 'metabox_'. $field .'_save_redirect' ) );
@@ -196,7 +196,7 @@ class VGSR_Dispuut extends VGSR_Entity {
 	 * @param string $location The redrirect location
 	 * @return string $location
 	 */
-	public function metabox_since_save_redirect( $location ){
+	public function metabox_since_save_redirect( $location ) {
 		return add_query_arg( 'dispuut-error', '1', $location );
 	}
 
@@ -208,7 +208,7 @@ class VGSR_Dispuut extends VGSR_Entity {
 	 * @param string $location The redrirect location
 	 * @return string $location
 	 */
-	public function metabox_died_save_redirect( $location ){
+	public function metabox_died_save_redirect( $location ) {
 		return add_query_arg( 'dispuut-error', '2', $location );
 	}
 
@@ -220,9 +220,9 @@ class VGSR_Dispuut extends VGSR_Entity {
 	 * @param array $messages
 	 * @return array $messages
 	 */
-	public function admin_messages( $messages ){
-		$messages[1] = sprintf( __('The submitted value for %s is not given in the valid format.', 'vgsr-entity'), '<strong>'. __('Since', 'vgsr-entity') .'</strong>' );
-		$messages[2] = sprintf( __('The submitted value for %s is not given in the valid format.', 'vgsr-entity'), '<strong>'. __('Died', 'vgsr-entity') .'</strong>' );
+	public function admin_messages( $messages ) {
+		$messages[1] = sprintf( __('The submitted value for %s is not given in the valid format.', 'vgsr-entity'), '<strong>' . __('Since', 'vgsr-entity') . '</strong>' );
+		$messages[2] = sprintf( __('The submitted value for %s is not given in the valid format.', 'vgsr-entity'), '<strong>' . __('Died',  'vgsr-entity') . '</strong>' );
 
 		return $messages;
 	}
@@ -235,11 +235,11 @@ class VGSR_Dispuut extends VGSR_Entity {
 	 * @param array $meta Meta fields
 	 * @return array $meta
 	 */
-	public function entity_meta( $meta ){
+	public function entity_meta( $meta ) {
 		global $post;
 
 		// Setup value for since meta
-		if ( $since = get_post_meta( $post->ID, 'vgsr_entity_dispuut_since', true ) ){
+		if ( $since = get_post_meta( $post->ID, 'vgsr_entity_dispuut_since', true ) ) {
 
 			// Meta icon
 			$meta['since'] = array(
@@ -250,7 +250,7 @@ class VGSR_Dispuut extends VGSR_Entity {
 		}
 
 		// Setup value for died meta
-		if ( $died = get_post_meta( $post->ID, 'vgsr_entity_dispuut_died', true ) ){
+		if ( $died = get_post_meta( $post->ID, 'vgsr_entity_dispuut_died', true ) ) {
 
 			// Meta icon
 			$meta['died'] = array(
@@ -273,7 +273,7 @@ endif; // class_exists
  *
  * @uses VGSR_Dispuut
  */
-function vgsr_entity_dispuut(){
+function vgsr_entity_dispuut() {
 	global $vgsr_entity;
 
 	$vgsr_entity->dispuut = new VGSR_Dispuut();

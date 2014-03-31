@@ -123,7 +123,7 @@ class VGSR_Entity {
 	}
 
 	/**
-	 * Create class globals
+	 * Define default entity base globals
 	 *
 	 * @since 0.1
 	 */
@@ -144,7 +144,7 @@ class VGSR_Entity {
 	}
 
 	/**
-	 * Setup default base entity actions and filters
+	 * Setup default entity base actions and filters
 	 *
 	 * @since 0.1
 	 */
@@ -174,7 +174,7 @@ class VGSR_Entity {
 	public function setup_globals() { /* Overwrite this method in a child class */ }
 
 	/**
-	 * Include child class files
+	 * Include required child class files
 	 *
 	 * @since 0.1
 	 */
