@@ -8,12 +8,15 @@
  */
 
 /**
- * Plugin Name: VGSR Entity
- * Description: Post types voor VGSR besturen, disputen en kasten
- * Plugin URI:  https://github.com/vgsr/vgsr-entity
- * Author:      Laurens Offereins
- * Author URI:  https://github.com/lmoffereins
- * Version:     0.1
+ * Plugin Name:       VGSR Entity
+ * Description:       Custom post type management for besturen, disputen and kasten
+ * Plugin URI:        https://github.com/vgsr/vgsr-entity
+ * Author:            Laurens Offereins
+ * Author URI:        https://github.com/lmoffereins
+ * Version:           0.1
+ * Text Domain:       vgsr-entity
+ * Domain Path:       /languages/
+ * GitHub Plugin URI: vgsr/vgsr-entity
  */
 
 // Exit if accessed directly
