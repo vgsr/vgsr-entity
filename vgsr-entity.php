@@ -113,7 +113,7 @@ class VGSR_Entity {
 
 		// Bail when labels are msising
 		if ( empty( $this->labels->single ) || empty( $this->labels->plural ) )
-			wp_die( __('The VGSR entity is missing some of the post type labels', 'vgsr-entity'), 'vgsr-entity-missing-labels' );
+			wp_die( __( 'The VGSR entity is missing some of the post type labels', 'vgsr-entity' ), 'vgsr-entity-missing-labels' );
 
 		// Setup defaults
 		$this->entity_globals();
@@ -143,7 +143,7 @@ class VGSR_Entity {
 		$this->thumbsize      = 'post-thumbnail';
 
 		// Setup settings page title
-		$this->settings_title = $this->labels->single . ' ' . __('Settings');
+		$this->settings_title = $this->labels->single . ' ' . __( 'Settings' );
 	}
 
 	/**
@@ -208,15 +208,15 @@ class VGSR_Entity {
 		$labels = array(
 			'name'                 => $this->labels->plural,
 			'singular_name'        => $this->labels->single,
-			'add_new'              => sprintf( __('New %s'),               $this->labels->single ),
-			'add_new_item'         => sprintf( __('Add new %s'),           $this->labels->single ),
-			'edit_item'            => sprintf( __('Edit %s'),              $this->labels->single ),
-			'new_item'             => sprintf( __('New %s'),               $this->labels->single ),
-			'all_items'            => sprintf( __('All %s'),               $this->labels->plural ),
-			'view_item'            => sprintf( __('View %s'),              $this->labels->single ),
-			'search_items'         => sprintf( __('Search %s'),            $this->labels->plural ),
-			'not_found'            => sprintf( __('No %s found'),          $this->labels->plural ),
-			'not_found_in_trash'   => sprintf( __('No %s found in trash'), $this->labels->plural ), 
+			'add_new'              => sprintf( __( 'New %s' ),               $this->labels->single ),
+			'add_new_item'         => sprintf( __( 'Add new %s' ),           $this->labels->single ),
+			'edit_item'            => sprintf( __( 'Edit %s' ),              $this->labels->single ),
+			'new_item'             => sprintf( __( 'New %s' ),               $this->labels->single ),
+			'all_items'            => sprintf( __( 'All %s' ),               $this->labels->plural ),
+			'view_item'            => sprintf( __( 'View %s' ),              $this->labels->single ),
+			'search_items'         => sprintf( __( 'Search %s' ),            $this->labels->plural ),
+			'not_found'            => sprintf( __( 'No %s found' ),          $this->labels->plural ),
+			'not_found_in_trash'   => sprintf( __( 'No %s found in trash' ), $this->labels->plural ), 
 			'menu_name'            => $this->labels->plural
 		);
 
@@ -268,7 +268,7 @@ class VGSR_Entity {
 	 *                     head and footer
 	 */
 	public function entity_admin_menu() {
-		$this->hook = add_submenu_page( $this->page, $this->settings_title, __('Settings'), 'manage_options', $this->type . '-settings', array( $this, 'settings_page' ) );
+		$this->hook = add_submenu_page( $this->page, $this->settings_title, __( 'Settings' ), 'manage_options', $this->type . '-settings', array( $this, 'settings_page' ) );
 
 		// Setup settings specific hooks
 		add_action( 'load-'                . $this->hook, array( $this, 'entity_settings_load'    ), 9  );
@@ -356,13 +356,13 @@ class VGSR_Entity {
 		// Register main settings section
 		add_settings_section( 
 			$this->settings_section, 
-			sprintf( __('Main %s Settings', 'vgsr-entity'), $this->labels->plural ),
+			sprintf( __( 'Main %s Settings', 'vgsr-entity' ), $this->labels->plural ),
 			array( $this, 'main_settings_info' ), 
 			$this->settings_page 
 		);
 
 		// Entity post type parent page
-		add_settings_field( $this->parent_option, sprintf( __('%s Parent Page', 'vgsr-entity'), $this->labels->plural ), array( $this, 'entity_parent_page_settings_field' ), $this->settings_page, $this->settings_section );
+		add_settings_field( $this->parent_option, sprintf( __( '%s Parent Page', 'vgsr-entity' ), $this->labels->plural ), array( $this, 'entity_parent_page_settings_field' ), $this->settings_page, $this->settings_section );
 		register_setting( $this->settings_page, $this->parent_option, 'intval' );
 	}
 
@@ -387,11 +387,11 @@ class VGSR_Entity {
 			'name'             => $this->parent_option,
 			'selected'         => get_option( $this->parent_option ),
 			'echo'             => true,
-			'show_option_none' => __('None')
+			'show_option_none' => __( 'None' )
 		) );
 
 		?>
-			<label><span class="description"><?php echo sprintf( __('Select the parent page you want to have your %s to appear on. ', 'vgsr-entity'), $this->labels->plural ); ?></span></label>
+			<label><span class="description"><?php echo sprintf( __( 'Select the parent page you want to have your %s to appear on. ', 'vgsr-entity' ), $this->labels->plural ); ?></span></label>
 		<?php
 	}
 
@@ -563,7 +563,7 @@ class VGSR_Entity {
 					$size = '200x200'; // Random default value
 				}
 
-				$retval .= '<img src="http://dummyimage.com/' . $size . '/fefefe/000&text=' .  __('Placeholder', 'vgsr-entity') . '" />';
+				$retval .= '<img src="http://dummyimage.com/' . $size . '/fefefe/000&text=' .  __( 'Placeholder', 'vgsr-entity' ) . '" />';
 
 			endif;
 

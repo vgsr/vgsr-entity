@@ -78,7 +78,7 @@ class VGSR_Bestuur extends VGSR_Entity {
 	public function bestuur_register_settings() {
 
 		// Bestuur widget menu order setting
-		add_settings_field( '_bestuur-menu-order', __('Widget menu order', 'vgsr-entity' ), array( $this, 'setting_menu_order_field' ), $this->settings_page, $this->settings_section );
+		add_settings_field( '_bestuur-menu-order', __( 'Widget menu order', 'vgsr-entity' ), array( $this, 'setting_menu_order_field' ), $this->settings_page, $this->settings_section );
 		register_setting( $this->settings_page, '_bestuur-menu-order', 'intval' );
 	}
 
@@ -91,10 +91,10 @@ class VGSR_Bestuur extends VGSR_Entity {
 		$value = (int) get_option( '_bestuur-menu-order' );
 		?>
 			<select name="_bestuur-menu-order" id="_bestuur-menu-order">
-				<option value="0" <?php selected( $value, 0 ); ?>><?php _e('Seniority',         'vgsr-entity'); ?></option>
-				<option value="1" <?php selected( $value, 1 ); ?>><?php _e('Reverse seniority', 'vgsr-entity'); ?></option>
+				<option value="0" <?php selected( $value, 0 ); ?>><?php _e('Seniority',         'vgsr-entity' ); ?></option>
+				<option value="1" <?php selected( $value, 1 ); ?>><?php _e('Reverse seniority', 'vgsr-entity' ); ?></option>
 			</select>
-			<label for="_bestuur-menu-order"><span class="description"><?php sprintf( __('The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->labels->plural ); ?></span></label>
+			<label for="_bestuur-menu-order"><span class="description"><?php sprintf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->labels->plural ); ?></span></label>
 		<?php
 	}
 
@@ -110,7 +110,7 @@ class VGSR_Bestuur extends VGSR_Entity {
 		// Add Bestuur Data meta box
 		add_meta_box(
 			"vgsr-entity-{$this->type}",
-			__('Bestuur Data', 'vgsr-entity'),
+			__( 'Bestuur Data', 'vgsr-entity' ),
 			array( $this, 'metabox_display' ),
 			$this->type,
 			'side'
@@ -143,10 +143,10 @@ class VGSR_Bestuur extends VGSR_Entity {
 		echo '<p id="vgsr_entity_bestuur_season">';
 
 		// Output input field
-		echo '<label><strong>' . __('Season', 'vgsr-entity') . ': </strong><input type="text" name="vgsr_entity_bestuur_season" value="' . $value . '" /></label>';
+		echo '<label><strong>' . __( 'Season', 'vgsr-entity' ) . ': </strong><input type="text" name="vgsr_entity_bestuur_season" value="' . $value . '" /></label>';
 
 		// Output field information
-		echo '<span class="howto">' . __('The required format is yyyy/yyyy.', 'vgsr-entity') . '</span>';
+		echo '<span class="howto">' . __( 'The required format is yyyy/yyyy.', 'vgsr-entity' ) . '</span>';
 
 		// End field
 		echo '</p>';
@@ -221,7 +221,7 @@ class VGSR_Bestuur extends VGSR_Entity {
 	 * @return array $messages
 	 */
 	public function admin_messages( $messages ) {
-		$messages[1] = sprintf( __('The submitted value for %s is not given in the valid format.', 'vgsr-entity'), '<strong>' . __('Season', 'vgsr-entity') . '</strong>' );
+		$messages[1] = sprintf( __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>' . __( 'Season', 'vgsr-entity' ) . '</strong>' );
 
 		return $messages;
 	}
@@ -320,7 +320,7 @@ class VGSR_Bestuur extends VGSR_Entity {
 			// Meta icon
 			$meta['season'] = array(
 				'icon'   => 'icon-calendar',
-				'before' => __('Season', 'vgsr-entity') . ': ',
+				'before' => __( 'Season', 'vgsr-entity' ) . ': ',
 				'value'  => $season
 			);
 		}

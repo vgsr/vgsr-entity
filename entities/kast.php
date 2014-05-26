@@ -65,12 +65,12 @@ class VGSR_Kast extends VGSR_Entity {
 	public function setup_actions() {
 
 		// Actions
-		add_action( 'admin_init', array( $this, 'kast_register_settings' ) );
-		add_action( 'admin_head', array( $this, 'admin_scripts'            ) );
-		add_action( 'save_post',  array( $this, 'metabox_since_save'       ) );
+		add_action( 'admin_init', array( $this, 'register_settings'  ) );
+		add_action( 'admin_head', array( $this, 'admin_scripts'      ) );
+		add_action( 'save_post',  array( $this, 'metabox_since_save' ) );
 
 		// Filters
-		add_filter( "vgsr_{$this->type}_register_cpt",     array( $this, 'edit_cpt'        ) );
+		add_filter( "vgsr_{$this->type}_register_cpt",     array( $this, 'post_type_args'  ) );
 		add_filter( "vgsr_{$this->type}_settings_load",    array( $this, 'downsize_thumbs' ) );
 		add_filter( "vgsr_{$this->type}_settings_scripts", array( $this, 'enqueue_scripts' ) );
 	}
@@ -80,13 +80,13 @@ class VGSR_Kast extends VGSR_Entity {
 	 * 
 	 * @since 0.1
 	 * 
-	 * @param array $args CPT arguments
-	 * @return array $args
+	 * @param array $args Post type arguments
+	 * @return array Args
 	 */
-	public function edit_cpt( $args ) {
+	public function post_type_args( $args ) {
 
 		// Rename labels
-		$args['labels']['add_new'] = $args['labels']['new_item'] = sprintf( _x('New %s', 'In Dutch «New Kast» doesn\'t translate like «New Bestuur».', 'vgsr-entity'), strtolower( $this->labels->single ) );
+		$args['labels']['add_new'] = $args['labels']['new_item'] = sprintf( _x( 'New %s', 'In Dutch «New Kast» doesn\'t translate like «New Bestuur».', 'vgsr-entity' ), strtolower( $this->labels->single ) );
 
 		return $args;
 	}
@@ -96,10 +96,10 @@ class VGSR_Kast extends VGSR_Entity {
 	 * 
 	 * @since 0.1
 	 */
-	public function kast_register_settings() {
+	public function register_settings() {
 
 		// Kast recreate thumbnail option
-		add_settings_field( '_kast-downsize-thumbs', __('Recreate Thumbnails', 'vgsr-entity'), array( $this, 'settings_downsize_thumbs_field' ), $this->settings_page, $this->settings_section );
+		add_settings_field( '_kast-downsize-thumbs', __( 'Recreate Thumbnails', 'vgsr-entity' ), array( $this, 'settings_downsize_thumbs_field' ), $this->settings_page, $this->settings_section );
 		register_setting( $this->settings_page, '_kast-downsize-thumbs', 'intval' );
 	}
 
@@ -109,10 +109,12 @@ class VGSR_Kast extends VGSR_Entity {
 	 * @since 0.1
 	 */
 	public function settings_downsize_thumbs_field() {
-		?>
-			<input type="checkbox" name="_kast-downsize-thumbs" id="_kast-downsize-thumbs" <?php checked( get_option( '_kast-downsize-thumbs' ) ); ?> value="1"/>
-			<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __('This is a one time resizing of thumbs for %s. NOTE: This option only <strong>adds</strong> new image sizes, it doesn\'t remove old ones.', 'vgsr-entity'), $this->labels->plural ); ?></span></label>
-		<?php
+	?>
+
+		<input type="checkbox" name="_kast-downsize-thumbs" id="_kast-downsize-thumbs" <?php checked( get_option( '_kast-downsize-thumbs' ) ); ?> value="1"/>
+		<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __( 'This is a one time resizing of thumbs for %s. NOTE: This option only <strong>adds</strong> new image sizes, it doesn\'t remove old ones.', 'vgsr-entity' ), $this->labels->plural ); ?></span></label>
+
+	<?php
 	}
 
 	/**
@@ -247,7 +249,7 @@ class VGSR_Kast extends VGSR_Entity {
 		// Add Kast Data metabox
 		add_meta_box(
 			"vgsr-entity-{$this->type}",
-			__('Kast Data', 'vgsr-entity'),
+			__( 'Kast Data', 'vgsr-entity' ),
 			array( $this, 'metabox_display' ),
 			$this->type,
 			'side'
@@ -268,31 +270,102 @@ class VGSR_Kast extends VGSR_Entity {
 	public function metabox_display( $post ) {
 		global $vgsr_entity;
 
-		/** Since Meta **/
+		// Output nonce verification field
+		wp_nonce_field( $vgsr_entity->file, 'vgsr_entity_kast_meta' ); 
+
+		/** Since ******************************************************/
 
 		// Get stored meta value
-		$value = get_post_meta( $post->ID, 'vgsr_entity_kast_since', true );
+		$since = get_post_meta( $post->ID, 'vgsr_entity_kast_since', true );
 
 		// If no value served set it empty
-		if ( ! $value )
-			$value = '';
+		if ( ! $since )
+			$since = '';
 
-		// Output nonce verification field
-		wp_nonce_field( $vgsr_entity->file, 'vgsr_entity_kast_since_nonce' );
+		?>
 
-		// Start field
-		echo '<p id="vgsr_entity_kast_since">';
+		<p id="vgsr_entity_kast_since">
 
-		// Output input field
-		echo '<label><strong>'. __('Since', 'vgsr-entity') . ': </strong><input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_since" value="'. $value . '" /></label>';
+			<label>
+				<strong><?php __( 'Since', 'vgsr-entity' ); ?>: </strong>
+				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_since" value="<?php echo $since; ?>" />
+			</label>
+			<span class="howto"><?php __( 'The required format is dd/mm/yyyy.', 'vgsr-entity' ); ?></span>
 
-		// Output field information
-		echo '<span class="howto">'. __('The required format is dd/mm/yyyy.', 'vgsr-entity') . '</span>';
+		</p>
 
-		// End field
-		echo '</p>';
-		
-		/** Other Meta **/
+		<?php
+
+		/** Ceased *****************************************************/
+
+		// Get stored meta value
+		$ceased = get_post_meta( $post->ID, 'vgsr_entity_kast_ceased', true );
+
+		// If no value served set it empty
+		if ( ! $ceased )
+			$ceased = '';
+
+		?>
+
+		<p id="vgsr_entity_kast_ceased">
+
+			<label>
+				<strong><?php __( 'Ceased', 'vgsr-entity' ); ?>: </strong>
+				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_ceased" value="<?php echo $ceased; ?>" />
+			</label>
+			<span class="howto"><?php __( 'The required format is dd/mm/yyyy.', 'vgsr-entity' ); ?></span>
+
+		</p>
+
+		<?php
+
+		/** Occupants **************************************************/
+
+		// Get stored meta value
+		$occupants = get_post_meta( $post->ID, 'vgsr_entity_kast_occupants', true );
+
+		// If no value served set it empty
+		if ( ! $occupants )
+			$occupants = '';
+
+		?>
+
+		<p id="vgsr_entity_kast_occupants">
+
+			<label>
+				<strong><?php __( 'Occupants', 'vgsr-entity' ); ?>: </strong>
+				<input type="text" name="vgsr_entity_kast_occupants" value="<?php echo $occupants; ?>" />
+			</label>
+			<span class="howto"><?php __( 'The current occupants.', 'vgsr-entity' ); ?></span>
+
+		</p>
+
+		<?php
+
+		/** Previous Occupants *****************************************/
+
+		// Get stored meta value
+		$prev_occupants = get_post_meta( $post->ID, 'vgsr_entity_kast_prev_occupants', true );
+
+		// If no value served set it empty
+		if ( ! $prev_occupants )
+			$prev_occupants = '';
+
+		?>
+
+		<p id="vgsr_entity_kast_prev_occupants">
+
+			<label>
+				<strong><?php __( 'Previous Occupants', 'vgsr-entity' ); ?>: </strong>
+				<input type="text" name="vgsr_entity_kast_prev_occupants" value="<?php echo $prev_occupants; ?>" />
+			</label>
+			<span class="howto"><?php __( 'The previous occupants.', 'vgsr-entity' ); ?></span>
+
+		</p>
+
+		<?php
+
+		/** Other ******************************************************/
 
 		do_action( "vgsr_{$this->type}_metabox", $post );
 	}
@@ -320,7 +393,7 @@ class VGSR_Kast extends VGSR_Entity {
 			)
 			return;
 
-		if ( ! wp_verify_nonce( $_POST['vgsr_entity_kast_since_nonce'], $vgsr_entity->file ) )
+		if ( ! wp_verify_nonce( $_POST['vgsr_entity_kast_meta'], $vgsr_entity->file ) )
 			return;
 
 		// We're authenticated now
@@ -361,7 +434,7 @@ class VGSR_Kast extends VGSR_Entity {
 	 * @since 0.1
 	 */
 	public function admin_messages( $messages ) {
-		$messages[1] = sprintf( __('The submitted value for %s is not given in the valid format.', 'vgsr-entity'), '<strong>'. __('Since', 'vgsr-entity') . '</strong>' );
+		$messages[1] = sprintf( __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>'. __( 'Since', 'vgsr-entity' ) . '</strong>' );
 
 		return $messages;
 	}
@@ -383,7 +456,7 @@ class VGSR_Kast extends VGSR_Entity {
 			// Setup kast Since meta
 			$meta['since'] = array(
 				'icon'   => 'icon-calendar',
-				'before' => __('Since', 'vgsr-entity') . ': ',
+				'before' => __( 'Since', 'vgsr-entity' ) . ': ',
 				'value'  => date_i18n( get_option( 'date_format' ), strtotime( str_replace( '/', '-', $since ) ) )
 			);
 		}
