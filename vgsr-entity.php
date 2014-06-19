@@ -13,7 +13,7 @@
  * Plugin URI:        https://github.com/vgsr/vgsr-entity
  * Author:            Laurens Offereins
  * Author URI:        https://github.com/lmoffereins
- * Version:           0.1
+ * Version:           0.2
  * Text Domain:       vgsr-entity
  * Domain Path:       /languages/
  * GitHub Plugin URI: vgsr/vgsr-entity
@@ -21,6 +21,351 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
+
+if ( ! class_exists( 'VGSR_Entities' ) ) :
+
+/**
+ * Main Plugin Entities Class
+ *
+ * @since 0.1
+ */
+final class VGSR_Entities {
+
+	/**
+	 * Contains all built-in entity names
+	 *
+	 * @since 0.1
+	 * @var array
+	 */
+	public $entities = array();
+
+	/** Singleton *************************************************************/
+
+	/**
+	 * Main VGSR Entities Instance
+	 *
+	 * Insures that only one instance of VGSR_Entities exists in memory 
+	 * at any one time. Also prevents needing to define globals all over 
+	 * the place.
+	 *
+	 * @since 0.2
+	 * 
+	 * @staticvar object $instance
+	 * @uses VGSR_Entities::setup_globals() Setup the globals needed
+	 * @uses VGSR_Entities::includes() Include the required files
+	 * @uses VGSR_Entities::setup_actions() Setup the hooks and actions
+	 * @see vgsr()
+	 * @return The one true VGSR_Entities
+	 */
+	public static function instance() {
+
+		// Store the instance locally to avoid private static replication
+		static $instance = null;
+
+		// Only run these methods if they haven't been ran previously
+		if ( null === $instance ) {
+			$instance = new VGSR_Entities;
+			$instance->setup_globals();
+			$instance->includes();
+			$instance->setup_actions();
+		}
+
+		// Always return the instance
+		return $instance;
+	}
+
+	/**
+	 * Construct the main plugin class
+	 *
+	 * @since 0.1
+	 */
+	public function __construct() { /* do nothing here */ }
+
+	/**
+	 * Define default class globals
+	 *
+	 * @since 0.1
+	 */
+	private function setup_globals() {
+
+		// Paths
+		$this->file          = __FILE__;
+		$this->plugin_dir    = plugin_dir_path( $this->file );
+		$this->menu_position = 35;
+
+		// Predefine all entities
+		$this->entities = array( 'bestuur', 'dispuut', 'kast' );
+	}
+
+	/**
+	 * Include the required files
+	 *
+	 * @since 0.1
+	 */
+	private function includes() {
+		require( $this->plugin_dir . 'widgets/widget-menu.php' );
+
+		// Load each entity
+		foreach ( $this->entities as $entity ) {
+			require( $this->plugin_dir . "entities/{$entity}.php" );
+		}
+	}
+
+	/**
+	 * Setup default actions and filters
+	 *
+	 * @since 0.1
+	 */
+	private function setup_actions() {
+
+		add_action( 'plugins_loaded',     array( $this, 'load_textdomain'  ) );
+		add_action( 'init',               array( $this, 'entities_init'    ) );
+		add_action( 'admin_menu',         array( $this, 'admin_menu'       ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts'  ) );
+		add_action( 'widgets_init',       array( $this, 'widgets_init'     ) );
+		add_action( 'template_include',   array( $this, 'template_include' ) );
+
+		// Setup all entities
+		foreach ( $this->entities as $entity ) {
+			add_action( 'vgsr_entity_init', "vgsr_entity_{$entity}", 9 );
+		}
+
+		register_activation_hook( $this->file, array( $this, 'rewrite_flush' ) );
+	}
+
+	/** Functions ******************************************************/
+
+	/**
+	 * Create vgsr_entity_init action
+	 *
+	 * @since 0.2
+	 */
+	public function entities_init() {
+		do_action( 'vgsr_entity_init' );
+	}
+
+	/**
+	 * Set new permalink structure by refreshing the rewrite rules
+	 * on activation
+	 *
+	 * @since 0.1
+	 * 
+	 * @uses VGSR_Entity::register_post_type()
+	 * @uses flush_rewrite_rules()
+	 */
+	public function rewrite_flush() {
+
+		// Call post type registration
+		foreach ( $this->entities as $entity ) {
+			$cname = 'VGSR_' . ucfirst( $entity );
+			$class = new $cname;
+			$class->register_post_type();
+		}
+
+		// Flush rules only on activation
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Loads the textdomain file for this plugin
+	 *
+	 * @since 0.1
+	 *
+	 * @uses load_textdomain() To insert the matched language file
+	 * @return mixed Text domain if found, else boolean false
+	 */
+	public function load_textdomain() {
+
+		// Traditional WordPress plugin locale filter
+		$mofile = sprintf( 'vgsr-entity-%s.mo', get_locale() );
+
+		// Setup paths to current locale file
+		$mofile_local  = $this->plugin_dir . 'languages/' . $mofile;
+		$mofile_global = WP_LANG_DIR . '/vgsr-entity/' . $mofile;
+
+		// Look in global /wp-content/languages/vgsr-entity folder
+		if ( file_exists( $mofile_global ) ) {
+			return load_textdomain( 'vgsr-entity', $mofile_global );
+
+		// Look in local /wp-content/plugins/vgsr-entity/languages/ folder
+		} elseif ( file_exists( $mofile_local ) ) {
+			return load_textdomain( 'vgsr-entity', $mofile_local );
+		}
+
+		// Nothing found
+		return false;
+	}
+
+	/**
+	 * Filters the admin menu to add a separator
+	 * 
+	 * @since 0.1
+	 *
+	 * @uses VGSR_Entities::add_separator()
+	 */
+	public function admin_menu() {
+		$this->add_separator( $this->menu_position - 1 );
+	}
+
+	/**
+	 * Runs through the admin menu to add a separator at given position
+	 *
+	 * The separator name can affect the order of the separators,
+	 * therefor the separator{$index} naming is changed.
+	 *
+	 * @link http://wordpress.stackexchange.com/questions/2666/add-a-separator-to-the-admin-menu
+	 * 
+	 * @since 0.1
+	 *
+	 * @global array $menu
+	 * @param int $pos The position after which to add the sep
+	 */
+	public function add_separator( $pos ) {
+		global $menu;
+		$index = 1;
+
+		foreach( $menu as $offset => $item ) {
+			if ( substr( $item[2], 0, 9 ) == 'separator' )
+				$index++;
+
+			if ( $offset >= $pos ) {
+				$menu[$pos] = array( '', 'read', "separator-pos{$index}", '', 'wp-menu-separator' );
+				break;
+			}
+		}
+
+		ksort( $menu );
+	}
+
+	/**
+	 * Enqueue page scripts
+	 * 
+	 * @since 0.1
+	 *
+	 * @uses VGSR_Entities::get_entitiy_parent_id()
+	 * @uses wp_register_style()
+	 * @uses wp_enqueue_style()
+	 */
+	public function enqueue_scripts() {
+		global $post;
+
+		// Bail when $post is not set
+		if ( ! isset( $post ) || ! $post )
+			return;
+
+		// Bail when not on entity parent page
+		if (   ! in_array( $post->post_type, $this->entities         ) 
+			&& ! in_array( $post->ID, $this->get_entity_parent_ids() ) 
+			)
+			return;
+
+		wp_register_style( 'vgsr-entity', plugins_url( 'css/style.css', __FILE__ ) );
+		wp_enqueue_style(  'vgsr-entity' );
+	}
+
+	/**
+	 * Return all entity parent page IDs
+	 *
+	 * @since 0.1
+	 */
+	public function get_entity_parent_ids() {
+		$parents = array();
+		foreach ( $this->entities as $entity )
+			$parents[$entity] = get_option( $this->{$entity}->parent_option );
+
+		return $parents;
+	}
+
+	/**
+	 * Initiate entity widgets
+	 *
+	 * @since 0.1
+	 *
+	 * @uses register_widget()
+	 */
+	public function widgets_init() {
+		register_widget( 'VGSR_Entity_Menu_Widget' );
+	}
+
+	/**
+	 * Intercept the template loader to load the entity template
+	 *
+	 * @since 0.1
+	 * 
+	 * @param string $template The current template match
+	 * @return string $template
+	 */
+	public function template_include( $template ) {
+		$post_type = get_post_type();
+
+		// Serve single-{$entity} template if asked for
+		if ( in_array( $post_type, $this->entities ) && is_singular( $post_type ) ) {
+
+			// Get our template path
+			$single = $this->plugin_dir . 'templates/single-' . $post_type . ' .php';
+
+			// Only serve our template when it exists
+			$template = file_exists( $single ) ? $single : $template;
+		}
+
+		return $template;
+	}
+
+	/**
+	 * Outputs the entity meta list
+	 * 
+	 * @since 0.1
+	 *
+	 * @uses apply_filters() Calls 'vgsr_{$post_type}_meta' with the meta array
+	 */
+	public function entity_meta() {
+		global $post;
+
+		// Setup meta list
+		$list = '';
+
+		// Loop over all meta fields
+		foreach ( apply_filters( "vgsr_{$post->post_type}_meta", array() ) as $key => $meta ) {
+
+			// Merge meta args
+			$meta = wp_parse_args( $meta, array(
+				'icon'   => '',
+				'before' => '',
+				'value'  => '',
+				'after'  => ''
+			) );
+
+			$list .= '<li><i class="' . $meta['icon'] . '"></i> ' . $meta['before'] . $meta['value'] . $meta['after'] . '</li>';
+		}
+		
+		// End list
+		if ( ! empty( $list ) )
+			echo '<ul class="post-meta entity-meta">' . $list . '</ul>';
+	}
+}
+
+/**
+ * Return the single instance of VGSR_Entities
+ *
+ * Use this function like you would a global variable, except without needing
+ * to declare the global.
+ *
+ * Example: <?php $entities = vgsr_entities(); ?>
+ *
+ * @since 0.2
+ * 
+ * @uses VGSR_Entities
+ * @return The one single VGSR Entities
+ */
+function vgsr_entities() {
+	return VGSR_Entities::instance();
+}
+
+endif; // class_exists VGSR_Entities
+
+//
+// Single entity
+// 
 
 if ( ! class_exists( 'VGSR_Entity' ) ) :
 
@@ -643,318 +988,3 @@ abstract class VGSR_Entity {
 }
 
 endif; // class_exsits
-
-if ( ! class_exists( 'VGSR_Entities' ) ) :
-
-/**
- * Main Plugin Entities Class
- *
- * @since 0.1
- */
-final class VGSR_Entities {
-
-	/**
-	 * The plugin file path
-	 *
-	 * @since 0.1
-	 * @var string
-	 */
-	public $file = '';
-
-	/**
-	 * The plugin directory path
-	 *
-	 * @since 0.1
-	 * @var string
-	 */
-	public $plugin_dir = '';
-
-	/**
-	 * Contains the entities names
-	 *
-	 * @since 0.1
-	 * @var array
-	 */
-	public $entities = array();
-
-	/**
-	 * The entities admin menu position
-	 *
-	 * @since 0.1
-	 * @var int
-	 */
-	public $menu_position = 0;
-
-	/**
-	 * Construct the main plugin class
-	 *
-	 * @since 0.1
-	 */
-	public function __construct() {
-		$this->setup_globals();
-		$this->setup_requires();
-		$this->setup_actions();
-	}
-
-	/**
-	 * Define default class globals
-	 *
-	 * @since 0.1
-	 */
-	private function setup_globals() {
-		$this->file          = __FILE__;
-		$this->plugin_dir    = plugin_dir_path( $this->file );
-		$this->menu_position = 35;
-
-		// Predefine all entities
-		$this->entities = array( 'bestuur', 'dispuut', 'kast' );
-	}
-
-	/**
-	 * Include the required files
-	 *
-	 * @since 0.1
-	 */
-	private function setup_requires() {
-		require( $this->plugin_dir     . 'widgets/widget-menu.php' );
-
-		foreach ( $this->entities as $entity ) {
-			require( $this->plugin_dir . "entities/$entity.php"    );
-		}
-	}
-
-	/**
-	 * Setup default actions and filters
-	 *
-	 * @since 0.1
-	 */
-	private function setup_actions() {
-
-		add_action( 'plugins_loaded',     array( $this, 'load_textdomain'  ) );
-		add_action( 'init',               array( $this, 'entities_init'    ) );
-		add_action( 'admin_menu',         array( $this, 'admin_menu'       ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts'  ) );
-		add_action( 'widgets_init',       array( $this, 'widgets_init'     ) );
-		add_action( 'template_include',   array( $this, 'template_include' ) );
-
-		foreach ( $this->entities as $e )
-			add_action( 'vgsr_entity_init', "vgsr_entity_$e", 9 );
-
-		register_activation_hook( $this->file, array( $this, 'rewrite_flush' ) );
-	}
-
-	/** Functions ******************************************************/
-
-	/**
-	 * Create vgsr_entity_init action
-	 *
-	 * @since 0.2
-	 */
-	public function entities_init() {
-		do_action( 'vgsr_entity_init' );
-	}
-
-	/**
-	 * Set new permalink structure by refreshing the rewrite rules
-	 * on activation
-	 *
-	 * @since 0.1
-	 * 
-	 * @uses VGSR_Entity::register_post_type()
-	 * @uses flush_rewrite_rules()
-	 */
-	public function rewrite_flush() {
-
-		// Call post type registration
-		foreach ( $this->entities as $entity ) {
-			$cname = 'VGSR_' . ucfirst( $entity );
-			$class = new $cname;
-			$class->register_post_type();
-		}
-
-		// Flush rules only on activation
-		flush_rewrite_rules();
-	}
-
-	/**
-	 * Loads the textdomain file for this plugin
-	 *
-	 * @since 0.1
-	 *
-	 * @uses load_textdomain() To insert the matched language file
-	 * @return mixed Text domain if found, else boolean false
-	 */
-	public function load_textdomain() {
-
-		// Traditional WordPress plugin locale filter
-		$mofile = sprintf( 'vgsr-entity-%s.mo', get_locale() );
-
-		// Setup paths to current locale file
-		$mofile_local  = $this->plugin_dir . 'languages/' . $mofile;
-		$mofile_global = WP_LANG_DIR . '/vgsr-entity/' . $mofile;
-
-		// Look in global /wp-content/languages/vgsr-entity folder
-		if ( file_exists( $mofile_global ) ) {
-			return load_textdomain( 'vgsr-entity', $mofile_global );
-
-		// Look in local /wp-content/plugins/vgsr-entity/languages/ folder
-		} elseif ( file_exists( $mofile_local ) ) {
-			return load_textdomain( 'vgsr-entity', $mofile_local );
-		}
-
-		// Nothing found
-		return false;
-	}
-
-	/**
-	 * Filters the admin menu to add a separator
-	 * 
-	 * @since 0.1
-	 *
-	 * @uses VGSR_Entities::add_separator()
-	 */
-	public function admin_menu() {
-		$this->add_separator( $this->menu_position - 1 );
-	}
-
-	/**
-	 * Runs through the admin menu to add a separator at given position
-	 *
-	 * The separator name can affect the order of the separators,
-	 * therefor the separator{$index} naming is changed.
-	 *
-	 * @link http://wordpress.stackexchange.com/questions/2666/add-a-separator-to-the-admin-menu
-	 * 
-	 * @since 0.1
-	 *
-	 * @global array $menu
-	 * @param int $pos The position after which to add the sep
-	 */
-	public function add_separator( $pos ) {
-		global $menu;
-		$index = 1;
-
-		foreach( $menu as $offset => $item ) {
-			if ( substr( $item[2], 0, 9 ) == 'separator' )
-				$index++;
-
-			if ( $offset >= $pos ) {
-				$menu[$pos] = array( '', 'read', "separator-pos{$index}", '', 'wp-menu-separator' );
-				break;
-			}
-		}
-
-		ksort( $menu );
-	}
-
-	/**
-	 * Enqueue page scripts
-	 * 
-	 * @since 0.1
-	 *
-	 * @uses VGSR_Entities::get_entitiy_parent_id()
-	 * @uses wp_register_style()
-	 * @uses wp_enqueue_style()
-	 */
-	public function enqueue_scripts() {
-		global $post;
-
-		// Bail when $post is not set
-		if ( ! isset( $post ) || ! $post )
-			return;
-
-		// Bail when not on entity parent page
-		if (   ! in_array( $post->post_type, $this->entities         ) 
-			&& ! in_array( $post->ID, $this->get_entity_parent_ids() ) 
-			)
-			return;
-
-		wp_register_style( 'vgsr-entity', plugins_url( 'css/style.css', __FILE__ ) );
-		wp_enqueue_style(  'vgsr-entity' );
-	}
-
-	/**
-	 * Return all entity parent page IDs
-	 *
-	 * @since 0.1
-	 */
-	public function get_entity_parent_ids() {
-		$parents = array();
-		foreach ( $this->entities as $entity )
-			$parents[$entity] = get_option( $this->{$entity}->parent_option );
-
-		return $parents;
-	}
-
-	/**
-	 * Initiate entity widgets
-	 *
-	 * @since 0.1
-	 *
-	 * @uses register_widget()
-	 */
-	public function widgets_init() {
-		register_widget( 'VGSR_Entity_Menu_Widget' );
-	}
-
-	/**
-	 * Intercept the template loader to load the entity template
-	 *
-	 * @since 0.1
-	 * 
-	 * @param string $template The current template match
-	 * @return string $template
-	 */
-	public function template_include( $template ) {
-		$post_type = get_post_type();
-
-		// Serve single-{$entity} template if asked for
-		if ( in_array( $post_type, $this->entities ) && is_singular( $post_type ) ) {
-
-			// Get our template path
-			$single = $this->plugin_dir . 'templates/single-' . $post_type . ' .php';
-
-			// Only serve our template when it exists
-			$template = file_exists( $single ) ? $single : $template;
-		}
-
-		return $template;
-	}
-
-	/**
-	 * Outputs the entity meta list
-	 * 
-	 * @since 0.1
-	 *
-	 * @uses apply_filters() Calls 'vgsr_{$post_type}_meta' with the meta array
-	 */
-	public function entity_meta() {
-		global $post;
-
-		// Setup meta list
-		$list = '';
-
-		// Loop over all meta fields
-		foreach ( apply_filters( "vgsr_{$post->post_type}_meta", array() ) as $key => $meta ) {
-
-			// Merge meta args
-			$meta = wp_parse_args( $meta, array(
-				'icon'   => '',
-				'before' => '',
-				'value'  => '',
-				'after'  => ''
-			) );
-
-			$list .= '<li><i class="' . $meta['icon'] . '"></i> ' . $meta['before'] . $meta['value'] . $meta['after'] . '</li>';
-		}
-		
-		// End list
-		if ( ! empty( $list ) )
-			echo '<ul class="post-meta entity-meta">' . $list . '</ul>';
-	}
-}
-
-$GLOBALS['vgsr_entity'] = new VGSR_Entities();
-
-endif; // class_exists VGSR_Entities
-
