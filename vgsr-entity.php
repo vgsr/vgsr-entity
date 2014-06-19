@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VGSR Entity Main Classes
+ * The VGSR Entity Plugin
  *
  * @package VGSR Entity
  * @subpackage Main
@@ -25,11 +25,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! class_exists( 'VGSR_Entity' ) ) :
 
 /**
- * VGSR Entity base class
+ * Single entity base class
  *
  * @since 0.1
  */
-class VGSR_Entity {
+abstract class VGSR_Entity {
 
 	/**
 	 * The entity post type
@@ -651,7 +651,7 @@ if ( ! class_exists( 'VGSR_Entities' ) ) :
  *
  * @since 0.1
  */
-class VGSR_Entities {
+final class VGSR_Entities {
 
 	/**
 	 * The plugin file path
