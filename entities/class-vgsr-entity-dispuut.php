@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VGSR Dispuut class
+ * VGSR Dispuut Class
  *
  * @package VGSR Entity
  * @subpackage Entities
@@ -9,10 +9,6 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
-
-// Include Entity Base Class
-if ( ! class_exists( 'VGSR_Entity' ) )
-	require( plugin_dir_path( __FILE__ ) . 'vgsr-entity.php' );
 
 if ( ! class_exists( 'VGSR_Entity_Dispuut' ) ) :
 
