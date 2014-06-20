@@ -388,13 +388,11 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 		// Check caps
 		$pto = get_post_type_object( $this->type );
-		if (   ! current_user_can( $pto->cap->edit_posts          ) 
-			|| ! current_user_can( $pto->cap->edit_post, $post_id ) 
-		)
+		if ( ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
 			return;
 
 		// Check nonce
-		if ( ! wp_verify_nonce( $_POST['vgsr_entity_kast_meta_nonce'], vgsr_entity()->file ) )
+		if ( ! isset( $_POST['vgsr_entity_kast_meta_nonce'] ) || ! wp_verify_nonce( $_POST['vgsr_entity_kast_meta_nonce'], vgsr_entity()->file ) )
 			return;
 
 		//
