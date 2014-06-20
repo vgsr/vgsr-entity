@@ -199,7 +199,7 @@ class VGSR_Kast extends VGSR_Entity {
 	 * @uses wp_enqueue_style()
 	 */
 	public function enqueue_scripts() {
-		global $pagenow, $post, $vgsr_entity;
+		global $pagenow, $post;
 
 		// Bail if not on a Kast page
 		if ( ! isset( $post ) || ( $this->type != $post->post_type && 'post.php' != $pagenow ) )
@@ -210,7 +210,7 @@ class VGSR_Kast extends VGSR_Entity {
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 
 		// Include jQuery UI Theme style
-		wp_register_style( 'jquery-ui-theme-fresh', plugins_url( 'css/jquery.ui.theme.css', $vgsr_entity->file ) );
+		wp_register_style( 'jquery-ui-theme-fresh', plugins_url( 'css/jquery.ui.theme.css', vgsr_entity()->file ) );
 		wp_enqueue_style( 'jquery-ui-theme-fresh' );
 	}
 
@@ -268,10 +268,9 @@ class VGSR_Kast extends VGSR_Entity {
 	 * @param object $post The current post
 	 */
 	public function metabox_display( $post ) {
-		global $vgsr_entity;
 
 		// Output nonce verification field
-		wp_nonce_field( $vgsr_entity->file, 'vgsr_entity_kast_meta' ); 
+		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_kast_meta_nonce' ); 
 
 		/** Since ******************************************************/
 
@@ -287,10 +286,10 @@ class VGSR_Kast extends VGSR_Entity {
 		<p id="vgsr_entity_kast_since">
 
 			<label>
-				<strong><?php __( 'Since', 'vgsr-entity' ); ?>: </strong>
-				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_since" value="<?php echo $since; ?>" />
+				<strong><?php _e( 'Since', 'vgsr-entity' ); ?>: </strong>
+				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_since" value="<?php echo esc_attr( $since ); ?>" />
 			</label>
-			<span class="howto"><?php __( 'The required format is dd/mm/yyyy.', 'vgsr-entity' ); ?></span>
+			<span class="howto"><?php _e( 'The required format is dd/mm/yyyy.', 'vgsr-entity' ); ?></span>
 
 		</p>
 
@@ -310,10 +309,10 @@ class VGSR_Kast extends VGSR_Entity {
 		<p id="vgsr_entity_kast_ceased">
 
 			<label>
-				<strong><?php __( 'Ceased', 'vgsr-entity' ); ?>: </strong>
-				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_ceased" value="<?php echo $ceased; ?>" />
+				<strong><?php _e( 'Ceased', 'vgsr-entity' ); ?>: </strong>
+				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_ceased" value="<?php echo esc_attr( $ceased ); ?>" />
 			</label>
-			<span class="howto"><?php __( 'The required format is dd/mm/yyyy.', 'vgsr-entity' ); ?></span>
+			<span class="howto"><?php _e( 'The required format is dd/mm/yyyy.', 'vgsr-entity' ); ?></span>
 
 		</p>
 
@@ -378,7 +377,6 @@ class VGSR_Kast extends VGSR_Entity {
 	 * @param int $post_id The post ID
 	 */
 	public function metabox_since_save( $post_id ) {
-		global $vgsr_entity;
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
@@ -393,7 +391,7 @@ class VGSR_Kast extends VGSR_Entity {
 			)
 			return;
 
-		if ( ! wp_verify_nonce( $_POST['vgsr_entity_kast_meta'], $vgsr_entity->file ) )
+		if ( ! wp_verify_nonce( $_POST['vgsr_entity_kast_meta_nonce'], vgsr_entity()->file ) )
 			return;
 
 		// We're authenticated now
@@ -476,8 +474,6 @@ endif; // class_exists
  * @uses VGSR_Kast
  */
 function vgsr_entity_kast() {
-	global $vgsr_entity;
-
-	$vgsr_entity->kast = new VGSR_Kast;
+	vgsr_entity()->kast = new VGSR_Kast;
 }
 

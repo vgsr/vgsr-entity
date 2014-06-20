@@ -54,7 +54,7 @@ final class VGSR_Entities {
 	 * @uses VGSR_Entities::setup_globals() Setup the globals needed
 	 * @uses VGSR_Entities::includes() Include the required files
 	 * @uses VGSR_Entities::setup_actions() Setup the hooks and actions
-	 * @see vgsr()
+	 * @see vgsr_entity()
 	 * @return The one true VGSR_Entities
 	 */
 	public static function instance() {
@@ -270,8 +270,9 @@ final class VGSR_Entities {
 	 */
 	public function get_entity_parent_ids() {
 		$parents = array();
-		foreach ( $this->entities as $entity )
+		foreach ( $this->entities as $entity ) {
 			$parents[$entity] = get_option( $this->{$entity}->parent_option );
+		}
 
 		return $parents;
 	}
@@ -339,8 +340,9 @@ final class VGSR_Entities {
 		}
 		
 		// End list
-		if ( ! empty( $list ) )
+		if ( ! empty( $list ) ) {
 			echo '<ul class="post-meta entity-meta">' . $list . '</ul>';
+		}
 	}
 }
 
@@ -350,14 +352,14 @@ final class VGSR_Entities {
  * Use this function like you would a global variable, except without needing
  * to declare the global.
  *
- * Example: <?php $entities = vgsr_entities(); ?>
+ * Example: <?php $entities = vgsr_entity(); ?>
  *
  * @since 0.2
  * 
  * @uses VGSR_Entities
  * @return The one single VGSR Entities
  */
-function vgsr_entities() {
+function vgsr_entity() {
 	return VGSR_Entities::instance();
 }
 
@@ -547,7 +549,6 @@ abstract class VGSR_Entity {
 	 *                        filter to enable post type arguments filtering
 	 */
 	public function register_post_type() {
-		global $vgsr_entity;
 
 		// Create post type labels
 		$labels = array(
@@ -570,7 +571,7 @@ abstract class VGSR_Entity {
 			'labels'               => $labels,
 			'public'               => true,
 			// 'menu_icon'            => null,
-			'menu_position'        => $vgsr_entity->menu_position,
+			'menu_position'        => vgsr_entity()->menu_position,
 			'hierarchical'         => false,
 			'rewrite'              => array( 
 				'slug' => $this->entity_parent_page_slug() 

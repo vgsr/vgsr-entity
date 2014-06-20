@@ -45,14 +45,16 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 * @param array $instance Saved widget values from DB
 	 */
 	public function widget( $args, $instance ) {
-		global $post, $vgsr_entity;
+		global $post;
+
+		$enty = vgsr_entity();
 
 		// Are we on a parent page?
-		$parents = $vgsr_entity->get_entity_parent_ids();
+		$parents = $enty->get_entity_parent_ids();
 		$parent  = in_array( $post->ID, $parents ) ? reset( array_keys( $parents, $post->ID ) ) : false;
 
 		// Don't display widget if not on entity page or entity parent page
-		if ( ! in_array( $post->post_type, $vgsr_entity->entities ) && ! $parent )
+		if ( ! in_array( $post->post_type, $enty->entities ) && ! $parent )
 			return;
 
 		// Get generic widget variables

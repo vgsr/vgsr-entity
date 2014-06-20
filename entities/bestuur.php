@@ -88,13 +88,14 @@ class VGSR_Bestuur extends VGSR_Entity {
 	 * @since 0.1
 	 */
 	public function setting_menu_order_field() {
-		$value = (int) get_option( '_bestuur-menu-order' );
-		?>
+		$value = (int) get_option( '_bestuur-menu-order' ); ?>
+
 			<select name="_bestuur-menu-order" id="_bestuur-menu-order">
 				<option value="0" <?php selected( $value, 0 ); ?>><?php _e('Seniority',         'vgsr-entity' ); ?></option>
 				<option value="1" <?php selected( $value, 1 ); ?>><?php _e('Reverse seniority', 'vgsr-entity' ); ?></option>
 			</select>
 			<label for="_bestuur-menu-order"><span class="description"><?php sprintf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->labels->plural ); ?></span></label>
+		
 		<?php
 	}
 
@@ -125,34 +126,33 @@ class VGSR_Bestuur extends VGSR_Entity {
 	 * @param object $post The current post
 	 */
 	public function metabox_display( $post ) {
-		global $vgsr_entity;
-
-		/** Season Meta **/
-
-		// Get stored meta value
-		$value = get_post_meta( $post->ID, 'vgsr_entity_bestuur_season', true );
-
-		// If no value served set it empty
-		if ( !$value )
-			$value = '';
 
 		// Output nonce verification field
-		wp_nonce_field( $vgsr_entity->file, 'vgsr_entity_bestuur_season_nonce' );
+		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_bestuur_meta_nonce' );
 
-		// Start field
-		echo '<p id="vgsr_entity_bestuur_season">';
+		/** Season *****************************************************/
 
-		// Output input field
-		echo '<label><strong>' . __( 'Season', 'vgsr-entity' ) . ': </strong><input type="text" name="vgsr_entity_bestuur_season" value="' . $value . '" /></label>';
+		// Get stored meta value
+		$season = get_post_meta( $post->ID, 'vgsr_entity_bestuur_season', true );
 
-		// Output field information
-		echo '<span class="howto">' . __( 'The required format is yyyy/yyyy.', 'vgsr-entity' ) . '</span>';
+		// If no value served set it empty
+		if ( ! $season )
+			$season = '';
 
-		// End field
-		echo '</p>';
+		?>
+
+		<p id="vgsr_entity_bestuur_season">
+
+			<label>
+				<strong><?php _e( 'Season', 'vgsr-entity' ); ?>:</strong>
+				<input type="text" name="vgsr_entity_bestuur_season" value="<?php echo esc_attr( $season ); ?>" />
+			</label>
+			<span class="howto"><?php _e( 'The required format is yyyy/yyyy.', 'vgsr-entity' ); ?></span>
+
+		</p>
+
+		<?php
 		
-		/** Other Meta **/
-
 		do_action( "vgsr_{$this->type}_metabox", $post );
 	}
 
@@ -164,7 +164,6 @@ class VGSR_Bestuur extends VGSR_Entity {
 	 * @param int $post_id The post ID
 	 */
 	public function metabox_season_save( $post_id ) {
-		global $vgsr_entity;
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
@@ -176,14 +175,14 @@ class VGSR_Bestuur extends VGSR_Entity {
 
 		if (   ! current_user_can( $cpt_obj->cap->edit_posts          ) 
 			|| ! current_user_can( $cpt_obj->cap->edit_post, $post_id ) 
-			)
+		)
 			return;
 
-		if ( ! wp_verify_nonce( $_POST['vgsr_entity_bestuur_season_nonce'], $vgsr_entity->file ) )
+		if ( ! wp_verify_nonce( $_POST['vgsr_entity_bestuur_meta_nonce'], vgsr_entity()->file ) )
 			return;
 
 		// We're authenticated now
-		
+
 		$input = sanitize_text_field( $_POST['vgsr_entity_bestuur_season'] );
 
 		// Does the inserted input match our requirements? - Checks for 1900 - 2099
@@ -338,10 +337,8 @@ class VGSR_Bestuur extends VGSR_Entity {
 	 */
 	public function widget_menu_order( $args ) {
 		$args['order'] = get_option( '_bestuur-menu-order' ) ? 'DESC' : 'ASC';
-
 		return $args;
 	}
-
 }
 
 endif; // class_exists
@@ -354,8 +351,6 @@ endif; // class_exists
  * @uses VGSR_Bestuur
  */
 function vgsr_entity_bestuur() {
-	global $vgsr_entity;
-
-	$vgsr_entity->bestuur = new VGSR_Bestuur();
+	vgsr_entity()->bestuur = new VGSR_Bestuur();
 }
 

@@ -75,10 +75,9 @@ class VGSR_Dispuut extends VGSR_Entity {
 	 * @param object $post The current post
 	 */
 	public function metabox_display( $post ) {
-		global $vgsr_entity;
 
 		// Output nonce verification field
-		wp_nonce_field( $vgsr_entity->file, 'vgsr_entity_dispuut_meta' ); 
+		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_dispuut_meta_nonce' ); 
 
 		/** Since ******************************************************/
 
@@ -94,10 +93,10 @@ class VGSR_Dispuut extends VGSR_Entity {
 		<p id="vgsr_entity_dispuut_since">
 
 			<label>
-				<strong><?php __( 'Since', 'vgsr-entity' ); ?>: </strong>
-				<input type="text" name="vgsr_entity_dispuut_since" value="<?php echo $since; ?>" />
+				<strong><?php _e( 'Since', 'vgsr-entity' ); ?>: </strong>
+				<input type="text" name="vgsr_entity_dispuut_since" value="<?php echo esc_attr( $since ); ?>" />
 			</label>
-			<span class="howto"><?php __( 'The required format is yyyy.', 'vgsr-entity' ); ?></span>
+			<span class="howto"><?php _e( 'The required format is yyyy.', 'vgsr-entity' ); ?></span>
 
 		</p>
 
@@ -117,10 +116,10 @@ class VGSR_Dispuut extends VGSR_Entity {
 		<p id="vgsr_entity_dispuut_ceased">
 
 			<label>
-				<strong><?php __( 'Ceased', 'vgsr-entity' ); ?>: </strong>
-				<input type="text" name="vgsr_entity_dispuut_ceased" value="<?php echo $ceased; ?>" />
+				<strong><?php _e( 'Ceased', 'vgsr-entity' ); ?>: </strong>
+				<input type="text" name="vgsr_entity_dispuut_ceased" value="<?php echo esc_attr( $ceased ); ?>" />
 			</label>
-			<span class="howto"><?php __( 'The required format is yyyy.', 'vgsr-entity' ); ?></span>
+			<span class="howto"><?php _e( 'The required format is yyyy.', 'vgsr-entity' ); ?></span>
 
 		</p>
 	
@@ -137,7 +136,6 @@ class VGSR_Dispuut extends VGSR_Entity {
 	 * @param int $post_id The post ID
 	 */
 	public function dispuut_metabox_save( $post_id ) {
-		global $vgsr_entity;
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
@@ -149,10 +147,10 @@ class VGSR_Dispuut extends VGSR_Entity {
 
 		if (   ! current_user_can( $cpt_obj->cap->edit_posts          ) 
 			|| ! current_user_can( $cpt_obj->cap->edit_post, $post_id ) 
-			)
+		)
 			return;
 
-		if ( ! wp_verify_nonce( $_POST['vgsr_entity_dispuut_meta'],  $vgsr_entity->file ) )
+		if ( ! wp_verify_nonce( $_POST['vgsr_entity_dispuut_meta_nonce'], vgsr_entity()->file ) )
 			return;
 
 		// We're authenticated now
@@ -273,8 +271,6 @@ endif; // class_exists
  * @uses VGSR_Dispuut
  */
 function vgsr_entity_dispuut() {
-	global $vgsr_entity;
-
-	$vgsr_entity->dispuut = new VGSR_Dispuut();
+	vgsr_entity()->dispuut = new VGSR_Dispuut();
 }
 

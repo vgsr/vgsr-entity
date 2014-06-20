@@ -9,8 +9,6 @@
  * @subpackage Templates
  */
 
-global $vgsr_entity;
-
 ?>
 
 <?php get_header(); ?>
@@ -28,7 +26,7 @@ global $vgsr_entity;
 			<h1 class="post-title"><?php the_title(); ?></h1>
 			<div class="post-wrapper clearfix">
 
-				<?php $vgsr_entity->entity_meta(); ?>
+				<?php vgsr_entity()->entity_meta(); ?>
 			
 				<div class="post-content">
 					<?php the_content(); ?>
