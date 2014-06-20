@@ -522,8 +522,7 @@ abstract class VGSR_Entity {
 		add_filter( "{$this->type}_admin_messages", array( $this, 'admin_messages'            )    );
 		add_action( "{$this->type}_settings_load",  array( $this, 'entity_parent_page_update' ), 1 );
 
-		// WP hooks
-		add_filter( 'the_content',           array( $this, 'entity_parent_page_children'  )        );
+		// Post hooks
 		add_filter( 'wp_insert_post_parent', array( $this, 'entity_parent_page_save_post' ), 10, 2 );
 	}
 

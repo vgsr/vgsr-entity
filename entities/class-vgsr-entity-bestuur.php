@@ -55,15 +55,12 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 */
 	public function setup_actions() {
 
-		add_action( 'init',           array( $this, 'latest_bestuur_rewrite_rule' ) );
-		add_action( 'admin_init',     array( $this, 'bestuur_register_settings'   ) );
-		add_action( 'save_post',      array( $this, 'latest_bestuur_save_id'      ) );
-		add_action( 'save_post',      array( $this, 'metabox_season_save'         ) );
+		add_action( 'init',       array( $this, 'latest_bestuur_rewrite_rule' ) );
+		add_action( 'admin_init', array( $this, 'bestuur_register_settings'   ) );
+		add_action( 'save_post',  array( $this, 'latest_bestuur_save_id'      ) );
+		add_action( 'save_post',  array( $this, 'metabox_season_save'         ) );
 
-		add_filter( 'vgsr_entity_menu_widget_get_posts',  array( $this, 'widget_menu_order' ) );
-
-		// Undo entity listing on parent page
-		remove_filter( 'the_content', array( $this, 'parent_page_add_children'    ) );
+		add_filter( 'vgsr_entity_menu_widget_get_posts', array( $this, 'widget_menu_order' ) );
 	}
 
 	/**

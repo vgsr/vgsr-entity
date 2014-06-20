@@ -69,6 +69,9 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 		add_filter( "vgsr_{$this->type}_register_cpt",     array( $this, 'post_type_args'  ) );
 		add_filter( "vgsr_{$this->type}_settings_load",    array( $this, 'downsize_thumbs' ) );
 		add_filter( "vgsr_{$this->type}_settings_scripts", array( $this, 'enqueue_scripts' ) );
+
+		// Append entity children
+		add_filter( 'the_content', array( $this, 'entity_parent_page_children' ) );
 	}
 
 	/**
