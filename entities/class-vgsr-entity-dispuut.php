@@ -26,8 +26,9 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 	 */
 	public function __construct() {
 		parent::__construct( array( 
-			'single' => 'Dispuut', 
-			'plural' => 'Disputen' 
+			'single'    => 'Dispuut', 
+			'plural'    => 'Disputen',
+			'menu_icon' => 'dashicons-format-status',
 		) );
 	}
 

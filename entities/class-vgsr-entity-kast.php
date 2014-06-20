@@ -34,8 +34,9 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	 */
 	public function __construct() {
 		parent::__construct( array( 
-			'single' => 'Kast', 
-			'plural' => 'Kasten' 
+			'single'    => 'Kast', 
+			'plural'    => 'Kasten',
+			'menu_icon' => 'dashicons-admin-home'
 		) );
 	}
 
@@ -66,9 +67,9 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 		add_action( 'save_post',  array( $this, 'metabox_since_save' ) );
 
 		// Filters
-		add_filter( "vgsr_{$this->type}_register_cpt",     array( $this, 'post_type_args'  ) );
-		add_filter( "vgsr_{$this->type}_settings_load",    array( $this, 'downsize_thumbs' ) );
-		add_filter( "vgsr_{$this->type}_settings_scripts", array( $this, 'enqueue_scripts' ) );
+		add_filter( 'vgsr_kast_register_post_type', array( $this, 'post_type_args'  ) );
+		add_filter( 'vgsr_kast_settings_load',      array( $this, 'downsize_thumbs' ) );
+		add_filter( 'vgsr_kast_settings_scripts',   array( $this, 'enqueue_scripts' ) );
 
 		// Append entity children
 		add_filter( 'the_content', array( $this, 'entity_parent_page_children' ) );
@@ -85,7 +86,7 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	public function post_type_args( $args ) {
 
 		// Rename labels
-		$args['labels']['add_new'] = $args['labels']['new_item'] = sprintf( _x( 'New %s', 'In Dutch «New Kast» doesn\'t translate like «New Bestuur».', 'vgsr-entity' ), strtolower( $this->labels->single ) );
+		$args['labels']['add_new'] = $args['labels']['new_item'] = sprintf( _x( 'New %s', 'In Dutch «New Kast» doesn\'t translate like «New Bestuur».', 'vgsr-entity' ), strtolower( $this->args->single ) );
 
 		return $args;
 	}
@@ -111,7 +112,7 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	?>
 
 		<input type="checkbox" name="_kast-downsize-thumbs" id="_kast-downsize-thumbs" <?php checked( get_option( '_kast-downsize-thumbs' ) ); ?> value="1"/>
-		<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __( 'This is a one time resizing of thumbs for %s. NOTE: This option only <strong>adds</strong> new image sizes, it doesn\'t remove old ones.', 'vgsr-entity' ), $this->labels->plural ); ?></span></label>
+		<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __( 'This is a one time resizing of thumbs for %s. NOTE: This option only <strong>adds</strong> new image sizes, it doesn\'t remove old ones.', 'vgsr-entity' ), $this->args->plural ); ?></span></label>
 
 	<?php
 	}

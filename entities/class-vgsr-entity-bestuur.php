@@ -34,8 +34,9 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 */
 	public function __construct() {
 		parent::__construct( array( 
-			'single' => 'Bestuur', 
-			'plural' => 'Besturen' 
+			'single'    => 'Bestuur', 
+			'plural'    => 'Besturen',
+			'menu_icon' => 'dashicons-awards',
 		) );
 	}
 
@@ -87,7 +88,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 				<option value="0" <?php selected( $value, 0 ); ?>><?php _e('Seniority',         'vgsr-entity' ); ?></option>
 				<option value="1" <?php selected( $value, 1 ); ?>><?php _e('Reverse seniority', 'vgsr-entity' ); ?></option>
 			</select>
-			<label for="_bestuur-menu-order"><span class="description"><?php sprintf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->labels->plural ); ?></span></label>
+			<label for="_bestuur-menu-order"><span class="description"><?php sprintf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->args->plural ); ?></span></label>
 		
 		<?php
 	}
