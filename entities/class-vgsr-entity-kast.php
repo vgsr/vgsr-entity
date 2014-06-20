@@ -377,37 +377,72 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	 */
 	public function metabox_since_save( $post_id ) {
 
+		// Check autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
 
+		// Check post type
 		if ( $this->type != get_post_type( $post_id ) )
 			return;
 
-		$cpt_obj = get_post_type_object( $this->type );
 
-		if (   ! current_user_can( $cpt_obj->cap->edit_posts          ) 
-			|| ! current_user_can( $cpt_obj->cap->edit_post, $post_id ) 
+		// Check caps
+		$pto = get_post_type_object( $this->type );
+		if (   ! current_user_can( $pto->cap->edit_posts          ) 
+			|| ! current_user_can( $pto->cap->edit_post, $post_id ) 
 		)
 			return;
 
+		// Check nonce
 		if ( ! wp_verify_nonce( $_POST['vgsr_entity_kast_meta_nonce'], vgsr_entity()->file ) )
 			return;
 
+		//
 		// We're authenticated now
-		
-		$input = sanitize_text_field( $_POST['vgsr_entity_kast_since'] );
+		// 
 
-		// Does the inserted input match our requirements? - Checks for 01-31 / 01-12 / 1900-2099
-		if ( ! preg_match( '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)[0-9]{2}$/', $input, $matches ) ) {
+		// Since & Ceased
+		if ( isset( $_POST['vgsr_entity_kast_since'] ) || isset( $_POST['vgsr_entity_kast_ceased'] ) ) {
 
-			// Alert the user
-			add_filter( 'redirect_post_location', array( $this, 'metabox_since_save_redirect' ) );
+			// Walk since and ceased meta
+			foreach ( array_filter(
+				'since'  => sanitize_text_field( $_POST['vgsr_entity_kast_since']  ),
+				'ceased' => sanitize_text_field( $_POST['vgsr_entity_kast_ceased'] ),
+			) as $meta_key => $value ) :
 
-			$input = false;
-		
-		// Update post meta
-		} else {
-			update_post_meta( $post_id, 'vgsr_entity_kast_since', $input );
+				// Ceased field may be empty, so delete
+				if ( 'ceased' == $meta_key && empty( $value ) ) {
+					delete_post_meta( $post_id, "vgsr_entity_dispuut_{$meta_key}" );
+					continue;
+				}
+
+				// Does the inserted input match our requirements? - Checks for 01-31 / 01-12 / 1900-2099
+				if ( ! preg_match( '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)[0-9]{2}$/', $value, $matches ) ) {
+
+					// Alert the user
+					add_filter( 'redirect_post_location', array( $this, "metabox_{$meta_key}_save_redirect" ) );
+					$value = false;
+
+				// Update post meta
+				} else {
+					update_post_meta( $post_id, "vgsr_entity_kast_{$meta_key}", $value );
+				}
+
+			endforeach;
+		}
+
+		// Occupants
+		if ( isset( $_POST['vgsr_entity_kast_occupants'] ) || isset( $_POST['vgsr_entity_kast_prev_occupants'] ) ) {
+
+			// Walk since and ceased meta
+			foreach ( array_filter(
+				'occupants'      => array_map( 'intval', $_POST['vgsr_entity_kast_occupants']      ),
+				'prev_occupants' => array_map( 'intval', $_POST['vgsr_entity_kast_prev_occupants'] ),
+			) as $meta_key => $value ) {
+
+				// Update post meta
+				update_post_meta( $post_id, "vgsr_entity_kast_{$meta_key}", $value );
+			}			
 		}
 	}
 
@@ -458,9 +493,19 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 			);
 		}
 
+		// Setup value for ceased meta
+		if ( $ceased = get_post_meta( $post->ID, 'vgsr_entity_kast_ceased', true ) ) {
+
+			// Setup kast Since meta
+			$meta['ceased'] = array(
+				'icon'   => 'icon-calendar',
+				'before' => __( 'Ceased', 'vgsr-entity' ) . ': ',
+				'value'  => date_i18n( get_option( 'date_format' ), strtotime( str_replace( '/', '-', $ceased ) ) )
+			);
+		}
+
 		return $meta;
 	}
-
 }
 
 endif; // class_exists

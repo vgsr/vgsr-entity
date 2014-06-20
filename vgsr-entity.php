@@ -23,7 +23,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 //
-// Main entities holder
+// Main entities
 // 
 
 if ( ! class_exists( 'VGSR_Entities' ) ) :

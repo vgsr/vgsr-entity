@@ -138,52 +138,58 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 	 */
 	public function dispuut_metabox_save( $post_id ) {
 
+		// Check autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
 
+		// Check post type
 		if ( get_post_type( $post_id ) !== $this->type )
 			return;
 
-		$cpt_obj = get_post_type_object( $this->type );
-
-		if (   ! current_user_can( $cpt_obj->cap->edit_posts          ) 
-			|| ! current_user_can( $cpt_obj->cap->edit_post, $post_id ) 
+		// Check caps
+		$pto = get_post_type_object( $this->type );
+		if (   ! current_user_can( $pto->cap->edit_posts          ) 
+			|| ! current_user_can( $pto->cap->edit_post, $post_id ) 
 		)
 			return;
 
+		// Check nonce
 		if ( ! wp_verify_nonce( $_POST['vgsr_entity_dispuut_meta_nonce'], vgsr_entity()->file ) )
 			return;
 
+		//
 		// We're authenticated now
-		
-		$inputs = array(
-			'since'  => sanitize_text_field( $_POST['vgsr_entity_dispuut_since']  ),
-			'ceased' => sanitize_text_field( $_POST['vgsr_entity_dispuut_ceased'] )
-		);
+		//
 
-		// Loop over the inputs
-		foreach ( $inputs as $field => $input ) :
+		// Since & Ceased
+		if ( isset( $_POST['vgsr_entity_kast_since'] ) || isset( $_POST['vgsr_entity_kast_ceased'] ) ) {
 
-			// Ceased field may be empty
-			if ( 'ceased' == $field && empty( $input ) ) {
-				delete_post_meta( $post_id, 'vgsr_entity_dispuut_'. $field );
-				continue;
-			}
+			// Walk since and ceased meta
+			foreach ( array(
+				'since'  => sanitize_text_field( $_POST['vgsr_entity_dispuut_since']  ),
+				'ceased' => sanitize_text_field( $_POST['vgsr_entity_dispuut_ceased'] )
+			) as $meta_key => $value ) :
 
-			// Does the inserted input match our requirements? - Checks for 1900 - 2099
-			if ( ! preg_match( '/^(19\d{2}|20\d{2})$/', $input, $matches ) ) {
+				// Ceased field may be empty, so delete
+				if ( 'ceased' == $meta_key && empty( $value ) ) {
+					delete_post_meta( $post_id, "vgsr_entity_dispuut_{$meta_key}" );
+					continue;
+				}
 
-				// Alert the user
-				add_filter( 'redirect_post_location', array( $this, 'metabox_'. $field .'_save_redirect' ) );
+				// Does the inserted input match our requirements? - Checks for 1900 - 2099
+				if ( ! preg_match( '/^(19\d{2}|20\d{2})$/', $value, $matches ) ) {
 
-				$input = false;
+					// Alert the user
+					add_filter( 'redirect_post_location', array( $this, "metabox_{$meta_key}" .'_save_redirect' ) );
+					$value = false;
 
-			// Update post meta
-			} else {
-				update_post_meta( $post_id, 'vgsr_entity_dispuut_'. $field, $input );
-			}
+				// Update post meta
+				} else {
+					update_post_meta( $post_id, "vgsr_entity_dispuut_{$meta_key}", $value );
+				}
 
-		endforeach;
+			endforeach;
+		}
 	}
 
 	/**

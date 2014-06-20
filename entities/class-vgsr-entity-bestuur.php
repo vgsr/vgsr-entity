@@ -158,37 +158,44 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 */
 	public function metabox_season_save( $post_id ) {
 
+		// Check autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
 
+		// Check post type
 		if ( get_post_type( $post_id ) !== $this->type )
 			return;
 
-		$cpt_obj = get_post_type_object( $this->type );
-
-		if (   ! current_user_can( $cpt_obj->cap->edit_posts          ) 
-			|| ! current_user_can( $cpt_obj->cap->edit_post, $post_id ) 
+		// Check caps
+		$pto = get_post_type_object( $this->type );
+		if (   ! current_user_can( $pto->cap->edit_posts          ) 
+			|| ! current_user_can( $pto->cap->edit_post, $post_id ) 
 		)
 			return;
 
+		// Check nonce
 		if ( ! wp_verify_nonce( $_POST['vgsr_entity_bestuur_meta_nonce'], vgsr_entity()->file ) )
 			return;
 
+		// 
 		// We're authenticated now
+		// 
 
-		$input = sanitize_text_field( $_POST['vgsr_entity_bestuur_season'] );
+		// Season
+		if ( isset( $_POST['vgsr_entity_kast_season'] ) ) {
+			$value = sanitize_text_field( $_POST['vgsr_entity_bestuur_season'] );
 
-		// Does the inserted input match our requirements? - Checks for 1900 - 2099
-		if ( ! preg_match( '/^(19\d{2}|20\d{2})\/(19\d{2}|20\d{2})$/', $input, $matches ) ) {
+			// Does the inserted input match our requirements? - Checks for 1900 - 2099
+			if ( ! preg_match( '/^(19\d{2}|20\d{2})\/(19\d{2}|20\d{2})$/', $value, $matches ) ) {
 
-			// Alert the user
-			add_filter( 'redirect_post_location', array( $this, 'metabox_season_save_redirect' ) );
+				// Alert the user
+				add_filter( 'redirect_post_location', array( $this, 'metabox_season_save_redirect' ) );
+				$value = false;
 
-			$input = false;
-
-		// Update post meta
-		} else {
-			update_post_meta( $post_id, 'vgsr_entity_bestuur_season', $input );
+			// Update post meta
+			} else {
+				update_post_meta( $post_id, 'vgsr_entity_bestuur_season', $value );
+			}
 		}
 	}
 
