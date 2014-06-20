@@ -14,14 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! class_exists( 'VGSR_Entity' ) )
 	require( plugin_dir_path( __FILE__ ) . 'vgsr-entity.php' );
 
-if ( ! class_exists( 'VGSR_Kast' ) ) :
+if ( ! class_exists( 'VGSR_Entity_Kast' ) ) :
 
 /**
  * VGSR Kast Entity Class
  *
  * @since 0.1
  */
-class VGSR_Kast extends VGSR_Entity {
+class VGSR_Entity_Kast extends VGSR_Entity {
 
 	/**
 	 * Kast post mini thumbnail size
@@ -388,7 +388,7 @@ class VGSR_Kast extends VGSR_Entity {
 
 		if (   ! current_user_can( $cpt_obj->cap->edit_posts          ) 
 			|| ! current_user_can( $cpt_obj->cap->edit_post, $post_id ) 
-			)
+		)
 			return;
 
 		if ( ! wp_verify_nonce( $_POST['vgsr_entity_kast_meta_nonce'], vgsr_entity()->file ) )
@@ -471,9 +471,9 @@ endif; // class_exists
  *
  * @since 0.1
  *
- * @uses VGSR_Kast
+ * @uses VGSR_Entity_Kast
  */
 function vgsr_entity_kast() {
-	vgsr_entity()->kast = new VGSR_Kast;
+	vgsr_entity()->kast = new VGSR_Entity_Kast;
 }
 

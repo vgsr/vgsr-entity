@@ -14,14 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! class_exists( 'VGSR_Entity' ) )
 	require( plugin_dir_path( __FILE__ ) . 'vgsr-entity.php' );
 
-if ( ! class_exists( 'VGSR_Bestuur' ) ) :
+if ( ! class_exists( 'VGSR_Entity_Bestuur' ) ) :
 
 /**
  * VGSR Bestuur Entity Class
  *
  * @since 0.1
  */
-class VGSR_Bestuur extends VGSR_Entity {
+class VGSR_Entity_Bestuur extends VGSR_Entity {
 
 	/**
 	 * The latest Bestuur post ID
@@ -348,9 +348,9 @@ endif; // class_exists
  *
  * @since 0.1
  *
- * @uses VGSR_Bestuur
+ * @uses VGSR_Entity_Bestuur
  */
 function vgsr_entity_bestuur() {
-	vgsr_entity()->bestuur = new VGSR_Bestuur();
+	vgsr_entity()->bestuur = new VGSR_Entity_Bestuur();
 }
 

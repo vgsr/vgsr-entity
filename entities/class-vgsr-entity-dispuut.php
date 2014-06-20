@@ -14,14 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! class_exists( 'VGSR_Entity' ) )
 	require( plugin_dir_path( __FILE__ ) . 'vgsr-entity.php' );
 
-if ( ! class_exists( 'VGSR_Dispuut' ) ) :
+if ( ! class_exists( 'VGSR_Entity_Dispuut' ) ) :
 
 /**
  * VGSR Dispuut Entity Class
  *
  * @since 0.1
  */
-class VGSR_Dispuut extends VGSR_Entity {
+class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 	/**
 	 * Construct Dispuut Entity
@@ -268,9 +268,9 @@ endif; // class_exists
  *
  * @since 0.1
  *
- * @uses VGSR_Dispuut
+ * @uses VGSR_Entity_Dispuut
  */
 function vgsr_entity_dispuut() {
-	vgsr_entity()->dispuut = new VGSR_Dispuut();
+	vgsr_entity()->dispuut = new VGSR_Entity_Dispuut();
 }
 

@@ -97,8 +97,12 @@ final class VGSR_Entities {
 		$this->plugin_dir    = plugin_dir_path( $this->file );
 		$this->menu_position = 35;
 
-		// Predefine all entities
-		$this->entities = array( 'bestuur', 'dispuut', 'kast' );
+		// Predefine all entities as class name => post type
+		$this->entities = array( 
+			'VGSR_Entity_Bestuur' => 'bestuur', 
+			'VGSR_Entity_Dispuut' => 'dispuut', 
+			'VGSR_Entity_Kast'    => 'kast', 
+		);
 	}
 
 	/**
@@ -111,7 +115,7 @@ final class VGSR_Entities {
 
 		// Load each entity
 		foreach ( $this->entities as $entity ) {
-			require( $this->plugin_dir . "entities/{$entity}.php" );
+			require( $this->plugin_dir . "entities/class-vgsr-entity-{$entity}.php" );
 		}
 	}
 
@@ -160,9 +164,8 @@ final class VGSR_Entities {
 	public function rewrite_flush() {
 
 		// Call post type registration
-		foreach ( $this->entities as $entity ) {
-			$cname = 'VGSR_' . ucfirst( $entity );
-			$class = new $cname;
+		foreach ( array_keys( $this->entities ) as $class_name ) {
+			$class = new $class_name;
 			$class->register_post_type();
 		}
 
@@ -258,9 +261,9 @@ final class VGSR_Entities {
 			return;
 
 		// Bail when not on entity parent page
-		if (   ! in_array( $post->post_type, $this->entities         ) 
-			&& ! in_array( $post->ID, $this->get_entity_parent_ids() ) 
-			)
+		if (   ! in_array( $post->post_type, $this->entities ) 
+			&& ! in_array( $post->ID, $this->get_entity_parent_ids()       ) 
+		)
 			return;
 
 		wp_register_style( 'vgsr-entity', plugins_url( 'css/style.css', __FILE__ ) );
