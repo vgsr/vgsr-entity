@@ -353,23 +353,6 @@ final class VGSR_Entities {
 	}
 }
 
-/**
- * Return the single instance of VGSR_Entities
- *
- * Use this function like you would a global variable, except without needing
- * to declare the global.
- *
- * Example: <?php $entities = vgsr_entity(); ?>
- *
- * @since 0.2
- * 
- * @uses VGSR_Entities
- * @return The one single VGSR Entities
- */
-function vgsr_entity() {
-	return VGSR_Entities::instance();
-}
-
 endif; // class_exists VGSR_Entities
 
 //
@@ -1001,3 +984,23 @@ abstract class VGSR_Entity {
 }
 
 endif; // class_exsits
+
+/**
+ * Return the single instance of VGSR_Entities
+ *
+ * Use this function like you would a global variable, except without needing
+ * to declare the global.
+ *
+ * Example: <?php $entities = vgsr_entity(); ?>
+ *
+ * @since 0.2
+ * 
+ * @uses VGSR_Entities
+ * @return The one single VGSR Entities
+ */
+function vgsr_entity() {
+	return VGSR_Entities::instance();
+}
+
+// Fire it up!
+vgsr_entity();

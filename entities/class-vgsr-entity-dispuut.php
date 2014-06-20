@@ -165,10 +165,10 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 		if ( isset( $_POST['vgsr_entity_kast_since'] ) || isset( $_POST['vgsr_entity_kast_ceased'] ) ) {
 
 			// Walk since and ceased meta
-			foreach ( array(
+			foreach ( array_filter( array(
 				'since'  => sanitize_text_field( $_POST['vgsr_entity_dispuut_since']  ),
 				'ceased' => sanitize_text_field( $_POST['vgsr_entity_dispuut_ceased'] )
-			) as $meta_key => $value ) :
+			) ) as $meta_key => $value ) :
 
 				// Ceased field may be empty, so delete
 				if ( 'ceased' == $meta_key && empty( $value ) ) {
@@ -225,8 +225,12 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 	 * @return array $messages
 	 */
 	public function admin_messages( $messages ) {
-		$messages[1] = sprintf( __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>' . __( 'Since',  'vgsr-entity' ) . '</strong>' );
-		$messages[2] = sprintf( __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>' . __( 'Ceased', 'vgsr-entity' ) . '</strong>' );
+
+		// Default strings
+		$wrong_format = __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' );
+
+		$messages[1] = sprintf( $wrong_format, '<strong>' . __( 'Since',  'vgsr-entity' ) . '</strong>' );
+		$messages[2] = sprintf( $wrong_format, '<strong>' . __( 'Ceased', 'vgsr-entity' ) . '</strong>' );
 
 		return $messages;
 	}

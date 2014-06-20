@@ -405,10 +405,10 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 		if ( isset( $_POST['vgsr_entity_kast_since'] ) || isset( $_POST['vgsr_entity_kast_ceased'] ) ) {
 
 			// Walk since and ceased meta
-			foreach ( array_filter(
+			foreach ( array_filter( array(
 				'since'  => sanitize_text_field( $_POST['vgsr_entity_kast_since']  ),
 				'ceased' => sanitize_text_field( $_POST['vgsr_entity_kast_ceased'] ),
-			) as $meta_key => $value ) :
+			) ) as $meta_key => $value ) :
 
 				// Ceased field may be empty, so delete
 				if ( 'ceased' == $meta_key && empty( $value ) ) {
@@ -435,10 +435,10 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 		if ( isset( $_POST['vgsr_entity_kast_occupants'] ) || isset( $_POST['vgsr_entity_kast_prev_occupants'] ) ) {
 
 			// Walk since and ceased meta
-			foreach ( array_filter(
+			foreach ( array_filter( array(
 				'occupants'      => array_map( 'intval', $_POST['vgsr_entity_kast_occupants']      ),
 				'prev_occupants' => array_map( 'intval', $_POST['vgsr_entity_kast_prev_occupants'] ),
-			) as $meta_key => $value ) {
+			) ) as $meta_key => $value ) {
 
 				// Update post meta
 				update_post_meta( $post_id, "vgsr_entity_kast_{$meta_key}", $value );
@@ -466,7 +466,12 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	 * @since 0.1
 	 */
 	public function admin_messages( $messages ) {
-		$messages[1] = sprintf( __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>'. __( 'Since', 'vgsr-entity' ) . '</strong>' );
+
+		// Default strings
+		$wrong_format = __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' );
+
+		$messages[1] = sprintf( $wrong_format, '<strong>' . __( 'Since',  'vgsr-entity' ) . '</strong>' );
+		$messages[2] = sprintf( $wrong_format, '<strong>' . __( 'Ceased', 'vgsr-entity' ) . '</strong>' );
 
 		return $messages;
 	}
