@@ -201,7 +201,7 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 		global $pagenow, $post;
 
 		// Bail if not on a Kast page
-		if ( ! isset( $post ) || ( $this->type != $post->post_type && 'post.php' != $pagenow ) )
+		if ( ! isset( get_current_screen()->post_type ) || $this->type != get_current_screen()->post_type || 'post' != get_current_screen()->base )
 			return;
 
 		// Enable jQuery UI Datepicker
@@ -221,7 +221,7 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	public function admin_scripts() {
 
 		// Editing a single kast
-		if ( isset( get_current_screen()->post_type ) && $this->type = get_current_screen()->post_type && 'post' == get_current_screen()->base ) : ?>
+		if ( isset( get_current_screen()->post_type ) && $this->type == get_current_screen()->post_type && 'post' == get_current_screen()->base ) : ?>
 
 		<script type="text/javascript">
 			jQuery(document).ready( function($) {
@@ -458,6 +458,20 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	 */
 	public function metabox_since_save_redirect( $location ) {
 		return add_query_arg( 'kast-error', '1', $location );
+	}
+
+	/**
+	 * Add query arg to the redirect location after save_post()
+	 *
+	 * @since 0.1
+	 *
+	 * @uses add_query_arg()
+	 * 
+	 * @param string $location The redrirect location
+	 * @return string $location
+	 */
+	public function metabox_ceased_save_redirect( $location ) {
+		return add_query_arg( 'kast-error', '2', $location );
 	}
 
 	/**
