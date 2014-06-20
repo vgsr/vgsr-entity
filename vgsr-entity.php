@@ -22,6 +22,10 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+//
+// Main entities holder
+// 
+
 if ( ! class_exists( 'VGSR_Entities' ) ) :
 
 /**
@@ -480,17 +484,21 @@ abstract class VGSR_Entity {
 	private function entity_globals() {
 
 		// Build post type from single type label
-		$this->type           = strtolower( $this->labels->single );
-		$this->page           = 'edit.php?post_type=' . $this->type;
+		$this->type = strtolower( $this->labels->single );
+		$this->page = 'edit.php?post_type=' . $this->type;
 
 		// Post type parent page option value
 		$this->parent_option  = "_{$this->type}-parent-page";
 
 		// Default thumbsize. @todo When theme does not support post-thumbnail image size
-		$this->thumbsize      = 'post-thumbnail';
+		$this->thumbsize = 'post-thumbnail';
 
 		// Setup settings page title
 		$this->settings_title = $this->labels->single . ' ' . __( 'Settings' );
+
+		// Settings globals
+		$this->settings_page    = "vgsr_{$this->type}_settings";
+		$this->settings_section = "vgsr_{$this->type}_options_main";
 	}
 
 	/**
@@ -566,33 +574,30 @@ abstract class VGSR_Entity {
 			'menu_name'            => $this->labels->plural
 		);
 
-		// Setup post type arguments
-		$args = array(
+		// Setup post type support
+		$supports = array(
+			'title', 
+			'editor', 
+			'author', 
+			'thumbnail', 
+			'revisions', 
+			'page-attributes' // To set menu order
+		);
+
+		// Register this entity post type
+		register_post_type( $this->type, apply_filters( "vgsr_{$this->type}_register_cpt", array(
 			'labels'               => $labels,
 			'public'               => true,
-			// 'menu_icon'            => null,
 			'menu_position'        => vgsr_entity()->menu_position,
 			'hierarchical'         => false,
 			'rewrite'              => array( 
 				'slug' => $this->entity_parent_page_slug() 
 			),
 			'capability_type'      => 'page',
-			'supports'             => array(
-				'title', 
-				'editor', 
-				'author', 
-				'thumbnail', 
-				'revisions', 
-				'page-attributes' // To set menu order
-			),
-			'register_meta_box_cb' => array( $this, 'add_metabox' )
-		);
-
-		// Register this entity post type
-		register_post_type( 
-			$this->type, 
-			apply_filters( "vgsr_{$this->type}_register_cpt", $args )
-		);
+			'supports'             => $supports,
+			'register_meta_box_cb' => array( $this, 'add_metabox' ),
+			// 'menu_icon'            => null,
+		) ) );
 	}
 
 	/**
@@ -668,22 +673,24 @@ abstract class VGSR_Entity {
 	 * @uses settings_fields()
 	 * @uses do_settings_sections()
 	 */
-	public function settings_page() {
-		?>
-			<div class="wrap">
+	public function settings_page() { ?>
 
-				<?php screen_icon(); ?>
-				<h2><?php echo $this->settings_title; ?></h2>
-				<?php settings_errors(); ?>
+		<div class="wrap">
 
-				<form method="post" action="options.php">
-					<?php settings_fields( $this->settings_page ); ?>
-					<?php do_settings_sections( $this->settings_page ); ?>
-					<?php submit_button(); ?>
-				</form>
+			<?php screen_icon(); ?>
+			<h2><?php echo $this->settings_title; ?></h2>
 
-			</div>
-		<?php
+			<?php settings_errors(); ?>
+
+			<form method="post" action="options.php">
+				<?php settings_fields( $this->settings_page ); ?>
+				<?php do_settings_sections( $this->settings_page ); ?>
+				<?php submit_button(); ?>
+			</form>
+
+		</div>
+
+	<?php
 	}
 
 	/**
@@ -696,8 +703,6 @@ abstract class VGSR_Entity {
 	 * @uses register_setting()
 	 */
 	public function entity_register_settings() {
-		$this->settings_page    = "vgsr_{$this->type}_settings";
-		$this->settings_section = "vgsr_{$this->type}_options_main";
 
 		// Register main settings section
 		add_settings_section( 
@@ -726,19 +731,23 @@ abstract class VGSR_Entity {
 	 *
 	 * @uses wp_dropdown_pages()
 	 */
-	public function entity_parent_page_settings_field() {
+	public function entity_parent_page_settings_field() { ?>
 
-		// Output page dropdown
-		wp_dropdown_pages( array(
-			'name'             => $this->parent_option,
-			'selected'         => get_option( $this->parent_option ),
-			'echo'             => true,
-			'show_option_none' => __( 'None' )
-		) );
+		<label>
+			<?php
 
-		?>
-			<label><span class="description"><?php echo sprintf( __( 'Select the parent page you want to have your %s to appear on. ', 'vgsr-entity' ), $this->labels->plural ); ?></span></label>
-		<?php
+			// Output page dropdown
+			wp_dropdown_pages( array(
+				'name'             => $this->parent_option,
+				'selected'         => get_option( $this->parent_option ),
+				'echo'             => true,
+				'show_option_none' => __( 'None' )
+			) ); ?>
+
+			<span class="description"><?php printf( __( 'Select the parent page you want to have your %s to appear on.', 'vgsr-entity' ), $this->labels->plural ); ?></span>
+		</label>
+
+	<?php
 	}
 
 	/**
@@ -788,7 +797,7 @@ abstract class VGSR_Entity {
 
 		if (   ! current_user_can( $cpt_obj->cap->edit_posts          ) 
 			|| ! current_user_can( $cpt_obj->cap->edit_post, $post_id ) 
-			)
+		)
 			return $parent_id;
 
 		$entity_ppid = (int) get_option( $this->parent_option );
@@ -836,10 +845,11 @@ abstract class VGSR_Entity {
 	 * @return string $content
 	 */
 	public function entity_parent_page_children( $content ) {
-		global $post;
 
-		if ( (int) get_option( $this->parent_option ) == $post->ID )
+		// Append child entities if available
+		if ( (int) get_option( $this->parent_option ) == get_the_ID() ) {
 			$content .= $this->parent_page_list_children();
+		}
 
 		return $content;
 	}
@@ -939,7 +949,7 @@ abstract class VGSR_Entity {
 		// Only continue if error is sent
 		if (   ! isset( $_REQUEST[$this->type . '-error'] ) 
 			||   empty( $_REQUEST[$this->type . '-error'] ) 
-			)
+		)
 			return;
 
 		// Get the message number
