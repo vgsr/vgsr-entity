@@ -332,10 +332,10 @@ class VGSR_Kast extends VGSR_Entity {
 		<p id="vgsr_entity_kast_occupants">
 
 			<label>
-				<strong><?php __( 'Occupants', 'vgsr-entity' ); ?>: </strong>
-				<input type="text" name="vgsr_entity_kast_occupants" value="<?php echo $occupants; ?>" />
+				<strong><?php _e( 'Occupants', 'vgsr-entity' ); ?>: </strong>
+				<input type="text" name="vgsr_entity_kast_occupants" value="<?php echo esc_attr( $occupants ); ?>" />
 			</label>
-			<span class="howto"><?php __( 'The current occupants.', 'vgsr-entity' ); ?></span>
+			<span class="howto"><?php _e( 'The current occupants.', 'vgsr-entity' ); ?></span>
 
 		</p>
 
@@ -355,10 +355,10 @@ class VGSR_Kast extends VGSR_Entity {
 		<p id="vgsr_entity_kast_prev_occupants">
 
 			<label>
-				<strong><?php __( 'Previous Occupants', 'vgsr-entity' ); ?>: </strong>
-				<input type="text" name="vgsr_entity_kast_prev_occupants" value="<?php echo $prev_occupants; ?>" />
+				<strong><?php _e( 'Previous Occupants', 'vgsr-entity' ); ?>: </strong>
+				<input type="text" name="vgsr_entity_kast_prev_occupants" value="<?php echo esc_attr( $prev_occupants ); ?>" />
 			</label>
-			<span class="howto"><?php __( 'The previous occupants.', 'vgsr-entity' ); ?></span>
+			<span class="howto"><?php _e( 'The previous occupants.', 'vgsr-entity' ); ?></span>
 
 		</p>
 
