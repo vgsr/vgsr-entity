@@ -153,7 +153,7 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 			if ( ! $logo ) 
 				continue;
 
-			// Juggling with {$logo} so storing ID separate
+			// Juggling with {$logo} so storing ID separately
 			$logo_id = $logo->ID;
 			$logo    = wp_get_attachment_image_src( $logo_id, $this->thumbsize );
 
@@ -219,21 +219,21 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	 * @since 0.1
 	 */
 	public function admin_scripts() {
-		global $pagenow, $post;
 
-		if ( isset( $post ) && $post->post_type == $this->type && 'post.php' == $pagenow ) {
-			?>
-<script type="text/javascript">
-	jQuery(document).ready( function($) {
-		$('.datepicker').datepicker({
-			dateFormat: 'dd/mm/yyyy',
-			changeMonth: true,
-			changeYear: true
-		});
-	});
-</script>
-			<?php
-		}
+		// Editing a single kast
+		if ( isset( get_current_screen()->post_type ) && $this->type = get_current_screen()->post_type && 'post' == get_current_screen()->base ) : ?>
+
+		<script type="text/javascript">
+			jQuery(document).ready( function($) {
+				$('.datepicker').datepicker({
+					dateFormat: 'dd/mm/yyyy',
+					changeMonth: true,
+					changeYear: true
+				});
+			});
+		</script>
+
+		<?php endif;
 	}
 
 	/**
