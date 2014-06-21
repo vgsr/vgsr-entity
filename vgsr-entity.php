@@ -92,13 +92,31 @@ final class VGSR_Entities {
 	 */
 	private function setup_globals() {
 
-		// Paths
-		$this->file          = __FILE__;
-		$this->plugin_dir    = plugin_dir_path( $this->file );
+		/** Paths *************************************************************/
+
+		// Setup some base path and URL information
+		$this->file         = __FILE__;
+		$this->basename     = apply_filters( 'vgsr_plugin_basename', plugin_basename( $this->file ) );
+		$this->plugin_dir   = apply_filters( 'vgsr_plugin_dir_path', plugin_dir_path( $this->file ) );
+		$this->plugin_url   = apply_filters( 'vgsr_plugin_dir_url',  plugin_dir_url ( $this->file ) );
+
+		// Includes
+		$this->entities_dir = apply_filters( 'vgsr_entities_dir', trailingslashit( $this->plugin_dir . 'entities'  ) );
+		$this->entities_url = apply_filters( 'vgsr_entities_url', trailingslashit( $this->plugin_url . 'entities'  ) );
+
+		// Languages
+		$this->lang_dir     = apply_filters( 'vgsr_lang_dir',     trailingslashit( $this->plugin_dir . 'languages' ) );
+
+		// Templates
+		$this->themes_dir   = apply_filters( 'vgsr_themes_dir',   trailingslashit( $this->plugin_dir . 'templates' ) );
+		$this->themes_url   = apply_filters( 'vgsr_themes_url',   trailingslashit( $this->plugin_url . 'templates' ) );
+
+		/** Misc **************************************************************/
+
 		$this->menu_position = 35;
 
 		// Predefine all entities as class name => post type
-		$this->entities = array( 
+		$this->entities      = array( 
 			'VGSR_Entity_Bestuur' => 'bestuur', 
 			'VGSR_Entity_Dispuut' => 'dispuut', 
 			'VGSR_Entity_Kast'    => 'kast', 
@@ -115,7 +133,7 @@ final class VGSR_Entities {
 
 		// Load each entity
 		foreach ( $this->entities as $entity ) {
-			require( $this->plugin_dir . "entities/class-vgsr-entity-{$entity}.php" );
+			require( $this->entities_dir . "class-vgsr-entity-{$entity}.php" );
 		}
 	}
 
@@ -127,7 +145,7 @@ final class VGSR_Entities {
 	private function setup_actions() {
 
 		add_action( 'plugins_loaded',     array( $this, 'load_textdomain'  ) );
-		add_action( 'init',               array( $this, 'entities_init'    ) );
+		add_action( 'init',               array( $this, 'vgsr_entity_init' ) );
 		add_action( 'admin_menu',         array( $this, 'admin_menu'       ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts'  ) );
 		add_action( 'widgets_init',       array( $this, 'widgets_init'     ) );
@@ -148,7 +166,7 @@ final class VGSR_Entities {
 	 *
 	 * @since 0.2
 	 */
-	public function entities_init() {
+	public function vgsr_entity_init() {
 		do_action( 'vgsr_entity_init' );
 	}
 
@@ -308,7 +326,7 @@ final class VGSR_Entities {
 		if ( in_array( $post_type, $this->entities ) && is_singular( $post_type ) ) {
 
 			// Get our template path
-			$single = $this->plugin_dir . 'templates/single-' . $post_type . ' .php';
+			$single = $this->plugin_dir . 'templates/single-{$post_type}.php';
 
 			// Only serve our template when it exists
 			$template = file_exists( $single ) ? $single : $template;

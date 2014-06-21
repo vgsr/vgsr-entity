@@ -40,7 +40,7 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 	public function setup_actions() {
 
 		// Save post meta
-		add_action( 'save_post', array( $this, 'dispuut_metabox_save' ) );
+		add_action( 'save_post', array( $this, 'dispuut_metabox_save' ), 10, 2 );
 
 		// Append entity children
 		add_filter( 'the_content', array( $this, 'entity_parent_page_children' ) );
@@ -136,20 +136,21 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 	 * @since 0.1
 	 * 
 	 * @param int $post_id The post ID
+	 * @param object $post Post data
 	 */
-	public function dispuut_metabox_save( $post_id ) {
+	public function dispuut_metabox_save( $post_id, $post ) {
 
 		// Check autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
 
 		// Check post type
-		if ( get_post_type( $post_id ) !== $this->type )
+		if ( $post->post_type !== $this->type )
 			return;
 
 		// Check caps
 		$pto = get_post_type_object( $this->type );
-		if (   ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
+		if ( ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
 			return;
 
 		// Check nonce
@@ -157,7 +158,7 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 			return;
 
 		//
-		// We're authenticated now
+		// Authenticated
 		//
 
 		// Since & Ceased

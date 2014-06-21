@@ -62,9 +62,9 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	public function setup_actions() {
 
 		// Actions
-		add_action( 'admin_init', array( $this, 'register_settings'  ) );
-		add_action( 'admin_head', array( $this, 'admin_scripts'      ) );
-		add_action( 'save_post',  array( $this, 'metabox_since_save' ) );
+		add_action( 'admin_init', array( $this, 'register_settings' )        );
+		add_action( 'admin_head', array( $this, 'admin_scripts'     )        );
+		add_action( 'save_post',  array( $this, 'kast_metabox_save' ), 10, 2 );
 
 		// Filters
 		add_filter( 'vgsr_kast_register_post_type', array( $this, 'post_type_args'  ) );
@@ -375,17 +375,17 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	 * @since 0.1
 	 * 
 	 * @param int $post_id The post ID
+	 * @param object $post Post data
 	 */
-	public function metabox_since_save( $post_id ) {
+	public function kast_metabox_save( $post_id, $post ) {
 
 		// Check autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
 
 		// Check post type
-		if ( $this->type != get_post_type( $post_id ) )
+		if ( $post->post_type != $this->type )
 			return;
-
 
 		// Check caps
 		$pto = get_post_type_object( $this->type );
@@ -397,7 +397,7 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 			return;
 
 		//
-		// We're authenticated now
+		// Authenticated
 		// 
 
 		// Since & Ceased

@@ -56,11 +56,15 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 */
 	public function setup_actions() {
 
-		add_action( 'init',       array( $this, 'latest_bestuur_rewrite_rule' ) );
-		add_action( 'admin_init', array( $this, 'bestuur_register_settings'   ) );
-		add_action( 'save_post',  array( $this, 'latest_bestuur_save_id'      ) );
-		add_action( 'save_post',  array( $this, 'metabox_season_save'         ) );
+		add_action( 'vgsr_entity_init', array( $this, 'latest_bestuur_rewrite_rule' )        );
+		add_action( 'admin_init',       array( $this, 'bestuur_register_settings'   )        );
+		add_action( 'save_post',        array( $this, 'latest_bestuur_save_id'      ), 10, 2 );
+		add_action( 'save_post',        array( $this, 'bsetuur_metabox_save'        ), 10, 2 );
 
+		// Mark the current bestuur
+		add_filter( 'display_post_states', array( $this, 'display_post_states' ), 9, 2 );
+
+		// Entity Widget
 		add_filter( 'vgsr_entity_menu_widget_get_posts', array( $this, 'widget_menu_order' ) );
 	}
 
@@ -85,8 +89,8 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 		$value = (int) get_option( '_bestuur-menu-order' ); ?>
 
 			<select name="_bestuur-menu-order" id="_bestuur-menu-order">
-				<option value="0" <?php selected( $value, 0 ); ?>><?php _e('Seniority',         'vgsr-entity' ); ?></option>
-				<option value="1" <?php selected( $value, 1 ); ?>><?php _e('Reverse seniority', 'vgsr-entity' ); ?></option>
+				<option value="0" <?php selected( $value, 0 ); ?>><?php _e( 'Seniority',         'vgsr-entity' ); ?></option>
+				<option value="1" <?php selected( $value, 1 ); ?>><?php _e( 'Reverse seniority', 'vgsr-entity' ); ?></option>
 			</select>
 			<label for="_bestuur-menu-order"><span class="description"><?php sprintf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->args->plural ); ?></span></label>
 		
@@ -156,20 +160,21 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 * @since 0.1
 	 * 
 	 * @param int $post_id The post ID
+	 * @param object $post Post data
 	 */
-	public function metabox_season_save( $post_id ) {
+	public function bsetuur_metabox_save( $post_id, $post ) {
 
 		// Check autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
 
 		// Check post type
-		if ( get_post_type( $post_id ) !== $this->type )
+		if ( $post->post_type !== $this->type )
 			return;
 
 		// Check caps
 		$pto = get_post_type_object( $this->type );
-		if (   ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
+		if ( ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
 			return;
 
 		// Check nonce
@@ -177,7 +182,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 			return;
 
 		// 
-		// We're authenticated now
+		// Authenticated
 		// 
 
 		// Season
@@ -230,75 +235,121 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 * We only do this when a new bestuur gets saved
 	 * 
 	 * @since 0.1
+	 *
+	 * @param int $post_id Post ID
+	 * @param object $post Post data
 	 */
-	public function latest_bestuur_save_id( $post_id ) {
+	public function latest_bestuur_save_id( $post_id, $post ) {
 
+		// Check autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
 
-		if ( get_post_type( $post_id ) !== $this->type )
+		// Check post type
+		if ( $post->post_type !== $this->type )
 			return;
 
-		$cpt_obj = get_post_type_object( $this->type );
-
-		if (   ! current_user_can( $cpt_obj->cap->edit_posts          ) 
-			|| ! current_user_can( $cpt_obj->cap->edit_post, $post_id ) 
-			)
+		// Check caps
+		$pto = get_post_type_object( $this->type );
+		if ( ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
 			return;
 
-		if ( $post_id == $this->latest_bestuur )
-			return;
+		// Check if this bestuur is already known as the latest one
+		if ( $post_id == $this->latest_bestuur ) {
 
-		$current_bestuur = get_post( $post_id );
-		$latest_bestuur  = get_post( $this->latest_bestuur );
+			// Bail if status isn't changed
+			if ( 'publish' == $post->post_status )
+				return;
 
-		// Can be silent for a year
-		if ( $current_bestuur->menu_order <= $latest_bestuur->menu_order )
-			return;
+			// Find now latest bestuur
+			if ( $_post = $this->get_latest_bestuur() ) {
+				$post_id = $_post->ID;
 
-		// Let's do this, the menu order is higher, so save it!
+			// Default to 0
+			} else {
+				$post_id = 0;
+			}
+
+		// Is not latest bestuur
+		} else {
+
+			// Nothing changes when it's not published or it's an older bestuur
+			if ( 'publish' != $post->post_status || ( $post->menu_order <= get_post( $this->latest_bestuur )->menu_order ) ) {
+				return;
+			}
+		}
+
+		// Update latest bestuur option
 		update_option( '_bestuur-latest-bestuur', $post_id );
 		$this->latest_bestuur = $post_id;
 
-		// Reset rewrite rules
-		flush_rewrite_rules();
+		// Overwrite latest bestuur rule
+		$this->latest_bestuur_rewrite_rule();
+
+		// Reset rewrite rules to properly point to the latest bestuur
+		add_action( 'save_post', 'flush_rewrite_rules', 99 );
 	}
 
 	/**
-	 * Reroutes requests for the parent page to the latest bestuur
+	 * Redirect requests for the entity parent page to the latest bestuur
 	 * 
 	 * @since 0.1
 	 * 
 	 * @uses get_post_type_object() To find the post type slug for the parent
 	 */
 	public function latest_bestuur_rewrite_rule() {
-		add_rewrite_rule( 
-			get_post_type_object( $this->type )->rewrite['slug'] . '/?$', // The parent page ...
-			'index.php?p=' . $this->latest_bestuur, // ... appears to be the latest Bestuur
-			'top'
-		);
+
+		// Add rewrite rule with latest bestuur
+		if ( $this->latest_bestuur ) {
+			add_rewrite_rule( 
+				get_post_type_object( $this->type )->rewrite['slug'] . '/?$', // The parent page ...
+				'index.php?p=' . $this->latest_bestuur, // ... appears to be the latest Bestuur
+				'top'
+			);
+		}
 	}
 
 	/**
 	 * Returns the latest (or current) bestuur
 	 *
 	 * @since 0.1
-	 * 
+	 *
+	 * @uses get_posts()
 	 * @return object|boolean Post object on success, false if not found
 	 */
 	public function get_latest_bestuur() {
 
 		// Get the latest bestuur
-		$bestuur = get_posts( array(
+		if ( $bestuur = get_posts( array(
 			'numberposts' => 1,
 			'post_type'   => $this->type,
-			'orderby'     => 'menu_order'
-		) );
-
-		if ( $bestuur )
+			'post_status' => 'publish',
+			'orderby'     => 'menu_order',
+		) ) ) {
 			return $bestuur[0];
+		}
 
 		return false;
+	}
+
+	/**
+	 * Show which bestuur is the current one by appending a 'Current'
+	 * post state
+	 *
+	 * @since 0.2
+	 * 
+	 * @param array $states Post states
+	 * @param object $post Post object
+	 * @return array Post states
+	 */
+	public function display_post_states( $states, $post ) {
+
+		// Bestuur is the latest one
+		if ( $post->post_type == $this->type && $post->ID == $this->latest_bestuur ) {
+			$states['current'] = __( 'Current', 'vgsr-entity' );
+		}
+
+		return $states;
 	}
 
 	/**
