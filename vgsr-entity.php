@@ -261,9 +261,7 @@ final class VGSR_Entities {
 			return;
 
 		// Bail when not on entity parent page
-		if (   ! in_array( $post->post_type, $this->entities ) 
-			&& ! in_array( $post->ID, $this->get_entity_parent_ids()       ) 
-		)
+		if ( ! in_array( $post->post_type, $this->entities ) && ! in_array( $post->ID, $this->get_entity_parent_ids() ) )
 			return;
 
 		wp_register_style( 'vgsr-entity', plugins_url( 'css/style.css', __FILE__ ) );
@@ -508,7 +506,7 @@ abstract class VGSR_Entity {
 		add_action( "{$this->type}_settings_load",  array( $this, 'entity_parent_page_update' ), 1 );
 
 		// Post hooks
-		add_filter( 'wp_insert_post_parent', array( $this, 'entity_parent_page_save_post' ), 10, 2 );
+		add_filter( 'wp_insert_post_parent', array( $this, 'entity_parent_page_id' ), 10, 4 );
 	}
 
 	/**
@@ -770,16 +768,18 @@ abstract class VGSR_Entity {
 	 * 
 	 * @param int $parent_id The parent page ID
 	 * @param int $post_id The post ID
+	 * @param array $new_postarr Array of parsed post data
+	 * @param array $postarr Array of unmodified post data
 	 * @return int The parent ID
 	 */
-	public function entity_parent_page_save_post( $parent_id, $post_id ) {
+	public function entity_parent_page_id( $parent_id, $post_id, $new_postarr, $postarr ) {
 
 		// Check autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return $parent_id;
 
 		// Check post type
-		if ( get_post_type( $post_id ) !== $this->type )
+		if ( $new_postarr['post_type'] !== $this->type )
 			return $parent_id;
 
 		// Check caps
@@ -787,12 +787,10 @@ abstract class VGSR_Entity {
 		if ( ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
 			return $parent_id;
 
-		$entity_ppid = (int) get_option( $this->parent_option_key );
+		// Get the parent post ID
+		$parent_id = (int) get_option( $this->parent_option_key );
 
-		if ( $parent_id != $entity_ppid )
-			return $parent_id;
-
-		return $entity_ppid;
+		return $parent_id;
 	}
 
 	/**
