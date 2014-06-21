@@ -56,10 +56,10 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 */
 	public function setup_actions() {
 
-		add_action( 'vgsr_entity_init', array( $this, 'latest_bestuur_rewrite_rule' )        );
-		add_action( 'admin_init',       array( $this, 'bestuur_register_settings'   )        );
-		add_action( 'save_post',        array( $this, 'latest_bestuur_save_id'      ), 10, 2 );
-		add_action( 'save_post',        array( $this, 'bsetuur_metabox_save'        ), 10, 2 );
+		add_action( 'vgsr_entity_init', array( $this, 'add_bestuur_rewrite_rule'  )        );
+		add_action( 'admin_init',       array( $this, 'bestuur_register_settings' )        );
+		add_action( 'save_post',        array( $this, 'latest_bestuur_save_id'    ), 10, 2 );
+		add_action( 'save_post',        array( $this, 'bsetuur_metabox_save'      ), 10, 2 );
 
 		// Mark the current bestuur
 		add_filter( 'display_post_states', array( $this, 'display_post_states' ), 9, 2 );
@@ -284,7 +284,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 		$this->latest_bestuur = $post_id;
 
 		// Overwrite latest bestuur rule
-		$this->latest_bestuur_rewrite_rule();
+		$this->add_bestuur_rewrite_rule();
 
 		// Reset rewrite rules to properly point to the latest bestuur
 		add_action( 'save_post', 'flush_rewrite_rules', 99 );
@@ -297,9 +297,9 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 * 
 	 * @uses get_post_type_object() To find the post type slug for the parent
 	 */
-	public function latest_bestuur_rewrite_rule() {
+	public function add_bestuur_rewrite_rule() {
 
-		// Add rewrite rule with latest bestuur
+		// Point parent page to latest bestuur
 		if ( $this->latest_bestuur ) {
 			add_rewrite_rule( 
 				get_post_type_object( $this->type )->rewrite['slug'] . '/?$', // The parent page ...
@@ -315,7 +315,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 * @since 0.1
 	 *
 	 * @uses get_posts()
-	 * @return object|boolean Post object on success, false if not found
+	 * @return object|bool Post object on success, false if not found
 	 */
 	public function get_latest_bestuur() {
 
