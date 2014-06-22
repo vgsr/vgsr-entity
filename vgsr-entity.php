@@ -349,7 +349,7 @@ final class VGSR_Entities {
 		$list = '';
 
 		// Loop over all meta fields
-		foreach ( apply_filters( "vgsr_{$post->post_type}_meta", array() ) as $key => $meta ) {
+		foreach ( apply_filters( "vgsr_{$post->post_type}_display_meta", array() ) as $key => $meta ) {
 
 			// Merge meta args
 			$meta = wp_parse_args( $meta, array(
@@ -519,9 +519,9 @@ abstract class VGSR_Entity {
 		add_action( 'admin_notices',    array( $this, 'entity_admin_notices'     ) );
 
 		// Plugin hooks
-		add_filter( "vgsr_{$this->type}_meta",      array( $this, 'entity_meta'               )    );
-		add_filter( "{$this->type}_admin_messages", array( $this, 'admin_messages'            )    );
-		add_action( "{$this->type}_settings_load",  array( $this, 'entity_parent_page_update' ), 1 );
+		add_filter( "vgsr_{$this->type}_display_meta",   array( $this, 'entity_display_meta'               )    );
+		add_filter( "vgsr_{$this->type}_admin_messages", array( $this, 'admin_messages'            )    );
+		add_action( "vgsr_{$this->type}_settings_load",  array( $this, 'entity_parent_page_update' ), 1 );
 
 		// Post hooks
 		add_filter( 'wp_insert_post_parent', array( $this, 'entity_parent_page_id' ), 10, 4 );
@@ -959,7 +959,7 @@ abstract class VGSR_Entity {
 		$num = trim( $_REQUEST[$this->type . '-error'] );
 
 		// The messages to pick from
-		$messages = apply_filters( $this->type . '_admin_messages', array(
+		$messages = apply_filters( "vgsr_{$this->type}_admin_messages", array(
 			0 => '' // Default empty
 		) );
 
@@ -996,7 +996,7 @@ abstract class VGSR_Entity {
 	 * @param array $meta The entity meta data
 	 * @return array $meta
 	 */
-	public function entity_meta( $meta ) {
+	public function entity_display_meta( $meta ) {
 		return $meta;
 	}
 }

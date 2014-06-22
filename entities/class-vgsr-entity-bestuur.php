@@ -143,14 +143,35 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 
 			<label>
 				<strong><?php _e( 'Season', 'vgsr-entity' ); ?>:</strong>
-				<input type="text" name="vgsr_entity_bestuur_season" value="<?php echo esc_attr( $season ); ?>" />
+				<input type="text" name="vgsr_entity_bestuur_season" value="<?php echo esc_attr( $season ); ?>" placeholder="yyyy/yyyy" />
 			</label>
-			<span class="howto"><?php _e( 'The required format is yyyy/yyyy.', 'vgsr-entity' ); ?></span>
 
 		</p>
 
 		<?php
-		
+
+		/** Members ****************************************************/
+
+		// Get stored meta value
+		$members = get_post_meta( $post->ID, 'vgsr_entity_bestuur_members', true );
+
+		// If no value served set it empty
+		if ( ! $members )
+			$members = '';
+
+		?>
+
+		<p id="vgsr_entity_bestuur_members">
+
+			<label>
+				<strong><?php _e( 'Members', 'vgsr-entity' ); ?>:</strong><br/>
+				<textarea name="vgsr_entity_bestuur_members" rows="4" placeholder="Voornaam Achternaam, Praeses"><?php echo esc_textarea( $members ); ?></textarea>
+			</label>
+
+		</p>
+
+		<?php
+
 		do_action( "vgsr_{$this->type}_metabox", $post );
 	}
 
@@ -186,7 +207,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 		// 
 
 		// Season
-		if ( isset( $_POST['vgsr_entity_kast_season'] ) ) {
+		if ( isset( $_POST['vgsr_entity_bestuur_season'] ) ) {
 			$value = sanitize_text_field( $_POST['vgsr_entity_bestuur_season'] );
 
 			// Does the inserted input match our requirements? - Checks for 1900 - 2099
@@ -360,7 +381,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 * @param array $meta Meta fields
 	 * @return array $meta
 	 */
-	public function entity_meta( $meta ) {
+	public function entity_display_meta( $meta ) {
 		global $post;
 
 		// Setup value for season meta

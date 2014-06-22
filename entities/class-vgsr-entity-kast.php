@@ -287,9 +287,8 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 			<label>
 				<strong><?php _e( 'Since', 'vgsr-entity' ); ?>: </strong>
-				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_since" value="<?php echo esc_attr( $since ); ?>" />
+				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_since" value="<?php echo esc_attr( $since ); ?>" placeholder="dd/mm/yyyy" />
 			</label>
-			<span class="howto"><?php _e( 'The required format is dd/mm/yyyy.', 'vgsr-entity' ); ?></span>
 
 		</p>
 
@@ -310,9 +309,8 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 			<label>
 				<strong><?php _e( 'Ceased', 'vgsr-entity' ); ?>: </strong>
-				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_ceased" value="<?php echo esc_attr( $ceased ); ?>" />
+				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_ceased" value="<?php echo esc_attr( $ceased ); ?>" placeholder="dd/mm/yyyy" />
 			</label>
-			<span class="howto"><?php _e( 'The required format is dd/mm/yyyy.', 'vgsr-entity' ); ?></span>
 
 		</p>
 
@@ -497,7 +495,7 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	 * @param array $meta Meta fields
 	 * @return array $meta
 	 */
-	public function entity_meta( $meta ) {
+	public function entity_display_meta( $meta ) {
 		global $post;
 
 		// Setup value for since meta

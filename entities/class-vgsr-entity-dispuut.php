@@ -96,9 +96,8 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 			<label>
 				<strong><?php _e( 'Since', 'vgsr-entity' ); ?>: </strong>
-				<input type="text" name="vgsr_entity_dispuut_since" value="<?php echo esc_attr( $since ); ?>" />
+				<input type="text" name="vgsr_entity_dispuut_since" value="<?php echo esc_attr( $since ); ?>" placeholder="yyyy" />
 			</label>
-			<span class="howto"><?php _e( 'The required format is yyyy.', 'vgsr-entity' ); ?></span>
 
 		</p>
 
@@ -119,9 +118,8 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 			<label>
 				<strong><?php _e( 'Ceased', 'vgsr-entity' ); ?>: </strong>
-				<input type="text" name="vgsr_entity_dispuut_ceased" value="<?php echo esc_attr( $ceased ); ?>" />
+				<input type="text" name="vgsr_entity_dispuut_ceased" value="<?php echo esc_attr( $ceased ); ?>" placeholder="yyyy" />
 			</label>
-			<span class="howto"><?php _e( 'The required format is yyyy.', 'vgsr-entity' ); ?></span>
 
 		</p>
 	
@@ -162,7 +160,7 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 		//
 
 		// Since & Ceased
-		if ( isset( $_POST['vgsr_entity_kast_since'] ) || isset( $_POST['vgsr_entity_kast_ceased'] ) ) {
+		if ( isset( $_POST['vgsr_entity_dispuut_since'] ) || isset( $_POST['vgsr_entity_dispuut_ceased'] ) ) {
 
 			// Walk since and ceased meta
 			foreach ( array_filter( array(
@@ -243,7 +241,7 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 	 * @param array $meta Meta fields
 	 * @return array $meta
 	 */
-	public function entity_meta( $meta ) {
+	public function entity_display_meta( $meta ) {
 		global $post;
 
 		// Setup value for since meta
