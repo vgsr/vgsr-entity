@@ -13,7 +13,7 @@
  * Plugin URI:        https://github.com/vgsr/vgsr-entity
  * Author:            Laurens Offereins
  * Author URI:        https://github.com/lmoffereins
- * Version:           0.1
+ * Version:           1.0.0
  * Text Domain:       vgsr-entity
  * Domain Path:       /languages/
  * GitHub Plugin URI: vgsr/vgsr-entity
@@ -24,21 +24,21 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 //
 // Main entities
-// 
+//
 
 if ( ! class_exists( 'VGSR_Entities' ) ) :
 
 /**
  * Main Plugin Entities Class
  *
- * @since 0.1
+ * @since 1.0.0
  */
 final class VGSR_Entities {
 
 	/**
 	 * Contains all built-in entity names
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 * @var array
 	 */
 	public $entities = array();
@@ -48,12 +48,12 @@ final class VGSR_Entities {
 	/**
 	 * Main VGSR Entities Instance
 	 *
-	 * Insures that only one instance of VGSR_Entities exists in memory 
-	 * at any one time. Also prevents needing to define globals all over 
+	 * Insures that only one instance of VGSR_Entities exists in memory
+	 * at any one time. Also prevents needing to define globals all over
 	 * the place.
 	 *
-	 * @since 0.2
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @staticvar object $instance
 	 * @uses VGSR_Entities::setup_globals() Setup the globals needed
 	 * @uses VGSR_Entities::includes() Include the required files
@@ -81,14 +81,14 @@ final class VGSR_Entities {
 	/**
 	 * Construct the main plugin class
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function __construct() { /* do nothing here */ }
 
 	/**
 	 * Define default class globals
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	private function setup_globals() {
 
@@ -116,17 +116,17 @@ final class VGSR_Entities {
 		$this->menu_position = 35;
 
 		// Predefine all entities as class name => post type
-		$this->entities      = array( 
-			'VGSR_Entity_Bestuur' => 'bestuur', 
-			'VGSR_Entity_Dispuut' => 'dispuut', 
-			'VGSR_Entity_Kast'    => 'kast', 
+		$this->entities      = array(
+			'VGSR_Entity_Bestuur' => 'bestuur',
+			'VGSR_Entity_Dispuut' => 'dispuut',
+			'VGSR_Entity_Kast'    => 'kast',
 		);
 	}
 
 	/**
 	 * Include the required files
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	private function includes() {
 		require( $this->plugin_dir . 'widgets/widget-menu.php' );
@@ -140,7 +140,7 @@ final class VGSR_Entities {
 	/**
 	 * Setup default actions and filters
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	private function setup_actions() {
 
@@ -164,7 +164,7 @@ final class VGSR_Entities {
 	/**
 	 * Create vgsr_entity_init action
 	 *
-	 * @since 0.2
+	 * @since 1.0.0
 	 */
 	public function vgsr_entity_init() {
 		do_action( 'vgsr_entity_init' );
@@ -174,8 +174,8 @@ final class VGSR_Entities {
 	 * Set new permalink structure by refreshing the rewrite rules
 	 * on activation
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @uses VGSR_Entity::register_post_type()
 	 * @uses flush_rewrite_rules()
 	 */
@@ -194,7 +194,7 @@ final class VGSR_Entities {
 	/**
 	 * Loads the textdomain file for this plugin
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @uses load_textdomain() To insert the matched language file
 	 * @return mixed Text domain if found, else boolean false
@@ -223,8 +223,8 @@ final class VGSR_Entities {
 
 	/**
 	 * Filters the admin menu to add a separator
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @uses VGSR_Entities::add_separator()
 	 */
@@ -239,8 +239,8 @@ final class VGSR_Entities {
 	 * therefor the separator{$index} naming is changed.
 	 *
 	 * @link http://wordpress.stackexchange.com/questions/2666/add-a-separator-to-the-admin-menu
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @global array $menu
 	 * @param int $pos The position after which to add the sep
@@ -264,8 +264,8 @@ final class VGSR_Entities {
 
 	/**
 	 * Enqueue page scripts
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @uses VGSR_Entities::get_entitiy_parent_id()
 	 * @uses wp_register_style()
@@ -289,7 +289,7 @@ final class VGSR_Entities {
 	/**
 	 * Return all entity parent page IDs
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function get_entity_parent_ids() {
 		$parents = array();
@@ -303,7 +303,7 @@ final class VGSR_Entities {
 	/**
 	 * Initiate entity widgets
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @uses register_widget()
 	 */
@@ -314,8 +314,8 @@ final class VGSR_Entities {
 	/**
 	 * Intercept the template loader to load the entity template
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param string $template The current template match
 	 * @return string $template
 	 */
@@ -337,8 +337,8 @@ final class VGSR_Entities {
 
 	/**
 	 * Outputs the entity meta list
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @uses apply_filters() Calls 'vgsr_{$post_type}_meta' with the meta array
 	 */
@@ -361,7 +361,7 @@ final class VGSR_Entities {
 
 			$list .= '<li><i class="' . $meta['icon'] . '"></i> ' . $meta['before'] . $meta['value'] . $meta['after'] . '</li>';
 		}
-		
+
 		// End list
 		if ( ! empty( $list ) ) {
 			echo '<ul class="post-meta entity-meta">' . $list . '</ul>';
@@ -373,29 +373,29 @@ endif; // class_exists VGSR_Entities
 
 //
 // Single entity
-// 
+//
 
 if ( ! class_exists( 'VGSR_Entity' ) ) :
 
 /**
  * Single entity base class
  *
- * @since 0.1
+ * @since 1.0.0
  */
 abstract class VGSR_Entity {
 
 	/**
 	 * The entity post type
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 * @var string
 	 */
 	public $type = '';
 
 	/**
-	 * The entity admin page 
+	 * The entity admin page
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 * @var string
 	 */
 	public $page = '';
@@ -403,7 +403,7 @@ abstract class VGSR_Entity {
 	/**
 	 * The entity post type labels
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 * @var array {
 	 *  @type string $single Post type single label
 	 *  @type string $plural Post type plural label
@@ -414,7 +414,7 @@ abstract class VGSR_Entity {
 	/**
 	 * The entity settings page hook
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 * @var string
 	 */
 	public $hook = '';
@@ -422,7 +422,7 @@ abstract class VGSR_Entity {
 	/**
 	 * The entity parent page option name
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 * @var string
 	 */
 	public $parent_option_key = '';
@@ -430,7 +430,7 @@ abstract class VGSR_Entity {
 	/**
 	 * The entity post thumbnail size
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 * @var string
 	 */
 	public $thumbsize = '';
@@ -438,7 +438,7 @@ abstract class VGSR_Entity {
 	/**
 	 * The entity settings page
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 * @var string
 	 */
 	public $settings_page = '';
@@ -446,7 +446,7 @@ abstract class VGSR_Entity {
 	/**
 	 * The entity main settings section
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 * @var string
 	 */
 	public $settings_section = '';
@@ -454,12 +454,12 @@ abstract class VGSR_Entity {
 	/**
 	 * Construct the VGSR Entity
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function __construct( $args ) {
 
 		// Setup entity args
-		$this->args = (object) wp_parse_args( $args, array( 
+		$this->args = (object) wp_parse_args( $args, array(
 			'single'    => '',
 			'plural'    => '',
 			'menu_icon' => '',
@@ -483,7 +483,7 @@ abstract class VGSR_Entity {
 	/**
 	 * Define default entity base globals
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	private function entity_globals() {
 
@@ -508,7 +508,7 @@ abstract class VGSR_Entity {
 	/**
 	 * Setup default entity base actions and filters
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	private function entity_actions() {
 
@@ -530,21 +530,21 @@ abstract class VGSR_Entity {
 	/**
 	 * Define child class globals
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function setup_globals() { /* Overwrite this method in a child class */ }
 
 	/**
 	 * Include required child class files
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function setup_requires() { /* Overwrite this method in a child class */ }
 
 	/**
 	 * Setup child class actions and filters
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function setup_actions() { /* Overwrite this method in a child class */ }
 
@@ -553,7 +553,7 @@ abstract class VGSR_Entity {
 	/**
 	 * Register the post type
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @uses register_post_type()
 	 * @uses apply_filters() To call vgsr_{$post_type}_register_cpt
@@ -573,17 +573,17 @@ abstract class VGSR_Entity {
 			'view_item'            => sprintf( __( 'View %s' ),              $this->args->single ),
 			'search_items'         => sprintf( __( 'Search %s' ),            $this->args->plural ),
 			'not_found'            => sprintf( __( 'No %s found' ),          $this->args->plural ),
-			'not_found_in_trash'   => sprintf( __( 'No %s found in trash' ), $this->args->plural ), 
+			'not_found_in_trash'   => sprintf( __( 'No %s found in trash' ), $this->args->plural ),
 			'menu_name'            => $this->args->plural
 		);
 
 		// Setup post type support
 		$supports = array(
-			'title', 
-			'editor', 
-			'author', 
-			'thumbnail', 
-			'revisions', 
+			'title',
+			'editor',
+			'author',
+			'thumbnail',
+			'revisions',
 			'page-attributes' // To set menu order
 		);
 
@@ -593,8 +593,8 @@ abstract class VGSR_Entity {
 			'public'               => true,
 			'menu_position'        => vgsr_entity()->menu_position,
 			'hierarchical'         => false,
-			'rewrite'              => array( 
-				'slug' => $this->entity_parent_page_slug() 
+			'rewrite'              => array(
+				'slug' => $this->entity_parent_page_slug()
 			),
 			'capability_type'      => 'page',
 			'supports'             => $supports,
@@ -606,7 +606,7 @@ abstract class VGSR_Entity {
 	/**
 	 * Add metabox callback for entity CPT
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function add_metabox() { /* Overwrite this method in a child class */ }
 
@@ -615,7 +615,7 @@ abstract class VGSR_Entity {
 	/**
 	 * Register the entity admin menu with associated hooks
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @uses add_submenu_page()
 	 * @uses add_action() To call some actions on page load
@@ -642,7 +642,7 @@ abstract class VGSR_Entity {
 
 	/**
 	 * Create admin page styles hook
-	 * 
+	 *
 	 * @since 0.x
 	 */
 	public function entity_settings_styles() {
@@ -651,7 +651,7 @@ abstract class VGSR_Entity {
 
 	/**
 	 * Create admin settings scripts hook
-	 * 
+	 *
 	 * @since 0.x
 	 */
 	public function entity_settings_scripts() {
@@ -660,7 +660,7 @@ abstract class VGSR_Entity {
 
 	/**
 	 * Create admin footer scripts hook
-	 * 
+	 *
 	 * @since 0.x
 	 */
 	public function entity_settings_footer() {
@@ -668,9 +668,9 @@ abstract class VGSR_Entity {
 	}
 
 	/**
-	 * Output entity settings page 
+	 * Output entity settings page
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @uses settings_errors()
 	 * @uses settings_fields()
@@ -699,8 +699,8 @@ abstract class VGSR_Entity {
 	/**
 	 * Register entity settings
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @uses add_settings_section()
 	 * @uses add_settings_field()
 	 * @uses register_setting()
@@ -708,11 +708,11 @@ abstract class VGSR_Entity {
 	public function entity_register_settings() {
 
 		// Register main settings section
-		add_settings_section( 
-			$this->settings_section, 
+		add_settings_section(
+			$this->settings_section,
 			sprintf( __( 'Main %s Settings', 'vgsr-entity' ), $this->args->plural ),
-			array( $this, 'main_settings_info' ), 
-			$this->settings_page 
+			array( $this, 'main_settings_info' ),
+			$this->settings_page
 		);
 
 		// Entity post type parent page
@@ -723,14 +723,14 @@ abstract class VGSR_Entity {
 	/**
 	 * Output main settings section info
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function main_settings_info() { /* Nothing to display */ }
 
 	/**
 	 * Output entity parent page settings field
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @uses wp_dropdown_pages()
 	 */
@@ -756,7 +756,7 @@ abstract class VGSR_Entity {
 	/**
 	 * Rewrite permalink setup if post parent changes
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @uses get_posts()
 	 * @uses wp_update_post()
@@ -782,8 +782,8 @@ abstract class VGSR_Entity {
 	/**
 	 * Return entity parent page ID as post parent on post save
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param int $parent_id The parent page ID
 	 * @param int $post_id The post ID
 	 * @param array $new_postarr Array of parsed post data
@@ -814,8 +814,8 @@ abstract class VGSR_Entity {
 	/**
 	 * Return the slug for the entity parent page
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @return string Parent page slug
 	 */
 	public function entity_parent_page_slug() {
@@ -842,8 +842,8 @@ abstract class VGSR_Entity {
 	/**
 	 * Append entity parent page content with entity children
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param string $content The post content
 	 * @return string $content
 	 */
@@ -859,10 +859,10 @@ abstract class VGSR_Entity {
 
 	/**
 	 * Return entity posts HTML markup
-	 * 
+	 *
 	 * Creates a list of all posts with their respective post thumbnails.
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @uses get_posts()
 	 * @uses setup_postdata()
@@ -872,7 +872,7 @@ abstract class VGSR_Entity {
 	 * @uses get_post_thumbnail_id()
 	 * @uses get_children()
 	 * @global array $_wp_additional_image_sizes
-	 * 
+	 *
 	 * @return string $retval HTML
 	 */
 	public function parent_page_list_children() {
@@ -911,7 +911,7 @@ abstract class VGSR_Entity {
 				} else {
 					$format = $this->thumbsize;
 				}
-				
+
 				// Setup dummy image size
 				if ( is_array( $format ) ) {
 					if ( isset( $format[0] ) ) // Numerical array
@@ -942,16 +942,16 @@ abstract class VGSR_Entity {
 
 	/**
 	 * Output the admin messages if requested
-	 *  
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @uses apply_filters() To call the {$this->type}_admin_messages filter
 	 */
 	public function entity_admin_notices() {
 
 		// Only continue if error is sent
-		if (   ! isset( $_REQUEST[$this->type . '-error'] ) 
-			||   empty( $_REQUEST[$this->type . '-error'] ) 
+		if (   ! isset( $_REQUEST[$this->type . '-error'] )
+			||   empty( $_REQUEST[$this->type . '-error'] )
 		)
 			return;
 
@@ -976,8 +976,8 @@ abstract class VGSR_Entity {
 	 *
 	 * Should be overriden in child class.
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param array $messages {
 	 *  @type int    Message number
 	 *  @type string Message content
@@ -991,8 +991,8 @@ abstract class VGSR_Entity {
 	/**
 	 * Return the entity meta data
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param array $meta The entity meta data
 	 * @return array $meta
 	 */
@@ -1011,8 +1011,8 @@ endif; // class_exsits
  *
  * Example: <?php $entities = vgsr_entity(); ?>
  *
- * @since 0.2
- * 
+ * @since 1.0.0
+ *
  * @uses VGSR_Entities
  * @return The one single VGSR Entities
  */

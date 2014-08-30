@@ -15,14 +15,14 @@ if ( ! class_exists( 'VGSR_Entity_Bestuur' ) ) :
 /**
  * VGSR Bestuur Entity Class
  *
- * @since 0.1
+ * @since 1.0.0
  */
 class VGSR_Entity_Bestuur extends VGSR_Entity {
 
 	/**
 	 * The latest Bestuur post ID
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 * @var int
 	 */
 	public $latest_bestuur;
@@ -30,20 +30,20 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	/**
 	 * Construct Bestuur Entity
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function __construct() {
-		parent::__construct( array( 
-			'single'    => 'Bestuur', 
+		parent::__construct( array(
+			'single'    => 'Bestuur',
 			'plural'    => 'Besturen',
 			'menu_icon' => 'dashicons-awards',
 		) );
 	}
 
-	/** 
+	/**
 	 * Define default Bestuur globals
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function setup_globals() {
 		$this->latest_bestuur = get_option( '_bestuur-latest-bestuur' );
@@ -52,7 +52,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	/**
 	 * Setup default Bestuur actions and filters
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function setup_actions() {
 
@@ -70,8 +70,8 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 
 	/**
 	 * Add additional Bestuur settings fields
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 */
 	public function bestuur_register_settings() {
 
@@ -82,8 +82,8 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 
 	/**
 	 * Output the Bestuur menu order settings field
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 */
 	public function setting_menu_order_field() {
 		$value = (int) get_option( '_bestuur-menu-order' ); ?>
@@ -93,14 +93,14 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 				<option value="1" <?php selected( $value, 1 ); ?>><?php _e( 'Reverse seniority', 'vgsr-entity' ); ?></option>
 			</select>
 			<label for="_bestuur-menu-order"><span class="description"><?php sprintf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->args->plural ); ?></span></label>
-		
+
 		<?php
 	}
 
 	/**
 	 * Add metaboxes to the Bestuur edit screen
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @uses add_meta_box()
 	 */
@@ -118,9 +118,9 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 
 	/**
 	 * Output bestuur meta box
-	 * 
-	 * @since 0.1
-	 * 
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param object $post The current post
 	 */
 	public function metabox_display( $post ) {
@@ -177,9 +177,9 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 
 	/**
 	 * Save bestuur season meta field
-	 * 
-	 * @since 0.1
-	 * 
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param int $post_id The post ID
 	 * @param object $post Post data
 	 */
@@ -202,9 +202,9 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 		if ( ! isset( $_POST['vgsr_entity_bestuur_meta_nonce'] ) || ! wp_verify_nonce( $_POST['vgsr_entity_bestuur_meta_nonce'], vgsr_entity()->file ) )
 			return;
 
-		// 
+		//
 		// Authenticated
-		// 
+		//
 
 		// Season
 		if ( isset( $_POST['vgsr_entity_bestuur_season'] ) ) {
@@ -226,9 +226,9 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 
 	/**
 	 * Add query arg to the redirect location after save_post()
-	 * 
-	 * @since 0.1
-	 * 
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param string $location The redrirect location
 	 * @return string $location
 	 */
@@ -238,8 +238,8 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 
 	/**
 	 * Setup Bestuur admin error messages
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param array $messages
 	 * @return array $messages
@@ -254,8 +254,8 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 * Checks for the latest bestuur to be still correct
 	 *
 	 * We only do this when a new bestuur gets saved
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param int $post_id Post ID
 	 * @param object $post Post data
@@ -313,16 +313,16 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 
 	/**
 	 * Redirect requests for the entity parent page to the latest bestuur
-	 * 
-	 * @since 0.1
-	 * 
+	 *
+	 * @since 1.0.0
+	 *
 	 * @uses get_post_type_object() To find the post type slug for the parent
 	 */
 	public function add_bestuur_rewrite_rule() {
 
 		// Point parent page to latest bestuur
 		if ( $this->latest_bestuur ) {
-			add_rewrite_rule( 
+			add_rewrite_rule(
 				get_post_type_object( $this->type )->rewrite['slug'] . '/?$', // The parent page ...
 				'index.php?p=' . $this->latest_bestuur, // ... appears to be the latest Bestuur
 				'top'
@@ -333,7 +333,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	/**
 	 * Returns the latest (or current) bestuur
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @uses get_posts()
 	 * @return object|bool Post object on success, false if not found
@@ -357,8 +357,8 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 * Show which bestuur is the current one by appending a 'Current'
 	 * post state
 	 *
-	 * @since 0.2
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param array $states Post states
 	 * @param object $post Post object
 	 * @return array Post states
@@ -376,8 +376,8 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	/**
 	 * Returns the meta fields for post type bestuur
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param array $meta Meta fields
 	 * @return array $meta
 	 */
@@ -401,8 +401,8 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	/**
 	 * Manipulate Entity Menu Widget posts arguments
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param array $args The arguments for get_posts()
 	 * @return array $args
 	 */
@@ -417,7 +417,7 @@ endif; // class_exists
 /**
  * Setup VGSR Bestuur Entity
  *
- * @since 0.1
+ * @since 1.0.0
  *
  * @uses VGSR_Entity_Bestuur
  */

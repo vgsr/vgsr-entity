@@ -15,14 +15,14 @@ if ( ! class_exists( 'VGSR_Entity_Kast' ) ) :
 /**
  * VGSR Kast Entity Class
  *
- * @since 0.1
+ * @since 1.0.0
  */
 class VGSR_Entity_Kast extends VGSR_Entity {
 
 	/**
 	 * Kast post mini thumbnail size
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 * @var int
 	 */
 	public $mini_size;
@@ -30,21 +30,21 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	/**
 	 * Construct Kast Entity
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function __construct() {
-		parent::__construct( array( 
-			'single'    => 'Kast', 
+		parent::__construct( array(
+			'single'    => 'Kast',
 			'plural'    => 'Kasten',
 			'menu_icon' => 'dashicons-admin-home'
 		) );
 	}
 
-	/** 
+	/**
 	 * Define default Kast globals
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @uses add_image_size()
 	 */
 	public function setup_globals() {
@@ -57,7 +57,7 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	/**
 	 * Setup default Kast actions and filters
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function setup_actions() {
 
@@ -77,9 +77,9 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 	/**
 	 * Manipulate entity custom post type arguments
-	 * 
-	 * @since 0.1
-	 * 
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param array $args Post type arguments
 	 * @return array Args
 	 */
@@ -93,8 +93,8 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 	/**
 	 * Add additional Kast settings fields
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 */
 	public function register_settings() {
 
@@ -105,8 +105,8 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 	/**
 	 * Output the Kast downsize thumbs settings field
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 */
 	public function settings_downsize_thumbs_field() {
 	?>
@@ -121,8 +121,8 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	 * Resize Kast thumbs of all kasten first attachments
 	 *
 	 * Will only be run if the _kast-downsize-thumbs option is set.
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @uses get_posts()
 	 * @uses get_children()
@@ -140,7 +140,7 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 		// Get all kasten
 		$kasten = get_posts( array(
 			'post_type'   => $this->type,
-			'numberposts' => -1 
+			'numberposts' => -1
 		) );
 
 		// Loop over all kasten
@@ -151,7 +151,7 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 			$logo = is_array( $logo ) ? reset( $logo ) : false;
 
 			// Do not continue without any attachment
-			if ( ! $logo ) 
+			if ( ! $logo )
 				continue;
 
 			// Juggling with {$logo} so storing ID separately
@@ -161,18 +161,18 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 			if ( $logo[1] == $this->mini_size && $logo[2] == $this->mini_size )
 				continue;
 
-			// 
+			//
 			// No perfect match found so continue to edit images
 			//
-			
+
 			// Create absolute file path
 			$file_path = ABSPATH . substr( dirname( $logo[0] ), ( strpos( $logo[0], parse_url( site_url(), PHP_URL_PATH ) ) + strlen( parse_url( site_url(), PHP_URL_PATH ) ) + 1 ) ) . '/'. basename( $logo[0] );
-			
+
 			// Do the resizing
 			$logo = image_resize( $file_path, $this->mini_size, $this->mini_size, true );
 
 			// Setup image size meta
-			$args = array( 
+			$args = array(
 				'file'   => basename( $logo ),
 				'width'  => $this->mini_size,
 				'height' => $this->mini_size
@@ -191,8 +191,8 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 	/**
 	 * Enqueue scripts to the edit kast page
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @uses wp_enqueue_script()
 	 * @uses wp_register_style()
@@ -216,8 +216,8 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 	/**
 	 * Output custom JS script to the edit kast page
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 */
 	public function admin_scripts() {
 
@@ -240,8 +240,8 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	/**
 	 * Add metaboxes to the Kast edit screen
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @uses add_meta_box()
 	 */
 	public function add_metabox() {
@@ -258,19 +258,19 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 	/**
 	 * Output kast meta box
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @uses get_post_meta()
 	 * @uses wp_nonce_field()
 	 * @uses do_action() Calls 'vgsr_{$this->type}_metabox' hook with the post object
-	 * 
+	 *
 	 * @param object $post The current post
 	 */
 	public function metabox_display( $post ) {
 
 		// Output nonce verification field
-		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_kast_meta_nonce' ); 
+		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_kast_meta_nonce' );
 
 		/** Since ******************************************************/
 
@@ -369,9 +369,9 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 	/**
 	 * Save kast since meta field
-	 * 
-	 * @since 0.1
-	 * 
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param int $post_id The post ID
 	 * @param object $post Post data
 	 */
@@ -396,7 +396,7 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 		//
 		// Authenticated
-		// 
+		//
 
 		// Since & Ceased
 		if ( isset( $_POST['vgsr_entity_kast_since'] ) || isset( $_POST['vgsr_entity_kast_ceased'] ) ) {
@@ -439,17 +439,17 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 				// Update post meta
 				update_post_meta( $post_id, "vgsr_entity_kast_{$meta_key}", $value );
-			}			
+			}
 		}
 	}
 
 	/**
 	 * Add query arg to the redirect location after save_post()
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @uses add_query_arg()
-	 * 
+	 *
 	 * @param string $location The redrirect location
 	 * @return string $location
 	 */
@@ -460,10 +460,10 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	/**
 	 * Add query arg to the redirect location after save_post()
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @uses add_query_arg()
-	 * 
+	 *
 	 * @param string $location The redrirect location
 	 * @return string $location
 	 */
@@ -473,8 +473,8 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 
 	/**
 	 * Setup Kast admin error messages
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 */
 	public function admin_messages( $messages ) {
 
@@ -490,8 +490,8 @@ class VGSR_Entity_Kast extends VGSR_Entity {
 	/**
 	 * Returns the meta fields for post type kast
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param array $meta Meta fields
 	 * @return array $meta
 	 */
@@ -529,7 +529,7 @@ endif; // class_exists
 /**
  * Setup VGSR Kast Entity
  *
- * @since 0.1
+ * @since 1.0.0
  *
  * @uses VGSR_Entity_Kast
  */

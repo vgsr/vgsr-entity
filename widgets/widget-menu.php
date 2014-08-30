@@ -12,14 +12,14 @@ if ( ! class_exists( 'VGSR_Entity_Menu_Widget' ) ) :
 /**
  * VGSR Entity Menu Widget
  *
- * @since 0.1
+ * @since 1.0.0
  */
 class VGSR_Entity_Menu_Widget extends WP_Widget {
 
 	/**
 	 * Construct Entity Menu Widget
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @see WP_Widget::__construct()
 	 */
@@ -34,13 +34,13 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	/**
 	 * Front-end display of widget
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 *
 	 * @see WP_Widget::widget()
 	 *
 	 * @uses VGSR_Entities::get_entity_parent_ids()
 	 * @uses get_posts()
-	 * 
+	 *
 	 * @param array $args Widget arguments
 	 * @param array $instance Saved widget values from DB
 	 */
@@ -87,7 +87,7 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 				continue;
 
 			// Is current item
-			if ( $post->ID == $item->ID ) 
+			if ( $post->ID == $item->ID )
 				$class .= ' current-menu-item current_'. $item->post_type .'_item';
 
 			// Output list item
@@ -103,14 +103,14 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 
 	/**
 	 * Back-end widget form
-	 * 
-	 * Use $this->get_field_id($var) to fetch the widget input ID 
+	 *
+	 * Use $this->get_field_id($var) to fetch the widget input ID
 	 * Use $this->get_field_name($var) to fetch the widget input name
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @see WP_Widget::form()
-	 * 
+	 *
 	 * @param array $instance Previously saved values from DB
 	 */
 	public function form( $instance ) {
@@ -127,10 +127,10 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	/**
 	 * Sanitize widget form values before saving
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @see WP_Widget::update()
-	 * 
+	 *
 	 * @param array $new_instance The new values
 	 * @param array $old_instance The old values
 	 * @return array The sanitized values save for saving to DB

@@ -2,8 +2,8 @@
 Contributors: offereins
 Tags: vgsr, bestuur, dispuut, kast
 Requires at least: 3.6
-Tested up to: 3.9.1
-Stable tag: 0.1
+Tested up to: 4.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,10 +25,10 @@ Custom post type management for besturen, disputen and kasten
 
 == Changelog ==
 
-= 0.2 =
+= 1.0.0 =
 * Refactored code to use the singleton pattern
 * Added kast meta: current occupants
 * Added kast meta: previous occupants
 
 = 0.1 =
-* First release
+* Initial release

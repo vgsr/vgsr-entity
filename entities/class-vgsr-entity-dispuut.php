@@ -15,18 +15,18 @@ if ( ! class_exists( 'VGSR_Entity_Dispuut' ) ) :
 /**
  * VGSR Dispuut Entity Class
  *
- * @since 0.1
+ * @since 1.0.0
  */
 class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 	/**
 	 * Construct Dispuut Entity
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function __construct() {
-		parent::__construct( array( 
-			'single'    => 'Dispuut', 
+		parent::__construct( array(
+			'single'    => 'Dispuut',
 			'plural'    => 'Disputen',
 			'menu_icon' => 'dashicons-format-status',
 		) );
@@ -35,7 +35,7 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 	/**
 	 * Setup default Dispuut actions and filters
 	 *
-	 * @since 0.1
+	 * @since 1.0.0
 	 */
 	public function setup_actions() {
 
@@ -48,8 +48,8 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 	/**
 	 * Add metaboxes to the Dispuut edit screen
-	 * 
-	 * @since 0.1
+	 *
+	 * @since 1.0.0
 	 *
 	 * @uses add_meta_box()
 	 */
@@ -67,19 +67,19 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 	/**
 	 * Output dispuut meta box
-	 * 
-	 * @since 0.1
-	 * 
+	 *
+	 * @since 1.0.0
+	 *
 	 * @uses get_post_meta()
 	 * @uses wp_nonce_field()
 	 * @uses do_action() Calls 'vgsr_{$this->type}_metabox' hook with the post object
-	 * 
+	 *
 	 * @param object $post The current post
 	 */
 	public function metabox_display( $post ) {
 
 		// Output nonce verification field
-		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_dispuut_meta_nonce' ); 
+		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_dispuut_meta_nonce' );
 
 		/** Since ******************************************************/
 
@@ -122,7 +122,7 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 			</label>
 
 		</p>
-	
+
 		<?php
 
 		do_action( "vgsr_{$this->type}_metabox", $post );
@@ -130,9 +130,9 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 
 	/**
 	 * Save dispuut since and ceased meta field
-	 * 
-	 * @since 0.1
-	 * 
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param int $post_id The post ID
 	 * @param object $post Post data
 	 */
@@ -193,8 +193,8 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 	/**
 	 * Add query arg to the redirect location after save_post()
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param string $location The redrirect location
 	 * @return string $location
 	 */
@@ -205,8 +205,8 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 	/**
 	 * Add query arg to the redirect location after save_post()
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param string $location The redrirect location
 	 * @return string $location
 	 */
@@ -217,8 +217,8 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 	/**
 	 * Setup Dispuut admin error messages
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param array $messages
 	 * @return array $messages
 	 */
@@ -236,8 +236,8 @@ class VGSR_Entity_Dispuut extends VGSR_Entity {
 	/**
 	 * Returns the meta fields for post type dispuut
 	 *
-	 * @since 0.1
-	 * 
+	 * @since 1.0.0
+	 *
 	 * @param array $meta Meta fields
 	 * @return array $meta
 	 */
@@ -275,7 +275,7 @@ endif; // class_exists
 /**
  * Setup VGSR Dispuut Entity
  *
- * @since 0.1
+ * @since 1.0.0
  *
  * @uses VGSR_Entity_Dispuut
  */
