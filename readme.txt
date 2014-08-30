@@ -27,6 +27,7 @@ Custom post type management for besturen, disputen and kasten
 
 = 1.0.0 =
 * Refactored code to use the singleton pattern
+* Fixed refreshing rewrite rules logic on bestuur update
 * Added kast meta: current occupants
 * Added kast meta: previous occupants
 
