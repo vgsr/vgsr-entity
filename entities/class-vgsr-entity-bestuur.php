@@ -59,7 +59,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 		add_action( 'vgsr_entity_init', array( $this, 'add_bestuur_rewrite_rule'  )        );
 		add_action( 'admin_init',       array( $this, 'bestuur_register_settings' )        );
 		add_action( 'save_post',        array( $this, 'latest_bestuur_save_id'    ), 10, 2 );
-		add_action( 'save_post',        array( $this, 'bsetuur_metabox_save'      ), 10, 2 );
+		add_action( 'save_post',        array( $this, 'bestuur_metabox_save'      ), 10, 2 );
 
 		// Mark the current bestuur
 		add_filter( 'display_post_states', array( $this, 'display_post_states' ), 9, 2 );
@@ -183,7 +183,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 * @param int $post_id The post ID
 	 * @param object $post Post data
 	 */
-	public function bsetuur_metabox_save( $post_id, $post ) {
+	public function bestuur_metabox_save( $post_id, $post ) {
 
 		// Check autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
