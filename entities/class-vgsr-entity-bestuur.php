@@ -336,7 +336,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	 * @since 1.0.0
 	 *
 	 * @uses get_posts()
-	 * @return object|bool Post object on success, false if not found
+	 * @return WP_Post|bool Post object on success, false if not found
 	 */
 	public function get_latest_bestuur() {
 
@@ -409,6 +409,23 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	public function widget_menu_order( $args ) {
 		$args['order'] = get_option( '_bestuur-menu-order' ) ? 'DESC' : 'ASC';
 		return $args;
+	}
+
+	/** Bestuur Meta ***************************************************/
+
+	/**
+	 * Return the season of a given bestuur
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param WP_Post|int $post Post object or post ID
+	 * @return string Bestuur season
+	 */
+	public function get_season( $post ) {
+		if ( ( ! $post = get_post( $post ) ) || $this->type != $post->post_type )
+			return;
+
+		return get_post_meta( $post->ID, 'vgsr_entity_bestuur_season', true );
 	}
 }
 
