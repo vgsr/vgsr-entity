@@ -156,6 +156,10 @@ final class VGSR_Entities {
 			add_action( 'vgsr_entity_init', "vgsr_entity_{$entity}", 9 );
 		}
 
+		// Queries
+		add_filter( 'get_previous_post_where',  array( $this, 'adjacent_post_where'  ), 10, 3 );
+		add_filter( 'get_next_post_where',      array( $this, 'adjacent_post_where'  ), 10, 3 );
+
 		register_activation_hook( $this->file, array( $this, 'rewrite_flush' ) );
 	}
 
@@ -293,8 +297,8 @@ final class VGSR_Entities {
 	 */
 	public function get_entity_parent_ids() {
 		$parents = array();
-		foreach ( $this->entities as $entity ) {
-			$parents[$entity] = get_option( $this->{$entity}->parent_option_key );
+		foreach ( $this->entities as $post_type ) {
+			$parents[ $post_type ] = get_option( $this->{$post_type}->parent_option_key );
 		}
 
 		return $parents;
@@ -366,6 +370,57 @@ final class VGSR_Entities {
 		if ( ! empty( $list ) ) {
 			echo '<ul class="post-meta entity-meta">' . $list . '</ul>';
 		}
+	}
+
+	/** Queries ********************************************************/
+
+	/**
+	 * Modify the adjacent's post WHERE query clause
+	 *
+	 * @since 1.1.0
+	 * 
+	 * @param string $where WHERE clause
+	 * @param bool $in_same_term 
+	 * @param array $excluded_terms
+	 * @return string WHERE clause
+	 */
+	public function adjacent_post_where( $where, $in_same_term, $excluded_terms ) {
+		global $wpdb;
+
+		// Bail when this is not an entity
+		if ( ( ! $post = get_post() ) || in_array( $post->post_type, $this->entities ) );
+			return $where;
+
+		$prev     = false !== strpos( current_filter(), 'previous' );
+		$adjacent = $prev ? 'previous' : 'next';
+		$op       = $prev ? '<' : '>';
+
+		// Compare for the post menu order
+		$where = str_replace( $wpdb->prepare( "p.post_date $op %s", $post->post_date ), $wpdb->prepare( "p.menu_order $op %s", $post->menu_order ), $where );
+
+		// Hook sorting filter after this
+		add_filter( "get_{$adjacent}_post_sort", array( $this, 'adjacent_post_sort' ) );
+
+		return $where;
+	}
+
+	/**
+	 * Modify the adjacent post's ORDER BY query clause
+	 *
+	 * @since 1.1.0
+	 * 
+	 * @param string $sort ORDER BY clause
+	 * @return string ORDER BY clause
+	 */
+	public function adjacent_post_sort( $sort ) {
+
+		// Sort by the post menu order
+		$sort = str_replace( 'p.post_date', 'p.menu_order', $sort );
+
+		// Unhook single-use sorting filter
+		remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
+
+		return $sort;
 	}
 }
 

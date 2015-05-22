@@ -92,7 +92,7 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 
 					// Mimic nav-menu list classes
 					$class = 'menu-item menu-item-type-post_type menu-item-object-'. $post_type .' menu-item-'. $item->ID;
-					if ( $post && $post->ID === $item->ID ) {
+					if ( is_single() && $post->ID === $item->ID ) {
 						$class .= ' current-menu-item current_'. $post_type .'_item';
 					} 
 

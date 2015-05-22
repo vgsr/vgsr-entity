@@ -61,10 +61,6 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 		add_action( 'save_post',        array( $this, 'latest_bestuur_save_id'    ), 10, 2 );
 		add_action( 'save_post',        array( $this, 'bestuur_metabox_save'      ), 10, 2 );
 
-		// Fix adjacent besturen
-		add_filter( 'get_previous_post_where',  array( $this, 'adjacent_post_where'  ), 10, 3 );
-		add_filter( 'get_next_post_where',      array( $this, 'adjacent_post_where'  ), 10, 3 );
-
 		// Mark the current bestuur
 		add_filter( 'display_post_states', array( $this, 'display_post_states' ), 9, 2 );
 
@@ -413,55 +409,6 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 	public function widget_menu_order( $args ) {
 		$args['order'] = get_option( '_bestuur-menu-order' ) ? 'DESC' : 'ASC';
 		return $args;
-	}
-
-	/**
-	 * Modify the adjacent's post WHERE query clause
-	 *
-	 * @since 1.1.0
-	 * 
-	 * @param string $where WHERE clause
-	 * @param bool $in_same_term 
-	 * @param array $excluded_terms
-	 * @return string WHERE clause
-	 */
-	public function adjacent_post_where( $where, $in_same_term, $excluded_terms ) {
-		global $wpdb;
-
-		// Bail when this is not a Bestuur
-		if ( ( ! $post = get_post() ) || $this->type != $post->post_type )
-			return $where;
-
-		$prev     = false !== strpos( current_filter(), 'previous' );
-		$adjacent = $prev ? 'previous' : 'next';
-		$op       = $prev ? '<' : '>';
-
-		// Compare for the post menu order
-		$where = str_replace( $wpdb->prepare( "p.post_date $op %s", $post->post_date ), $wpdb->prepare( "p.menu_order $op %s", $post->menu_order ), $where );
-
-		// Hook sorting filter after this
-		add_filter( "get_{$adjacent}_post_sort", array( $this, 'adjacent_post_sort' ) );
-
-		return $where;
-	}
-
-	/**
-	 * Modify the adjacent post's ORDER BY query clause
-	 *
-	 * @since 1.1.0
-	 * 
-	 * @param string $sort ORDER BY clause
-	 * @return string ORDER BY clause
-	 */
-	public function adjacent_post_sort( $sort ) {
-
-		// Sort by the post menu order
-		$sort = str_replace( 'p.post_date', 'p.menu_order', $sort );
-
-		// Unhook single-use sorting filter
-		remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
-
-		return $sort;
 	}
 
 	/** Bestuur Meta ***************************************************/
