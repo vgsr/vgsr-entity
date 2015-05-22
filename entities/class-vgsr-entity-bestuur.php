@@ -436,10 +436,10 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 		$adjacent = $prev ? 'previous' : 'next';
 		$op       = $prev ? '<' : '>';
 
-		// Check for the post menu order
+		// Compare for the post menu order
 		$where = str_replace( $wpdb->prepare( "p.post_date $op %s", $post->post_date ), $wpdb->prepare( "p.menu_order $op %s", $post->menu_order ), $where );
 
-		// Hook sorting filters after this
+		// Hook sorting filter after this
 		add_filter( "get_{$adjacent}_post_sort", array( $this, 'adjacent_post_sort' ) );
 
 		return $where;
@@ -457,6 +457,9 @@ class VGSR_Entity_Bestuur extends VGSR_Entity {
 
 		// Sort by the post menu order
 		$sort = str_replace( 'p.post_date', 'p.menu_order', $sort );
+
+		// Unhook single-use sorting filter
+		remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
 
 		return $sort;
 	}
