@@ -26,8 +26,10 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
 			'vgsr_entity_family', // VGSR base ID
-			__('VGSR Entity Menu', 'vgsr-entity'), // Widget name
-			array( 'description' => __( 'Display VGSR Entity menu list', 'vgsr-entity' ) )
+			__( 'VGSR Entity Menu', 'vgsr-entity' ), // Widget name
+			array( 
+				'description' => __( 'Display entity menu list', 'vgsr-entity' )
+			)
 		);
 	}
 
@@ -45,67 +47,72 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 * @param array $instance Saved widget values from DB
 	 */
 	public function widget( $args, $instance ) {
-		global $post;
 
-		$enty = vgsr_entity();
+		// Define local variable(s)
+		$post_type  = false;
+		$entity     = vgsr_entity();
+		$entities   = $entity->entities;
+		$parent_ids = $entity->get_entity_parent_ids();
+		$parent     = false;
 
-		// Are we on a parent page?
-		$parents = $enty->get_entity_parent_ids();
-		$parent  = in_array( $post->ID, $parents ) ? reset( array_keys( $parents, $post->ID ) ) : false;
+		// Are we on a post type page?
+		if ( $post = get_post() ) {
+			if ( in_array( $post->ID, $parent_ids ) ) {
+				$post_type = reset( array_keys( $parent_ids, $post->ID ) );
+				$parent    = $post->ID;
+			} else if ( in_array( $post->post_type, $entities ) ) {
+				$post_type = $post->post_type;
+			}
 
-		// Don't display widget if not on entity page or entity parent page
-		if ( ! in_array( $post->post_type, $enty->entities ) && ! $parent )
-			return;
-
-		// Get generic widget variables
-		extract( $args );
-
-		// Get post type label
-		$cpt    = get_post_type_object( $parent ? $parent : $post->post_type );
-		$title  = $cpt->labels->name;
-
-		// Get all post type items
-		$items  = get_posts( apply_filters( 'vgsr_entity_menu_widget_get_posts', array( 'post_type' => 'any', 'orderby' => 'menu_order', 'numberposts' => -1, 'post_status' => 'publish', 'post_parent' => $parent ? $post->ID : $parents[$post->post_type] ) ) );
-
-		// Defined by themes
-		echo $before_widget;
-
-		// Widget title - before & after defined by themes
-		echo $before_title . $title . $after_title;
-
-		// Display your widget here...
-		// Start list
-		echo '<ul id="menu-'. $post->post_type .'" class="menu">';
-
-		// Loop over all children
-		foreach( $items as $item ) {
-
-			$class = 'menu-item menu-item-type-post_type menu-item-object-'. $item->post_type .' menu-item-'. $item->ID;
-
-			// Don't do attachments
-			if ( 'attachment' == $item->post_type )
-				continue;
-
-			// Is current item
-			if ( $post->ID == $item->ID )
-				$class .= ' current-menu-item current_'. $item->post_type .'_item';
-
-			// Output list item
-			echo '<li class="'. $class .'"><a href="'. get_permalink( $item->ID ) .'">'. $item->post_title .'</a></li>';
+		// Are we otherwise entity related?
+		} else if ( in_array( get_query_var( 'post_type' ), $entities ) ) {
+			$post_type = get_query_var( 'post_type' );
 		}
 
-		// End list
-		echo '</ul>';
+		// Bail when there's no entity context
+		if ( ! $post_type || ! in_array( $post_type, $entities ) || ! post_type_exists( $post_type ) )
+			return;
 
-		// Defined by themes
-		echo $after_widget;
+		// Get all post type items
+		$items = get_posts( apply_filters( 'vgsr_entity_menu_widget_get_posts', array( 
+			'post_type'   => $post_type,
+			'orderby'     => 'menu_order',
+			'numberposts' => -1,
+			'post_status' => 'publish',
+			'post_parent' => $parent ? $parent : $parent_ids[ $post_type ]
+		) ) );
+
+		?>
+
+		<?php echo $args['before_widget']; ?>
+			<?php echo $args['before_title'] . get_post_type_object( $post_type )->labels->name . $args['after_title']; ?>
+
+			<ul id="menu-<?php echo $post_type; ?>" class="menu">
+				<?php foreach( $items as $item ) {
+
+					// Mimic nav-menu list classes
+					$class = 'menu-item menu-item-type-post_type menu-item-object-'. $post_type .' menu-item-'. $item->ID;
+					if ( $post && $post->ID === $item->ID ) {
+						$class .= ' current-menu-item current_'. $post_type .'_item';
+					} 
+
+					?>
+					<li class="<?php echo esc_attr( $class ); ?>">
+						<a href="<?php echo esc_attr( get_permalink( $item->ID ) ); ?>"><?php echo get_the_title( $item->ID ); ?></a>
+					</li>
+					<?php
+				} ?>
+
+			</ul>
+
+		<?php echo $args['after_widget'];
 	}
 
 	/**
 	 * Back-end widget form
 	 *
-	 * Use $this->get_field_id($var) to fetch the widget input ID
-	 * Use $this->get_field_name($var) to fetch the widget input name
+	 * Use $this->get_field_id() to fetch the widget input ID.
+	 * Use $this->get_field_name() to fetch the widget input name.
 	 *
 	 * @since 1.0.0
 	 *
@@ -113,14 +120,11 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 *
 	 * @param array $instance Previously saved values from DB
 	 */
-	public function form( $instance ) {
-		?>
-			<p>
-				<?php _e( 'This widget will only be shown on a VGSR Entity page and on it\'s parent page.', 'vgsr-entity' );  ?>
-			</p>
-			<p>
-				<?php _e( 'There are no settings for this widget', 'vgsr-entity' ); ?>
-			</p>
+	public function form( $instance ) { ?>
+
+		<p><?php _e( "This widget will only be shown on a entity related page.", 'vgsr-entity' ); ?></p>
+		<p><?php _e( 'There are no settings for this widget', 'vgsr-entity' ); ?></p>
+
 		<?php
 	}
 
@@ -136,14 +140,6 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 * @return array The sanitized values save for saving to DB
 	 */
 	public function update( $new_instance, $old_instance ) {
-
-		// Accept previous values
-		$instance = $old_instance;
-
-		// Set new values if submitted
-		if ( isset( $new_instance['title'] ) )
-			$instance['title'] = strip_tags( $new_instance['title'] );
-
 		return $instance;
 	}
 }
