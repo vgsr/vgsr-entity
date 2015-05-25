@@ -55,10 +55,12 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 		$parent_ids = $entity->get_entity_parent_ids();
 		$parent     = false;
 
-		// Are we on a post type page?
-		if ( $post = get_post() ) {
+		// Are we on a post type page? Explicitly check for a valid ID to
+		// check for cases where the global post object is a dummy.
+		if ( ( $post = get_post() ) && $post->ID ) {
 			if ( in_array( $post->ID, $parent_ids ) ) {
-				$post_type = reset( array_keys( $parent_ids, $post->ID ) );
+				$_parent   = array_keys( $parent_ids, $post->ID );
+				$post_type = reset( $_parent );
 				$parent    = $post->ID;
 			} else if ( in_array( $post->post_type, $entities ) ) {
 				$post_type = $post->post_type;
