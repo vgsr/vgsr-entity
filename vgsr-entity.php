@@ -9,18 +9,18 @@
 
 /**
  * Plugin Name:       VGSR Entity
- * Description:       Custom post type management for besturen, disputen and kasten
+ * Description:       Custom post type management for community entities
  * Plugin URI:        https://github.com/vgsr/vgsr-entity
  * Author:            Laurens Offereins
  * Author URI:        https://github.com/lmoffereins
- * Version:           1.0.0
+ * Version:           1.0.1
  * Text Domain:       vgsr-entity
  * Domain Path:       /languages/
  * GitHub Plugin URI: vgsr/vgsr-entity
  */
 
 // Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
 //
 // Main entities
@@ -92,30 +92,30 @@ final class VGSR_Entities {
 	 */
 	private function setup_globals() {
 
+		/** Versions **********************************************************/
+
+		$this->version       = '1.0.1';
+
 		/** Paths *************************************************************/
 
 		// Setup some base path and URL information
-		$this->file         = __FILE__;
-		$this->basename     = apply_filters( 'vgsr_plugin_basename', plugin_basename( $this->file ) );
-		$this->plugin_dir   = apply_filters( 'vgsr_plugin_dir_path', plugin_dir_path( $this->file ) );
-		$this->plugin_url   = apply_filters( 'vgsr_plugin_dir_url',  plugin_dir_url ( $this->file ) );
+		$this->file          = __FILE__;
+		$this->basename      = plugin_basename( $this->file );
+		$this->plugin_dir    = plugin_dir_path( $this->file );
+		$this->plugin_url    = plugin_dir_url ( $this->file );
 
-		// Includes
-		$this->entities_dir = apply_filters( 'vgsr_entities_dir', trailingslashit( $this->plugin_dir . 'entities'  ) );
-		$this->entities_url = apply_filters( 'vgsr_entities_url', trailingslashit( $this->plugin_url . 'entities'  ) );
+		// Entities
+		$this->entities_dir  = trailingslashit( $this->plugin_dir . 'entities'  );
+		$this->entities_url  = trailingslashit( $this->plugin_url . 'entities'  );
 
 		// Languages
-		$this->lang_dir     = apply_filters( 'vgsr_lang_dir',     trailingslashit( $this->plugin_dir . 'languages' ) );
-
-		// Templates
-		$this->themes_dir   = apply_filters( 'vgsr_themes_dir',   trailingslashit( $this->plugin_dir . 'templates' ) );
-		$this->themes_url   = apply_filters( 'vgsr_themes_url',   trailingslashit( $this->plugin_url . 'templates' ) );
+		$this->lang_dir      = trailingslashit( $this->plugin_dir . 'languages' );
 
 		/** Misc **************************************************************/
 
 		$this->menu_position = 35;
 
-		// Predefine all entities as class name => post type
+		// Define the entities as class_name => post_type
 		$this->entities      = array(
 			'VGSR_Entity_Bestuur' => 'bestuur',
 			'VGSR_Entity_Dispuut' => 'dispuut',
@@ -320,6 +320,8 @@ final class VGSR_Entities {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @uses get_query_template()
+	 *
 	 * @param string $template The current template match
 	 * @return string $template
 	 */
@@ -381,6 +383,9 @@ final class VGSR_Entities {
 
 	/**
 	 * Modify the adjacent's post WHERE query clause
+	 *
+	 * Custom entity order is assumed to be set through the menu_order 
+	 * parameter.
 	 *
 	 * @since 1.1.0
 	 * 
