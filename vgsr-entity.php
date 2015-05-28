@@ -13,7 +13,7 @@
  * Plugin URI:        https://github.com/vgsr/vgsr-entity
  * Author:            Laurens Offereins
  * Author URI:        https://github.com/lmoffereins
- * Version:           1.0.1
+ * Version:           1.0.2
  * Text Domain:       vgsr-entity
  * Domain Path:       /languages/
  * GitHub Plugin URI: vgsr/vgsr-entity
@@ -94,7 +94,7 @@ final class VGSR_Entities {
 
 		/** Versions **********************************************************/
 
-		$this->version       = '1.0.1';
+		$this->version       = '1.0.2';
 
 		/** Paths *************************************************************/
 

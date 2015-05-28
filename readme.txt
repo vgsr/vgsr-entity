@@ -3,7 +3,7 @@ Contributors: offereins
 Tags: vgsr, bestuur, dispuut, kast
 Requires at least: 3.6
 Tested up to: 4.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,10 +25,13 @@ Custom post type management for besturen, disputen and kasten
 
 == Changelog ==
 
+= 1.0.2 =
+* Fixed bug in adjacency logic
+
 = 1.0.1 =
 * Fixed menu widget logic
 * Fixed template loading
-* Added entity adjecency sorting
+* Added entity adjacency sorting
 
 = 1.0.0 =
 * Refactored code to use the singleton pattern
