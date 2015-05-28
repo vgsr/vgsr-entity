@@ -326,14 +326,19 @@ final class VGSR_Entities {
 	public function template_include( $template ) {
 		$post_type = get_post_type();
 
-		// Serve single-{$entity} template if asked for
+		// Entity requested
 		if ( in_array( $post_type, $this->entities ) && is_singular( $post_type ) ) {
 
-			// Get our template path
-			$single = $this->plugin_dir . 'templates/single-{$post_type}.php';
+			// Define our own tempate stack
+			$templates = array(
+				"single-{$post_type}.php",
+				"{$post_type}.php",
+				'page.php',
+				'single.php'
+			);
 
-			// Only serve our template when it exists
-			$template = file_exists( $single ) ? $single : $template;
+			// Query for a suitable template
+			$template = get_query_template( $post_type, $templates );
 		}
 
 		return $template;
