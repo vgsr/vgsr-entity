@@ -320,24 +320,42 @@ final class VGSR_Entities {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @uses get_post_type()
+	 * @uses is_singular()
 	 * @uses get_query_template()
 	 *
 	 * @param string $template The current template match
 	 * @return string $template
 	 */
 	public function template_include( $template ) {
+
+		// Get the current post type
 		$post_type = get_post_type();
 
 		// Entity requested
 		if ( in_array( $post_type, $this->entities ) && is_singular( $post_type ) ) {
 
-			// Define our own tempate stack
+			/**
+			 * Define our own tempate stack
+			 *
+			 * The template(s) should be defined in the current child 
+			 * or parent theme.
+			 */
 			$templates = array(
+
+				// Post-type specific template
 				"single-{$post_type}.php",
 				"{$post_type}.php",
+
+				// Default to page and single template
 				'page.php',
 				'single.php'
 			);
+
+			// Generic entity template
+			if ( ! post_type_exists( 'entity' ) ) {
+				array_splice( $templates, 2, 0, 'single-entity.php' );
+			}
 
 			// Query for a suitable template
 			$template = get_query_template( $post_type, $templates );
@@ -397,8 +415,11 @@ final class VGSR_Entities {
 	public function adjacent_post_where( $where, $in_same_term, $excluded_terms ) {
 		global $wpdb;
 
+		// Get the current post
+		$post = get_post();
+
 		// Bail when this is not an entity
-		if ( ( ! $post = get_post() ) || in_array( $post->post_type, $this->entities ) );
+		if ( ! $post || ! in_array( $post->post_type, $this->entities ) )
 			return $where;
 
 		$prev     = false !== strpos( current_filter(), 'previous' );
