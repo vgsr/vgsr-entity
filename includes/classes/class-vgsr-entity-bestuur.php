@@ -429,15 +429,3 @@ class VGSR_Entity_Bestuur extends VGSR_Entity_Base {
 }
 
 endif; // class_exists
-
-/**
- * Setup VGSR Bestuur Entity
- *
- * @since 1.0.0
- *
- * @uses VGSR_Entity_Bestuur
- */
-function vgsr_entity_bestuur() {
-	vgsr_entity()->bestuur = new VGSR_Entity_Bestuur();
-}
-

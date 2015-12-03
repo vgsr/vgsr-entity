@@ -270,15 +270,3 @@ class VGSR_Entity_Dispuut extends VGSR_Entity_Base {
 }
 
 endif; // class_exists
-
-/**
- * Setup VGSR Dispuut Entity
- *
- * @since 1.0.0
- *
- * @uses VGSR_Entity_Dispuut
- */
-function vgsr_entity_dispuut() {
-	vgsr_entity()->dispuut = new VGSR_Entity_Dispuut();
-}
-

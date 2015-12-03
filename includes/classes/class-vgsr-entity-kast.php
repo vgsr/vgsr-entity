@@ -524,15 +524,3 @@ class VGSR_Entity_Kast extends VGSR_Entity_Base {
 }
 
 endif; // class_exists
-
-/**
- * Setup VGSR Kast Entity
- *
- * @since 1.0.0
- *
- * @uses VGSR_Entity_Kast
- */
-function vgsr_entity_kast() {
-	vgsr_entity()->kast = new VGSR_Entity_Kast;
-}
-
