@@ -417,10 +417,10 @@ class VGSR_Entity_Bestuur extends VGSR_Entity_Base {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param WP_Post|int $post Post object or post ID
+	 * @param WP_Post|int $post Optional. Post object or post ID
 	 * @return string Bestuur season
 	 */
-	public function get_season( $post ) {
+	public function get_season( $post = 0 ) {
 		if ( ( ! $post = get_post( $post ) ) || $this->type != $post->post_type )
 			return;
 
