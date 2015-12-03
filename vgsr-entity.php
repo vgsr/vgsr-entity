@@ -36,12 +36,12 @@ if ( ! class_exists( 'VGSR_Entities' ) ) :
 final class VGSR_Entities {
 
 	/**
-	 * Contains all built-in entity names
+	 * Holds all built-in entity names
 	 *
 	 * @since 1.0.0
 	 * @var array
 	 */
-	public $entities = array();
+	protected $entities = array();
 
 	/** Singleton *************************************************************/
 
@@ -172,6 +172,17 @@ final class VGSR_Entities {
 	 */
 	public function vgsr_entity_init() {
 		do_action( 'vgsr_entity_init' );
+	}
+
+	/**
+	 * Return the registered entities
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return array Registered entities as `array( class => type )`
+	 */
+	public function get_entities() {
+		return $this->entities;
 	}
 
 	/**
