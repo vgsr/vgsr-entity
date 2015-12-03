@@ -623,7 +623,7 @@ abstract class VGSR_Entity_Base {
 	}
 
 	/**
-	 * Return the entity meta data
+	 * Return the entity meta data to display
 	 *
 	 * @since 1.0.0
 	 *
@@ -632,6 +632,17 @@ abstract class VGSR_Entity_Base {
 	 */
 	public function entity_display_meta( $meta ) {
 		return $meta;
+	}
+
+	/**
+	 * Return the entity's meta data
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return array Entity meta
+	 */
+	public function get_meta() {
+		return array();
 	}
 }
 
