@@ -22,18 +22,13 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-//
-// Main entities
-//
-
-if ( ! class_exists( 'VGSR_Entities' ) ) :
-
+if ( ! class_exists( 'VGSR_Entity' ) ) :
 /**
  * Main Plugin Entities Class
  *
  * @since 1.0.0
  */
-final class VGSR_Entities {
+final class VGSR_Entity {
 
 	/**
 	 * Holds all built-in entity names
@@ -48,18 +43,18 @@ final class VGSR_Entities {
 	/**
 	 * Main VGSR Entities Instance
 	 *
-	 * Insures that only one instance of VGSR_Entities exists in memory
+	 * Insures that only one instance of VGSR_Entity exists in memory
 	 * at any one time. Also prevents needing to define globals all over
 	 * the place.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @staticvar object $instance
-	 * @uses VGSR_Entities::setup_globals() Setup the globals needed
-	 * @uses VGSR_Entities::includes() Include the required files
-	 * @uses VGSR_Entities::setup_actions() Setup the hooks and actions
+	 * @uses VGSR_Entity::setup_globals() Setup the globals needed
+	 * @uses VGSR_Entity::includes() Include the required files
+	 * @uses VGSR_Entity::setup_actions() Setup the hooks and actions
 	 * @see vgsr_entity()
-	 * @return The one true VGSR_Entities
+	 * @return The one true VGSR_Entity
 	 */
 	public static function instance() {
 
@@ -68,7 +63,7 @@ final class VGSR_Entities {
 
 		// Only run these methods if they haven't been ran previously
 		if ( null === $instance ) {
-			$instance = new VGSR_Entities;
+			$instance = new VGSR_Entity;
 			$instance->setup_globals();
 			$instance->includes();
 			$instance->setup_actions();
@@ -241,7 +236,7 @@ final class VGSR_Entities {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses VGSR_Entities::add_separator()
+	 * @uses VGSR_Entity::add_separator()
 	 */
 	public function admin_menu() {
 		$this->add_separator( $this->menu_position - 1 );
@@ -282,7 +277,7 @@ final class VGSR_Entities {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses VGSR_Entities::get_entitiy_parent_id()
+	 * @uses VGSR_Entity::get_entitiy_parent_id()
 	 * @uses wp_register_style()
 	 * @uses wp_enqueue_style()
 	 */
@@ -469,7 +464,7 @@ final class VGSR_Entities {
 endif; // class_exists VGSR_Entity
 
 /**
- * Return the single instance of VGSR_Entities
+ * Return the single instance of VGSR_Entity
  *
  * Use this function like you would a global variable, except without needing
  * to declare the global.
@@ -478,11 +473,11 @@ endif; // class_exists VGSR_Entity
  *
  * @since 1.0.0
  *
- * @uses VGSR_Entities
+ * @uses VGSR_Entity
  * @return The one single VGSR Entities
  */
 function vgsr_entity() {
-	return VGSR_Entities::instance();
+	return VGSR_Entity::instance();
 }
 
 // Fire it up!
