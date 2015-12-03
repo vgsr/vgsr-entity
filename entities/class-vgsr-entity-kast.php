@@ -11,13 +11,12 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 if ( ! class_exists( 'VGSR_Entity_Kast' ) ) :
-
 /**
  * VGSR Kast Entity Class
  *
  * @since 1.0.0
  */
-class VGSR_Entity_Kast extends VGSR_Entity {
+class VGSR_Entity_Kast extends VGSR_Entity_Base {
 
 	/**
 	 * Kast post mini thumbnail size

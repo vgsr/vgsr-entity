@@ -11,13 +11,12 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 if ( ! class_exists( 'VGSR_Entity_Dispuut' ) ) :
-
 /**
  * VGSR Dispuut Entity Class
  *
  * @since 1.0.0
  */
-class VGSR_Entity_Dispuut extends VGSR_Entity {
+class VGSR_Entity_Dispuut extends VGSR_Entity_Base {
 
 	/**
 	 * Construct Dispuut Entity

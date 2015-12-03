@@ -11,13 +11,12 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 if ( ! class_exists( 'VGSR_Entity_Bestuur' ) ) :
-
 /**
  * VGSR Bestuur Entity Class
  *
  * @since 1.0.0
  */
-class VGSR_Entity_Bestuur extends VGSR_Entity {
+class VGSR_Entity_Bestuur extends VGSR_Entity_Base {
 
 	/**
 	 * The latest Bestuur post ID
