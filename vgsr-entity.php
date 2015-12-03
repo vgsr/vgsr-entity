@@ -99,9 +99,9 @@ final class VGSR_Entity {
 		$this->plugin_dir    = plugin_dir_path( $this->file );
 		$this->plugin_url    = plugin_dir_url ( $this->file );
 
-		// Entities
-		$this->entities_dir  = trailingslashit( $this->plugin_dir . 'entities'  );
-		$this->entities_url  = trailingslashit( $this->plugin_url . 'entities'  );
+		// Includes
+		$this->includes_dir  = trailingslashit( $this->plugin_dir . 'includes'  );
+		$this->includes_url  = trailingslashit( $this->plugin_url . 'includes'  );
 
 		// Languages
 		$this->lang_dir      = trailingslashit( $this->plugin_dir . 'languages' );
@@ -124,12 +124,17 @@ final class VGSR_Entity {
 	 * @since 1.0.0
 	 */
 	private function includes() {
-		require( $this->plugin_dir . 'widgets/widget-menu.php' );
 
-		// Load each entity
+		// Include entity base class
+		require( $this->includes_dir . "classes/class-vgsr-entity-base.php" );
+
+		// Include all entities
 		foreach ( $this->entities as $entity ) {
-			require( $this->entities_dir . "class-vgsr-entity-{$entity}.php" );
+			require( $this->includes_dir . "classes/class-vgsr-entity-{$entity}.php" );
 		}
+
+		// Widgets
+		require( $this->includes_dir . 'classes/class-vgsr-entity-menu-widget.php' );
 	}
 
 	/**
@@ -292,7 +297,7 @@ final class VGSR_Entity {
 		if ( ! in_array( $post->post_type, $this->entities ) && ! in_array( $post->ID, $this->get_entity_parent_ids() ) )
 			return;
 
-		wp_register_style( 'vgsr-entity', plugins_url( 'css/style.css', __FILE__ ) );
+		wp_register_style( 'vgsr-entity', $this->includes_url . 'assets/css/style.css' );
 		wp_enqueue_style(  'vgsr-entity' );
 	}
 
