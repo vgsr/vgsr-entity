@@ -124,17 +124,9 @@ final class VGSR_Entity {
 	 * @since 1.0.0
 	 */
 	private function includes() {
-
-		// Include entity base class
-		require( $this->includes_dir . "classes/class-vgsr-entity-base.php" );
-
-		// Include all entities
-		foreach ( $this->entities as $entity ) {
-			require( $this->includes_dir . "classes/class-vgsr-entity-{$entity}.php" );
-		}
-
-		// Widgets
-		require( $this->includes_dir . 'classes/class-vgsr-entity-menu-widget.php' );
+		require( $this->includes_dir . 'actions.php'       );
+		require( $this->includes_dir . 'functions.php'     );
+		require( $this->includes_dir . 'template-tags.php' );
 	}
 
 	/**
@@ -144,35 +136,25 @@ final class VGSR_Entity {
 	 */
 	private function setup_actions() {
 
+		// Plugin
 		add_action( 'plugins_loaded',     array( $this, 'load_textdomain'  ) );
-		add_action( 'init',               array( $this, 'vgsr_entity_init' ) );
+
+		// Entities
+		add_action( 'vgsr_entity_loaded', array( $this, 'setup_entities'   ) );
+
 		add_action( 'admin_menu',         array( $this, 'admin_menu'       ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts'  ) );
 		add_action( 'widgets_init',       array( $this, 'widgets_init'     ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts'  ) );
 		add_action( 'template_include',   array( $this, 'template_include' ) );
 
-		// Setup all entities
-		foreach ( $this->entities as $entity ) {
-			add_action( 'vgsr_entity_init', "vgsr_entity_{$entity}", 9 );
-		}
-
-		// Queries
+		// Adjacent entity
 		add_filter( 'get_previous_post_where',  array( $this, 'adjacent_post_where'  ), 10, 3 );
 		add_filter( 'get_next_post_where',      array( $this, 'adjacent_post_where'  ), 10, 3 );
 
-		register_activation_hook( $this->file, array( $this, 'rewrite_flush' ) );
+		register_activation_hook( $this->file, array( $this, 'flush_rewrite_rules' ) );
 	}
 
 	/** Functions ******************************************************/
-
-	/**
-	 * Create vgsr_entity_init action
-	 *
-	 * @since 1.0.0
-	 */
-	public function vgsr_entity_init() {
-		do_action( 'vgsr_entity_init' );
-	}
 
 	/**
 	 * Return the registered entities
@@ -186,20 +168,49 @@ final class VGSR_Entity {
 	}
 
 	/**
-	 * Set new permalink structure by refreshing the rewrite rules
-	 * on activation
+	 * Setup the registered entities
+	 *
+	 * @since 1.1.0
+	 */
+	public function setup_entities() {
+
+		// Base class
+		require_once( $this->includes_dir . "classes/class-vgsr-entity-base.php" );
+
+		// Walk registered entities
+		foreach ( $this->entities as $class => $type ) {
+
+			// Setup entity
+			require_once( $this->includes_dir . "classes/class-vgsr-entity-{$type}.php" );
+
+			if ( ! isset( $type->{$type} ) ) {
+				$this->{$type} = new $class;
+			}
+		}
+	}
+
+	/**
+	 * Refresh permalink structure on activation
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses VGSR_Entity::register_post_type()
+	 * @uses VGSR_Entity::setup_entities()
+	 * @uses VGSR_Entity_Base::register_post_type()
 	 * @uses flush_rewrite_rules()
 	 */
-	public function rewrite_flush() {
+	public function flush_rewrite_rules() {
+
+		/**
+		 * On activation, the 'init' hook was already passed, so
+		 * our post types have not been registered at this point.
+		 */
+
+		// Setup entities
+		$this->setup_entities();
 
 		// Call post type registration
-		foreach ( array_keys( $this->entities ) as $class_name ) {
-			$class = new $class_name;
-			$class->register_post_type();
+		foreach ( $this->entities as $type ) {
+			$this->{$type}->register_post_type();
 		}
 
 		// Flush rules only on activation
@@ -323,6 +334,11 @@ final class VGSR_Entity {
 	 * @uses register_widget()
 	 */
 	public function widgets_init() {
+
+		// Include files
+		require_once( $this->includes_dir . 'classes/class-vgsr-entity-menu-widget.php' );
+
+		// Register widgets
 		register_widget( 'VGSR_Entity_Menu_Widget' );
 	}
 
