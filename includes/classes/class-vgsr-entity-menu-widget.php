@@ -23,13 +23,9 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 * @see WP_Widget::__construct()
 	 */
 	public function __construct() {
-		parent::__construct(
-			'vgsr_entity_family', // VGSR base ID
-			__( 'VGSR Entity Menu', 'vgsr-entity' ), // Widget name
-			array( 
-				'description' => __( 'Display a list of all the entities of the type of the current page', 'vgsr-entity' )
-			)
-		);
+		parent::__construct( 'vgsr_entity_family', __( 'VGSR Entity Menu', 'vgsr-entity' ), array(
+			'description' => __( 'Display a list of all the entities of the type of the current page', 'vgsr-entity' )
+		) );
 	}
 
 	/**
@@ -141,7 +137,7 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 * @return array The sanitized values save for saving to DB
 	 */
 	public function update( $new_instance, $old_instance ) {
-		return $instance;
+		return $new_instance;
 	}
 }
 
