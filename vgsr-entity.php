@@ -149,7 +149,8 @@ final class VGSR_Entity {
 		add_filter( 'get_previous_post_sort',  array( $this, 'adjacent_post_sort'  ), 10, 2 );
 		add_filter( 'get_next_post_sort',      array( $this, 'adjacent_post_sort'  ), 10, 2 );
 
-		register_activation_hook( $this->file, array( $this, 'flush_rewrite_rules' ) );
+		// Activation
+		add_action( "activate_{$this->basename}", array( $this, 'flush_rewrite_rules' ) );
 	}
 
 	/** Entities *******************************************************/
