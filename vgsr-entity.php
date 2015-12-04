@@ -130,15 +130,18 @@ final class VGSR_Entity {
 	private function setup_actions() {
 
 		// Plugin
-		add_action( 'plugins_loaded',     array( $this, 'load_textdomain'  ) );
+		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 
 		// Entities
-		add_action( 'vgsr_entity_loaded', array( $this, 'setup_entities'   ) );
+		add_action( 'plugins_loaded', array( $this, 'setup_entities' ) );
 
-		add_action( 'admin_menu',         array( $this, 'admin_menu'       ) );
-		add_action( 'widgets_init',       array( $this, 'widgets_init'     ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts'  ) );
+		// Admin & Widgets
+		add_action( 'admin_menu',   array( $this, 'admin_menu'   ) );
+		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
+
+		// Theme
 		add_action( 'template_include',   array( $this, 'template_include' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts'  ) );
 
 		// Adjacent entity
 		add_filter( 'get_previous_post_where', array( $this, 'adjacent_post_where' ), 10, 5 );
@@ -370,7 +373,7 @@ final class VGSR_Entity {
 				$index++;
 
 			if ( $offset >= $pos ) {
-				$menu[$pos] = array( '', 'read', "separator-pos{$index}", '', 'wp-menu-separator' );
+				$menu[ $pos ] = array( '', 'read', "separator-pos{$index}", '', 'wp-menu-separator' );
 				break;
 			}
 		}
@@ -379,7 +382,25 @@ final class VGSR_Entity {
 	}
 
 	/**
-	 * Enqueue page scripts
+	 * Initiate entity widgets
+	 *
+	 * @since 1.0.0
+	 *
+	 * @uses register_widget()
+	 */
+	public function widgets_init() {
+
+		// Include files
+		require_once( $this->includes_dir . 'classes/class-vgsr-entity-menu-widget.php' );
+
+		// Register widgets
+		register_widget( 'VGSR_Entity_Menu_Widget' );
+	}
+
+	/** Theme **********************************************************/
+
+	/**
+	 * Enqueue scripts
 	 *
 	 * @since 1.0.0
 	 *
@@ -414,22 +435,6 @@ final class VGSR_Entity {
 		}
 
 		return $parents;
-	}
-
-	/**
-	 * Initiate entity widgets
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses register_widget()
-	 */
-	public function widgets_init() {
-
-		// Include files
-		require_once( $this->includes_dir . 'classes/class-vgsr-entity-menu-widget.php' );
-
-		// Register widgets
-		register_widget( 'VGSR_Entity_Menu_Widget' );
 	}
 
 	/**
