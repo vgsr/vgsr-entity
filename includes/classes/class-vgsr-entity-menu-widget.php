@@ -40,7 +40,7 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 *
 	 * @see WP_Widget::widget()
 	 *
-	 * @uses VGSR_Entities::get_entity_parent_ids()
+	 * @uses VGSR_Entity::get_entity_parents()
 	 * @uses get_posts()
 	 *
 	 * @param array $args Widget arguments
@@ -51,8 +51,8 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 		// Define local variable(s)
 		$post_type  = false;
 		$entity     = vgsr_entity();
-		$entities   = $entity->entities;
-		$parent_ids = $entity->get_entity_parent_ids();
+		$entities   = $entity->get_entities();
+		$parent_ids = $entity->get_entity_parents();
 		$parent     = false;
 
 		// Are we on a post type page? Explicitly check for a valid ID to
