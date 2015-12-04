@@ -141,8 +141,10 @@ final class VGSR_Entity {
 		add_action( 'template_include',   array( $this, 'template_include' ) );
 
 		// Adjacent entity
-		add_filter( 'get_previous_post_where',  array( $this, 'adjacent_post_where'  ), 10, 3 );
-		add_filter( 'get_next_post_where',      array( $this, 'adjacent_post_where'  ), 10, 3 );
+		add_filter( 'get_previous_post_where', array( $this, 'adjacent_post_where' ), 10, 5 );
+		add_filter( 'get_next_post_where',     array( $this, 'adjacent_post_where' ), 10, 5 );
+		add_filter( 'get_previous_post_sort',  array( $this, 'adjacent_post_sort'  ), 10, 2 );
+		add_filter( 'get_next_post_sort',      array( $this, 'adjacent_post_sort'  ), 10, 2 );
 
 		register_activation_hook( $this->file, array( $this, 'flush_rewrite_rules' ) );
 	}
@@ -520,32 +522,38 @@ final class VGSR_Entity {
 	 * Custom entity order is assumed to be set through the menu_order 
 	 * parameter.
 	 *
-	 * @since 1.1.0
+	 * @since 1.0.0
+	 * @since 1.1.0 Added support for the `$taxonomy` and `$post` params as per WP 4.4
 	 * 
 	 * @param string $where WHERE clause
 	 * @param bool $in_same_term 
 	 * @param array $excluded_terms
+	 * @param string $taxonomy
+	 * @param WP_Post $post
 	 * @return string WHERE clause
 	 */
-	public function adjacent_post_where( $where, $in_same_term, $excluded_terms ) {
+	public function adjacent_post_where( $where, $in_same_term, $excluded_terms, $taxonomy, $post ) {
 		global $wpdb;
 
-		// Get the current post
-		$post = get_post();
+		// When this is an entity
+		if ( is_entity() ) {
 
-		// Bail when this is not an entity
-		if ( ! $post || ! in_array( $post->post_type, $this->get_entities() ) )
-			return $where;
+			// Get the current post
+			if ( ! $post ) {
+				$post = get_post();
+			}
 
-		$prev     = false !== strpos( current_filter(), 'previous' );
-		$adjacent = $prev ? 'previous' : 'next';
-		$op       = $prev ? '<' : '>';
+			$previous = ( 'get_previous_post_where' === current_filter() );
+			$op = $previous ? '<' : '>';
 
-		// Compare for the post menu order
-		$where = str_replace( $wpdb->prepare( "p.post_date $op %s", $post->post_date ), $wpdb->prepare( "p.menu_order $op %s", $post->menu_order ), $where );
-
-		// Hook sorting filter after this
-		add_filter( "get_{$adjacent}_post_sort", array( $this, 'adjacent_post_sort' ) );
+			/**
+			 * Replace the `p.post_date` WHERE clause with a comparison based
+			 * on the menu order.
+			 */
+			$original = $wpdb->prepare( "WHERE p.post_date $op %s",  $post->post_date  );
+			$improved = $wpdb->prepare( "WHERE p.menu_order $op %s", $post->menu_order );
+			$where    = str_replace( $original, $improved, $where );
+		}
 
 		return $where;
 	}
@@ -553,20 +561,23 @@ final class VGSR_Entity {
 	/**
 	 * Modify the adjacent post's ORDER BY query clause
 	 *
-	 * @since 1.1.0
+	 * @since 1.0.0
+	 * @since 1.1.0 Added support for the `$post` param as per WP 4.4
 	 * 
-	 * @param string $sort ORDER BY clause
+	 * @param string $order_by ORDER BY clause
+	 * @param WP_Post $post Post object
 	 * @return string ORDER BY clause
 	 */
-	public function adjacent_post_sort( $sort ) {
+	public function adjacent_post_sort( $order_by, $post ) {
 
-		// Sort by the post menu order
-		$sort = str_replace( 'p.post_date', 'p.menu_order', $sort );
+		// When this is an entity
+		if ( is_entity() ) {
 
-		// Unhook single-use sorting filter
-		remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
+			// Order by the post menu order
+			$order_by = str_replace( 'p.post_date', 'p.menu_order', $order_by );
+		}
 
-		return $sort;
+		return $order_by;
 	}
 }
 
