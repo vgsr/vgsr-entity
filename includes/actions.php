@@ -12,8 +12,7 @@ defined( 'ABSPATH' ) || exit;
 
 /** Actions ************************************************************/
 
-add_action( 'plugins_loaded', 'vgsr_entity_loaded' );
-add_action( 'init',           'vgsr_entity_init'   );
+add_action( 'init', 'vgsr_entity_init' );
 
 /** Sub-Actions ********************************************************/
 
@@ -27,15 +26,4 @@ add_action( 'init',           'vgsr_entity_init'   );
  */
 function vgsr_entity_init() {
 	do_action( 'vgsr_entity_init' );
-}
-
-/**
- * Setup our own hook on 'plugins_loaded'
- *
- * @since 1.1.0
- *
- * @uses do_action() Calls 'vgsr_entity_loaded'
- */
-function vgsr_entity_loaded() {
-	do_action( 'vgsr_entity_loaded' );
 }
