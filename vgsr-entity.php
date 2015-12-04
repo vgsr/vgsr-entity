@@ -109,13 +109,6 @@ final class VGSR_Entity {
 		/** Misc **************************************************************/
 
 		$this->menu_position = 35;
-
-		// Define the entities as class_name => post_type
-		$this->entities      = array(
-			'VGSR_Entity_Bestuur' => 'bestuur',
-			'VGSR_Entity_Dispuut' => 'dispuut',
-			'VGSR_Entity_Kast'    => 'kast',
-		);
 	}
 
 	/**
@@ -157,35 +150,115 @@ final class VGSR_Entity {
 	/** Functions ******************************************************/
 
 	/**
-	 * Return the registered entities
-	 *
-	 * @since 1.1.0
-	 *
-	 * @return array Registered entities as `array( class => type )`
-	 */
-	public function get_entities() {
-		return $this->entities;
-	}
-
-	/**
 	 * Setup the registered entities
 	 *
 	 * @since 1.1.0
 	 */
 	public function setup_entities() {
 
+		// Define the entities as post_type => class_name|file
+		$entities = apply_filters( 'vgsr_entity_entities', array(
+			'bestuur' => 'VGSR_Entity_Bestuur',
+			'dispuut' => 'VGSR_Entity_Dispuut',
+			'kast'    => 'VGSR_Entity_Kast',
+		) );
+
 		// Base class
 		require_once( $this->includes_dir . "classes/class-vgsr-entity-base.php" );
 
 		// Walk registered entities
-		foreach ( $this->entities as $class => $type ) {
+		foreach ( $entities as $type => $class ) {
 
 			// Setup entity
 			require_once( $this->includes_dir . "classes/class-vgsr-entity-{$type}.php" );
 
-			if ( ! isset( $type->{$type} ) ) {
-				$this->{$type} = new $class;
+			if ( ! array_key_exists( $type, $this->entities ) ) {
+				$this->entities[ $type ] = new $class;
 			}
+		}
+	}
+
+	/**
+	 * Return the registered entity types
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return array Registered entity types
+	 */
+	public function get_entities() {
+		return array_keys( $this->entities );
+	}
+
+	/**
+	 * Magic check for isset(). Handles protected entity objects
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key
+	 * @return bool
+	 */
+	public function __isset( $key ) {
+
+		// Check for protected entity object when present
+		if ( array_key_exists( $key, $this->entities ) ) {
+			return true;
+		} else {
+			return isset( $this->{$key} );
+		}
+	}
+
+	/**
+	 * Magic getter. Handles protected entity objects
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key
+	 * @return mixed
+	 */
+	public function __get( $key ) {
+
+		// Return protected entity object when present
+		if ( array_key_exists( $key, $this->entities ) ) {
+			return $this->entities[ $key ];
+
+		// Return registered types for 'entities'
+		} elseif ( 'entities' === $key ) {
+			return $this->get_entities();
+
+		// Default
+		} else {
+			return $this->{$key};
+		}
+	}
+
+	/**
+	 * Magic setter. Handles protected entity objects
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 */
+	public function __set( $key, $value ) {
+
+		// Prevent overwriting entity object when present
+		if ( ! array_key_exists( $key, $this->entities ) ) {
+			$this->{$key} = $value;
+		}
+	}
+
+	/**
+	 * Magic unsetter. Handles protected entity objects
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key
+	 */
+	public function __unset( $key ) {
+
+		// Prevent overwriting entity object when present
+		if ( ! array_key_exists( $key, $this->entities ) ) {
+			unset( $this->{$key} );
 		}
 	}
 
@@ -305,7 +378,7 @@ final class VGSR_Entity {
 			return;
 
 		// Bail when not on entity parent page
-		if ( ! in_array( $post->post_type, $this->entities ) && ! in_array( $post->ID, $this->get_entity_parent_ids() ) )
+		if ( ! in_array( $post->post_type, $this->get_entities() ) && ! in_array( $post->ID, $this->get_entity_parent_ids() ) )
 			return;
 
 		wp_register_style( 'vgsr-entity', $this->includes_url . 'assets/css/style.css' );
@@ -319,7 +392,7 @@ final class VGSR_Entity {
 	 */
 	public function get_entity_parent_ids() {
 		$parents = array();
-		foreach ( $this->entities as $post_type ) {
+		foreach ( $this->get_entities() as $post_type ) {
 			$parents[ $post_type ] = get_option( $this->{$post_type}->parent_option_key );
 		}
 
@@ -360,7 +433,7 @@ final class VGSR_Entity {
 		$post_type = get_post_type();
 
 		// Entity requested
-		if ( in_array( $post_type, $this->entities ) && is_singular( $post_type ) ) {
+		if ( in_array( $post_type, $this->get_entities() ) && is_singular( $post_type ) ) {
 
 			/**
 			 * Define our own tempate stack
@@ -446,7 +519,7 @@ final class VGSR_Entity {
 		$post = get_post();
 
 		// Bail when this is not an entity
-		if ( ! $post || ! in_array( $post->post_type, $this->entities ) )
+		if ( ! $post || ! in_array( $post->post_type, $this->get_entities() ) )
 			return $where;
 
 		$prev     = false !== strpos( current_filter(), 'previous' );
