@@ -584,6 +584,29 @@ final class VGSR_Entity {
 
 		return $order_by;
 	}
+
+	/** Wrappers *******************************************************/
+
+	/**
+	 * Wrapper for a single entity's {@see VGSR_Entity::get_meta()}
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses is_entity()
+	 * @uses VGSR_Entity::get_meta()
+	 *
+	 * @param int|WP_Post $post Optional. Post ID or object
+	 * @return array Entity meta
+	 */
+	public function get_meta( $post = 0 ) {
+		$post = get_post( $post );
+
+		if ( $post && is_entity( $post ) ) {
+			return $this->{$post->post_type}->get_meta( $post );
+		} else {
+			return array();
+		}
+	}
 }
 
 /**
