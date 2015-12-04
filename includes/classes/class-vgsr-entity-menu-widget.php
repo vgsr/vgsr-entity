@@ -8,7 +8,6 @@
  */
 
 if ( ! class_exists( 'VGSR_Entity_Menu_Widget' ) ) :
-
 /**
  * VGSR Entity Menu Widget
  *
@@ -28,7 +27,7 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 			'vgsr_entity_family', // VGSR base ID
 			__( 'VGSR Entity Menu', 'vgsr-entity' ), // Widget name
 			array( 
-				'description' => __( 'Display entity menu list', 'vgsr-entity' )
+				'description' => __( 'Display a list of all the entities of the type of the current page', 'vgsr-entity' )
 			)
 		);
 	}
@@ -41,73 +40,73 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 * @see WP_Widget::widget()
 	 *
 	 * @uses VGSR_Entity::get_entity_parents()
-	 * @uses get_posts()
+	 * @uses apply_filters() Calls 'vgsr_entity_menu_widget_get_posts'
+	 * @uses get_post_type_object()
 	 *
 	 * @param array $args Widget arguments
 	 * @param array $instance Saved widget values from DB
 	 */
 	public function widget( $args, $instance ) {
 
-		// Define local variable(s)
-		$post_type  = false;
-		$entity     = vgsr_entity();
-		$entities   = $entity->get_entities();
-		$parent_ids = $entity->get_entity_parents();
-		$parent     = false;
+		// This is an entity parent page
+		if ( is_entity_parent() ) {
+			$parent    = get_post()->ID;
+			$post_type = array_search( $parent, vgsr_entity()->get_entity_parents() );
 
-		// Are we on a post type page? Explicitly check for a valid ID to
-		// check for cases where the global post object is a dummy.
-		if ( ( $post = get_post() ) && $post->ID ) {
-			if ( in_array( $post->ID, $parent_ids ) ) {
-				$_parent   = array_keys( $parent_ids, $post->ID );
-				$post_type = reset( $_parent );
-				$parent    = $post->ID;
-			} else if ( in_array( $post->post_type, $entities ) ) {
-				$post_type = $post->post_type;
-			}
+		// This is an entity
+		} elseif ( is_entity() ) {
+			$parent    = get_post()->post_parent;
+			$post_type = get_post_type();
 
-		// Are we otherwise entity related?
-		} else if ( in_array( get_query_var( 'post_type' ), $entities ) ) {
-			$post_type = get_query_var( 'post_type' );
+		/**
+		 * Without any explicit relation to an entity type, this
+		 * widget is not displayed.
+		 */
+		} else {
+			return;
 		}
 
-		// Bail when there's no entity context
-		if ( ! $post_type || ! in_array( $post_type, $entities ) || ! post_type_exists( $post_type ) )
-			return;
+		// Get the current post
+		$post_id = get_the_ID();
 
 		// Get all post type items
-		$items = get_posts( apply_filters( 'vgsr_entity_menu_widget_get_posts', array( 
+		if ( $query = new WP_Query( apply_filters( 'vgsr_entity_menu_widget_get_posts', array(
 			'post_type'   => $post_type,
-			'orderby'     => 'menu_order',
-			'numberposts' => -1,
+			'post_parent' => $parent,
 			'post_status' => 'publish',
-			'post_parent' => $parent ? $parent : $parent_ids[ $post_type ]
-		) ) );
+			'numberposts' => -1,
+			'orderby'     => 'menu_order',
+			'order'       => 'DESC',
+		) ) ) ) {
 
-		?>
+			echo $args['before_widget'];
+			echo $args['before_title'] . get_post_type_object( $post_type )->labels->name . $args['after_title'];
 
-		<?php echo $args['before_widget']; ?>
-			<?php echo $args['before_title'] . get_post_type_object( $post_type )->labels->name . $args['after_title']; ?>
+			printf( '<ul id="menu-%s" class="menu">', $post_type );
 
-			<ul id="menu-<?php echo $post_type; ?>" class="menu">
-				<?php foreach( $items as $item ) {
+			// Walk queried posts
+			while ( $query->have_posts() ) : $query->the_post();
 
-					// Mimic nav-menu list classes
-					$class = 'menu-item menu-item-type-post_type menu-item-object-'. $post_type .' menu-item-'. $item->ID;
-					if ( is_single() && $post->ID === $item->ID ) {
-						$class .= ' current-menu-item current_'. $post_type .'_item';
-					} 
+				// Mimic nav-menu list classes
+				$class = sprintf( "menu-item menu-item-type-post_type menu-item-object-%s menu-item-%d", get_post_type(), get_the_ID() );
 
-					?>
-					<li class="<?php echo esc_attr( $class ); ?>">
-						<a href="<?php echo esc_attr( get_permalink( $item->ID ) ); ?>"><?php echo get_the_title( $item->ID ); ?></a>
-					</li>
-					<?php
-				} ?>
+				// This is the current post
+				if ( is_single() && $post_id === get_the_ID() ) {
+					$class .= sprintf( ' current-menu-item current_%s_item', get_post_type() );
+				}
 
-			</ul>
+				// Print post list item
+				printf( '<li class="%s"><a href="%s">%s</a></li>', esc_attr( $class ), esc_url( get_permalink() ), get_the_title() );
 
-		<?php echo $args['after_widget'];
+			endwhile;
+
+			// Reset globa post data
+			wp_reset_postdata();
+
+			echo '</ul>';
+
+			echo $args['after_widget'];
+		}
 	}
 
 	/**
@@ -124,8 +123,8 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 */
 	public function form( $instance ) { ?>
 
-		<p><?php _e( "This widget will only be shown on a entity related page.", 'vgsr-entity' ); ?></p>
-		<p><?php _e( 'There are no settings for this widget', 'vgsr-entity' ); ?></p>
+		<p><?php _e( "This widget will only display a list of entities on a entity related page.", 'vgsr-entity' ); ?></p>
+		<p class="description"><?php _e( 'There are no settings for this widget.', 'vgsr-entity' ); ?></p>
 
 		<?php
 	}
