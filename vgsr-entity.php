@@ -386,29 +386,29 @@ final class VGSR_Entity {
 	 * @uses wp_enqueue_style()
 	 */
 	public function enqueue_scripts() {
-		global $post;
-
-		// Bail when $post is not set
-		if ( ! isset( $post ) || ! $post )
-			return;
 
 		// Bail when not on entity parent page
-		if ( ! in_array( $post->post_type, $this->get_entities() ) && ! in_array( $post->ID, $this->get_entity_parent_ids() ) )
+		if ( ! is_entity() && ! is_entity_parent() )
 			return;
 
-		wp_register_style( 'vgsr-entity', $this->includes_url . 'assets/css/style.css' );
-		wp_enqueue_style(  'vgsr-entity' );
+		wp_enqueue_style( 'vgsr-entity', $this->includes_url . 'assets/css/style.css' );
 	}
 
 	/**
-	 * Return all entity parent page IDs
+	 * Return all entity parent page ids
 	 *
 	 * @since 1.0.0
+	 *
+	 * @uses VGSR_Entity::get_entities()
+	 * @return array Parent page ids
 	 */
-	public function get_entity_parent_ids() {
+	public function get_entity_parents() {
+
+		// Define local variable
 		$parents = array();
-		foreach ( $this->get_entities() as $post_type ) {
-			$parents[ $post_type ] = get_option( $this->{$post_type}->parent_option_key );
+
+		foreach ( $this->get_entities() as $type ) {
+			$parents[ $type ] = get_option( $this->{$type}->parent_option_key );
 		}
 
 		return $parents;
