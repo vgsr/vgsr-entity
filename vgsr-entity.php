@@ -328,6 +328,8 @@ final class VGSR_Entity {
 		return false;
 	}
 
+	/** Admin **********************************************************/
+
 	/**
 	 * Filters the admin menu to add a separator
 	 *
@@ -336,6 +338,11 @@ final class VGSR_Entity {
 	 * @uses VGSR_Entity::add_separator()
 	 */
 	public function admin_menu() {
+
+		// Bail when there are no entities registered
+		if ( empty( $this->entities ) )
+			return;
+
 		$this->add_separator( $this->menu_position - 1 );
 	}
 
