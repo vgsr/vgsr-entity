@@ -248,7 +248,7 @@ final class VGSR_Entity {
 	public function __set( $key, $value ) {
 
 		// Prevent overwriting entity object when present
-		if ( ! array_key_exists( $key, $this->entities ) ) {
+		if ( ! array_key_exists( $key, $this->entities ) && 'entities' !== $key ) {
 			$this->{$key} = $value;
 		}
 	}
@@ -263,7 +263,7 @@ final class VGSR_Entity {
 	public function __unset( $key ) {
 
 		// Prevent overwriting entity object when present
-		if ( ! array_key_exists( $key, $this->entities ) ) {
+		if ( ! array_key_exists( $key, $this->entities ) && 'entities' !== $key ) {
 			unset( $this->{$key} );
 		}
 	}
