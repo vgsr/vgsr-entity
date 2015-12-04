@@ -7,6 +7,9 @@
  * @subpackage Widgets
  */
 
+// Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
+
 if ( ! class_exists( 'VGSR_Entity_Menu_Widget' ) ) :
 /**
  * VGSR Entity Menu Widget
