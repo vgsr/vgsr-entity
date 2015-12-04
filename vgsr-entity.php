@@ -147,14 +147,19 @@ final class VGSR_Entity {
 		register_activation_hook( $this->file, array( $this, 'flush_rewrite_rules' ) );
 	}
 
-	/** Functions ******************************************************/
+	/** Entities *******************************************************/
 
 	/**
 	 * Setup the registered entities
 	 *
 	 * @since 1.1.0
+	 *
+	 * @uses apply_filters() Calls 'vgsr_entity_entities'
 	 */
 	public function setup_entities() {
+
+		// Load base class
+		require_once( $this->includes_dir . "classes/class-vgsr-entity-base.php" );
 
 		// Define the entities as post_type => class_name|file
 		$entities = apply_filters( 'vgsr_entity_entities', array(
@@ -163,16 +168,17 @@ final class VGSR_Entity {
 			'kast'    => 'VGSR_Entity_Kast',
 		) );
 
-		// Base class
-		require_once( $this->includes_dir . "classes/class-vgsr-entity-base.php" );
-
 		// Walk registered entities
 		foreach ( $entities as $type => $class ) {
 
-			// Setup entity
-			require_once( $this->includes_dir . "classes/class-vgsr-entity-{$type}.php" );
+			// Load class file
+			$class_file = $this->includes_dir . "classes/class-vgsr-entity-{$type}.php";
+			if ( file_exists( $class_file ) ) {
+				require_once( $class_file );
+			}
 
-			if ( ! array_key_exists( $type, $this->entities ) ) {
+			// Load entity class
+			if ( ! array_key_exists( $type, $this->entities ) && class_exists( $class ) ) {
 				$this->entities[ $type ] = new $class;
 			}
 		}
@@ -262,6 +268,8 @@ final class VGSR_Entity {
 		}
 	}
 
+	/** Plugin *********************************************************/
+
 	/**
 	 * Refresh permalink structure on activation
 	 *
@@ -282,8 +290,8 @@ final class VGSR_Entity {
 		$this->setup_entities();
 
 		// Call post type registration
-		foreach ( $this->entities as $type ) {
-			$this->{$type}->register_post_type();
+		foreach ( $this->entities as $type_obj ) {
+			$type_obj->register_post_type();
 		}
 
 		// Flush rules only on activation
