@@ -430,7 +430,7 @@ abstract class VGSR_Entity_Base {
 
 		// Get the parent post ID
 		if ( null === $this->args['parent'] ) {
-			$this->args['parent'] = get_option( $this->args['parent_key'], 0 );
+			$this->args['parent'] = (int) get_option( $this->args['parent_key'], 0 );
 		}
 
 		return $this->args['parent'];
