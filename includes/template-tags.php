@@ -72,12 +72,19 @@ if ( ! function_exists( 'is_entity_parent' ) ) :
  *
  * @since 1.1.0
  *
+ * @uses VGSR_Entity::get_entity_parents()
+ * @uses post_type_exists()
+ *
  * @param int|WP_Post $post Optional. Post ID or object
- * @return bool Post is an entity parent page
+ * @return string|bool Post type of parent's entity or False if it is not.
  */
 function is_entity_parent( $post = 0 ) {
 	if ( ! $post = get_post( $post ) )
 		return false;
-	return in_array( $post->ID, vgsr_entity()->get_entity_parents() );
+
+	// Find this post
+	$post_type = array_search( $post->ID, vgsr_entity()->get_entity_parents() );
+
+	return ( post_type_exists( $post_type ) ? $post_type : false );
 }
 endif;
