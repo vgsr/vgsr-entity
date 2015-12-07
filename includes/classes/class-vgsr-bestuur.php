@@ -76,8 +76,8 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		// Mark the current bestuur
 		add_filter( 'display_post_states', array( $this, 'display_post_states' ), 9, 2 );
 
-		// Entity Widget
-		add_filter( 'vgsr_entity_menu_widget_get_posts', array( $this, 'widget_menu_order' ) );
+		// Widgets
+		add_filter( "vgsr_{$this->type}_menu_widget_query_args", array( $this, 'widget_menu_order' ) );
 	}
 
 	/**
@@ -419,7 +419,10 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * @return array $args
 	 */
 	public function widget_menu_order( $args ) {
+
+		// Define query order
 		$args['order'] = get_option( '_bestuur-menu-order' ) ? 'DESC' : 'ASC';
+
 		return $args;
 	}
 

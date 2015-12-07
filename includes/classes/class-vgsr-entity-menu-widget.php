@@ -48,14 +48,15 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	public function widget( $args, $instance ) {
 
 		// This is an entity parent page
-		if ( is_entity_parent() ) {
+		if ( $post_type = is_entity_parent() ) {
 			$parent    = get_post()->ID;
-			$post_type = array_search( $parent, vgsr_entity()->get_entity_parents() );
+			$is_parent = true;
 
 		// This is an entity
 		} elseif ( is_entity() ) {
 			$parent    = get_post()->post_parent;
 			$post_type = get_post_type();
+			$is_parent = false;
 
 		/**
 		 * Without any explicit relation to an entity type, this
@@ -69,7 +70,7 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 		$post_id = get_the_ID();
 
 		// Get all post type items
-		if ( $query = new WP_Query( apply_filters( 'vgsr_entity_menu_widget_get_posts', array(
+		if ( $query = new WP_Query( apply_filters( "vgsr_{$post_type}_menu_widget_query_args", array(
 			'post_type'      => $post_type,
 			'post_parent'    => $parent,
 			'post_status'    => 'publish',
@@ -78,8 +79,14 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 			'order'          => 'DESC',
 		) ) ) ) {
 
+			// Define widget title
+			$title = get_post_type_object( $post_type )->labels->name;
+			if ( ! $is_parent ) {
+				$title = sprintf( '<a href="%s">%s</a>', get_permalink( $parent ), $title );
+			}
+
 			echo $args['before_widget'];
-			echo $args['before_title'] . get_post_type_object( $post_type )->labels->name . $args['after_title'];
+			echo $args['before_title'] . $title . $args['after_title'];
 
 			printf( '<ul id="menu-%s" class="menu">', $post_type );
 
