@@ -19,12 +19,12 @@ if ( ! class_exists( 'VGSR_Bestuur' ) ) :
 class VGSR_Bestuur extends VGSR_Entity_Base {
 
 	/**
-	 * Holds the latest Bestuur post ID
+	 * Holds the current Bestuur post ID
 	 *
 	 * @since 1.0.0
 	 * @var int
 	 */
-	protected $latest_bestuur;
+	protected $current_bestuur;
 
 	/**
 	 * Construct Bestuur Entity
@@ -58,7 +58,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * @since 1.0.0
 	 */
 	public function setup_globals() {
-		$this->latest_bestuur = get_option( '_bestuur-latest-bestuur' );
+		$this->current_bestuur = get_option( '_bestuur-latest-bestuur' );
 	}
 
 	/**
@@ -70,10 +70,10 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 		add_action( 'vgsr_entity_init', array( $this, 'add_bestuur_rewrite_rule'  )        );
 		add_action( 'admin_init',       array( $this, 'bestuur_register_settings' )        );
-		add_action( 'save_post',        array( $this, 'latest_bestuur_save_id'    ), 10, 2 );
+		add_action( 'save_post',        array( $this, 'current_bestuur_save_id'    ), 10, 2 );
 		add_action( 'save_post',        array( $this, 'bestuur_metabox_save'      ), 10, 2 );
 
-		// Mark the current bestuur
+		// Current bestuur
 		add_filter( 'display_post_states', array( $this, 'display_post_states' ), 9, 2 );
 
 		// Widgets
@@ -272,7 +272,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * @param int $post_id Post ID
 	 * @param object $post Post data
 	 */
-	public function latest_bestuur_save_id( $post_id, $post ) {
+	public function current_bestuur_save_id( $post_id, $post ) {
 
 		// Check autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
@@ -288,14 +288,14 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 			return;
 
 		// Check if this bestuur is already known as the latest one
-		if ( $post_id == $this->latest_bestuur ) {
+		if ( $post_id == $this->current_bestuur ) {
 
 			// Bail if status isn't changed
 			if ( 'publish' == $post->post_status )
 				return;
 
 			// Find now latest bestuur
-			if ( $_post = $this->get_latest_bestuur() ) {
+			if ( $_post = $this->get_current_bestuur() ) {
 				$post_id = $_post->ID;
 
 			// Default to 0
@@ -307,14 +307,14 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		} else {
 
 			// Nothing changes when it's not published or it's an older bestuur
-			if ( 'publish' != $post->post_status || ( $post->menu_order <= get_post( $this->latest_bestuur )->menu_order ) ) {
+			if ( 'publish' != $post->post_status || ( $post->menu_order <= get_post( $this->current_bestuur )->menu_order ) ) {
 				return;
 			}
 		}
 
 		// Update latest bestuur option
 		update_option( '_bestuur-latest-bestuur', $post_id );
-		$this->latest_bestuur = $post_id;
+		$this->current_bestuur = $post_id;
 
 		// Overwrite latest bestuur rule
 		$this->add_bestuur_rewrite_rule();
@@ -333,10 +333,10 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	public function add_bestuur_rewrite_rule() {
 
 		// Point parent page to latest bestuur
-		if ( $this->latest_bestuur ) {
+		if ( $this->current_bestuur ) {
 			add_rewrite_rule(
 				get_post_type_object( $this->type )->rewrite['slug'] . '/?$', // The parent page ...
-				'index.php?p=' . $this->latest_bestuur, // ... appears to be the latest Bestuur
+				'index.php?p=' . $this->current_bestuur, // ... should be interpreted as the current Bestuur
 				'top'
 			);
 		}
@@ -347,27 +347,26 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses get_posts()
+	 * @uses WP_Query
 	 * @return WP_Post|bool Post object on success, false if not found
 	 */
-	public function get_latest_bestuur() {
+	public function get_current_bestuur() {
 
 		// Get the latest bestuur
-		if ( $bestuur = get_posts( array(
+		if ( $bestuur = new WP_Query( array(
 			'numberposts' => 1,
 			'post_type'   => $this->type,
 			'post_status' => 'publish',
 			'orderby'     => 'menu_order',
 		) ) ) {
-			return $bestuur[0];
+			return $bestuur->posts[0];
 		}
 
 		return false;
 	}
 
 	/**
-	 * Show which bestuur is the current one by appending a 'Current'
-	 * post state
+	 * Mark which bestuur is the current one
 	 *
 	 * @since 1.0.0
 	 *
@@ -378,7 +377,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	public function display_post_states( $states, $post ) {
 
 		// Bestuur is the latest one
-		if ( $post->post_type == $this->type && $post->ID == $this->latest_bestuur ) {
+		if ( $post->post_type === $this->type && $post->ID == $this->current_bestuur ) {
 			$states['current'] = __( 'Current', 'vgsr-entity' );
 		}
 
