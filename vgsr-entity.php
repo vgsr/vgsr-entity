@@ -432,7 +432,7 @@ final class VGSR_Entity {
 		$parents = array();
 
 		foreach ( $this->get_entities() as $type ) {
-			$parents[ $type ] = get_option( $this->{$type}->parent_option_key );
+			$parents[ $type ] = $this->{$type}->parent;
 		}
 
 		return $parents;

@@ -61,7 +61,7 @@ abstract class VGSR_Entity_Base {
 			'labels'    => array(),
 
 			// Parent
-			'parent'    => 0,
+			'parent'    => null,
 
 			// Default thumbsize. @todo When theme does not support post-thumbnail image size
 			'thumbsize' => 'post-thumbnail',
@@ -113,7 +113,13 @@ abstract class VGSR_Entity_Base {
 	 */
 	public function __get( $key ) {
 		if ( array_key_exists( $key, $this->args ) ) {
-			return $this->args[ $key ];
+			switch ( $key ) {
+				case 'parent' :
+					return $this->get_entity_parent();
+					break;
+				default :
+					return $this->args[ $key ];
+			}
 		} else {
 			return $this->{$key};
 		}
