@@ -32,7 +32,7 @@ class VGSR_Entity_Kast extends VGSR_Entity_Base {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		parent::__construct( array(
+		parent::__construct( 'kast', array(
 			'single'    => 'Kast',
 			'plural'    => 'Kasten',
 			'menu_icon' => 'dashicons-admin-home'
@@ -85,7 +85,7 @@ class VGSR_Entity_Kast extends VGSR_Entity_Base {
 	public function post_type_args( $args ) {
 
 		// Rename labels
-		$args['labels']['add_new'] = $args['labels']['new_item'] = sprintf( _x( 'New %s', 'In Dutch «New Kast» doesn\'t translate like «New Bestuur».', 'vgsr-entity' ), strtolower( $this->args->single ) );
+		$args['labels']['add_new'] = $args['labels']['new_item'] = sprintf( _x( 'New %s', 'In Dutch «New Kast» doesn\'t translate like «New Bestuur».', 'vgsr-entity' ), strtolower( $this->args['single'] ) );
 
 		return $args;
 	}
@@ -111,7 +111,7 @@ class VGSR_Entity_Kast extends VGSR_Entity_Base {
 	?>
 
 		<input type="checkbox" name="_kast-downsize-thumbs" id="_kast-downsize-thumbs" <?php checked( get_option( '_kast-downsize-thumbs' ) ); ?> value="1"/>
-		<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __( 'This is a one time resizing of thumbs for %s. NOTE: This option only <strong>adds</strong> new image sizes, it doesn\'t remove old ones.', 'vgsr-entity' ), $this->args->plural ); ?></span></label>
+		<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __( 'This is a one time resizing of thumbs for %s. NOTE: This option only <strong>adds</strong> new image sizes, it doesn\'t remove old ones.', 'vgsr-entity' ), $this->args['plural'] ); ?></span></label>
 
 	<?php
 	}

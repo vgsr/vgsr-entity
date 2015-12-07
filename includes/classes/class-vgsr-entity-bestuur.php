@@ -32,7 +32,7 @@ class VGSR_Entity_Bestuur extends VGSR_Entity_Base {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		parent::__construct( array(
+		parent::__construct( 'bestuur', array(
 			'single'    => 'Bestuur',
 			'plural'    => 'Besturen',
 			'menu_icon' => 'dashicons-awards',

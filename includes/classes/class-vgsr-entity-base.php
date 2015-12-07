@@ -19,15 +19,23 @@ if ( ! class_exists( 'VGSR_Entity_Base' ) ) :
 abstract class VGSR_Entity_Base {
 
 	/**
-	 * The entity post type
+	 * Holds tye entity post type
 	 *
 	 * @since 1.0.0
 	 * @var string
 	 */
-	public $type = '';
+	public $type;
 
 	/**
-	 * The entity admin page
+	 * Holds the entity arguments
+	 * 
+	 * @since 1.1.0
+	 * @var object
+	 */
+	protected $args;
+
+	/**
+	 * Holds the entity admin page link
 	 *
 	 * @since 1.0.0
 	 * @var string
@@ -35,18 +43,7 @@ abstract class VGSR_Entity_Base {
 	public $page = '';
 
 	/**
-	 * The entity post type labels
-	 *
-	 * @since 1.0.0
-	 * @var array {
-	 *  @type string $single Post type single label
-	 *  @type string $plural Post type plural label
-	 * }
-	 */
-	public $labels = array();
-
-	/**
-	 * The entity settings page hook
+	 * Holds the entity settings page hook
 	 *
 	 * @since 1.0.0
 	 * @var string
@@ -62,7 +59,7 @@ abstract class VGSR_Entity_Base {
 	public $parent_option_key = '';
 
 	/**
-	 * The entity post thumbnail size
+	 * Holds the entity post thumbnail size
 	 *
 	 * @since 1.0.0
 	 * @var string
@@ -89,20 +86,41 @@ abstract class VGSR_Entity_Base {
 	 * Construct the VGSR Entity
 	 *
 	 * @since 1.0.0
+	 * 
+	 * @param string $type Post type name. Required
+	 * @param array $args Entity and post type arguments
+	 *
+	 * @uses VGSR_Entity_Base::entity_globals()
+	 * @uses VGSR_Entity_Base::entity_actions()
+	 * @uses VGSR_Entity_Base::setup_globals()
+	 * @uses VGSR_Entity_Base::setup_requires()
+	 * @uses VGSR_Entity_Base::setup_actions()
 	 */
-	public function __construct( $args ) {
+	public function __construct( $type, $args = array() ) {
+
+		// Set type
+		$this->type = $type;
 
 		// Setup entity args
-		$this->args = (object) wp_parse_args( $args, array(
+		$args = wp_parse_args( $args, array(
+			'menu_icon' => '',
+
+			// Labels
 			'single'    => '',
 			'plural'    => '',
-			'menu_icon' => '',
+			'labels'    => array(),
 		) );
 
-		// Bail when labels are msising
-		if ( empty( $this->args->single ) || empty( $this->args->plural ) ) {
-			wp_die( __( 'The VGSR entity is missing some of the post type labels', 'vgsr-entity' ), 'vgsr-entity-missing-labels' );
+		if ( empty( $args['single'] ) ) {
+			$args['single'] = ucfirst( $args['type'] );
 		}
+
+		if ( empty( $args['plural'] ) ) {
+			$args['plural'] = ucfirst( $args['type'] ) . 's';
+		}
+
+		// Define global args
+		$this->args = $args;
 
 		// Setup defaults
 		$this->entity_globals();
@@ -115,6 +133,67 @@ abstract class VGSR_Entity_Base {
 	}
 
 	/**
+	 * Magic isset-er
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key
+	 * @return bool Value isset
+	 */
+	public function __isset( $key ) {
+		if ( array_key_exists( $key, $this->args ) ) {
+			return true;
+		} else {
+			return isset( $this->{$key} );
+		}
+	}
+
+	/**
+	 * Magic getter
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key
+	 * @return bool Value isset
+	 */
+	public function __get( $key ) {
+		if ( array_key_exists( $key, $this->args ) ) {
+			return $this->args[ $key ];
+		} else {
+			return $this->{$key};
+		}
+	}
+
+	/**
+	 * Magic setter
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 */
+	public function __set( $key, $value ) {
+		if ( ! array_key_exists( $key, $this->args ) ) {
+			$this->{$key} = $value;
+		}
+	}
+
+	/**
+	 * Magic unsetter
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key
+	 */
+	public function __unset( $key ) {
+		if ( ! array_key_exists( $key, $this->args ) ) {
+			unset( $this->{$key} );
+		}
+	}
+
+	/** Setup Base *****************************************************/
+
+	/**
 	 * Define default entity base globals
 	 *
 	 * @since 1.0.0
@@ -122,7 +201,6 @@ abstract class VGSR_Entity_Base {
 	private function entity_globals() {
 
 		// Build post type from single type label
-		$this->type = strtolower( $this->args->single );
 		$this->page = 'edit.php?post_type=' . $this->type;
 
 		// Post type parent page option value
@@ -132,7 +210,7 @@ abstract class VGSR_Entity_Base {
 		$this->thumbsize = 'post-thumbnail';
 
 		// Setup settings page title
-		$this->settings_title = sprintf( __( '%s Settings' ), $this->args->single );
+		$this->settings_title = sprintf( __( '%s Settings', 'vgsr-entity' ), $this->args['single'] );
 
 		// Settings globals
 		$this->settings_page    = "vgsr_{$this->type}_settings";
@@ -153,7 +231,7 @@ abstract class VGSR_Entity_Base {
 		add_action( 'admin_notices',    array( $this, 'entity_admin_notices'     ) );
 
 		// Plugin hooks
-		add_filter( "vgsr_{$this->type}_display_meta",   array( $this, 'entity_display_meta'               )    );
+		add_filter( "vgsr_{$this->type}_display_meta",   array( $this, 'entity_display_meta'       )    );
 		add_filter( "vgsr_{$this->type}_admin_messages", array( $this, 'admin_messages'            )    );
 		add_action( "vgsr_{$this->type}_settings_load",  array( $this, 'entity_parent_page_update' ), 1 );
 
@@ -182,7 +260,7 @@ abstract class VGSR_Entity_Base {
 	 */
 	public function setup_actions() { /* Overwrite this method in a child class */ }
 
-	/** Setup Entity Post Type *****************************************/
+	/** Post Type ******************************************************/
 
 	/**
 	 * Register the post type
@@ -197,18 +275,23 @@ abstract class VGSR_Entity_Base {
 
 		// Create post type labels
 		$labels = array(
-			'name'                 => $this->args->plural,
-			'singular_name'        => $this->args->single,
-			'add_new'              => sprintf( __( 'New %s' ),               $this->args->single ),
-			'add_new_item'         => sprintf( __( 'Add new %s' ),           $this->args->single ),
-			'edit_item'            => sprintf( __( 'Edit %s' ),              $this->args->single ),
-			'new_item'             => sprintf( __( 'New %s' ),               $this->args->single ),
-			'all_items'            => sprintf( __( 'All %s' ),               $this->args->plural ),
-			'view_item'            => sprintf( __( 'View %s' ),              $this->args->single ),
-			'search_items'         => sprintf( __( 'Search %s' ),            $this->args->plural ),
-			'not_found'            => sprintf( __( 'No %s found' ),          $this->args->plural ),
-			'not_found_in_trash'   => sprintf( __( 'No %s found in trash' ), $this->args->plural ),
-			'menu_name'            => $this->args->plural
+			'name'                 => $this->args['plural'],
+			'singular_name'        => $this->args['single'],
+			'add_new'              => sprintf( __( 'New %s' ),               $this->args['single'] ),
+			'add_new_item'         => sprintf( __( 'Add new %s' ),           $this->args['single'] ),
+			'edit_item'            => sprintf( __( 'Edit %s' ),              $this->args['single'] ),
+			'new_item'             => sprintf( __( 'New %s' ),               $this->args['single'] ),
+			'all_items'            => sprintf( __( 'All %s' ),               $this->args['plural'] ),
+			'view_item'            => sprintf( __( 'View %s' ),              $this->args['single'] ),
+			'search_items'         => sprintf( __( 'Search %s' ),            $this->args['plural'] ),
+			'not_found'            => sprintf( __( 'No %s found' ),          $this->args['plural'] ),
+			'not_found_in_trash'   => sprintf( __( 'No %s found in trash' ), $this->args['plural'] ),
+			'menu_name'            => $this->args['plural']
+		);
+
+		// Setup rewrite
+		$rewrite = array(
+			'slug' => $this->entity_parent_page_slug()
 		);
 
 		// Setup post type support
@@ -222,19 +305,20 @@ abstract class VGSR_Entity_Base {
 		);
 
 		// Register this entity post type
-		register_post_type( $this->type, apply_filters( "vgsr_{$this->type}_register_post_type", array(
-			'labels'               => $labels,
-			'public'               => true,
-			'menu_position'        => vgsr_entity()->menu_position,
-			'hierarchical'         => false,
-			'rewrite'              => array(
-				'slug' => $this->entity_parent_page_slug()
-			),
-			'capability_type'      => 'page',
-			'supports'             => $supports,
-			'register_meta_box_cb' => array( $this, 'add_metabox' ),
-			'menu_icon'            => $this->args->menu_icon,
-		) ) );
+		register_post_type(
+			$this->type,
+			apply_filters( "vgsr_{$this->type}_register_post_type", array(
+				'labels'               => $labels,
+				'public'               => true,
+				'menu_position'        => vgsr_entity()->menu_position,
+				'hierarchical'         => false,
+				'capability_type'      => 'page',
+				'rewrite'              => $rewrite,
+				'supports'             => $supports,
+				'menu_icon'            => $this->args['menu_icon'],
+				'register_meta_box_cb' => array( $this, 'add_metabox' ),
+			) )
+		);
 	}
 
 	/**
@@ -344,13 +428,13 @@ abstract class VGSR_Entity_Base {
 		// Register main settings section
 		add_settings_section(
 			$this->settings_section,
-			sprintf( __( 'Main %s Settings', 'vgsr-entity' ), $this->args->plural ),
+			sprintf( __( 'Main %s Settings', 'vgsr-entity' ), $this->args['plural'] ),
 			array( $this, 'main_settings_info' ),
 			$this->settings_page
 		);
 
 		// Entity post type parent page
-		add_settings_field( $this->parent_option_key, sprintf( __( '%s Parent Page', 'vgsr-entity' ), $this->args->plural ), array( $this, 'entity_parent_page_settings_field' ), $this->settings_page, $this->settings_section );
+		add_settings_field( $this->parent_option_key, sprintf( __( '%s Parent Page', 'vgsr-entity' ), $this->args['plural'] ), array( $this, 'entity_parent_page_settings_field' ), $this->settings_page, $this->settings_section );
 		register_setting( $this->settings_page, $this->parent_option_key, 'intval' );
 	}
 
@@ -381,7 +465,7 @@ abstract class VGSR_Entity_Base {
 				'show_option_none' => __( 'None' )
 			) ); ?>
 
-			<span class="description"><?php printf( __( 'Select the parent page you want to have your %s to appear on.', 'vgsr-entity' ), $this->args->plural ); ?></span>
+			<span class="description"><?php printf( __( 'Select the parent page you want to have your %s to appear on.', 'vgsr-entity' ), $this->args['plural'] ); ?></span>
 		</label>
 
 	<?php
