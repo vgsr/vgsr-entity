@@ -178,7 +178,7 @@ final class VGSR_Entity {
 		foreach ( $entities as $type => $class ) {
 
 			// Load class file
-			$class_file = $this->includes_dir . "classes/class-vgsr-entity-{$type}.php";
+			$class_file = $this->includes_dir . "classes/class-vgsr-{$type}.php";
 			if ( file_exists( $class_file ) ) {
 				require_once( $class_file );
 			}

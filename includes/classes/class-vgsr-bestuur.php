@@ -19,12 +19,12 @@ if ( ! class_exists( 'VGSR_Bestuur' ) ) :
 class VGSR_Bestuur extends VGSR_Entity_Base {
 
 	/**
-	 * The latest Bestuur post ID
+	 * Holds the latest Bestuur post ID
 	 *
 	 * @since 1.0.0
 	 * @var int
 	 */
-	public $latest_bestuur;
+	protected $latest_bestuur;
 
 	/**
 	 * Construct Bestuur Entity
