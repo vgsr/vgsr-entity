@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VGSR Kast Class
+ * VGSR Entity Kast Class
  *
  * @package VGSR Entity
  * @subpackage Entities
@@ -33,9 +33,25 @@ class VGSR_Entity_Kast extends VGSR_Entity_Base {
 	 */
 	public function __construct() {
 		parent::__construct( 'kast', array(
+			'menu_icon' => 'dashicons-admin-home',
+
+			// Labels
 			'single'    => 'Kast',
 			'plural'    => 'Kasten',
-			'menu_icon' => 'dashicons-admin-home'
+			'labels'    => array(
+				'name'               => __( 'Kasten',                   'vgsr-entity' ),
+				'singular_name'      => __( 'Kast',                     'vgsr-entity' ),
+				'add_new'            => __( 'New Kast',                 'vgsr-entity' ),
+				'add_new_item'       => __( 'Add new Kast',             'vgsr-entity' ),
+				'edit_item'          => __( 'Edit Kast',                'vgsr-entity' ),
+				'new_item'           => __( 'New Kast',                 'vgsr-entity' ),
+				'all_items'          => __( 'All Kasten',               'vgsr-entity' ),
+				'view_item'          => __( 'View Kast',                'vgsr-entity' ),
+				'search_items'       => __( 'Search Kasten',            'vgsr-entity' ),
+				'not_found'          => __( 'No Kasten found',          'vgsr-entity' ),
+				'not_found_in_trash' => __( 'No Kasten found in trash', 'vgsr-entity' ),
+				'menu_name'          => __( 'Kasten',                   'vgsr-entity' ),
+			)
 		) );
 	}
 
@@ -66,28 +82,11 @@ class VGSR_Entity_Kast extends VGSR_Entity_Base {
 		add_action( 'save_post',  array( $this, 'kast_metabox_save' ), 10, 2 );
 
 		// Filters
-		add_filter( 'vgsr_kast_register_post_type', array( $this, 'post_type_args'  ) );
 		add_filter( 'vgsr_kast_settings_load',      array( $this, 'downsize_thumbs' ) );
 		add_filter( 'vgsr_kast_settings_scripts',   array( $this, 'enqueue_scripts' ) );
 
 		// Append entity children
 		add_filter( 'the_content', array( $this, 'entity_parent_page_children' ) );
-	}
-
-	/**
-	 * Manipulate entity custom post type arguments
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $args Post type arguments
-	 * @return array Args
-	 */
-	public function post_type_args( $args ) {
-
-		// Rename labels
-		$args['labels']['add_new'] = $args['labels']['new_item'] = sprintf( _x( 'New %s', 'In Dutch «New Kast» doesn\'t translate like «New Bestuur».', 'vgsr-entity' ), strtolower( $this->args['single'] ) );
-
-		return $args;
 	}
 
 	/**

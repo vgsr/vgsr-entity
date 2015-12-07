@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VGSR Dispuut Class
+ * VGSR Entity Dispuut Class
  *
  * @package VGSR Entity
  * @subpackage Entities
@@ -25,9 +25,25 @@ class VGSR_Entity_Dispuut extends VGSR_Entity_Base {
 	 */
 	public function __construct() {
 		parent::__construct( 'dispuut', array(
+			'menu_icon' => 'dashicons-format-status',
+
+			// Labels
 			'single'    => 'Dispuut',
 			'plural'    => 'Disputen',
-			'menu_icon' => 'dashicons-format-status',
+			'labels'    => array(
+				'name'               => __( 'Disputen',                   'vgsr-entity' ),
+				'singular_name'      => __( 'Dispuut',                    'vgsr-entity' ),
+				'add_new'            => __( 'New Dispuut',                'vgsr-entity' ),
+				'add_new_item'       => __( 'Add new Dispuut',            'vgsr-entity' ),
+				'edit_item'          => __( 'Edit Dispuut',               'vgsr-entity' ),
+				'new_item'           => __( 'New Dispuut',                'vgsr-entity' ),
+				'all_items'          => __( 'All Disputen',               'vgsr-entity' ),
+				'view_item'          => __( 'View Dispuut',               'vgsr-entity' ),
+				'search_items'       => __( 'Search Disputen',            'vgsr-entity' ),
+				'not_found'          => __( 'No Disputen found',          'vgsr-entity' ),
+				'not_found_in_trash' => __( 'No Disputen found in trash', 'vgsr-entity' ),
+				'menu_name'          => __( 'Disputen',                   'vgsr-entity' ),
+			)
 		) );
 	}
 

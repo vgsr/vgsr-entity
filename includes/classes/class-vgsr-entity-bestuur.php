@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VGSR Bestuur Class
+ * VGSR Entity Bestuur Class
  *
  * @package VGSR Entity
  * @subpackage Entities
@@ -33,9 +33,25 @@ class VGSR_Entity_Bestuur extends VGSR_Entity_Base {
 	 */
 	public function __construct() {
 		parent::__construct( 'bestuur', array(
+			'menu_icon' => 'dashicons-awards',
+
+			// Labels
 			'single'    => 'Bestuur',
 			'plural'    => 'Besturen',
-			'menu_icon' => 'dashicons-awards',
+			'labels'    => array(
+				'name'               => __( 'Besturen',                   'vgsr-entity' ),
+				'singular_name'      => __( 'Bestuur',                    'vgsr-entity' ),
+				'add_new'            => __( 'New Bestuur',                'vgsr-entity' ),
+				'add_new_item'       => __( 'Add new Bestuur',            'vgsr-entity' ),
+				'edit_item'          => __( 'Edit Bestuur',               'vgsr-entity' ),
+				'new_item'           => __( 'New Bestuur',                'vgsr-entity' ),
+				'all_items'          => __( 'All Besturen',               'vgsr-entity' ),
+				'view_item'          => __( 'View Bestuur',               'vgsr-entity' ),
+				'search_items'       => __( 'Search Besturen',            'vgsr-entity' ),
+				'not_found'          => __( 'No Besturen found',          'vgsr-entity' ),
+				'not_found_in_trash' => __( 'No Besturen found in trash', 'vgsr-entity' ),
+				'menu_name'          => __( 'Besturen',                   'vgsr-entity' ),
+			)
 		) );
 	}
 

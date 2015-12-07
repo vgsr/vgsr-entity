@@ -24,7 +24,7 @@ abstract class VGSR_Entity_Base {
 	 * @since 1.0.0
 	 * @var string
 	 */
-	public $type;
+	public $type = '';
 
 	/**
 	 * Holds the entity arguments
@@ -268,26 +268,26 @@ abstract class VGSR_Entity_Base {
 	 * @since 1.0.0
 	 *
 	 * @uses register_post_type()
-	 * @uses apply_filters() To call vgsr_{$post_type}_register_cpt
-	 *                        filter to enable post type arguments filtering
+	 * @uses VGSR_Entity_Base::entity_parent_page_slug()
+	 * @uses apply_filters() Calls 'vgsr_{$post_type}_register_post_type'
 	 */
 	public function register_post_type() {
 
 		// Create post type labels
-		$labels = array(
-			'name'                 => $this->args['plural'],
-			'singular_name'        => $this->args['single'],
-			'add_new'              => sprintf( __( 'New %s' ),               $this->args['single'] ),
-			'add_new_item'         => sprintf( __( 'Add new %s' ),           $this->args['single'] ),
-			'edit_item'            => sprintf( __( 'Edit %s' ),              $this->args['single'] ),
-			'new_item'             => sprintf( __( 'New %s' ),               $this->args['single'] ),
-			'all_items'            => sprintf( __( 'All %s' ),               $this->args['plural'] ),
-			'view_item'            => sprintf( __( 'View %s' ),              $this->args['single'] ),
-			'search_items'         => sprintf( __( 'Search %s' ),            $this->args['plural'] ),
-			'not_found'            => sprintf( __( 'No %s found' ),          $this->args['plural'] ),
-			'not_found_in_trash'   => sprintf( __( 'No %s found in trash' ), $this->args['plural'] ),
-			'menu_name'            => $this->args['plural']
-		);
+		$labels = wp_parse_args( $this->args['labels'], array(
+			'name'               => $this->args['plural'],
+			'singular_name'      => $this->args['single'],
+			'add_new'            => sprintf( _x( 'New %s',               'Post type add_new',            'vgsr-entity' ), $this->args['single'] ),
+			'add_new_item'       => sprintf( _x( 'Add new %s',           'Post type add_new_item',       'vgsr-entity' ), $this->args['single'] ),
+			'edit_item'          => sprintf( _x( 'Edit %s',              'Post type edit_item',          'vgsr-entity' ), $this->args['single'] ),
+			'new_item'           => sprintf( _x( 'New %s',               'Post type new_item',           'vgsr-entity' ), $this->args['single'] ),
+			'all_items'          => sprintf( _x( 'All %s',               'Post type all_items',          'vgsr-entity' ), $this->args['plural'] ),
+			'view_item'          => sprintf( _x( 'View %s',              'Post type view_item',          'vgsr-entity' ), $this->args['single'] ),
+			'search_items'       => sprintf( _x( 'Search %s',            'Post type search_items',       'vgsr-entity' ), $this->args['plural'] ),
+			'not_found'          => sprintf( _x( 'No %s found',          'Post type not_found',          'vgsr-entity' ), $this->args['plural'] ),
+			'not_found_in_trash' => sprintf( _x( 'No %s found in trash', 'Post type not_found_in_trash', 'vgsr-entity' ), $this->args['plural'] ),
+			'menu_name'          => $this->args['plural']
+		) );
 
 		// Setup rewrite
 		$rewrite = array(
