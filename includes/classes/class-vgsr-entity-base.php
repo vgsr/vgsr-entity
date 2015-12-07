@@ -189,7 +189,7 @@ abstract class VGSR_Entity_Base {
 	}
 
 	/**
-	 * Setup default entity base actions and filters
+	 * Define default base actions and filters
 	 *
 	 * @since 1.0.0
 	 */
@@ -255,7 +255,7 @@ abstract class VGSR_Entity_Base {
 			'author',
 			'thumbnail',
 			'revisions',
-			'page-attributes' // To set menu order
+			'page-attributes' // Use menu_order
 		);
 
 		// Register this entity post type
@@ -319,7 +319,7 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @since 0.x
 	 *
-	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_scripts'
+	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_enqueue_scripts'
 	 */
 	public function settings_enqueue_scripts( $page_hook ) {
 
