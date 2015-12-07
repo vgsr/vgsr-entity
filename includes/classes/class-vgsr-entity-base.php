@@ -306,48 +306,48 @@ abstract class VGSR_Entity_Base {
 	public function entity_admin_menu() {
 
 		// Register menu page
-		$this->hook = add_submenu_page( $this->args['page'], $this->args['labels']['settings_title'], __( 'Settings' ), 'manage_options', "{$this->type}-settings", array( $this, 'settings_page' ) );
+		$this->args['hook'] = add_submenu_page( $this->args['page'], $this->args['labels']['settings_title'], __( 'Settings' ), 'manage_options', "{$this->type}-settings", array( $this, 'settings_page' ) );
 
 		// Setup settings specific hooks
-		add_action( 'load-'                . $this->hook, array( $this, 'entity_settings_load'    ), 9  );
-		add_action( 'admin_print_scripts-' . $this->hook, array( $this, 'entity_settings_styles'  ), 10 );
-		add_action( 'admin_print_styles-'  . $this->hook, array( $this, 'entity_settings_scripts' ), 10 );
-		add_action( 'admin_footer-'        . $this->hook, array( $this, 'entity_settings_footer'  )     );
+		add_action( "load-{$this->args['hook']}",         array( $this, 'settings_load'            ), 9  );
+		add_action( 'admin_enqueue_scripts',              array( $this, 'settings_enqueue_scripts' ), 10 );
+		add_action( "admin_footer-{$this->args['hook']}", array( $this, 'settings_footer'          )     );
 	}
 
 	/**
 	 * Create admin page load hook
 	 *
 	 * @since 0.x
+	 *
+	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_load'
 	 */
-	public function entity_settings_load() {
+	public function settings_load() {
 		do_action( "vgsr_{$this->type}_settings_load" );
 	}
 
 	/**
-	 * Create admin page styles hook
+	 * Create admin settings enqueue scripts hook
 	 *
 	 * @since 0.x
+	 *
+	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_scripts'
 	 */
-	public function entity_settings_styles() {
-		do_action( "vgsr_{$this->type}_settings_styles" );
+	public function settings_enqueue_scripts( $page_hook ) {
+
+		// Run hook when we're on the right page
+		if ( $page_hook === $this->args['hook'] ) {
+			do_action( "vgsr_{$this->type}_settings_enqueue_scripts" );
+		}
 	}
 
 	/**
-	 * Create admin settings scripts hook
+	 * Create admin footer hook
 	 *
 	 * @since 0.x
-	 */
-	public function entity_settings_scripts() {
-		do_action( "vgsr_{$this->type}_settings_scripts" );
-	}
-
-	/**
-	 * Create admin footer scripts hook
 	 *
-	 * @since 0.x
+	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_footer'
 	 */
-	public function entity_settings_footer() {
+	public function settings_footer() {
 		do_action( "vgsr_{$this->type}_settings_footer" );
 	}
 
