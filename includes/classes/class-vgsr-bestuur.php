@@ -88,7 +88,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	public function bestuur_register_settings() {
 
 		// Bestuur widget menu order setting
-		add_settings_field( '_bestuur-menu-order', __( 'Widget menu order', 'vgsr-entity' ), array( $this, 'setting_menu_order_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
+		add_settings_field( '_bestuur-menu-order', __( 'Menu Widget Order', 'vgsr-entity' ), array( $this, 'setting_menu_order_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
 		register_setting( $this->args['settings']['page'], '_bestuur-menu-order', 'intval' );
 	}
 
