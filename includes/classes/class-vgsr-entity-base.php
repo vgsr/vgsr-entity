@@ -207,6 +207,10 @@ abstract class VGSR_Entity_Base {
 
 		// Save post parent
 		add_filter( 'wp_insert_post_parent', array( $this, 'filter_entity_parent' ), 10, 4 );
+
+		// Entity children
+		add_filter( 'the_content', array( $this, 'entity_parent_page_children' ) );
+
 	}
 
 	/**
@@ -518,6 +522,8 @@ abstract class VGSR_Entity_Base {
 		return $slug;
 	}
 
+	/** Theme **********************************************************/
+
 	/**
 	 * Append entity parent page content with entity children
 	 *
@@ -529,7 +535,7 @@ abstract class VGSR_Entity_Base {
 	public function entity_parent_page_children( $content ) {
 
 		// Append child entities if available
-		if ( $this->get_entity_parent() == get_the_ID() ) {
+		if ( $this->get_entity_parent() === get_the_ID() ) {
 			$content .= $this->parent_page_list_children();
 		}
 
@@ -542,78 +548,95 @@ abstract class VGSR_Entity_Base {
 	 * Creates a list of all posts with their respective post thumbnails.
 	 *
 	 * @since 1.0.0
+	 * 
+	 * @global array $_wp_additional_image_sizes
 	 *
-	 * @uses get_posts()
+	 * @uses WP_Query
 	 * @uses setup_postdata()
 	 * @uses get_permalink()
 	 * @uses has_post_thumbnail()
 	 * @uses wp_get_attachment_image_src()
 	 * @uses get_post_thumbnail_id()
 	 * @uses get_children()
-	 * @global array $_wp_additional_image_sizes
 	 *
 	 * @return string $retval HTML
 	 */
 	public function parent_page_list_children() {
 
+		// Define retval variable
+		$retval = '';
+
 		// Get all entity posts
-		$children = get_posts( array(
+		if ( $children = new WP_Query( array(
 			'post_type'   => $this->type,
 			'numberposts' => -1,
 			'order'       => 'ASC'
-		) );
+		) ) ) {
 
-		$retval = '<ul class="parent-page-children ' . $this->type . '-children">';
+			// Start output buffer
+			ob_start(); ?>
 
-		foreach ( $children as $post ) : setup_postdata( $post );
-			$retval .=	'<li class="parent-child ' . $this->type. ' ' . $this->type. '-type">';
-			$retval .=		'<a href="' . get_permalink( $post->ID ) . '" title="' . $post->post_title . '">';
-			$retval .=			'<span class="parent-child-thumbnail ' . $this->type . '-thumbnail">';
+			<ul class="parent-page-children <?php echo $this->type; ?>-children">
 
-			// Get the post thumbnail
-			if ( has_post_thumbnail( $post->ID ) ) :
-				$img     = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), $this->args['thumbsize'] );
-				$retval .= '<img src="' . $img[0] . '" />';
+			<?php while ( $children->have_posts() ) : $children->the_post(); ?>
+				<li class="parent-child <?php echo "{$this->type} {$this->type}-type"; ?>">
+					<a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( get_the_title() ); ?>">
+						<span class="parent-child-thumbnail <?php echo $this->type; ?>-thumbnail">
 
-			// Get first image attachment
-			elseif ( $att = get_children( array('post_type' => 'attachment', 'post_mime_type' => 'image', 'post_parent' => $post->ID ) ) ) :
-				$att     = reset( $att );
-				$img     = wp_get_attachment_image_src( $att->ID, $this->args['thumbsize'] );
-				$retval .= '<img src="' . $img[0] . '" />';
+						<?php // Get the post thumbnail ?>
+						<?php if ( has_post_thumbnail() ) :
+							$image = wp_get_attachment_image_src( get_post_thumbnail_id(), $this->args['thumbsize'] );
+						?>
+							<img src="<?php echo $image[0]; ?>" />
 
-			// Get dummy image
-			else :
-				if ( is_string( $this->args['thumbsize'] ) ) {
-					global $_wp_additional_image_sizes;
-					$format = $_wp_additional_image_sizes[ $this->args['thumbsize'] ];
-				} else {
-					$format = $this->args['thumbsize'];
-				}
+						<?php // Get first image attachment ?>
+						<?php elseif ( $att = get_children( array( 'post_type' => 'attachment', 'post_mime_type' => 'image', 'post_parent' => get_the_ID() ) ) ) :
+							$att   = reset( $att );
+							$image = wp_get_attachment_image_src( $att->ID, $this->args['thumbsize'] );
+						?>
+							<img src="<?php echo $image[0]; ?>" />
 
-				// Setup dummy image size
-				if ( is_array( $format ) ) {
-					if ( isset( $format[0] ) ) // Numerical array
-						$size = $format[0] . 'x' . $format[1];
-					else // Textual string
-						$size = $format['width'] . 'x' . $format['height'];
-				} else {
-					$size = '200x200'; // Random default value
-				}
+						<?php // Get dummy image ?>
+						<?php else :
+							if ( is_string( $this->args['thumbsize'] ) ) {
+								global $_wp_additional_image_sizes;
+								$format = $_wp_additional_image_sizes[ $this->args['thumbsize'] ];
+							} else {
+								$format = $this->args['thumbsize'];
+							}
 
-				$retval .= '<img src="http://dummyimage.com/' . $size . '/fefefe/000&text=' .  __( 'Placeholder', 'vgsr-entity' ) . '" />';
+							// Setup dummy image size
+							if ( is_array( $format ) ) {
+								if ( isset( $format[0] ) ) // Numerical array
+									$size = $format[0] . 'x' . $format[1];
+								else // Textual string
+									$size = $format['width'] . 'x' . $format['height'];
+							} else {
+								$size = '200x200'; // Random default value
+							}
+						?>
+							<img src="http://dummyimage.com/<?php echo $size; ?>/fefefe/000&text=<?php _e( 'Placeholder', 'vgsr-entity' ); ?>" />
 
-			endif;
+						<?php endif; ?>
 
-			$retval .=			'</span>';
-			$retval .=			'<span class="parent-child-title ' . $this->type . '-title">' .
-									'<h3>' . $post->post_title . '</h3>' .
-								'</span>';
-			$retval .=		'</a>';
-			$retval .=	'</li>';
+						</span>
+						<span class="parent-child-title <?php echo $this->type; ?>-title">
+							<h3><?php the_title(); ?></h3>
+						</span>
+					</a>
+				</li>
+			<?php endwhile; ?>
 
-		endforeach;
+			</ul>
 
-		$retval .= '</ul>';
+			<?php
+
+			// Get output buffer content
+			$retval = ob_get_clean();
+
+			// Reste global `$post`
+			wp_reset_postdata();
+		}
 
 		return $retval;
 	}

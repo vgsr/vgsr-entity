@@ -74,9 +74,6 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		// Filters
 		add_filter( 'vgsr_kast_settings_load',      array( $this, 'downsize_thumbs' ) );
 		add_filter( 'vgsr_kast_settings_scripts',   array( $this, 'enqueue_scripts' ) );
-
-		// Append entity children
-		add_filter( 'the_content', array( $this, 'entity_parent_page_children' ) );
 	}
 
 	/**

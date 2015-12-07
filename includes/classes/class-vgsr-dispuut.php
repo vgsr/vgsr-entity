@@ -53,9 +53,6 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 
 		// Save post meta
 		add_action( 'save_post', array( $this, 'dispuut_metabox_save' ), 10, 2 );
-
-		// Append entity children
-		add_filter( 'the_content', array( $this, 'entity_parent_page_children' ) );
 	}
 
 	/**
