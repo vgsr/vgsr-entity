@@ -57,21 +57,22 @@ abstract class VGSR_Entity_Base {
 		$this->args = wp_parse_args( $args, array(
 
 			// Post type
-			'menu_icon' => '',
-			'labels'    => array(),
+			'menu_icon'  => '',
+			'labels'     => array(),
 
 			// Parent
-			'parent'    => null,
+			'parent'     => null,
+			'parent_key' => "_{$type}-parent-page",
 
 			// Default thumbsize. @todo When theme does not support post-thumbnail image size
-			'thumbsize' => 'post-thumbnail',
+			'thumbsize'  => 'post-thumbnail',
 
 			// Admin: Posts
-			'page'      => "edit.php?post_type={$type}",
+			'page'       => "edit.php?post_type={$type}",
 
 			// Admin: Settings
-			'hook'      => '',
-			'settings'  => array(
+			'hook'       => '',
+			'settings'   => array(
 				'page'    => "vgsr_{$type}_settings",
 				'section' => "vgsr_{$type}_options_main",
 			),
@@ -201,12 +202,11 @@ abstract class VGSR_Entity_Base {
 		add_action( 'admin_notices',    array( $this, 'entity_admin_notices'     ) );
 
 		// Plugin hooks
-		add_filter( "vgsr_{$this->type}_display_meta",   array( $this, 'entity_display_meta'       )    );
-		add_filter( "vgsr_{$this->type}_admin_messages", array( $this, 'admin_messages'            )    );
-		add_action( "vgsr_{$this->type}_settings_load",  array( $this, 'entity_parent_page_update' ), 1 );
+		add_filter( "vgsr_{$this->type}_display_meta",   array( $this, 'entity_display_meta' ) );
+		add_filter( "vgsr_{$this->type}_admin_messages", array( $this, 'admin_messages'      ) );
 
 		// Save post parent
-		add_filter( 'wp_insert_post_parent', array( $this, 'filter_post_parent' ), 10, 4 );
+		add_filter( 'wp_insert_post_parent', array( $this, 'filter_entity_parent' ), 10, 4 );
 	}
 
 	/**
@@ -238,14 +238,14 @@ abstract class VGSR_Entity_Base {
 	 * @since 1.0.0
 	 *
 	 * @uses register_post_type()
-	 * @uses VGSR_Entity_Base::entity_parent_page_slug()
+	 * @uses VGSR_Entity_Base::get_entity_parent_slug()
 	 * @uses apply_filters() Calls 'vgsr_{$post_type}_register_post_type'
 	 */
 	public function register_post_type() {
 
 		// Setup rewrite
 		$rewrite = array(
-			'slug' => $this->entity_parent_page_slug()
+			'slug' => $this->get_entity_parent_slug()
 		);
 
 		// Setup post type support
@@ -379,11 +379,12 @@ abstract class VGSR_Entity_Base {
 	public function entity_register_settings() {
 
 		// Register main settings section
-		add_settings_section( $this->args['settings']['section'], sprintf( __( 'Main %s Settings', 'vgsr-entity' ), $this->args['labels']['name'] ), array( $this, 'main_settings_info' ), $this->args['settings']['page'] );
+		add_settings_section( $this->args['settings']['section'], __( 'Main Settings', 'vgsr-entity' ), array( $this, 'main_settings_info' ), $this->args['settings']['page'] );
 
-		// Entity post type parent page
-		add_settings_field( "_{$this->type}-parent-page", sprintf( __( '%s Parent Page', 'vgsr-entity' ), $this->args['labels']['name'] ), array( $this, 'entity_parent_page_settings_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
-		register_setting( $this->args['settings']['page'], "_{$this->type}-parent-page", 'intval' );
+		// Entity Parent
+		add_settings_field( $this->args['parent_key'], __( 'Parent Page', 'vgsr-entity' ), array( $this, 'entity_parent_settings_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
+		register_setting( $this->args['settings']['page'], $this->args['parent_key'], 'intval' );
+		add_action( 'update_option', array( $this, 'update_entity_parent' ), 10, 3 );
 	}
 
 	/**
@@ -396,6 +397,28 @@ abstract class VGSR_Entity_Base {
 	/** Parent Page ****************************************************/
 
 	/**
+	 * Output entity parent page settings field
+	 *
+	 * @since 1.0.0
+	 *
+	 * @uses wp_dropdown_pages()
+	 * @uses VGSR_Entity_Base::get_entity_parent()
+	 */
+	public function entity_parent_settings_field() { ?>
+
+		<?php wp_dropdown_pages( array(
+			'name'             => $this->args['parent_key'],
+			'selected'         => $this->get_entity_parent(),
+			'show_option_none' => __( 'None', 'vgsr-entity' ),
+			'echo'             => true,
+		) ); ?>
+
+		<p class="description"><?php printf( __( 'Select the page that should act as the %s parent page.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></p>
+
+		<?php
+	}
+
+	/**
 	 * Return the entity's parent post ID
 	 *
 	 * @since 1.1.0
@@ -406,7 +429,7 @@ abstract class VGSR_Entity_Base {
 
 		// Get the parent post ID
 		if ( null === $this->args['parent'] ) {
-			$this->args['parent'] = get_option( "_{$this->type}-parent-page", 0 );
+			$this->args['parent'] = get_option( $this->args['parent_key'], 0 );
 		}
 
 		return $this->args['parent'];
@@ -423,7 +446,7 @@ abstract class VGSR_Entity_Base {
 	 * @param array $postarr Array of unmodified post data
 	 * @return int The parent ID
 	 */
-	public function filter_post_parent( $parent_id, $post_id, $new_postarr, $postarr ) {
+	public function filter_entity_parent( $parent_id, $post_id, $new_postarr, $postarr ) {
 
 		// When this is our post type, set the post parent
 		if ( $new_postarr['post_type'] === $this->type ) {
@@ -434,54 +457,35 @@ abstract class VGSR_Entity_Base {
 	}
 
 	/**
-	 * Output entity parent page settings field
+	 * Run logic when updating the parent page option
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 *
-	 * @uses wp_dropdown_pages()
+	 * @uses wpdb::update()
+	 * @uses VGSR_Entity_Base::register_post_type()
+	 * @uses flush_rewrite_rules()
+	 *
+	 * @param string $option Option name
+	 * @param mixed $old_value Previous option value
+	 * @param mixed $value New option value
 	 */
-	public function entity_parent_page_settings_field() { ?>
+	public function update_entity_parent( $option, $old_value, $value ) {
 
-		<label>
-			<?php
+		// Bail when this is not our option
+		if ( $option !== $this->args['parent_key'] )
+			return;
 
-			// Output page dropdown
-			wp_dropdown_pages( array(
-				'name'             => "_{$this->type}-parent-page",
-				'selected'         => $this->get_entity_parent(),
-				'echo'             => true,
-				'show_option_none' => __( 'None' )
-			) ); ?>
+		// Update entities with new value
+		if ( $value !== $old_value ) {
+			global $wpdb;
 
-			<span class="description"><?php printf( __( 'Select the parent page you want to have your %s to appear on.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></span>
-		</label>
+			// Run update query for entities' post_parent
+			$wpdb->update( $wpdb->posts, array( 'post_parent' => $value ), array( 'post_type' => $this->type ), array( '%d' ), array( '%s' ) );
 
-	<?php
-	}
-
-	/**
-	 * Rewrite permalink setup if post parent changes
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses get_posts()
-	 * @uses wp_update_post()
-	 */
-	public function entity_parent_page_update() {
-
-		// Get random entity post
-		$post = get_posts( array( 'post_type' => $this->type, 'numberposts' => 1 ) );
-
-		// Compare entity parent page ID with updated ID
-		if ( $this->get_entity_parent() !== $post[0]->post_parent ) {
-
-			// Loop all entity posts
-			foreach ( get_posts( array( 'post_type' => $this->type, 'numberposts' => -1 ) ) as $post ) {
-
-				// Update the post parent
-				$post->post_parent = $new_pid;
-				wp_update_post( $post );
-			}
+			// Renwe rewrite rules
+			$this->args['parent'] = $value;
+			$this->register_post_type();
+			flush_rewrite_rules();
 		}
 	}
 
@@ -490,23 +494,26 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @uses VGSR_Entity_Base::get_entity_parent()
 	 * @return string Parent page slug
 	 */
-	public function entity_parent_page_slug() {
+	public function get_entity_parent_slug() {
+
+		// Define retval
 		$slug = '';
 
 		// Find entity parent page
-		if ( $_post = get_post( $this->get_entity_parent() ) ) {
-			$slug = $_post->post_name;
+		if ( $post = get_post( $this->get_entity_parent() ) ) {
+			$slug = $post->post_name;
 
 			// Loop over all next parents
-			while ( ! empty( $_post->post_parent ) ) {
+			while ( ! empty( $post->post_parent ) ) {
 
 				// Get next parent
-				$_post = get_post( $_post->post_parent );
+				$post = get_post( $post->post_parent );
 
 				// Prepend parent slug
-				$slug = $_post->post_name . '/' . $slug;
+				$slug = $post->post_name . '/' . $slug;
 			}
 		}
 
