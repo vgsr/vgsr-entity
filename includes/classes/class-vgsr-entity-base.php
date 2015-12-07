@@ -60,6 +60,9 @@ abstract class VGSR_Entity_Base {
 			'menu_icon' => '',
 			'labels'    => array(),
 
+			// Parent
+			'parent'    => 0,
+
 			// Default thumbsize. @todo When theme does not support post-thumbnail image size
 			'thumbsize' => 'post-thumbnail',
 
@@ -73,9 +76,6 @@ abstract class VGSR_Entity_Base {
 				'section' => "vgsr_{$type}_options_main",
 			),
 		) );
-
-		// Define entity labels
-		$this->setup_labels();
 
 		// Setup global entity
 		$this->entity_globals();
@@ -149,14 +149,36 @@ abstract class VGSR_Entity_Base {
 	/** Setup Base *****************************************************/
 
 	/**
-	 * Define default entity base globals
+	 * Define the entity globals
 	 *
 	 * @since 1.0.0
 	 */
-	private function entity_globals() {
+	public function entity_globals() {
 
-		// Post type parent page option value
-		$this->parent_option_key  = "_{$this->type}-parent-page";
+		// Define local variables
+		$single = ucfirst( $this->type );
+		$plural = $single . 's';
+
+		// Complete post type labels
+		$this->args['labels'] = array_map( 'esc_html', wp_parse_args( $this->args['labels'], array(
+
+			// Post Type
+			'name'               => $plural,
+			'singular_name'      => $single,
+			'add_new'            => sprintf( _x( 'New %s',               'Post type add_new',            'vgsr-entity' ), $single ),
+			'add_new_item'       => sprintf( _x( 'Add new %s',           'Post type add_new_item',       'vgsr-entity' ), $single ),
+			'edit_item'          => sprintf( _x( 'Edit %s',              'Post type edit_item',          'vgsr-entity' ), $single ),
+			'new_item'           => sprintf( _x( 'New %s',               'Post type new_item',           'vgsr-entity' ), $single ),
+			'all_items'          => sprintf( _x( 'All %s',               'Post type all_items',          'vgsr-entity' ), $plural ),
+			'view_item'          => sprintf( _x( 'View %s',              'Post type view_item',          'vgsr-entity' ), $single ),
+			'search_items'       => sprintf( _x( 'Search %s',            'Post type search_items',       'vgsr-entity' ), $plural ),
+			'not_found'          => sprintf( _x( 'No %s found',          'Post type not_found',          'vgsr-entity' ), $plural ),
+			'not_found_in_trash' => sprintf( _x( 'No %s found in trash', 'Post type not_found_in_trash', 'vgsr-entity' ), $plural ),
+			'menu_name'          => $plural,
+
+			// Custom
+			'settings_title'     => sprintf( _x( '%s Settings',          'Post type settings_title',     'vgsr-entity' ), $plural ),
+		) ) );
 	}
 
 	/**
@@ -177,8 +199,8 @@ abstract class VGSR_Entity_Base {
 		add_filter( "vgsr_{$this->type}_admin_messages", array( $this, 'admin_messages'            )    );
 		add_action( "vgsr_{$this->type}_settings_load",  array( $this, 'entity_parent_page_update' ), 1 );
 
-		// Post hooks
-		add_filter( 'wp_insert_post_parent', array( $this, 'entity_parent_page_id' ), 10, 4 );
+		// Save post parent
+		add_filter( 'wp_insert_post_parent', array( $this, 'filter_post_parent' ), 10, 4 );
 	}
 
 	/**
@@ -203,44 +225,6 @@ abstract class VGSR_Entity_Base {
 	public function setup_actions() { /* Overwrite this method in a child class */ }
 
 	/** Post Type ******************************************************/
-
-	/**
-	 * Define the entity post type labels
-	 *
-	 * @since 1.1.0
-	 *
-	 * @return array Labels
-	 */
-	public function setup_labels() {
-
-		// Define local variables
-		$single = ucfirst( $this->type );
-		$plural = $single . 's';
-
-		// Complete the labels
-		$this->args['labels'] = array_map( 'esc_html', $this->args['labels'] );
-		$this->args['labels'] = wp_parse_args( $this->args['labels'], array(
-
-			// Post Type
-			'name'               => esc_html( $plural ),
-			'singular_name'      => esc_html( $single ),
-			'add_new'            => sprintf( esc_html_x( 'New %s',               'Post type add_new',            'vgsr-entity' ), $single ),
-			'add_new_item'       => sprintf( esc_html_x( 'Add new %s',           'Post type add_new_item',       'vgsr-entity' ), $single ),
-			'edit_item'          => sprintf( esc_html_x( 'Edit %s',              'Post type edit_item',          'vgsr-entity' ), $single ),
-			'new_item'           => sprintf( esc_html_x( 'New %s',               'Post type new_item',           'vgsr-entity' ), $single ),
-			'all_items'          => sprintf( esc_html_x( 'All %s',               'Post type all_items',          'vgsr-entity' ), $plural ),
-			'view_item'          => sprintf( esc_html_x( 'View %s',              'Post type view_item',          'vgsr-entity' ), $single ),
-			'search_items'       => sprintf( esc_html_x( 'Search %s',            'Post type search_items',       'vgsr-entity' ), $plural ),
-			'not_found'          => sprintf( esc_html_x( 'No %s found',          'Post type not_found',          'vgsr-entity' ), $plural ),
-			'not_found_in_trash' => sprintf( esc_html_x( 'No %s found in trash', 'Post type not_found_in_trash', 'vgsr-entity' ), $plural ),
-			'menu_name'          => esc_html( $plural ),
-
-			// Custom
-			'settings_title'     => sprintf( esc_html_x( '%s Settings',          'Post type settings_title',     'vgsr-entity' ), $plural ),
-		) );
-
-		return $this->args['labels'];
-	}
 
 	/**
 	 * Register the post type
@@ -292,7 +276,7 @@ abstract class VGSR_Entity_Base {
 	 */
 	public function add_metabox() { /* Overwrite this method in a child class */ }
 
-	/** Entity Settings Page *******************************************/
+	/** Settings Page **************************************************/
 
 	/**
 	 * Register the entity admin menu with associated hooks
@@ -300,8 +284,7 @@ abstract class VGSR_Entity_Base {
 	 * @since 1.0.0
 	 *
 	 * @uses add_submenu_page()
-	 * @uses add_action() To call some actions on page load
-	 *                     head and footer
+	 * @uses add_action() To call some actions on page load, head and footer
 	 */
 	public function entity_admin_menu() {
 
@@ -393,8 +376,8 @@ abstract class VGSR_Entity_Base {
 		add_settings_section( $this->args['settings']['section'], sprintf( __( 'Main %s Settings', 'vgsr-entity' ), $this->args['labels']['name'] ), array( $this, 'main_settings_info' ), $this->args['settings']['page'] );
 
 		// Entity post type parent page
-		add_settings_field( $this->parent_option_key, sprintf( __( '%s Parent Page', 'vgsr-entity' ), $this->args['labels']['name'] ), array( $this, 'entity_parent_page_settings_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
-		register_setting( $this->args['settings']['page'], $this->parent_option_key, 'intval' );
+		add_settings_field( "_{$this->type}-parent-page", sprintf( __( '%s Parent Page', 'vgsr-entity' ), $this->args['labels']['name'] ), array( $this, 'entity_parent_page_settings_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
+		register_setting( $this->args['settings']['page'], "_{$this->type}-parent-page", 'intval' );
 	}
 
 	/**
@@ -403,6 +386,46 @@ abstract class VGSR_Entity_Base {
 	 * @since 1.0.0
 	 */
 	public function main_settings_info() { /* Nothing to display */ }
+
+	/** Parent Page ****************************************************/
+
+	/**
+	 * Return the entity's parent post ID
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return int Post ID
+	 */
+	public function get_entity_parent() {
+
+		// Get the parent post ID
+		if ( null === $this->args['parent'] ) {
+			$this->args['parent'] = get_option( "_{$this->type}-parent-page", 0 );
+		}
+
+		return $this->args['parent'];
+	}
+
+	/**
+	 * Filter the parent page ID on save for entity posts
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $parent_id The parent page ID
+	 * @param int $post_id The post ID
+	 * @param array $new_postarr Array of parsed post data
+	 * @param array $postarr Array of unmodified post data
+	 * @return int The parent ID
+	 */
+	public function filter_post_parent( $parent_id, $post_id, $new_postarr, $postarr ) {
+
+		// When this is our post type, set the post parent
+		if ( $new_postarr['post_type'] === $this->type ) {
+			$parent_id = $this->get_entity_parent();
+		}
+
+		return $parent_id;
+	}
 
 	/**
 	 * Output entity parent page settings field
@@ -418,8 +441,8 @@ abstract class VGSR_Entity_Base {
 
 			// Output page dropdown
 			wp_dropdown_pages( array(
-				'name'             => $this->parent_option_key,
-				'selected'         => get_option( $this->parent_option_key ),
+				'name'             => "_{$this->type}-parent-page",
+				'selected'         => $this->get_entity_parent(),
 				'echo'             => true,
 				'show_option_none' => __( 'None' )
 			) ); ?>
@@ -444,7 +467,7 @@ abstract class VGSR_Entity_Base {
 		$post = get_posts( array( 'post_type' => $this->type, 'numberposts' => 1 ) );
 
 		// Compare entity parent page ID with updated ID
-		if ( $post[0]->post_parent != get_option( $this->parent_option_key ) ) {
+		if ( $this->get_entity_parent() !== $post[0]->post_parent ) {
 
 			// Loop all entity posts
 			foreach ( get_posts( array( 'post_type' => $this->type, 'numberposts' => -1 ) ) as $post ) {
@@ -454,38 +477,6 @@ abstract class VGSR_Entity_Base {
 				wp_update_post( $post );
 			}
 		}
-	}
-
-	/**
-	 * Return entity parent page ID as post parent on post save
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int $parent_id The parent page ID
-	 * @param int $post_id The post ID
-	 * @param array $new_postarr Array of parsed post data
-	 * @param array $postarr Array of unmodified post data
-	 * @return int The parent ID
-	 */
-	public function entity_parent_page_id( $parent_id, $post_id, $new_postarr, $postarr ) {
-
-		// Check autosave
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
-			return $parent_id;
-
-		// Check post type
-		if ( $new_postarr['post_type'] !== $this->type )
-			return $parent_id;
-
-		// Check caps
-		$pto = get_post_type_object( $this->type );
-		if ( ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
-			return $parent_id;
-
-		// Get the parent post ID
-		$parent_id = (int) get_option( $this->parent_option_key );
-
-		return $parent_id;
 	}
 
 	/**
@@ -499,7 +490,7 @@ abstract class VGSR_Entity_Base {
 		$slug = '';
 
 		// Find entity parent page
-		if ( $_post = get_post( get_option( $this->parent_option_key ) ) ) {
+		if ( $_post = get_post( $this->get_entity_parent() ) ) {
 			$slug = $_post->post_name;
 
 			// Loop over all next parents
@@ -527,7 +518,7 @@ abstract class VGSR_Entity_Base {
 	public function entity_parent_page_children( $content ) {
 
 		// Append child entities if available
-		if ( (int) get_option( $this->parent_option_key ) == get_the_ID() ) {
+		if ( $this->get_entity_parent() == get_the_ID() ) {
 			$content .= $this->parent_page_list_children();
 		}
 
