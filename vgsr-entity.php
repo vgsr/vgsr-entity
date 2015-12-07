@@ -456,11 +456,11 @@ final class VGSR_Entity {
 	 */
 	public function template_include( $template ) {
 
-		// Get the current post type
-		$post_type = get_post_type();
+		// Single entity requested
+		if ( is_entity() && is_singular() ) {
 
-		// Entity requested
-		if ( in_array( $post_type, $this->get_entities() ) && is_singular( $post_type ) ) {
+			// Get the current post type
+			$post_type = get_post_type();
 
 			/**
 			 * Define our own tempate stack
