@@ -412,6 +412,7 @@ abstract class VGSR_Entity_Base {
 			'show_option_none' => __( 'None', 'vgsr-entity' ),
 			'echo'             => true,
 		) ); ?>
+		<a class="button button-secondary" href="<?php echo esc_url( get_permalink( $this->get_entity_parent() ) ); ?>" target="_blank"><?php _e( 'View', 'vgsr-entity' ); ?></a>
 
 		<p class="description"><?php printf( __( 'Select the page that should act as the %s parent page.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></p>
 
