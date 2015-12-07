@@ -626,30 +626,29 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses apply_filters() To call the {$this->type}_admin_messages filter
+	 * @uses apply_filters() Calls '{$post_type}_admin_messages'
 	 */
 	public function entity_admin_notices() {
 
-		// Only continue if error is sent
-		if (   ! isset( $_REQUEST[$this->type . '-error'] )
-			||   empty( $_REQUEST[$this->type . '-error'] )
-		)
+		// Define error key
+		$error_key = "{$this->type}-error";
+
+		// Bail when no valid errors are reported
+		if ( ! isset( $_REQUEST[ $error_key ] ) || empty( $_REQUEST[ $error_key ] ) )
 			return;
 
 		// Get the message number
-		$num = trim( $_REQUEST[$this->type . '-error'] );
+		$num = trim( $_REQUEST[ $error_key ] );
 
 		// The messages to pick from
 		$messages = apply_filters( "vgsr_{$this->type}_admin_messages", array(
 			0 => '' // Default empty
 		) );
 
-		// Message must exist
-		if ( ! isset( $messages[$num] ) )
-			return;
-
-		// Output message
-		echo '<div class="error message"><p>' . $messages[$num] . '</p></div>';
+		// Print available message
+		if ( isset( $messages[ $num ] ) && ! empty( $messages[ $num ] ) ) {
+			printf( '<div class="error message"><p>%s</p></div>', $messages[ $num ] );
+		}
 	}
 
 	/**
