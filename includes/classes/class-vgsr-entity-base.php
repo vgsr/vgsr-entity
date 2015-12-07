@@ -476,18 +476,15 @@ abstract class VGSR_Entity_Base {
 		if ( $option !== $this->args['parent_key'] )
 			return;
 
-		// Update entities with new value
-		if ( $value !== $old_value ) {
-			global $wpdb;
+		global $wpdb;
 
-			// Run update query for entities' post_parent
-			$wpdb->update( $wpdb->posts, array( 'post_parent' => $value ), array( 'post_type' => $this->type ), array( '%d' ), array( '%s' ) );
+		// Run single update query for entities' post_parent
+		$wpdb->update( $wpdb->posts, array( 'post_parent' => $value ), array( 'post_type' => $this->type ), array( '%d' ), array( '%s' ) );
 
-			// Renwe rewrite rules
-			$this->args['parent'] = $value;
-			$this->register_post_type();
-			flush_rewrite_rules();
-		}
+		// Renew rewrite rules
+		$this->args['parent'] = $value;
+		$this->register_post_type();
+		flush_rewrite_rules();
 	}
 
 	/**
