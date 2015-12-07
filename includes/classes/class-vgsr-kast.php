@@ -19,14 +19,6 @@ if ( ! class_exists( 'VGSR_Kast' ) ) :
 class VGSR_Kast extends VGSR_Entity_Base {
 
 	/**
-	 * Kast post mini thumbnail size
-	 *
-	 * @since 1.0.0
-	 * @var int
-	 */
-	public $mini_size;
-
-	/**
 	 * Construct Kast Entity
 	 *
 	 * @since 1.0.0
@@ -34,10 +26,6 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	public function __construct() {
 		parent::__construct( 'kast', array(
 			'menu_icon' => 'dashicons-admin-home',
-
-			// Labels
-			'single'    => 'Kast',
-			'plural'    => 'Kasten',
 			'labels'    => array(
 				'name'               => __( 'Kasten',                   'vgsr-entity' ),
 				'singular_name'      => __( 'Kast',                     'vgsr-entity' ),
@@ -51,7 +39,12 @@ class VGSR_Kast extends VGSR_Entity_Base {
 				'not_found'          => __( 'No Kasten found',          'vgsr-entity' ),
 				'not_found_in_trash' => __( 'No Kasten found in trash', 'vgsr-entity' ),
 				'menu_name'          => __( 'Kasten',                   'vgsr-entity' ),
-			)
+				'settings_title'     => __( 'Kasten Settings',          'vgsr-entity' ),
+			),
+
+			// Thumbnail
+			'thumbsize' => 'mini-thumb',
+			'mini_size' => 100,
 		) );
 	}
 
@@ -63,10 +56,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 * @uses add_image_size()
 	 */
 	public function setup_globals() {
-		$this->thumbsize = 'mini-thumb'; // Parent var
-		$this->mini_size = 100;
-
-		add_image_size( $this->thumbsize, $this->mini_size, $this->mini_size, true );
+		add_image_size( $this->args['thumbsize'], $this->args['mini_size'], $this->args['mini_size'], true );
 	}
 
 	/**
@@ -97,8 +87,8 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	public function register_settings() {
 
 		// Kast recreate thumbnail option
-		add_settings_field( '_kast-downsize-thumbs', __( 'Recreate Thumbnails', 'vgsr-entity' ), array( $this, 'settings_downsize_thumbs_field' ), $this->settings_page, $this->settings_section );
-		register_setting( $this->settings_page, '_kast-downsize-thumbs', 'intval' );
+		add_settings_field( '_kast-downsize-thumbs', __( 'Recreate Thumbnails', 'vgsr-entity' ), array( $this, 'settings_downsize_thumbs_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
+		register_setting( $this->args['settings']['page'], '_kast-downsize-thumbs', 'intval' );
 	}
 
 	/**
@@ -110,7 +100,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	?>
 
 		<input type="checkbox" name="_kast-downsize-thumbs" id="_kast-downsize-thumbs" <?php checked( get_option( '_kast-downsize-thumbs' ) ); ?> value="1"/>
-		<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __( 'This is a one time resizing of thumbs for %s. NOTE: This option only <strong>adds</strong> new image sizes, it doesn\'t remove old ones.', 'vgsr-entity' ), $this->args['plural'] ); ?></span></label>
+		<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __( 'This is a one time resizing of thumbs for %s. NOTE: This option only <strong>adds</strong> new image sizes, it doesn\'t remove old ones.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></span></label>
 
 	<?php
 	}
@@ -154,9 +144,9 @@ class VGSR_Kast extends VGSR_Entity_Base {
 
 			// Juggling with {$logo} so storing ID separately
 			$logo_id = $logo->ID;
-			$logo    = wp_get_attachment_image_src( $logo_id, $this->thumbsize );
+			$logo    = wp_get_attachment_image_src( $logo_id, $this->args['thumbsize'] );
 
-			if ( $logo[1] == $this->mini_size && $logo[2] == $this->mini_size )
+			if ( $logo[1] == $this->args['mini_size'] && $logo[2] == $this->args['mini_size'] )
 				continue;
 
 			//
@@ -167,18 +157,18 @@ class VGSR_Kast extends VGSR_Entity_Base {
 			$file_path = ABSPATH . substr( dirname( $logo[0] ), ( strpos( $logo[0], parse_url( site_url(), PHP_URL_PATH ) ) + strlen( parse_url( site_url(), PHP_URL_PATH ) ) + 1 ) ) . '/'. basename( $logo[0] );
 
 			// Do the resizing
-			$logo = image_resize( $file_path, $this->mini_size, $this->mini_size, true );
+			$logo = image_resize( $file_path, $this->args['mini_size'], $this->args['mini_size'], true );
 
 			// Setup image size meta
 			$args = array(
 				'file'   => basename( $logo ),
-				'width'  => $this->mini_size,
-				'height' => $this->mini_size
+				'width'  => $this->args['mini_size'],
+				'height' => $this->args['mini_size']
 			);
 
 			// Store attachment metadata > we're havin a mini-thumb!
 			$meta = wp_get_attachment_metadata( $logo_id );
-			$meta['sizes'][$this->thumbsize] = $args;
+			$meta['sizes'][ $this->args['thumbsize'] ] = $args;
 			wp_update_attachment_metadata( $logo_id, $meta );
 
 		endforeach;

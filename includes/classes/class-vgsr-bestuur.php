@@ -34,10 +34,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	public function __construct() {
 		parent::__construct( 'bestuur', array(
 			'menu_icon' => 'dashicons-awards',
-
-			// Labels
-			'single'    => 'Bestuur',
-			'plural'    => 'Besturen',
 			'labels'    => array(
 				'name'               => __( 'Besturen',                   'vgsr-entity' ),
 				'singular_name'      => __( 'Bestuur',                    'vgsr-entity' ),
@@ -51,6 +47,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 				'not_found'          => __( 'No Besturen found',          'vgsr-entity' ),
 				'not_found_in_trash' => __( 'No Besturen found in trash', 'vgsr-entity' ),
 				'menu_name'          => __( 'Besturen',                   'vgsr-entity' ),
+				'settings_title'     => __( 'Besturen Settings',          'vgsr-entity' ),
 			)
 		) );
 	}
@@ -91,8 +88,8 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	public function bestuur_register_settings() {
 
 		// Bestuur widget menu order setting
-		add_settings_field( '_bestuur-menu-order', __( 'Widget menu order', 'vgsr-entity' ), array( $this, 'setting_menu_order_field' ), $this->settings_page, $this->settings_section );
-		register_setting( $this->settings_page, '_bestuur-menu-order', 'intval' );
+		add_settings_field( '_bestuur-menu-order', __( 'Widget menu order', 'vgsr-entity' ), array( $this, 'setting_menu_order_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
+		register_setting( $this->args['settings']['page'], '_bestuur-menu-order', 'intval' );
 	}
 
 	/**
@@ -107,7 +104,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 			<option value="0" <?php selected( $value, 0 ); ?>><?php _e( 'Seniority',         'vgsr-entity' ); ?></option>
 			<option value="1" <?php selected( $value, 1 ); ?>><?php _e( 'Reverse seniority', 'vgsr-entity' ); ?></option>
 		</select>
-		<label for="_bestuur-menu-order"><span class="description"><?php sprintf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->args->plural ); ?></span></label>
+		<label for="_bestuur-menu-order"><span class="description"><?php sprintf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></span></label>
 
 		<?php
 	}
