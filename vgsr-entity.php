@@ -143,6 +143,9 @@ final class VGSR_Entity {
 		add_action( 'template_include',   array( $this, 'template_include' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts'  ) );
 
+		// Query
+		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) );
+
 		// Adjacent entity
 		add_filter( 'get_previous_post_where', array( $this, 'adjacent_post_where' ), 10, 5 );
 		add_filter( 'get_next_post_where',     array( $this, 'adjacent_post_where' ), 10, 5 );
@@ -443,8 +446,9 @@ final class VGSR_Entity {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses get_post_type()
+	 * @uses is_entity()
 	 * @uses is_singular()
+	 * @uses get_post_type()
 	 * @uses get_query_template()
 	 *
 	 * @param string $template The current template match
@@ -480,47 +484,35 @@ final class VGSR_Entity {
 				array_splice( $templates, 2, 0, 'single-entity.php' );
 			}
 
-			// Query for a suitable template
+			// Query for a usable template
 			$template = get_query_template( $post_type, $templates );
 		}
 
 		return $template;
 	}
 
+	/** Queries ********************************************************/
+
 	/**
-	 * Outputs the entity meta list
+	 * Modify the post query vars
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 *
-	 * @uses apply_filters() Calls 'vgsr_{$post_type}_meta' with the meta array
+	 * @uses VGSR_Entity::get_entities()
+	 * @param WP_Query $query
 	 */
-	public function entity_meta() {
-		global $post;
+	public function pre_get_posts( $query ) {
 
-		// Setup meta list
-		$list = '';
+		// Force entity ordering by menu_order
+		if ( isset( $query->query_vars['post_type'] ) && in_array( $query->query_vars['post_type'], $this->get_entities() ) ) {
+			$query->query_vars['orderby'] = 'menu_order';
 
-		// Loop over all meta fields
-		foreach ( apply_filters( "vgsr_{$post->post_type}_display_meta", array() ) as $key => $meta ) {
-
-			// Merge meta args
-			$meta = wp_parse_args( $meta, array(
-				'icon'   => '',
-				'before' => '',
-				'value'  => '',
-				'after'  => ''
-			) );
-
-			$list .= '<li><i class="' . $meta['icon'] . '"></i> ' . $meta['before'] . $meta['value'] . $meta['after'] . '</li>';
-		}
-
-		// End list
-		if ( ! empty( $list ) ) {
-			echo '<ul class="post-meta entity-meta">' . $list . '</ul>';
+			// Define sort order
+			if ( ! isset( $query->query_vars['order'] ) ) {
+				$query->query_vars['order'] = 'DESC';
+			}
 		}
 	}
-
-	/** Queries ********************************************************/
 
 	/**
 	 * Modify the adjacent's post WHERE query clause
@@ -530,6 +522,8 @@ final class VGSR_Entity {
 	 *
 	 * @since 1.0.0
 	 * @since 1.1.0 Added support for the `$taxonomy` and `$post` params as per WP 4.4
+	 *
+	 * @global $wpdb
 	 * 
 	 * @param string $where WHERE clause
 	 * @param bool $in_same_term 
@@ -539,10 +533,10 @@ final class VGSR_Entity {
 	 * @return string WHERE clause
 	 */
 	public function adjacent_post_where( $where, $in_same_term, $excluded_terms, $taxonomy, $post ) {
-		global $wpdb;
 
 		// When this is an entity
 		if ( is_entity() ) {
+			global $wpdb;
 
 			// Get the current post
 			if ( ! $post ) {

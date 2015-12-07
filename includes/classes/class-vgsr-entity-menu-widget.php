@@ -75,8 +75,6 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 			'post_parent'    => $parent,
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,
-			'orderby'        => 'menu_order',
-			'order'          => 'DESC',
 		) ) ) ) {
 
 			// Define widget title

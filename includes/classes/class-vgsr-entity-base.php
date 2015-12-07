@@ -560,7 +560,6 @@ abstract class VGSR_Entity_Base {
 		$children = get_posts( array(
 			'post_type'   => $this->type,
 			'numberposts' => -1,
-			'orderby'     => 'menu_order',
 			'order'       => 'ASC'
 		) );
 
