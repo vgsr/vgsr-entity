@@ -70,12 +70,12 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 
 		// Get all post type items
 		if ( $query = new WP_Query( apply_filters( 'vgsr_entity_menu_widget_get_posts', array(
-			'post_type'   => $post_type,
-			'post_parent' => $parent,
-			'post_status' => 'publish',
-			'numberposts' => -1,
-			'orderby'     => 'menu_order',
-			'order'       => 'DESC',
+			'post_type'      => $post_type,
+			'post_parent'    => $parent,
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'menu_order',
+			'order'          => 'DESC',
 		) ) ) ) {
 
 			echo $args['before_widget'];
