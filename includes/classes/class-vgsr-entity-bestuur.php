@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VGSR Entity Bestuur Class
+ * VGSR Bestuur Class
  *
  * @package VGSR Entity
  * @subpackage Entities
@@ -10,13 +10,13 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'VGSR_Entity_Bestuur' ) ) :
+if ( ! class_exists( 'VGSR_Bestuur' ) ) :
 /**
  * VGSR Bestuur Entity Class
  *
  * @since 1.0.0
  */
-class VGSR_Entity_Bestuur extends VGSR_Entity_Base {
+class VGSR_Bestuur extends VGSR_Entity_Base {
 
 	/**
 	 * The latest Bestuur post ID

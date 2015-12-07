@@ -169,9 +169,9 @@ final class VGSR_Entity {
 
 		// Define the entities as post_type => class_name|file
 		$entities = apply_filters( 'vgsr_entity_entities', array(
-			'bestuur' => 'VGSR_Entity_Bestuur',
-			'dispuut' => 'VGSR_Entity_Dispuut',
-			'kast'    => 'VGSR_Entity_Kast',
+			'bestuur' => 'VGSR_Bestuur',
+			'dispuut' => 'VGSR_Dispuut',
+			'kast'    => 'VGSR_Kast',
 		) );
 
 		// Walk registered entities

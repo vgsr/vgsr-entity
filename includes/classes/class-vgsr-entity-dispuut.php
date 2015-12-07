@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VGSR Entity Dispuut Class
+ * VGSR Dispuut Class
  *
  * @package VGSR Entity
  * @subpackage Entities
@@ -10,13 +10,13 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'VGSR_Entity_Dispuut' ) ) :
+if ( ! class_exists( 'VGSR_Dispuut' ) ) :
 /**
  * VGSR Dispuut Entity Class
  *
  * @since 1.0.0
  */
-class VGSR_Entity_Dispuut extends VGSR_Entity_Base {
+class VGSR_Dispuut extends VGSR_Entity_Base {
 
 	/**
 	 * Construct Dispuut Entity
