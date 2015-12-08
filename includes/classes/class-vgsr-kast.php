@@ -45,6 +45,21 @@ class VGSR_Kast extends VGSR_Entity_Base {
 			// Thumbnail
 			'thumbsize' => 'mini-thumb',
 			'mini_size' => 100,
+		), array(
+
+			// Since
+			'since' => array(
+				'label' => __( 'Since', 'vgsr-entity' ),
+				'type'  => 'date',
+				'name'  => 'vgsr_entity_kast_since'
+			),
+
+			// Ceased
+			'ceased' => array(
+				'label' => __( 'Ceased', 'vgsr-entity' ),
+				'type'  => 'year',
+				'name'  => 'vgsr_entity_kast_ceased'
+			),
 		) );
 	}
 
@@ -453,40 +468,53 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		return $messages;
 	}
 
+	/** Meta ***********************************************************/
+
 	/**
-	 * Returns the meta fields for post type kast
+	 * Return the requested entity meta value
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 *
-	 * @param array $meta Meta fields
-	 * @return array $meta
+	 * @param string $key
+	 * @param int|WP_Post $post
+	 * @return mixed Entity meta value
 	 */
-	public function entity_display_meta( $meta ) {
-		global $post;
+	public function get( $key, $post = 0 ) {
 
-		// Setup value for since meta
-		if ( $since = get_post_meta( $post->ID, 'vgsr_entity_kast_since', true ) ) {
+		// Define local variables
+		$post  = get_post( $post );
+		$value = null;
 
-			// Setup kast Since meta
-			$meta['since'] = array(
-				'icon'   => 'icon-calendar',
-				'before' => __( 'Since', 'vgsr-entity' ) . ': ',
-				'value'  => date_i18n( get_option( 'date_format' ), strtotime( str_replace( '/', '-', $since ) ) )
-			);
+		switch ( $key ) {
+			case 'since' :
+			case 'ceased' :
+				$meta  = $this->meta[ $key ];
+				$value = get_post_meta( $post->ID, $meta['name'], true );
+				break;
 		}
 
-		// Setup value for ceased meta
-		if ( $ceased = get_post_meta( $post->ID, 'vgsr_entity_kast_ceased', true ) ) {
+		return $value;
+	}
 
-			// Setup kast Since meta
-			$meta['ceased'] = array(
-				'icon'   => 'icon-calendar',
-				'before' => __( 'Ceased', 'vgsr-entity' ) . ': ',
-				'value'  => date_i18n( get_option( 'date_format' ), strtotime( str_replace( '/', '-', $ceased ) ) )
-			);
+	/**
+	 * Sanitize the given entity meta value
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $value Meta value
+	 * @param string $key Meta key
+	 * @return mixed Meta value
+	 */
+	public function save( $value, $key ) {
+
+		switch ( $key ) {
+			case 'since' :
+			case 'ceased' :
+				// @todo Sanitize date input
+				break;
 		}
 
-		return $meta;
+		return $value;
 	}
 }
 

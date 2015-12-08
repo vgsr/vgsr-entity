@@ -49,6 +49,14 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 				'menu_name'          => __( 'Besturen',                   'vgsr-entity' ),
 				'settings_title'     => __( 'Besturen Settings',          'vgsr-entity' ),
 			)
+		), array(
+
+			// Season
+			'season' => array(
+				'label' => __( 'Season', 'vgsr-entity' ),
+				'type'  => 'year',
+				'name'  => 'menu_order'
+			)
 		) );
 	}
 
@@ -389,31 +397,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	}
 
 	/**
-	 * Returns the meta fields for post type bestuur
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $meta Meta fields
-	 * @return array $meta
-	 */
-	public function entity_display_meta( $meta ) {
-		global $post;
-
-		// Setup value for season meta
-		if ( $season = get_post_meta( $post->ID, 'vgsr_entity_bestuur_season', true ) ) {
-
-			// Meta icon
-			$meta['season'] = array(
-				'icon'   => 'icon-calendar',
-				'before' => __( 'Season', 'vgsr-entity' ) . ': ',
-				'value'  => $season
-			);
-		}
-
-		return $meta;
-	}
-
-	/**
 	 * Manipulate Entity Menu Widget posts arguments
 	 *
 	 * @since 1.0.0
@@ -429,7 +412,52 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		return $args;
 	}
 
-	/** Bestuur Meta ***************************************************/
+	/** Meta ***********************************************************/
+
+	/**
+	 * Return the requested entity meta value
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key
+	 * @param int|WP_Post $post
+	 * @return mixed Entity meta value
+	 */
+	public function get( $key, $post = 0 ) {
+
+		// Define local variables
+		$post  = get_post( $post );
+		$value = null;
+
+		switch ( $key ) {
+			case 'season' :
+				$value = $post->menu_order;
+				$value = sprintf( "%s/%s", $value, $value + 1 );
+				break;
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Sanitize the given entity meta value
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $value Meta value
+	 * @param string $key Meta key
+	 * @return mixed Meta value
+	 */
+	public function save( $value, $key ) {
+
+		switch ( $key ) {
+			case 'season' :
+				// Will be saved through WP's default handling of 'menu_order'
+				break;
+		}
+
+		return $value;
+	}
 
 	/**
 	 * Return the season of a given bestuur
@@ -440,10 +468,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * @return string Bestuur season
 	 */
 	public function get_season( $post = 0 ) {
-		if ( ( ! $post = get_post( $post ) ) || $this->type != $post->post_type )
-			return;
-
-		return get_post_meta( $post->ID, 'vgsr_entity_bestuur_season', true );
+		return $this->get( 'season', $post );
 	}
 }
 

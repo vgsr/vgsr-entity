@@ -35,12 +35,22 @@ abstract class VGSR_Entity_Base {
 	protected $args = array();
 
 	/**
+	 * Holds the entity meta arguments
+	 * 
+	 * @since 1.1.0
+	 * @var array
+	 */
+	protected $meta = array();
+
+	/**
 	 * Construct the VGSR Entity
 	 *
 	 * @since 1.0.0
+	 * @since 1.1.0 Rearranged parameters and added `$meta` parameter.
 	 * 
 	 * @param string $type Post type name. Required
 	 * @param array $args Entity and post type arguments
+	 * @param array $meta Meta field arguments
 	 *
 	 * @uses VGSR_Entity_Base::entity_globals()
 	 * @uses VGSR_Entity_Base::entity_actions()
@@ -48,7 +58,7 @@ abstract class VGSR_Entity_Base {
 	 * @uses VGSR_Entity_Base::setup_requires()
 	 * @uses VGSR_Entity_Base::setup_actions()
 	 */
-	public function __construct( $type, $args = array() ) {
+	public function __construct( $type, $args = array(), $meta = array() ) {
 
 		// Set type
 		$this->type = $type;
@@ -77,6 +87,9 @@ abstract class VGSR_Entity_Base {
 				'section' => "vgsr_{$type}_options_main",
 			),
 		) );
+
+		// Set meta fields
+		$this->meta = $meta;
 
 		// Setup global entity
 		$this->entity_globals();
@@ -202,11 +215,13 @@ abstract class VGSR_Entity_Base {
 		add_action( 'admin_notices',    array( $this, 'entity_admin_notices'     ) );
 
 		// Plugin hooks
-		add_filter( "vgsr_{$this->type}_display_meta",   array( $this, 'entity_display_meta' ) );
-		add_filter( "vgsr_{$this->type}_admin_messages", array( $this, 'admin_messages'      ) );
+		add_filter( "vgsr_{$this->type}_admin_messages", array( $this, 'admin_messages' ) );
 
-		// Save post parent
+		// Post data
 		add_filter( 'wp_insert_post_parent', array( $this, 'filter_entity_parent' ), 10, 4 );
+		foreach ( array_keys( $this->meta ) as $key ) {
+			add_filter( "sanitize_post_meta_{$key}", array( $this, 'save' ), 10, 2 );
+		}
 
 		// Entity children
 		add_filter( 'the_content', array( $this, 'entity_parent_page_children' ) );
@@ -701,16 +716,35 @@ abstract class VGSR_Entity_Base {
 		return $messages;
 	}
 
+	/** Theme **********************************************************/
+
 	/**
-	 * Return the entity meta data to display
+	 * Return the requested entity meta value
 	 *
-	 * @since 1.0.0
+	 * Overwrite this method in a chilc class.
 	 *
-	 * @param array $meta The entity meta data
-	 * @return array $meta
+	 * @since 1.1.0
+	 *
+	 * @param string $key Meta key
+	 * @return null
 	 */
-	public function entity_display_meta( $meta ) {
-		return $meta;
+	public function get( $key ) {
+		return null;
+	}
+
+	/**
+	 * Sanitize the given entity meta value
+	 *
+	 * Overwrite this method in a chilc class.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param mixed $value Meta value
+	 * @param string $key Meta key
+	 * @return mixed Meta value
+	 */
+	public function save( $value, $key ) {
+		return $value;
 	}
 
 	/**
@@ -718,9 +752,22 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @since 1.1.0
 	 *
+	 * @uses VGSR_Entity_Base::get_meta()
+	 *
+	 * @param string $context Optional. Defaults to 'raw'.
 	 * @return array Entity meta
 	 */
-	public function get_meta() {
+	public function meta( $context = 'raw' ) {
+		switch ( $context ) {
+			case 'raw' :
+				return $this->meta;
+				break;
+			case 'display' :
+				if ( is_callable( array( $this, 'get_meta' ) ) ) {
+					return $this->get_meta();
+				}
+		}
+
 		return array();
 	}
 }
