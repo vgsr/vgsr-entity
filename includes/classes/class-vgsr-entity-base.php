@@ -403,20 +403,13 @@ abstract class VGSR_Entity_Base {
 	public function entity_register_settings() {
 
 		// Register main settings section
-		add_settings_section( $this->args['settings']['section'], __( 'Main Settings', 'vgsr-entity' ), array( $this, 'main_settings_info' ), $this->args['settings']['page'] );
+		add_settings_section( $this->args['settings']['section'], __( 'Main Settings', 'vgsr-entity' ), '', $this->args['settings']['page'] );
 
 		// Entity Parent
 		add_settings_field( $this->args['parent_key'], __( 'Parent Page', 'vgsr-entity' ), array( $this, 'entity_parent_settings_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
 		register_setting( $this->args['settings']['page'], $this->args['parent_key'], 'intval' );
 		add_action( 'update_option', array( $this, 'update_entity_parent' ), 10, 3 );
 	}
-
-	/**
-	 * Output main settings section info
-	 *
-	 * @since 1.0.0
-	 */
-	public function main_settings_info() { /* Nothing to display */ }
 
 	/** Parent Page ****************************************************/
 
