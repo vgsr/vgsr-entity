@@ -109,6 +109,7 @@ final class VGSR_Entity {
 		/** Misc **************************************************************/
 
 		$this->menu_position = 35;
+		$this->base_year     = 1950; // 'Al sinds 1950!'
 	}
 
 	/**
