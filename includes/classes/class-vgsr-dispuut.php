@@ -56,26 +56,7 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 	}
 
 	/**
-	 * Add metaboxes to the Dispuut edit screen
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses add_meta_box()
-	 */
-	public function add_metabox() {
-
-		// Add Dispuut Data metabox
-		add_meta_box(
-			"vgsr-entity-{$this->type}",
-			__( 'Dispuut Data', 'vgsr-entity' ),
-			array( $this, 'metabox_display' ),
-			$this->type,
-			'side'
-		);
-	}
-
-	/**
-	 * Output dispuut meta box
+	 * Output dispuut details metabox
 	 *
 	 * @since 1.0.0
 	 *
@@ -85,7 +66,7 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 	 *
 	 * @param object $post The current post
 	 */
-	public function metabox_display( $post ) {
+	public function details_metabox( $post ) {
 
 		// Output nonce verification field
 		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_dispuut_meta_nonce' );

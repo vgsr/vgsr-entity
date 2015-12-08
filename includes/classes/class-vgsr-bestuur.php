@@ -113,32 +113,13 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	}
 
 	/**
-	 * Add metaboxes to the Bestuur edit screen
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses add_meta_box()
-	 */
-	public function add_metabox() {
-
-		// Add Bestuur Data meta box
-		add_meta_box(
-			"vgsr-entity-{$this->type}",
-			__( 'Bestuur Data', 'vgsr-entity' ),
-			array( $this, 'metabox_display' ),
-			$this->type,
-			'side'
-		);
-	}
-
-	/**
-	 * Output bestuur meta box
+	 * Output bestuur details metabox
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param object $post The current post
 	 */
-	public function metabox_display( $post ) {
+	public function details_metabox( $post ) {
 
 		// Output nonce verification field
 		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_bestuur_meta_nonce' );

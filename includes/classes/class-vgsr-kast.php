@@ -223,26 +223,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	}
 
 	/**
-	 * Add metaboxes to the Kast edit screen
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses add_meta_box()
-	 */
-	public function add_metabox() {
-
-		// Add Kast Data metabox
-		add_meta_box(
-			"vgsr-entity-{$this->type}",
-			__( 'Kast Data', 'vgsr-entity' ),
-			array( $this, 'metabox_display' ),
-			$this->type,
-			'side'
-		);
-	}
-
-	/**
-	 * Output kast meta box
+	 * Output kast details metabox
 	 *
 	 * @since 1.0.0
 	 *
@@ -252,7 +233,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 *
 	 * @param object $post The current post
 	 */
-	public function metabox_display( $post ) {
+	public function details_metabox( $post ) {
 
 		// Output nonce verification field
 		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_kast_meta_nonce' );

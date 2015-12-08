@@ -280,11 +280,31 @@ abstract class VGSR_Entity_Base {
 	}
 
 	/**
-	 * Add metabox callback for entity CPT
+	 * Add default metabox for this entity's edit post page
 	 *
 	 * @since 1.0.0
+	 *
+	 * @uses add_meta_box()
 	 */
-	public function add_metabox() { /* Overwrite this method in a child class */ }
+	public function add_metabox() {
+		add_meta_box(
+			"vgsr-entity-{$this->type}-details",
+			sprintf( __( '%s Details', 'vgsr-entity' ), $this->args['labels']['singular_name'] ),
+			array( $this, 'details_metabox' ),
+			$this->type,
+			'side',
+			'high'
+		);
+	}
+
+	/**
+	 * Output the contents of the details metabox
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param WP_Post $post
+	 */
+	public function details_metabox( $post ) { /* Overwrite this method in a child class */ }
 
 	/** Settings Page **************************************************/
 
