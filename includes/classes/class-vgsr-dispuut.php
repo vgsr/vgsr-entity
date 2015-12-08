@@ -71,69 +71,6 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 	}
 
 	/**
-	 * Output dispuut details metabox
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses get_post_meta()
-	 * @uses wp_nonce_field()
-	 * @uses do_action() Calls 'vgsr_{$this->type}_metabox' hook with the post object
-	 *
-	 * @param object $post The current post
-	 */
-	public function details_metabox( $post ) {
-
-		// Output nonce verification field
-		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_dispuut_meta_nonce' );
-
-		/** Since ******************************************************/
-
-		// Get stored meta value
-		$since = get_post_meta( $post->ID, 'vgsr_entity_dispuut_since', true );
-
-		// If no value served set it empty
-		if ( ! $since )
-			$since = '';
-
-		?>
-
-		<p id="vgsr_entity_dispuut_since">
-
-			<label>
-				<strong><?php _e( 'Since', 'vgsr-entity' ); ?>: </strong>
-				<input type="text" name="vgsr_entity_dispuut_since" value="<?php echo esc_attr( $since ); ?>" placeholder="yyyy" />
-			</label>
-
-		</p>
-
-		<?php
-
-		/** Ceased *****************************************************/
-
-		// Get stored meta value
-		$ceased = get_post_meta( $post->ID, 'vgsr_entity_dispuut_ceased', true );
-
-		// If no value served set it empty
-		if ( ! $ceased )
-			$ceased = '';
-
-		?>
-
-		<p id="vgsr_entity_dispuut_ceased">
-
-			<label>
-				<strong><?php _e( 'Ceased', 'vgsr-entity' ); ?>: </strong>
-				<input type="text" name="vgsr_entity_dispuut_ceased" value="<?php echo esc_attr( $ceased ); ?>" placeholder="yyyy" />
-			</label>
-
-		</p>
-
-		<?php
-
-		do_action( "vgsr_{$this->type}_metabox", $post );
-	}
-
-	/**
 	 * Save dispuut since and ceased meta field
 	 *
 	 * @since 1.0.0
@@ -247,21 +184,22 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 	 *
 	 * @param string $key
 	 * @param int|WP_Post $post
+	 * @param string $context Optional. Context, defaults to 'display'.
 	 * @return mixed Entity meta value
 	 */
-	public function get( $key, $post = 0 ) {
+	public function get( $key, $post = 0, $context = 'display' ) {
 
 		// Define local variables
-		$post  = get_post( $post );
-		$value = null;
+		$post    = get_post( $post );
+		$value   = null;
+		$display = ( 'display' === $context );
 
 		switch ( $key ) {
 			case 'since' :
 				$value = $post->menu_order;
 				break;
 			case 'ceased' :
-				$meta  = $this->meta[ $key ];
-				$value = get_post_meta( $post->ID, $meta['name'], true );
+				$value = get_post_meta( $post->ID, $this->meta[ $key ]['name'], true );
 				break;
 		}
 
@@ -284,7 +222,7 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 				// Will be saved through WP's default handling of 'menu_order'
 				break;
 			case 'ceased' :
-				// @todo Sanitize date input
+				$value = (int) $value;
 				break;
 		}
 

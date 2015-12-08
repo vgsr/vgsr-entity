@@ -91,6 +91,8 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		add_filter( "vgsr_{$this->type}_menu_widget_query_args", array( $this, 'widget_menu_order' ) );
 	}
 
+	/** Settings ***************************************************/
+
 	/**
 	 * Add additional Bestuur settings fields
 	 *
@@ -120,64 +122,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		<?php
 	}
 
-	/**
-	 * Output bestuur details metabox
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param object $post The current post
-	 */
-	public function details_metabox( $post ) {
-
-		// Output nonce verification field
-		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_bestuur_meta_nonce' );
-
-		/** Season *****************************************************/
-
-		// Get stored meta value
-		$season = get_post_meta( $post->ID, 'vgsr_entity_bestuur_season', true );
-
-		// If no value served set it empty
-		if ( ! $season )
-			$season = '';
-
-		?>
-
-		<p id="vgsr_entity_bestuur_season">
-
-			<label>
-				<strong><?php _e( 'Season', 'vgsr-entity' ); ?>:</strong>
-				<input type="text" name="vgsr_entity_bestuur_season" value="<?php echo esc_attr( $season ); ?>" placeholder="yyyy/yyyy" />
-			</label>
-
-		</p>
-
-		<?php
-
-		/** Members ****************************************************/
-
-		// Get stored meta value
-		$members = get_post_meta( $post->ID, 'vgsr_entity_bestuur_members', true );
-
-		// If no value served set it empty
-		if ( ! $members )
-			$members = '';
-
-		?>
-
-		<p id="vgsr_entity_bestuur_members">
-
-			<label>
-				<strong><?php _e( 'Members', 'vgsr-entity' ); ?>:</strong><br/>
-				<textarea name="vgsr_entity_bestuur_members" rows="4" placeholder="Voornaam Achternaam, Praeses"><?php echo esc_textarea( $members ); ?></textarea>
-			</label>
-
-		</p>
-
-		<?php
-
-		do_action( "vgsr_{$this->type}_metabox", $post );
-	}
+	/** Season *****************************************************/
 
 	/**
 	 * Save bestuur season meta field
@@ -421,18 +366,22 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 *
 	 * @param string $key
 	 * @param int|WP_Post $post
+	 * @param string $context Optional. Context, defaults to 'display'.
 	 * @return mixed Entity meta value
 	 */
-	public function get( $key, $post = 0 ) {
+	public function get( $key, $post = 0, $context = 'display' ) {
 
 		// Define local variables
-		$post  = get_post( $post );
-		$value = null;
+		$post    = get_post( $post );
+		$value   = null;
+		$display = ( 'display' === $context );
 
 		switch ( $key ) {
 			case 'season' :
 				$value = $post->menu_order;
-				$value = sprintf( "%s/%s", $value, $value + 1 );
+				if ( $display ) {
+					$value = sprintf( "%s/%s", $value, $value + 1 );
+				}
 				break;
 		}
 

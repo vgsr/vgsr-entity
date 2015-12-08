@@ -238,117 +238,6 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	}
 
 	/**
-	 * Output kast details metabox
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses get_post_meta()
-	 * @uses wp_nonce_field()
-	 * @uses do_action() Calls 'vgsr_{$this->type}_metabox' hook with the post object
-	 *
-	 * @param object $post The current post
-	 */
-	public function details_metabox( $post ) {
-
-		// Output nonce verification field
-		wp_nonce_field( vgsr_entity()->file, 'vgsr_entity_kast_meta_nonce' );
-
-		/** Since ******************************************************/
-
-		// Get stored meta value
-		$since = get_post_meta( $post->ID, 'vgsr_entity_kast_since', true );
-
-		// If no value served set it empty
-		if ( ! $since )
-			$since = '';
-
-		?>
-
-		<p id="vgsr_entity_kast_since">
-
-			<label>
-				<strong><?php _e( 'Since', 'vgsr-entity' ); ?>: </strong>
-				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_since" value="<?php echo esc_attr( $since ); ?>" placeholder="dd/mm/yyyy" />
-			</label>
-
-		</p>
-
-		<?php
-
-		/** Ceased *****************************************************/
-
-		// Get stored meta value
-		$ceased = get_post_meta( $post->ID, 'vgsr_entity_kast_ceased', true );
-
-		// If no value served set it empty
-		if ( ! $ceased )
-			$ceased = '';
-
-		?>
-
-		<p id="vgsr_entity_kast_ceased">
-
-			<label>
-				<strong><?php _e( 'Ceased', 'vgsr-entity' ); ?>: </strong>
-				<input class="ui-widget-content ui-corner-all datepicker" type="text" name="vgsr_entity_kast_ceased" value="<?php echo esc_attr( $ceased ); ?>" placeholder="dd/mm/yyyy" />
-			</label>
-
-		</p>
-
-		<?php
-
-		/** Occupants **************************************************/
-
-		// Get stored meta value
-		$occupants = get_post_meta( $post->ID, 'vgsr_entity_kast_occupants', true );
-
-		// If no value served set it empty
-		if ( ! $occupants )
-			$occupants = '';
-
-		?>
-
-		<p id="vgsr_entity_kast_occupants">
-
-			<label>
-				<strong><?php _e( 'Occupants', 'vgsr-entity' ); ?>: </strong>
-				<input type="text" name="vgsr_entity_kast_occupants" value="<?php echo esc_attr( $occupants ); ?>" />
-			</label>
-			<span class="howto"><?php _e( 'The current occupants.', 'vgsr-entity' ); ?></span>
-
-		</p>
-
-		<?php
-
-		/** Previous Occupants *****************************************/
-
-		// Get stored meta value
-		$prev_occupants = get_post_meta( $post->ID, 'vgsr_entity_kast_prev_occupants', true );
-
-		// If no value served set it empty
-		if ( ! $prev_occupants )
-			$prev_occupants = '';
-
-		?>
-
-		<p id="vgsr_entity_kast_prev_occupants">
-
-			<label>
-				<strong><?php _e( 'Previous Occupants', 'vgsr-entity' ); ?>: </strong>
-				<input type="text" name="vgsr_entity_kast_prev_occupants" value="<?php echo esc_attr( $prev_occupants ); ?>" />
-			</label>
-			<span class="howto"><?php _e( 'The previous occupants.', 'vgsr-entity' ); ?></span>
-
-		</p>
-
-		<?php
-
-		/** Other ******************************************************/
-
-		do_action( "vgsr_{$this->type}_metabox", $post );
-	}
-
-	/**
 	 * Save kast since meta field
 	 *
 	 * @since 1.0.0
@@ -477,13 +366,15 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 *
 	 * @param string $key
 	 * @param int|WP_Post $post
+	 * @param string $context Optional. Context, defaults to 'display'.
 	 * @return mixed Entity meta value
 	 */
-	public function get( $key, $post = 0 ) {
+	public function get( $key, $post = 0, $context = 'display' ) {
 
 		// Define local variables
-		$post  = get_post( $post );
-		$value = null;
+		$post    = get_post( $post );
+		$value   = null;
+		$display = ( 'display' === $context );
 
 		switch ( $key ) {
 			case 'since' :

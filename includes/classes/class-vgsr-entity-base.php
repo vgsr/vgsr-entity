@@ -274,7 +274,6 @@ abstract class VGSR_Entity_Base {
 			'author',
 			'thumbnail',
 			'revisions',
-			'page-attributes' // Use menu_order
 		);
 
 		// Register this entity post type
@@ -319,7 +318,43 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @param WP_Post $post
 	 */
-	public function details_metabox( $post ) { /* Overwrite this method in a child class */ }
+	public function details_metabox( $post ) {
+
+		// Output nonce verification field
+		wp_nonce_field( vgsr_entity()->file, "vgsr_entity_{$this->type}_meta_nonce" );
+
+		// Walk all meta fields
+		foreach ( $this->meta as $key => $args ) {
+			
+			// Define field variables
+			$id    = esc_attr( "{$this->type}_{$args['name']}" );
+			$value = $this->get( $key, $post, 'edit' );
+
+			// Output field per type
+			switch ( $args['type'] ) {
+
+				// Year
+				case 'year' : ?>
+
+		<label for="<?php echo $id; ?>"><?php echo esc_html( $args['label'] ); ?></label>
+		<input id="<?php echo $id; ?>" type="number" size="4" placeholder="<?php esc_html_e( 'YYYY', 'vgsr-entity' ); ?>" name="<?php echo esc_attr( $args['name'] ); ?>" value="<?php echo esc_attr( $value ); ?>" min="<?php echo esc_attr( vgsr_entity()->base_year ); ?>" max="<?php echo date( 'Y' ); ?>" />
+
+					<?php
+					break;
+
+				// Date
+				case 'date' : ?>
+
+		<label for="<?php echo $id; ?>"><?php echo esc_html( $args['label'] ); ?></label>
+		<input id="<?php echo $id; ?>" class="ui-widget-content ui-corner-all datepicker" type="text" placeholder="<?php esc_html_e( 'DD/MM/YYYY', 'vgsr-entity' ); ?>" name="<?php echo esc_attr( $args['name'] ); ?>" value="<?php echo esc_attr( $value ); ?>" />
+
+					<?php
+					break;
+			}
+		}
+
+		do_action( "vgsr_{$this->type}_metabox", $post );
+	}
 
 	/** Settings Page **************************************************/
 
@@ -726,9 +761,11 @@ abstract class VGSR_Entity_Base {
 	 * @since 1.1.0
 	 *
 	 * @param string $key Meta key
+	 * @param int|WP_Post $post Optional. Defaults to current post.
+	 * @param string $context Optional. Context, defaults to 'display'.
 	 * @return null
 	 */
-	public function get( $key ) {
+	public function get( $key, $post = 0, $context = 'display' ) {
 		return null;
 	}
 
