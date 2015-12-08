@@ -68,10 +68,13 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 */
 	public function setup_actions() {
 
-		add_action( 'vgsr_entity_init', array( $this, 'add_bestuur_rewrite_rule'  )        );
-		add_action( 'admin_init',       array( $this, 'bestuur_register_settings' )        );
-		add_action( 'save_post',        array( $this, 'current_bestuur_save_id'    ), 10, 2 );
-		add_action( 'save_post',        array( $this, 'bestuur_metabox_save'      ), 10, 2 );
+		add_action( 'vgsr_entity_init', array( $this, 'rewrite_rules'     ) );
+		add_action( 'admin_init',       array( $this, 'register_settings' ) );
+
+		// Post
+		add_action( "save_post_{$this->type}", array( $this, 'save_metabox'         ), 10, 2 );
+		add_action( "save_post_{$this->type}", array( $this, 'save_current_bestuur' ), 10, 2 );
+		add_filter( 'document_title_parts',    array( $this, 'document_title_parts' )        );
 
 		// Current bestuur
 		add_filter( 'display_post_states', array( $this, 'display_post_states' ), 9, 2 );
@@ -85,7 +88,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 *
 	 * @since 1.0.0
 	 */
-	public function bestuur_register_settings() {
+	public function register_settings() {
 
 		// Bestuur widget menu order setting
 		add_settings_field( '_bestuur-menu-order', __( 'Menu Widget Order', 'vgsr-entity' ), array( $this, 'setting_menu_order_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
@@ -195,22 +198,22 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * @param int $post_id The post ID
 	 * @param object $post Post data
 	 */
-	public function bestuur_metabox_save( $post_id, $post ) {
+	public function save_metabox( $post_id, $post ) {
 
-		// Check autosave
+		// Bail when doing outosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
 
-		// Check post type
+		// Bail when this is not our entity
 		if ( $post->post_type !== $this->type )
 			return;
 
-		// Check caps
-		$pto = get_post_type_object( $this->type );
-		if ( ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
+		// Bail when the user is not capable
+		$cpt = get_post_type_object( $this->type );
+		if ( ! current_user_can( $cpt->cap->edit_posts ) || ! current_user_can( $cpt->cap->edit_post, $post_id ) )
 			return;
 
-		// Check nonce
+		// Bail when the nonce does not verify
 		if ( ! isset( $_POST['vgsr_entity_bestuur_meta_nonce'] ) || ! wp_verify_nonce( $_POST['vgsr_entity_bestuur_meta_nonce'], vgsr_entity()->file ) )
 			return;
 
@@ -218,7 +221,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		// Authenticated
 		//
 
-		// Season
+		// Update: Season
 		if ( isset( $_POST['vgsr_entity_bestuur_season'] ) ) {
 			$value = sanitize_text_field( $_POST['vgsr_entity_bestuur_season'] );
 
@@ -227,7 +230,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 				// Alert the user
 				add_filter( 'redirect_post_location', array( $this, 'metabox_season_save_redirect' ) );
-				$value = false;
 
 			// Update post meta
 			} else {
@@ -272,7 +274,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * @param int $post_id Post ID
 	 * @param object $post Post data
 	 */
-	public function current_bestuur_save_id( $post_id, $post ) {
+	public function save_current_bestuur( $post_id, $post ) {
 
 		// Check autosave
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
@@ -283,18 +285,18 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 			return;
 
 		// Check caps
-		$pto = get_post_type_object( $this->type );
-		if ( ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
+		$cpt = get_post_type_object( $this->type );
+		if ( ! current_user_can( $cpt->cap->edit_posts ) || ! current_user_can( $cpt->cap->edit_post, $post_id ) )
 			return;
 
-		// Check if this bestuur is already known as the latest one
+		// Check if this bestuur is already known as the current one
 		if ( $post_id == $this->current_bestuur ) {
 
-			// Bail if status isn't changed
+			// Bail when status isn't changed
 			if ( 'publish' == $post->post_status )
 				return;
 
-			// Find now latest bestuur
+			// Find the current bestuur
 			if ( $_post = $this->get_current_bestuur() ) {
 				$post_id = $_post->ID;
 
@@ -303,7 +305,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 				$post_id = 0;
 			}
 
-		// Is not latest bestuur
+		// Is not current bestuur
 		} else {
 
 			// Nothing changes when it's not published or it's an older bestuur
@@ -312,38 +314,38 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 			}
 		}
 
-		// Update latest bestuur option
+		// Update current bestuur option
 		update_option( '_bestuur-latest-bestuur', $post_id );
 		$this->current_bestuur = $post_id;
 
-		// Overwrite latest bestuur rule
-		$this->add_bestuur_rewrite_rule();
-
-		// Reset rewrite rules to properly point to the latest bestuur
-		add_action( 'save_post', 'flush_rewrite_rules', 99 );
+		// Refresh rewrite rules to properly point to the current bestuur
+		add_action( "save_post_{$this->type}", array( $this, 'rewrite_rules' ), 99 );
+		add_action( "save_post_{$this->type}", 'flush_rewrite_rules',           99 );
 	}
 
 	/**
-	 * Redirect requests for the entity parent page to the latest bestuur
+	 * Define custom rewrite rules
 	 *
 	 * @since 1.0.0
 	 *
 	 * @uses get_post_type_object() To find the post type slug for the parent
 	 */
-	public function add_bestuur_rewrite_rule() {
+	public function rewrite_rules() {
 
-		// Point parent page to latest bestuur
+		// Redirect requests for the entity parent page to the current bestuur
 		if ( $this->current_bestuur ) {
 			add_rewrite_rule(
-				get_post_type_object( $this->type )->rewrite['slug'] . '/?$', // The parent page ...
-				'index.php?p=' . $this->current_bestuur, // ... should be interpreted as the current Bestuur
+				// The parent page ...
+				get_post_type_object( $this->type )->rewrite['slug'] . '/?$',
+				// ... should be interpreted as the current Bestuur
+				'index.php?p=' . $this->current_bestuur,
 				'top'
 			);
 		}
 	}
 
 	/**
-	 * Returns the latest (or current) bestuur
+	 * Returns the current (or current) bestuur
 	 *
 	 * @since 1.0.0
 	 *
@@ -352,7 +354,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 */
 	public function get_current_bestuur() {
 
-		// Get the latest bestuur
+		// Get the current bestuur
 		if ( $bestuur = new WP_Query( array(
 			'numberposts' => 1,
 			'post_type'   => $this->type,
@@ -376,12 +378,33 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 */
 	public function display_post_states( $states, $post ) {
 
-		// Bestuur is the latest one
+		// Bestuur is the current one
 		if ( $post->post_type === $this->type && $post->ID == $this->current_bestuur ) {
 			$states['current'] = __( 'Current', 'vgsr-entity' );
 		}
 
 		return $states;
+	}
+
+	/**
+	 * Modify the document title for our entity
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses is_bestuur()
+	 * @uses VGSR_Bestuur::get_season()
+	 *
+	 * @param array $title Title parts
+	 * @return array Title parts
+	 */
+	public function document_title_parts( $title ) {
+
+		// When this is our entity
+		if ( is_bestuur() ) {
+			$title['title'] .= sprintf( ' (%s)', $this->get_season() );
+		}
+
+		return $title;
 	}
 
 	/**
