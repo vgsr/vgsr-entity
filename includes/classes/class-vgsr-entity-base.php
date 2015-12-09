@@ -81,8 +81,8 @@ abstract class VGSR_Entity_Base {
 			'page'       => "edit.php?post_type={$type}",
 
 			// Admin: Settings
-			'hook'       => '',
 			'settings'   => array(
+				'hook'    => '',
 				'page'    => "vgsr_{$type}_settings",
 				'section' => "vgsr_{$type}_options_main",
 			),
@@ -373,11 +373,11 @@ abstract class VGSR_Entity_Base {
 	public function entity_admin_menu() {
 
 		// Register menu page
-		$this->args['hook'] = add_submenu_page( $this->args['page'], $this->args['labels']['settings_title'], __( 'Settings' ), 'manage_options', "{$this->type}-settings", array( $this, 'settings_page' ) );
+		$this->args['settings']['hook'] = add_submenu_page( $this->args['page'], $this->args['labels']['settings_title'], __( 'Settings' ), 'manage_options', "{$this->type}-settings", array( $this, 'settings_page' ) );
 
 		// Setup settings specific hooks
-		add_action( "load-{$this->args['hook']}",         array( $this, 'settings_load'   ), 9  );
-		add_action( "admin_footer-{$this->args['hook']}", array( $this, 'settings_footer' )     );
+		add_action( "load-{$this->args['settings']['hook']}",         array( $this, 'settings_load'   ), 9 );
+		add_action( "admin_footer-{$this->args['settings']['hook']}", array( $this, 'settings_footer' )    );
 	}
 
 	/**
@@ -406,7 +406,7 @@ abstract class VGSR_Entity_Base {
 		$screen      = get_current_screen();
 		$is_edit     = "edit-{$this->type}" === $screen->id;
 		$is_post     = $this->type === $screen->id;
-		$is_settings = $page_hook === $this->args['hook'];
+		$is_settings = $page_hook === $this->args['settings']['hook'];
 
 		// When on an entity admin page
 		if ( $is_edit || $is_post || $is_settings ) {
