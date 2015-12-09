@@ -369,12 +369,10 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 * @param string $context Optional. Context, defaults to 'display'.
 	 * @return mixed Entity meta value
 	 */
-	public function get( $key, $post = 0, $context = 'display' ) {
+	protected function _get( $key, $post, $context ) {
 
 		// Define local variables
-		$post    = get_post( $post );
-		$value   = null;
-		$display = ( 'display' === $context );
+		$value = null;
 
 		switch ( $key ) {
 			case 'since' :

@@ -756,7 +756,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Return the requested entity meta value
 	 *
-	 * Overwrite this method in a chilc class.
+	 * Override the `_get()` method in a child class to use this.
 	 *
 	 * @since 1.1.0
 	 *
@@ -766,13 +766,29 @@ abstract class VGSR_Entity_Base {
 	 * @return null
 	 */
 	public function get( $key, $post = 0, $context = 'display' ) {
-		return null;
+
+		// Define default value
+		$value = null;
+
+		// Bail when no post was found
+		if ( $post = get_post( $post ) ) {
+			$value = $this->_get( $key, $post, $context );
+		}
+
+		return $value;
 	}
+
+	/**
+	 * Abstract method to return entity meta
+	 *
+	 * @since 1.1.0
+	 */
+	abstract protected function _get( $key, $post, $context );
 
 	/**
 	 * Sanitize the given entity meta value
 	 *
-	 * Overwrite this method in a chilc class.
+	 * Overwrite this method in a child class.
 	 *
 	 * @since 1.1.0
 	 *
