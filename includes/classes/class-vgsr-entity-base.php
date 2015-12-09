@@ -208,17 +208,21 @@ abstract class VGSR_Entity_Base {
 	 */
 	private function entity_actions() {
 
-		// Actions
-		add_action( 'vgsr_entity_init', array( $this, 'register_post_type'       ) );
-		add_action( 'admin_init',       array( $this, 'entity_register_settings' ) );
-		add_action( 'admin_menu',       array( $this, 'entity_admin_menu'        ) );
-		add_action( 'admin_notices',    array( $this, 'entity_admin_notices'     ) );
+		// Post type
+		add_action( 'vgsr_entity_init', array( $this, 'register_post_type' ) );
 
-		// Plugin hooks
-		add_filter( "vgsr_{$this->type}_admin_messages", array( $this, 'admin_messages' ) );
+		// Admin
+		add_action( 'admin_init',                        array( $this, 'entity_register_settings' ) );
+		add_action( 'admin_menu',                        array( $this, 'entity_admin_menu'        ) );
+		add_action( 'admin_enqueue_scripts',             array( $this, 'enqueue_scripts'          ) );
+		add_action( 'admin_notices',                     array( $this, 'entity_admin_notices'     ) );
+		add_filter( "vgsr_{$this->type}_admin_messages", array( $this, 'admin_messages'           ) );
 
-		// Post data
-		add_filter( 'wp_insert_post_parent', array( $this, 'filter_entity_parent' ), 10, 4 );
+		// Post
+		add_filter( "manage_edit-{$this->type}_columns", array( $this, 'meta_columns'          )        );
+		add_filter( 'hidden_columns',                    array( $this, 'hide_columns'          ), 10, 2 );
+		add_action( 'quick_edit_custom_box',             array( $this, 'quick_edit_custom_box' ), 10, 2 );
+		add_filter( 'wp_insert_post_parent',             array( $this, 'filter_entity_parent'  ), 10, 4 );
 		foreach ( array_keys( $this->meta ) as $key ) {
 			add_filter( "sanitize_post_meta_{$key}", array( $this, 'save' ), 10, 2 );
 		}
@@ -372,15 +376,14 @@ abstract class VGSR_Entity_Base {
 		$this->args['hook'] = add_submenu_page( $this->args['page'], $this->args['labels']['settings_title'], __( 'Settings' ), 'manage_options', "{$this->type}-settings", array( $this, 'settings_page' ) );
 
 		// Setup settings specific hooks
-		add_action( "load-{$this->args['hook']}",         array( $this, 'settings_load'            ), 9  );
-		add_action( 'admin_enqueue_scripts',              array( $this, 'settings_enqueue_scripts' ), 10 );
-		add_action( "admin_footer-{$this->args['hook']}", array( $this, 'settings_footer'          )     );
+		add_action( "load-{$this->args['hook']}",         array( $this, 'settings_load'   ), 9  );
+		add_action( "admin_footer-{$this->args['hook']}", array( $this, 'settings_footer' )     );
 	}
 
 	/**
 	 * Create admin page load hook
 	 *
-	 * @since 0.x
+	 * @since 1.0.0
 	 *
 	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_load'
 	 */
@@ -391,14 +394,37 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Create admin settings enqueue scripts hook
 	 *
-	 * @since 0.x
+	 * @since 1.0.0
 	 *
+	 * @uses wp_enqueue_style()
+	 * @uses wp_enqueue_script()
 	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_enqueue_scripts'
 	 */
-	public function settings_enqueue_scripts( $page_hook ) {
+	public function enqueue_scripts( $page_hook ) {
 
-		// Run hook when we're on the right page
-		if ( $page_hook === $this->args['hook'] ) {
+		// Define local variables
+		$screen      = get_current_screen();
+		$is_edit     = "edit-{$this->type}" === $screen->id;
+		$is_post     = $this->type === $screen->id;
+		$is_settings = $page_hook === $this->args['hook'];
+
+		// When on an entity admin page
+		if ( $is_edit || $is_post || $is_settings ) {
+			$entity = vgsr_entity();
+
+			// Enqueue date picker
+			if ( wp_list_filter( $this->meta, array( 'type' => 'date' ) ) ) {
+				wp_enqueue_script( 'jquery-ui-datepicker' );
+				wp_enqueue_style( 'jquery-ui-theme-fresh', $entity->includes_url . 'assets/css/jquery.ui.theme.css' );
+			}
+
+			// Enqueue admin scripts
+			wp_enqueue_style( 'vgsr-entity-admin', $entity->includes_url . 'assets/css/admin.css' );
+			wp_enqueue_script( 'vgsr-entity-admin', $entity->includes_url . 'assets/js/admin.js', array( 'jquery' ), '1.1.0', true );
+		}
+
+		// Run hook when we're on the settings page
+		if ( $is_settings ) {
 			do_action( "vgsr_{$this->type}_settings_enqueue_scripts" );
 		}
 	}
@@ -406,7 +432,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Create admin footer hook
 	 *
-	 * @since 0.x
+	 * @since 1.0.0
 	 *
 	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_footer'
 	 */

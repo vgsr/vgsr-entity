@@ -83,7 +83,6 @@ class VGSR_Kast extends VGSR_Entity_Base {
 
 		// Actions
 		add_action( 'admin_init', array( $this, 'register_settings' )        );
-		add_action( 'admin_head', array( $this, 'admin_scripts'     )        );
 		add_action( 'save_post',  array( $this, 'kast_metabox_save' ), 10, 2 );
 
 		// Filters
@@ -187,54 +186,6 @@ class VGSR_Kast extends VGSR_Entity_Base {
 
 		// Downsizing done, set option off
 		update_option( '_kast-downsize-thumbs', 0 );
-	}
-
-	/**
-	 * Enqueue scripts to the edit kast page
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses wp_enqueue_script()
-	 * @uses wp_register_style()
-	 * @uses wp_enqueue_style()
-	 */
-	public function enqueue_scripts() {
-		global $pagenow, $post;
-
-		// Bail if not on a Kast page
-		if ( ! isset( get_current_screen()->post_type ) || $this->type != get_current_screen()->post_type || 'post' != get_current_screen()->base )
-			return;
-
-		// Enable jQuery UI Datepicker
-		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'jquery-ui-datepicker' );
-
-		// Include jQuery UI Theme style
-		wp_register_style( 'jquery-ui-theme-fresh', plugins_url( 'css/jquery.ui.theme.css', vgsr_entity()->file ) );
-		wp_enqueue_style( 'jquery-ui-theme-fresh' );
-	}
-
-	/**
-	 * Output custom JS script to the edit kast page
-	 *
-	 * @since 1.0.0
-	 */
-	public function admin_scripts() {
-
-		// Editing a single kast
-		if ( isset( get_current_screen()->post_type ) && $this->type == get_current_screen()->post_type && 'post' == get_current_screen()->base ) : ?>
-
-		<script type="text/javascript">
-			jQuery(document).ready( function($) {
-				$('.datepicker').datepicker({
-					dateFormat: 'dd/mm/yyyy',
-					changeMonth: true,
-					changeYear: true
-				});
-			});
-		</script>
-
-		<?php endif;
 	}
 
 	/**
