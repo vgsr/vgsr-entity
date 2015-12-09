@@ -302,7 +302,7 @@ abstract class VGSR_Entity_Base {
 	 */
 	public function add_metabox() {
 		add_meta_box(
-			"vgsr-entity-{$this->type}-details",
+			"vgsr-entity-details",
 			sprintf( __( '%s Details', 'vgsr-entity' ), $this->args['labels']['singular_name'] ),
 			array( $this, 'details_metabox' ),
 			$this->type,
