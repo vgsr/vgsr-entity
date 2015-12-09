@@ -41,15 +41,22 @@ function vgsr_entity_get_meta( $post = 0 ) {
 
 if ( ! function_exists( 'is_entity' ) ) :
 /**
- * Return whether the post is an entity
+ * Return whether the post('s post) type is an entity
  *
  * @since 1.1.0
  *
- * @param int|WP_Post $post Optional. Post ID or object
- * @return bool Post is an entity
+ * @param string|int|WP_Post $post_type Optional. Post type, post ID or object. Defaults
+ *                                      to current post.
+ * @return bool Post (type) is an entity
  */
-function is_entity( $post = 0 ) {
-	return in_array( get_post_type( $post ), vgsr_entity()->get_entities() );
+function is_entity( $post_type = 0 ) {
+
+	// Default to the current post's post type
+	if ( ! is_string( $post_type ) || ! post_type_exists( $post_type ) ) {
+		$post_type = get_post_type( $post );
+	}
+
+	return in_array( $post_type, vgsr_entity()->get_entities() );
 }
 endif;
 
