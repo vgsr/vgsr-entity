@@ -98,8 +98,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		add_action( 'save_post',  array( $this, 'kast_metabox_save' ), 10, 2 );
 
 		// Filters
-		add_filter( 'vgsr_kast_settings_load',      array( $this, 'downsize_thumbs' ) );
-		add_filter( 'vgsr_kast_settings_scripts',   array( $this, 'enqueue_scripts' ) );
+		add_filter( 'vgsr_kast_settings_load', array( $this, 'downsize_thumbs' ) );
 	}
 
 	/**
