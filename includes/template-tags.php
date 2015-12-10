@@ -28,7 +28,7 @@ function vgsr_entity_get_meta( $post = 0 ) {
 	$post = get_post( $post );
 
 	// Bail when this is not an entity
-	if ( is_entity( $post ) )
+	if ( ! is_entity( $post ) )
 		return array();
 
 	// Get post display meta fields

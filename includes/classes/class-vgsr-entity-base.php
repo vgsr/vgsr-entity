@@ -1125,7 +1125,7 @@ abstract class VGSR_Entity_Base {
 
 					// Provide with meta value
 					foreach ( $meta as $key => $args ) {
-						$meta['value'] = $this->get( $key, $post, $context );
+						$meta[ $key ]['value'] = $this->get( $key, $post, $context );
 					}
 
 					return $meta;
