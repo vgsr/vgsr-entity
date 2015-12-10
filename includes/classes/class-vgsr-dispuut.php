@@ -71,79 +71,6 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 		) );
 	}
 
-	/**
-	 * Setup default Dispuut actions and filters
-	 *
-	 * @since 1.0.0
-	 */
-	public function setup_actions() {
-
-		// Save post meta
-		add_action( 'save_post', array( $this, 'dispuut_metabox_save' ), 10, 2 );
-	}
-
-	/**
-	 * Save dispuut since and ceased meta field
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int $post_id The post ID
-	 * @param object $post Post data
-	 */
-	public function dispuut_metabox_save( $post_id, $post ) {
-
-		// Check autosave
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
-			return;
-
-		// Check post type
-		if ( $post->post_type !== $this->type )
-			return;
-
-		// Check caps
-		$pto = get_post_type_object( $this->type );
-		if ( ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
-			return;
-
-		// Check nonce
-		if ( ! isset( $_POST['vgsr_entity_dispuut_meta_nonce'] ) || ! wp_verify_nonce( $_POST['vgsr_entity_dispuut_meta_nonce'], vgsr_entity()->file ) )
-			return;
-
-		//
-		// Authenticated
-		//
-
-		// Since & Ceased
-		if ( isset( $_POST['vgsr_entity_dispuut_since'] ) || isset( $_POST['vgsr_entity_dispuut_ceased'] ) ) {
-
-			// Walk since and ceased meta
-			foreach ( array_filter( array(
-				'since'  => sanitize_text_field( $_POST['vgsr_entity_dispuut_since']  ),
-				'ceased' => sanitize_text_field( $_POST['vgsr_entity_dispuut_ceased'] )
-			) ) as $meta_key => $value ) :
-
-				// Ceased field may be empty, so delete
-				if ( 'ceased' == $meta_key && empty( $value ) ) {
-					delete_post_meta( $post_id, "vgsr_entity_dispuut_{$meta_key}" );
-					continue;
-				}
-
-				// Does the inserted input match our requirements? - Checks for 1900 - 2099
-				if ( ! preg_match( '/^(19\d{2}|20\d{2})$/', $value, $matches ) ) {
-
-					// Alert the user
-					add_filter( 'redirect_post_location', array( $this, "metabox_{$meta_key}" .'_save_redirect' ) );
-					$value = false;
-
-				// Update post meta
-				} else {
-					update_post_meta( $post_id, "vgsr_entity_dispuut_{$meta_key}", $value );
-				}
-
-			endforeach;
-		}
-	}
-
 	/** Meta ***********************************************************/
 
 	/**
@@ -178,19 +105,30 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param string $value Meta value
 	 * @param string $key Meta key
+	 * @param string $value Meta value
+	 * @param WP_Post $post Post object
 	 * @return mixed Meta value
 	 */
-	public function save( $value, $key ) {
+	public function save( $key, $value, $post ) {
+		global $wpdb;
+
+		// Basic input sanitization
+		$value = sanitize_text_field( $value );
 
 		switch ( $key ) {
 			case 'since' :
-				// Will be saved through WP's default handling of 'menu_order'
+				$value = intval( $value );
+
+				// When saving a post, WP handles 'menu_order' by default
+				if ( 'save_post' != current_filter() ) {
+					$wpdb->update( $wpdb->posts, array( 'menu_order' => $value ), array( 'ID' => $post->ID ), array( '%d' ), array( '%d' ) );
+				}
+
 				break;
 			case 'ceased' :
-				$value = (int) $value;
-				break;
+			default :
+				$value = parent::save( $key, $value, $post );
 		}
 
 		return $value;

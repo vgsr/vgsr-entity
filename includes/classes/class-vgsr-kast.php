@@ -94,8 +94,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	public function setup_actions() {
 
 		// Actions
-		add_action( 'admin_init', array( $this, 'register_settings' )        );
-		add_action( 'save_post',  array( $this, 'kast_metabox_save' ), 10, 2 );
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
 
 		// Filters
 		add_filter( 'vgsr_kast_settings_load', array( $this, 'downsize_thumbs' ) );
@@ -199,82 +198,6 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		update_option( '_kast-downsize-thumbs', 0 );
 	}
 
-	/**
-	 * Save kast since meta field
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int $post_id The post ID
-	 * @param object $post Post data
-	 */
-	public function kast_metabox_save( $post_id, $post ) {
-
-		// Check autosave
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
-			return;
-
-		// Check post type
-		if ( $post->post_type != $this->type )
-			return;
-
-		// Check caps
-		$pto = get_post_type_object( $this->type );
-		if ( ! current_user_can( $pto->cap->edit_posts ) || ! current_user_can( $pto->cap->edit_post, $post_id ) )
-			return;
-
-		// Check nonce
-		if ( ! isset( $_POST['vgsr_entity_kast_meta_nonce'] ) || ! wp_verify_nonce( $_POST['vgsr_entity_kast_meta_nonce'], vgsr_entity()->file ) )
-			return;
-
-		//
-		// Authenticated
-		//
-
-		// Since & Ceased
-		if ( isset( $_POST['vgsr_entity_kast_since'] ) || isset( $_POST['vgsr_entity_kast_ceased'] ) ) {
-
-			// Walk since and ceased meta
-			foreach ( array_filter( array(
-				'since'  => sanitize_text_field( $_POST['vgsr_entity_kast_since']  ),
-				'ceased' => sanitize_text_field( $_POST['vgsr_entity_kast_ceased'] ),
-			) ) as $meta_key => $value ) :
-
-				// Ceased field may be empty, so delete
-				if ( 'ceased' == $meta_key && empty( $value ) ) {
-					delete_post_meta( $post_id, "vgsr_entity_dispuut_{$meta_key}" );
-					continue;
-				}
-
-				// Does the inserted input match our requirements? - Checks for 01-31 / 01-12 / 1900-2099
-				if ( ! preg_match( '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/(19|20)[0-9]{2}$/', $value, $matches ) ) {
-
-					// Alert the user
-					add_filter( 'redirect_post_location', array( $this, "metabox_{$meta_key}_save_redirect" ) );
-					$value = false;
-
-				// Update post meta
-				} else {
-					update_post_meta( $post_id, "vgsr_entity_kast_{$meta_key}", $value );
-				}
-
-			endforeach;
-		}
-
-		// Occupants
-		if ( isset( $_POST['vgsr_entity_kast_occupants'] ) || isset( $_POST['vgsr_entity_kast_prev_occupants'] ) ) {
-
-			// Walk since and ceased meta
-			foreach ( array_filter( array(
-				'occupants'      => array_map( 'intval', $_POST['vgsr_entity_kast_occupants']      ),
-				'prev_occupants' => array_map( 'intval', $_POST['vgsr_entity_kast_prev_occupants'] ),
-			) ) as $meta_key => $value ) {
-
-				// Update post meta
-				update_post_meta( $post_id, "vgsr_entity_kast_{$meta_key}", $value );
-			}
-		}
-	}
-
 	/** Meta ***********************************************************/
 
 	/**
@@ -308,17 +231,21 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param string $value Meta value
 	 * @param string $key Meta key
+	 * @param string $value Meta value
+	 * @param WP_Post $post Post object
 	 * @return mixed Meta value
 	 */
-	public function save( $value, $key ) {
+	public function save( $key, $value, $post ) {
+
+		// Basic input sanitization
+		$value = sanitize_text_field( $value );
 
 		switch ( $key ) {
 			case 'since' :
 			case 'ceased' :
-				// @todo Sanitize date input
-				break;
+			default :
+				$value = parent::save( $key, $value, $post );
 		}
 
 		return $value;

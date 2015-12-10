@@ -238,14 +238,14 @@ abstract class VGSR_Entity_Base {
 		add_action( 'admin_notices',         array( $this, 'display_errors'           ) );
 
 		// Post
+		add_filter( 'wp_insert_post_parent',   array( $this, 'filter_entity_parent' ), 10, 4 );
+		add_action( "save_post_{$this->type}", array( $this, 'save_metabox'         ), 10, 2 );
+
+		// List Table
 		add_filter( "manage_edit-{$this->type}_columns",        array( $this, 'meta_columns'          )        );
 		add_filter( 'hidden_columns',                           array( $this, 'hide_columns'          ), 10, 2 );
 		add_action( "manage_{$this->type}_posts_custom_column", array( $this, 'column_content'        ), 10, 2 );
 		add_action( 'quick_edit_custom_box',                    array( $this, 'quick_edit_custom_box' ), 10, 2 );
-		add_filter( 'wp_insert_post_parent',                    array( $this, 'filter_entity_parent'  ), 10, 4 );
-		foreach ( array_keys( $this->meta ) as $key ) {
-			add_filter( "sanitize_post_meta_{$key}", array( $this, 'save' ), 10, 2 );
-		}
 
 		// Entity children
 		add_filter( 'the_content', array( $this, 'entity_parent_page_children' ) );
@@ -359,6 +359,148 @@ abstract class VGSR_Entity_Base {
 		}
 
 		do_action( "vgsr_{$this->type}_metabox", $post );
+	}
+
+	/**
+	 * Save details metabox input
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses wp_verify_nonce()
+	 * @uses VGSR_Entity_Base::has_errors()
+	 *
+	 * @param int $post_id Post ID
+	 * @param WP_Post $post Post object
+	 */
+	public function save_metabox( $post_id, $post ) {
+
+		// Bail when doing outosave
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+			return;
+
+		// Bail when the nonce does not verify
+		if ( ! isset( $_POST["vgsr_{$this->type}_meta_nonce"] )
+			|| ! wp_verify_nonce( $_POST["vgsr_{$this->type}_meta_nonce"], vgsr_entity()->file )
+		)
+			return;
+
+		// Bail when the user is not capable
+		$cpt = get_post_type_object( $this->type );
+		if ( ! current_user_can( $cpt->cap->edit_posts ) || ! current_user_can( $cpt->cap->edit_post, $post_id ) )
+			return;
+
+		// Now, update meta fields
+		foreach ( $this->meta as $key => $args ) {
+			$value = isset( $_POST[ $args['name'] ] ) ? $_POST[ $args['name'] ] : null;
+
+			// Save when we have a value or when it is allowed to have none
+			if ( $value || in_array( $args['type'], array( 'checkbox', 'multiselect' ) ) ) {
+				$this->save( $key, $value, $post );
+			}
+		}
+
+		// Report errors
+		if ( $this->has_errors() ) {
+			add_filter( 'redirect_post_location', array( $this, 'add_error_query_arg' ) );
+		}
+	}
+
+	/** List Table *****************************************************/
+
+	/**
+	 * Modify the current screen's columns
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param array $columns Columns
+	 * @return array Columns
+	 */
+	public function meta_columns( $columns ) {
+
+		// Append meta columns
+		foreach ( $this->meta as $key => $args ) {
+			$columns[ $key ] = $args['label'];
+		}
+
+		return $columns;
+	}
+
+	/**
+	 * Modify the current screen's hidden columns
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param array $columns Hidden columns
+	 * @param WP_Screen $screen
+	 * @return array Hidden columns
+	 */
+	public function hide_columns( $columns, $screen ) {
+
+		// Append meta columns for our entity's edit.php page
+		if ( "edit-{$this->type}" == $screen->id ) {
+			$columns = array_merge( $columns, array_keys( $this->meta ) );
+		}
+
+		return $columns;
+	}
+
+	/**
+	 * Output the list table column content
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses VGSR_Entity_Base::get()
+	 *
+	 * @param string $column Column name
+	 * @param int $post_id Post ID
+	 */
+	public function column_content( $column, $post_id ) {
+
+		// When this is our meta field
+		if ( in_array( $column, array_keys( $this->meta ) ) ) {
+
+			// Output display value
+			echo $this->get( $column, $post_id );
+
+			// Output value for edit
+			if ( current_user_can( get_post_type_object( $this->type )->cap->edit_post, $post_id ) ) {
+				printf( '<p class="edit-value hidden">%s</p>', $this->get( $column, $post_id, 'edit' ) );
+			}
+		}
+	}
+
+	/**
+	 * Output the entity's meta input fields in the quick edit box
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses get_default_post_to_edit()
+	 * @uses VGSR_Entity_Base::met_input_field()
+	 *
+	 * @param string $column Meta key
+	 * @param string $post_type Post type
+	 */
+	public function quick_edit_custom_box( $column, $post_type ) {
+
+		// When this is an entity and our meta field
+		if ( "edit-{$this->type}" == get_current_screen()->id && in_array( $column, array_keys( $this->meta ) ) ) {
+
+			// Get dummy post data
+			$post = get_default_post_to_edit( $post_type );
+
+			// Output the meta input field
+			$field = $this->meta_input_field( $column, $post );
+
+			if ( $field ) : ?>
+
+				<fieldset class="inline-edit-col-right entity-quick-edit"><div class="inline-edit-col">
+					<div class="inline-edit-group">
+						<?php echo $field; ?>
+					</div>
+				</div></fieldset>
+
+			<?php endif;
+		}
 	}
 
 	/** Settings Page **************************************************/
@@ -851,7 +993,7 @@ abstract class VGSR_Entity_Base {
 		// Define field variables
 		$meta          = $this->meta[ $key ];
 		$meta['id']    = esc_attr( "{$this->type}_{$meta['name']}" );
-		$meta['value'] = $this->get( $key, $post, 'edit' );
+		$meta['value'] = esc_attr( $this->get( $key, $post, 'edit' ) );
 
 		// Start output buffer
 		ob_start();
@@ -893,102 +1035,6 @@ abstract class VGSR_Entity_Base {
 	}
 
 	/**
-	 * Modify the current screen's columns
-	 *
-	 * @since 1.1.0
-	 *
-	 * @param array $columns Columns
-	 * @return array Columns
-	 */
-	public function meta_columns( $columns ) {
-
-		// Append meta columns
-		foreach ( $this->meta as $key => $args ) {
-			$columns[ $key ] = $args['label'];
-		}
-
-		return $columns;
-	}
-
-	/**
-	 * Modify the current screen's hidden columns
-	 *
-	 * @since 1.1.0
-	 *
-	 * @param array $columns Hidden columns
-	 * @param WP_Screen $screen
-	 * @return array Hidden columns
-	 */
-	public function hide_columns( $columns, $screen ) {
-
-		// Append meta columns for our entity's edit.php page
-		if ( "edit-{$this->type}" == $screen->id ) {
-			$columns = array_merge( $columns, array_keys( $this->meta ) );
-		}
-
-		return $columns;
-	}
-
-	/**
-	 * Output the list table column content
-	 *
-	 * @since 1.1.0
-	 *
-	 * @uses VGSR_Entity_Base::get()
-	 *
-	 * @param string $column Column name
-	 * @param int $post_id Post ID
-	 */
-	public function column_content( $column, $post_id ) {
-
-		// When this is our meta field
-		if ( in_array( $column, array_keys( $this->meta ) ) ) {
-
-			// Output display value
-			echo $this->get( $column, $post_id );
-
-			// Output value for edit
-			if ( current_user_can( 'edit_post', $post_id ) ) {
-				printf( '<p class="edit-value hidden">%s</p>', $this->get( $column, $post_id, 'edit' ) );
-			}
-		}
-	}
-
-	/**
-	 * Output the entity's meta input fields in the quick edit box
-	 *
-	 * @since 1.1.0
-	 *
-	 * @uses get_default_post_to_edit()
-	 * @uses VGSR_Entity_Base::met_input_field()
-	 *
-	 * @param string $column Meta key
-	 * @param string $post_type Post type
-	 */
-	public function quick_edit_custom_box( $column, $post_type ) {
-
-		// When this is an entity and our meta field
-		if ( "edit-{$this->type}" == get_current_screen()->id && in_array( $column, array_keys( $this->meta ) ) ) {
-
-			// Get dummy post data
-			$post = get_default_post_to_edit( $post_type );
-
-			// Output the meta input field
-			$field = $this->meta_input_field( $column, $post );
-
-			if ( $field ) : ?>
-
-				<fieldset class="inline-edit-col-right entity-quick-edit"><div class="inline-edit-col">
-					<div class="inline-edit-group">
-						<?php echo $field; ?>
-					</div>
-				</div></fieldset>
-
-			<?php endif;
-		}
-	}
-
-	/**
 	 * Return the requested entity meta value
 	 *
 	 * Override the `_get()` method in a child class to use this.
@@ -1027,11 +1073,26 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param mixed $value Meta value
+	 * @uses update_post_meta()
+	 * @uses sanitize_text_field()
+	 *
 	 * @param string $key Meta key
+	 * @param mixed $value Meta value
+	 * @param WP_Post $post Post object
 	 * @return mixed Meta value
 	 */
-	public function save( $value, $key ) {
+	public function save( $key, $value, $post ) {
+
+		// Basic input sanitization
+		$value = sanitize_text_field( $value );
+
+		// When this is a valid meta
+		if ( array_key_exists( $key, $this->meta ) ) {
+
+			// Update as post meta
+			update_post_meta( $post->ID, $key, $value );
+		}
+
 		return $value;
 	}
 
