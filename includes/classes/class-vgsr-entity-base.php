@@ -1106,14 +1106,29 @@ abstract class VGSR_Entity_Base {
 	 * @param string $context Optional. Defaults to 'raw'.
 	 * @return array Entity meta
 	 */
-	public function meta( $context = 'raw' ) {
+	public function meta( $post = 0, $context = 'raw' ) {
+
+		// Consider context
 		switch ( $context ) {
+
+			// Return raw meta fields
 			case 'raw' :
 				return $this->meta;
 				break;
+
+			// Return meta fields for display
 			case 'display' :
-				if ( is_callable( array( $this, 'get_meta' ) ) ) {
-					return $this->get_meta();
+				if ( $post = get_post( $post ) {
+
+					// Get display met afields
+					$meta = wp_list_filter( $this->meta, array( 'display' => true ) );
+
+					// Provide with meta value
+					foreach ( $meta as $key => $args ) {
+						$meta['value'] = $this->get( $key, $post, $context );
+					}
+
+					return $meta;
 				}
 		}
 

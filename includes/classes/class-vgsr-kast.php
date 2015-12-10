@@ -56,16 +56,18 @@ class VGSR_Kast extends VGSR_Entity_Base {
 
 			// Since
 			'since' => array(
-				'label' => esc_html__( 'Since', 'vgsr-entity' ),
-				'type'  => 'date',
-				'name'  => 'vgsr_entity_kast_since'
+				'label'   => esc_html__( 'Since', 'vgsr-entity' ),
+				'type'    => 'date',
+				'name'    => 'vgsr_entity_kast_since',
+				'display' => true,
 			),
 
 			// Ceased
 			'ceased' => array(
-				'label' => esc_html__( 'Ceased', 'vgsr-entity' ),
-				'type'  => 'year',
-				'name'  => 'vgsr_entity_kast_ceased'
+				'label'   => esc_html__( 'Ceased', 'vgsr-entity' ),
+				'type'    => 'year',
+				'name'    => 'vgsr_entity_kast_ceased',
+				'display' => true,
 			),
 
 		// Errors
@@ -213,7 +215,8 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	protected function _get( $key, $post, $context ) {
 
 		// Define local variables
-		$value = null;
+		$value   = null;
+		$display = ( 'display' === $context );
 
 		switch ( $key ) {
 			case 'since' :

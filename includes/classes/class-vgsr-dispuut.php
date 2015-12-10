@@ -52,16 +52,18 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 
 			// Since
 			'since' => array(
-				'label' => esc_html__( 'Since', 'vgsr-entity' ),
-				'type'  => 'year',
-				'name'  => 'menu_order'
+				'label'   => esc_html__( 'Since', 'vgsr-entity' ),
+				'type'    => 'year',
+				'name'    => 'menu_order',
+				'display' => true,
 			),
 
 			// Ceased
 			'ceased' => array(
-				'label' => esc_html__( 'Ceased', 'vgsr-entity' ),
-				'type'  => 'year',
-				'name'  => 'vgsr_entity_dispuut_ceased'
+				'label'   => esc_html__( 'Ceased', 'vgsr-entity' ),
+				'type'    => 'year',
+				'name'    => 'vgsr_entity_dispuut_ceased',
+				'display' => true,
 			),
 
 		// Errors
@@ -86,7 +88,8 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 	protected function _get( $key, $post, $context ) {
 
 		// Define local variables
-		$value = null;
+		$value   = null;
+		$display = ( 'display' === $context );
 
 		switch ( $key ) {
 			case 'since' :

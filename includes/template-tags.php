@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Return the entity post meta
+ * Return the entity post's display meta
  *
  * @since 1.1.0
  *
@@ -31,8 +31,8 @@ function vgsr_entity_get_meta( $post = 0 ) {
 	if ( is_entity( $post ) )
 		return array();
 
-	$type = get_post_type( $post );
-	$meta = vgsr_entity()->{$type}->get_meta();
+	// Get post display meta fields
+	$meta = vgsr_entity()->get_meta( $post );
 
 	return apply_filters( 'vgsr_entity_get_meta', $meta, $post );
 }

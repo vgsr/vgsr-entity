@@ -597,7 +597,7 @@ final class VGSR_Entity {
 	public function get_meta( $post = 0 ) {
 		$post = get_post( $post );
 
-		if ( $post && is_entity( $post ) ) {
+		if ( $post && is_entity( $post->post_type ) ) {
 			return $this->{$post->post_type}->meta( $post, 'display' );
 		} else {
 			return array();
