@@ -730,7 +730,7 @@ abstract class VGSR_Entity_Base {
 
 		// Print available message
 		if ( $errors ) {
-			printf( '<div class="notice notice-error">%s</div>', implode( '', $errors ) );
+			printf( '<div class="notice notice-error is-dismissible">%s</div>', implode( '', $errors ) );
 		}
 	}
 
