@@ -28,13 +28,13 @@
 	/* global inlineEditPost, entityEditPost */
 
 	// Create a copy of the WP inline edit post function
-	var $wp_inline_edit = inlineEditPost.edit;
+	var wp_inline_edit = inlineEditPost.edit;
 
 	// Overwrite the function with our own code
 	inlineEditPost.edit = function( id ) {
 
 		// Run the original inline edit function
-		$wp_inline_edit.apply( this, arguments );
+		wp_inline_edit.apply( this, arguments );
 
 		var t = this, editRow, rowData, fields, val;
 
