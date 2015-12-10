@@ -232,11 +232,10 @@ abstract class VGSR_Entity_Base {
 		add_action( 'vgsr_entity_init', array( $this, 'register_post_type' ) );
 
 		// Admin
-		add_action( 'admin_init',                        array( $this, 'entity_register_settings' ) );
-		add_action( 'admin_menu',                        array( $this, 'entity_admin_menu'        ) );
-		add_action( 'admin_enqueue_scripts',             array( $this, 'enqueue_scripts'          ) );
-		add_action( 'admin_notices',                     array( $this, 'entity_admin_notices'     ) );
-		add_filter( "vgsr_{$this->type}_admin_messages", array( $this, 'admin_messages'           ) );
+		add_action( 'admin_init',            array( $this, 'entity_register_settings' ) );
+		add_action( 'admin_menu',            array( $this, 'entity_admin_menu'        ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts'          ) );
+		add_action( 'admin_notices',         array( $this, 'display_errors'           ) );
 
 		// Post
 		add_filter( "manage_edit-{$this->type}_columns",        array( $this, 'meta_columns'          )        );
