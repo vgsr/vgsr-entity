@@ -1,0 +1,28 @@
+/**
+ * VGSR Entity Admin Styles
+ *
+ * @package VGSR Entity
+ * @subpackage Administration
+ */
+
+.input-text-wrap input {
+	vertical-align: middle;
+}
+
+/* wp-admin/post.php */
+
+#vgsr-entity-details .alignleft {
+	float: none;
+}
+
+	#vgsr-entity-details .alignleft span.title {
+		display: inline-block;
+		width: 6em;
+		font-weight: bold;
+	}
+
+/* wp-admin/edit.php */
+
+.inline-edit-row .entity-quick-edit {
+	display: none;
+}

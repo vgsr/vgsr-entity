@@ -219,10 +219,11 @@ abstract class VGSR_Entity_Base {
 		add_filter( "vgsr_{$this->type}_admin_messages", array( $this, 'admin_messages'           ) );
 
 		// Post
-		add_filter( "manage_edit-{$this->type}_columns", array( $this, 'meta_columns'          )        );
-		add_filter( 'hidden_columns',                    array( $this, 'hide_columns'          ), 10, 2 );
-		add_action( 'quick_edit_custom_box',             array( $this, 'quick_edit_custom_box' ), 10, 2 );
-		add_filter( 'wp_insert_post_parent',             array( $this, 'filter_entity_parent'  ), 10, 4 );
+		add_filter( "manage_edit-{$this->type}_columns",        array( $this, 'meta_columns'          )        );
+		add_filter( 'hidden_columns',                           array( $this, 'hide_columns'          ), 10, 2 );
+		add_action( "manage_{$this->type}_posts_custom_column", array( $this, 'column_content'        ), 10, 2 );
+		add_action( 'quick_edit_custom_box',                    array( $this, 'quick_edit_custom_box' ), 10, 2 );
+		add_filter( 'wp_insert_post_parent',                    array( $this, 'filter_entity_parent'  ), 10, 4 );
 		foreach ( array_keys( $this->meta ) as $key ) {
 			add_filter( "sanitize_post_meta_{$key}", array( $this, 'save' ), 10, 2 );
 		}
@@ -328,32 +329,13 @@ abstract class VGSR_Entity_Base {
 		wp_nonce_field( vgsr_entity()->file, "vgsr_entity_{$this->type}_meta_nonce" );
 
 		// Walk all meta fields
-		foreach ( $this->meta as $key => $args ) {
-			
-			// Define field variables
-			$id    = esc_attr( "{$this->type}_{$args['name']}" );
-			$value = $this->get( $key, $post, 'edit' );
+		foreach ( array_keys( $this->meta ) as $key ) {
 
-			// Output field per type
-			switch ( $args['type'] ) {
+			// Output the meta input field
+			$field = $this->meta_input_field( $key, $post );
 
-				// Year
-				case 'year' : ?>
-
-		<label for="<?php echo $id; ?>"><?php echo esc_html( $args['label'] ); ?></label>
-		<input id="<?php echo $id; ?>" type="number" size="4" placeholder="<?php esc_html_e( 'YYYY', 'vgsr-entity' ); ?>" name="<?php echo esc_attr( $args['name'] ); ?>" value="<?php echo esc_attr( $value ); ?>" min="<?php echo esc_attr( vgsr_entity()->base_year ); ?>" max="<?php echo date( 'Y' ); ?>" />
-
-					<?php
-					break;
-
-				// Date
-				case 'date' : ?>
-
-		<label for="<?php echo $id; ?>"><?php echo esc_html( $args['label'] ); ?></label>
-		<input id="<?php echo $id; ?>" class="ui-widget-content ui-corner-all datepicker" type="text" placeholder="<?php esc_html_e( 'DD/MM/YYYY', 'vgsr-entity' ); ?>" name="<?php echo esc_attr( $args['name'] ); ?>" value="<?php echo esc_attr( $value ); ?>" />
-
-					<?php
-					break;
+			if ( $field ) {
+				printf( '<p>%s</p>', $field );
 			}
 		}
 
@@ -398,6 +380,7 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @uses wp_enqueue_style()
 	 * @uses wp_enqueue_script()
+	 * @uses wp_localize_script()
 	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_enqueue_scripts'
 	 */
 	public function enqueue_scripts( $page_hook ) {
@@ -405,7 +388,7 @@ abstract class VGSR_Entity_Base {
 		// Define local variables
 		$screen      = get_current_screen();
 		$is_edit     = "edit-{$this->type}" === $screen->id;
-		$is_post     = $this->type === $screen->id;
+		$is_post     = 'post' === $screen->base && $this->type === $screen->id;
 		$is_settings = $page_hook === $this->args['settings']['hook'];
 
 		// When on an entity admin page
@@ -423,7 +406,22 @@ abstract class VGSR_Entity_Base {
 			wp_enqueue_script( 'vgsr-entity-admin', $entity->includes_url . 'assets/js/admin.js', array( 'jquery' ), '1.1.0', true );
 		}
 
-		// Run hook when we're on the settings page
+		// When on the edit view
+		if ( $is_edit ) {
+
+			// Prepare meta for js
+			$meta = $this->meta;
+			foreach ( array_keys( $meta ) as $key ) {
+				$meta[$key]['key'] = $key;
+			}
+
+			// Send data to admin js
+			wp_localize_script( 'vgsr-entity-admin', 'entityEditPost', array(
+				'fields' => array_values( $meta ),
+			) );
+		}
+
+		// When on the settings page, run hook
 		if ( $is_settings ) {
 			do_action( "vgsr_{$this->type}_settings_enqueue_scripts" );
 		}
@@ -777,7 +775,158 @@ abstract class VGSR_Entity_Base {
 		return $messages;
 	}
 
-	/** Theme **********************************************************/
+	/** Meta ***********************************************************/
+
+	/**
+	 * Return the input markup for the entity's meta field
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key Meta key
+	 * @param int|WP_Post $post Current post
+	 * @return string Meta input field
+	 */
+	public function meta_input_field( $key, $post ) {
+
+		// Define field variables
+		$meta          = $this->meta[ $key ];
+		$meta['id']    = esc_attr( "{$this->type}_{$meta['name']}" );
+		$meta['value'] = $this->get( $key, $post, 'edit' );
+
+		// Start output buffer
+		ob_start();
+
+		// Output field per type
+		switch ( $meta['type'] ) {
+
+			// Year
+			case 'year' : ?>
+
+		<label class="alignleft">
+			<span class="title"><?php echo esc_html( $meta['label'] ); ?></span>
+			<span class="input-text-wrap"><input type="number" size="4" placeholder="<?php esc_html_e( 'YYYY', 'vgsr-entity' ); ?>" name="<?php echo esc_attr( $meta['name'] ); ?>" value="<?php echo esc_attr( $meta['value'] ); ?>" min="<?php echo esc_attr( vgsr_entity()->base_year ); ?>" max="<?php echo date( 'Y' ); ?>" /></span>
+		</label>
+
+				<?php
+				break;
+
+			// Date
+			case 'date' : ?>
+
+		<label class="alignleft">
+			<span class="title"><?php echo esc_html( $meta['label'] ); ?></span>
+			<span class="input-text-wrap"><input id="<?php echo $meta['id']; ?>" class="ui-widget-content ui-corner-all datepicker" type="text" size="10" placeholder="<?php esc_html_e( 'DD/MM/YYYY', 'vgsr-entity' ); ?>" name="<?php echo esc_attr( $meta['name'] ); ?>" value="<?php echo esc_attr( $meta['value'] ); ?>" /></span>
+		</label>
+
+				<?php
+				break;
+
+			// Default fallback
+			default :
+				do_action( "vgsr_entity_meta_input_{$meta['type']}_field", $key, $post, $meta );
+				break;
+		}
+
+		$field = ob_get_clean();
+
+		return $field;
+	}
+
+	/**
+	 * Modify the current screen's columns
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param array $columns Columns
+	 * @return array Columns
+	 */
+	public function meta_columns( $columns ) {
+
+		// Append meta columns
+		foreach ( $this->meta as $key => $args ) {
+			$columns[ $key ] = $args['label'];
+		}
+
+		return $columns;
+	}
+
+	/**
+	 * Modify the current screen's hidden columns
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param array $columns Hidden columns
+	 * @param WP_Screen $screen
+	 * @return array Hidden columns
+	 */
+	public function hide_columns( $columns, $screen ) {
+
+		// Append meta columns for our entity's edit.php page
+		if ( "edit-{$this->type}" == $screen->id ) {
+			$columns = array_merge( $columns, array_keys( $this->meta ) );
+		}
+
+		return $columns;
+	}
+
+	/**
+	 * Output the list table column content
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses VGSR_Entity_Base::get()
+	 *
+	 * @param string $column Column name
+	 * @param int $post_id Post ID
+	 */
+	public function column_content( $column, $post_id ) {
+
+		// When this is our meta field
+		if ( in_array( $column, array_keys( $this->meta ) ) ) {
+
+			// Output display value
+			echo $this->get( $column, $post_id );
+
+			// Output value for edit
+			if ( current_user_can( 'edit_post', $post_id ) ) {
+				printf( '<p class="edit-value hidden">%s</p>', $this->get( $column, $post_id, 'edit' ) );
+			}
+		}
+	}
+
+	/**
+	 * Output the entity's meta input fields in the quick edit box
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses get_default_post_to_edit()
+	 * @uses VGSR_Entity_Base::met_input_field()
+	 *
+	 * @param string $column Meta key
+	 * @param string $post_type Post type
+	 */
+	public function quick_edit_custom_box( $column, $post_type ) {
+
+		// When this is an entity and our meta field
+		if ( "edit-{$this->type}" == get_current_screen()->id && in_array( $column, array_keys( $this->meta ) ) ) {
+
+			// Get dummy post data
+			$post = get_default_post_to_edit( $post_type );
+
+			// Output the meta input field
+			$field = $this->meta_input_field( $column, $post );
+
+			if ( $field ) : ?>
+
+				<fieldset class="inline-edit-col-right entity-quick-edit"><div class="inline-edit-col">
+					<div class="inline-edit-group">
+						<?php echo $field; ?>
+					</div>
+				</div></fieldset>
+
+			<?php endif;
+		}
+	}
 
 	/**
 	 * Return the requested entity meta value
