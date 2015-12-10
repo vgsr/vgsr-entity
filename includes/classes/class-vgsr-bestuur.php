@@ -49,6 +49,8 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 				'menu_name'          => __( 'Besturen',                   'vgsr-entity' ),
 				'settings_title'     => __( 'Besturen Settings',          'vgsr-entity' ),
 			)
+
+		// Meta
 		), array(
 
 			// Season
@@ -57,6 +59,10 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 				'type'  => 'year',
 				'name'  => 'menu_order'
 			)
+
+		// Errors
+		), array(
+			1 => sprintf( __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>' . __( 'Season', 'vgsr-entity' ) . '</strong>' ),
 		) );
 	}
 
@@ -170,32 +176,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 				update_post_meta( $post_id, 'vgsr_entity_bestuur_season', $value );
 			}
 		}
-	}
-
-	/**
-	 * Add query arg to the redirect location after save_post()
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $location The redrirect location
-	 * @return string $location
-	 */
-	public function metabox_season_save_redirect( $location ) {
-		return add_query_arg( 'bestuur-error', '1', $location );
-	}
-
-	/**
-	 * Setup Bestuur admin error messages
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $messages
-	 * @return array $messages
-	 */
-	public function admin_messages( $messages ) {
-		$messages[1] = sprintf( __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>' . __( 'Season', 'vgsr-entity' ) . '</strong>' );
-
-		return $messages;
 	}
 
 	/**

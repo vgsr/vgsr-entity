@@ -24,6 +24,11 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
+
+		// Default error strings
+		$error_wrong_format = __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' );
+
+		// Construct entity
 		parent::__construct( 'kast', array(
 			'menu_icon' => 'dashicons-admin-home',
 			'labels'    => array(
@@ -45,6 +50,8 @@ class VGSR_Kast extends VGSR_Entity_Base {
 			// Thumbnail
 			'thumbsize' => 'mini-thumb',
 			'mini_size' => 100,
+
+		// Meta
 		), array(
 
 			// Since
@@ -60,6 +67,11 @@ class VGSR_Kast extends VGSR_Entity_Base {
 				'type'  => 'year',
 				'name'  => 'vgsr_entity_kast_ceased'
 			),
+
+		// Errors
+		), array(
+			1 => sprintf( $error_wrong_format, '<strong>' . __( 'Since',  'vgsr-entity' ) . '</strong>' ),
+			2 => sprintf( $error_wrong_format, '<strong>' . __( 'Ceased', 'vgsr-entity' ) . '</strong>' ),
 		) );
 	}
 
@@ -262,50 +274,6 @@ class VGSR_Kast extends VGSR_Entity_Base {
 				update_post_meta( $post_id, "vgsr_entity_kast_{$meta_key}", $value );
 			}
 		}
-	}
-
-	/**
-	 * Add query arg to the redirect location after save_post()
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses add_query_arg()
-	 *
-	 * @param string $location The redrirect location
-	 * @return string $location
-	 */
-	public function metabox_since_save_redirect( $location ) {
-		return add_query_arg( 'kast-error', '1', $location );
-	}
-
-	/**
-	 * Add query arg to the redirect location after save_post()
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses add_query_arg()
-	 *
-	 * @param string $location The redrirect location
-	 * @return string $location
-	 */
-	public function metabox_ceased_save_redirect( $location ) {
-		return add_query_arg( 'kast-error', '2', $location );
-	}
-
-	/**
-	 * Setup Kast admin error messages
-	 *
-	 * @since 1.0.0
-	 */
-	public function admin_messages( $messages ) {
-
-		// Default strings
-		$wrong_format = __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' );
-
-		$messages[1] = sprintf( $wrong_format, '<strong>' . __( 'Since',  'vgsr-entity' ) . '</strong>' );
-		$messages[2] = sprintf( $wrong_format, '<strong>' . __( 'Ceased', 'vgsr-entity' ) . '</strong>' );
-
-		return $messages;
 	}
 
 	/** Meta ***********************************************************/

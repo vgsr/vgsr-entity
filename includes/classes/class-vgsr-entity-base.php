@@ -43,6 +43,22 @@ abstract class VGSR_Entity_Base {
 	protected $meta = array();
 
 	/**
+	 * Registered error messages
+	 *
+	 * @since 1.1.0
+	 * @var array
+	 */
+	public $errors = array();
+
+	/**
+	 * Reported error ids
+	 *
+	 * @since 1.1.0
+	 * @var array
+	 */
+	protected $_errors = array();
+
+	/**
 	 * Construct the VGSR Entity
 	 *
 	 * @since 1.0.0
@@ -51,6 +67,7 @@ abstract class VGSR_Entity_Base {
 	 * @param string $type Post type name. Required
 	 * @param array $args Entity and post type arguments
 	 * @param array $meta Meta field arguments
+	 * @param array $errors Error messages with their numeric ids
 	 *
 	 * @uses VGSR_Entity_Base::entity_globals()
 	 * @uses VGSR_Entity_Base::entity_actions()
@@ -58,7 +75,7 @@ abstract class VGSR_Entity_Base {
 	 * @uses VGSR_Entity_Base::setup_requires()
 	 * @uses VGSR_Entity_Base::setup_actions()
 	 */
-	public function __construct( $type, $args = array(), $meta = array() ) {
+	public function __construct( $type, $args = array(), $meta = array(), $errors = array() ) {
 
 		// Set type
 		$this->type = $type;
@@ -90,6 +107,9 @@ abstract class VGSR_Entity_Base {
 
 		// Set meta fields
 		$this->meta = $meta;
+
+		// Set error messages
+		$this->errors = $errors;
 
 		// Setup global entity
 		$this->entity_globals();
@@ -326,7 +346,7 @@ abstract class VGSR_Entity_Base {
 	public function details_metabox( $post ) {
 
 		// Output nonce verification field
-		wp_nonce_field( vgsr_entity()->file, "vgsr_entity_{$this->type}_meta_nonce" );
+		wp_nonce_field( vgsr_entity()->file, "vgsr_{$this->type}_meta_nonce" );
 
 		// Walk all meta fields
 		foreach ( array_keys( $this->meta ) as $key ) {
@@ -483,6 +503,94 @@ abstract class VGSR_Entity_Base {
 		add_settings_field( $this->args['parent_key'], __( 'Parent Page', 'vgsr-entity' ), array( $this, 'entity_parent_settings_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
 		register_setting( $this->args['settings']['page'], $this->args['parent_key'], 'intval' );
 		add_action( 'update_option', array( $this, 'update_entity_parent' ), 10, 3 );
+	}
+
+	/** Errors *********************************************************/
+
+	/**
+	 * Report an error
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param int $error_id Error ID
+	 */
+	public function add_error( $error_id = 0 ) {
+		if ( ! empty( $error_id ) && array_key_exists( $error_id, $this->errors ) ) {
+			$this->_errors[] = $error_id;
+		}
+	}
+
+	/**
+	 * Return whether errors are reported
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return bool Errors are reported
+	 */
+	public function has_errors() {
+		return ! empty( $this->_errors );
+	}
+
+	/**
+	 * Return the reported errors
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses pow2()
+	 *
+	 * @param bool $combine Optional. Whether to comine the reported error ids
+	 * @return array|int Reported errors or combined reported errors
+	 */
+	public function get_errors( $combine = false ) {
+		if ( $combine ) {
+			return pow2( $this->_errors );
+		} else {
+			return $this->_errors;
+		}
+	}
+
+	/**
+	 * Add the error query argument to a given URI
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses add_query_arg()
+	 * @uses VGSR_Entity_Base::get_errors()
+	 *
+	 * @param string $uri URI
+	 * @return string URI with error query argument
+	 */
+	public function add_error_query_arg( $uri ) {
+		return add_query_arg( array( "{$this->type}-error" => $this->get_errors( true ) ), $uri );
+	}
+
+	/**
+	 * Display reported errors
+	 *
+	 * @since 1.0.0
+	 *
+	 * @uses unpow2()
+	 */
+	public function display_errors() {
+
+		// Bail when no valid errors are reported
+		if ( ! isset( $_REQUEST[ "{$this->type}-error" ] ) )
+			return;
+
+		// Get the errors
+		$errors = (array) unpow2( (int) $_REQUEST[ "{$this->type}-error" ] );
+		foreach ( $errors as $k => $error_id ) {
+			if ( ! array_key_exists( $error_id, $this->errors ) ) {
+				unset( $errors[ $k ] );
+			} else {
+				$errors[ $k ] = sprintf( '<p>%s</p>', $this->errors[ $error_id ] );
+			}
+		}
+
+		// Print available message
+		if ( $errors ) {
+			printf( '<div class="notice notice-error">%s</div>', implode( '', $errors ) );
+		}
 	}
 
 	/** Parent Page ****************************************************/
@@ -726,53 +834,6 @@ abstract class VGSR_Entity_Base {
 		}
 
 		return $retval;
-	}
-
-	/**
-	 * Output the admin messages if requested
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses apply_filters() Calls '{$post_type}_admin_messages'
-	 */
-	public function entity_admin_notices() {
-
-		// Define error key
-		$error_key = "{$this->type}-error";
-
-		// Bail when no valid errors are reported
-		if ( ! isset( $_REQUEST[ $error_key ] ) || empty( $_REQUEST[ $error_key ] ) )
-			return;
-
-		// Get the message number
-		$num = trim( $_REQUEST[ $error_key ] );
-
-		// The messages to pick from
-		$messages = apply_filters( "vgsr_{$this->type}_admin_messages", array(
-			0 => '' // Default empty
-		) );
-
-		// Print available message
-		if ( isset( $messages[ $num ] ) && ! empty( $messages[ $num ] ) ) {
-			printf( '<div class="error message"><p>%s</p></div>', $messages[ $num ] );
-		}
-	}
-
-	/**
-	 * Return the custom admin messages
-	 *
-	 * Should be overriden in child class.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $messages {
-	 *  @type int    Message number
-	 *  @type string Message content
-	 * }
-	 * @return array $messages
-	 */
-	public function admin_messages( $messages ) {
-		return $messages;
 	}
 
 	/** Meta ***********************************************************/

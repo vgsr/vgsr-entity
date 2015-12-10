@@ -24,6 +24,11 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
+
+		// Default error strings
+		$error_wrong_format = __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' );
+
+		// Construct entity
 		parent::__construct( 'dispuut', array(
 			'menu_icon' => 'dashicons-format-status',
 			'labels'    => array(
@@ -41,6 +46,8 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 				'menu_name'          => __( 'Disputen',                   'vgsr-entity' ),
 				'settings_title'     => __( 'Disputen Settings',          'vgsr-entity' ),
 			)
+
+		// Meta
 		), array(
 
 			// Since
@@ -56,6 +63,11 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 				'type'  => 'year',
 				'name'  => 'vgsr_entity_dispuut_ceased'
 			),
+
+		// Errors
+		), array(
+			1 => sprintf( $error_wrong_format, '<strong>' . __( 'Since',  'vgsr-entity' ) . '</strong>' ),
+			2 => sprintf( $error_wrong_format, '<strong>' . __( 'Ceased', 'vgsr-entity' ) . '</strong>' ),
 		) );
 	}
 
@@ -130,49 +142,6 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 
 			endforeach;
 		}
-	}
-
-	/**
-	 * Add query arg to the redirect location after save_post()
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $location The redrirect location
-	 * @return string $location
-	 */
-	public function metabox_since_save_redirect( $location ) {
-		return add_query_arg( 'dispuut-error', '1', $location );
-	}
-
-	/**
-	 * Add query arg to the redirect location after save_post()
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $location The redrirect location
-	 * @return string $location
-	 */
-	public function metabox_ceased_save_redirect( $location ) {
-		return add_query_arg( 'dispuut-error', '2', $location );
-	}
-
-	/**
-	 * Setup Dispuut admin error messages
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $messages
-	 * @return array $messages
-	 */
-	public function admin_messages( $messages ) {
-
-		// Default strings
-		$wrong_format = __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' );
-
-		$messages[1] = sprintf( $wrong_format, '<strong>' . __( 'Since',  'vgsr-entity' ) . '</strong>' );
-		$messages[2] = sprintf( $wrong_format, '<strong>' . __( 'Ceased', 'vgsr-entity' ) . '</strong>' );
-
-		return $messages;
 	}
 
 	/** Meta ***********************************************************/
