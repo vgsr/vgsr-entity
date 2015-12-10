@@ -395,10 +395,7 @@ abstract class VGSR_Entity_Base {
 
 			$value = isset( $_POST[ $args['name'] ] ) ? $_POST[ $args['name'] ] : null;
 
-			// Save when we have a value or when it is allowed to have none
-			if ( $value || in_array( $args['type'], array( 'checkbox', 'multiselect' ) ) ) {
-				$this->save( $key, $value, $post );
-			}
+			$this->save( $key, $value, $post );
 		}
 
 		// Report errors
@@ -1094,8 +1091,14 @@ abstract class VGSR_Entity_Base {
 		// When this is a valid meta
 		if ( array_key_exists( $key, $this->meta ) ) {
 
-			// Update as post meta
-			update_post_meta( $post->ID, $key, $value );
+			// Update as post meta. Allow '0' values
+			if ( ! empty( $value ) || '0' === $value ) {
+				update_post_meta( $post->ID, $key, $value );
+
+			// Delete as post meta
+			} else {
+				delete_post_meta( $post->ID, $key );
+			}
 		}
 
 		return $value;
