@@ -26,7 +26,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	public function __construct() {
 
 		// Default error strings
-		$error_wrong_format = __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' );
+		$error_wrong_format = esc_html__( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' );
 
 		// Construct entity
 		parent::__construct( 'kast', array(
@@ -56,22 +56,22 @@ class VGSR_Kast extends VGSR_Entity_Base {
 
 			// Since
 			'since' => array(
-				'label' => __( 'Since', 'vgsr-entity' ),
+				'label' => esc_html__( 'Since', 'vgsr-entity' ),
 				'type'  => 'date',
 				'name'  => 'vgsr_entity_kast_since'
 			),
 
 			// Ceased
 			'ceased' => array(
-				'label' => __( 'Ceased', 'vgsr-entity' ),
+				'label' => esc_html__( 'Ceased', 'vgsr-entity' ),
 				'type'  => 'year',
 				'name'  => 'vgsr_entity_kast_ceased'
 			),
 
 		// Errors
 		), array(
-			1 => sprintf( $error_wrong_format, '<strong>' . __( 'Since',  'vgsr-entity' ) . '</strong>' ),
-			2 => sprintf( $error_wrong_format, '<strong>' . __( 'Ceased', 'vgsr-entity' ) . '</strong>' ),
+			1 => sprintf( $error_wrong_format, '<strong>' . esc_html__( 'Since',  'vgsr-entity' ) . '</strong>' ),
+			2 => sprintf( $error_wrong_format, '<strong>' . esc_html__( 'Ceased', 'vgsr-entity' ) . '</strong>' ),
 		) );
 	}
 

@@ -55,14 +55,14 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 			// Season
 			'season' => array(
-				'label' => __( 'Season', 'vgsr-entity' ),
+				'label' => esc_html__( 'Season', 'vgsr-entity' ),
 				'type'  => 'year',
 				'name'  => 'menu_order'
 			)
 
 		// Errors
 		), array(
-			1 => sprintf( __( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>' . __( 'Season', 'vgsr-entity' ) . '</strong>' ),
+			1 => sprintf( esc_html__( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>' . __( 'Season', 'vgsr-entity' ) . '</strong>' ),
 		) );
 	}
 
