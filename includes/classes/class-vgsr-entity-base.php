@@ -1118,7 +1118,7 @@ abstract class VGSR_Entity_Base {
 
 			// Return meta fields for display
 			case 'display' :
-				if ( $post = get_post( $post ) {
+				if ( $post = get_post( $post ) ) {
 
 					// Get display met afields
 					$meta = wp_list_filter( $this->meta, array( 'display' => true ) );
