@@ -96,7 +96,7 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 				$value = $post->menu_order;
 				break;
 			case 'ceased' :
-				$value = get_post_meta( $post->ID, $this->meta[ $key ]['name'], true );
+				$value = get_post_meta( $post->ID, $key, true );
 				break;
 		}
 

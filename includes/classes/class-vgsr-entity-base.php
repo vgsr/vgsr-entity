@@ -344,9 +344,6 @@ abstract class VGSR_Entity_Base {
 	 */
 	public function details_metabox( $post ) {
 
-		// Output nonce verification field
-		wp_nonce_field( vgsr_entity()->file, "vgsr_{$this->type}_meta_nonce" );
-
 		// Walk all meta fields
 		foreach ( array_keys( $this->meta ) as $key ) {
 
@@ -354,6 +351,10 @@ abstract class VGSR_Entity_Base {
 			$field = $this->meta_input_field( $key, $post );
 
 			if ( $field ) {
+
+				// Output nonce verification field
+				wp_nonce_field( vgsr_entity()->file, "vgsr_{$this->type}_meta_nonce_{$key}" );
+
 				printf( '<p>%s</p>', $field );
 			}
 		}
@@ -378,12 +379,6 @@ abstract class VGSR_Entity_Base {
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return;
 
-		// Bail when the nonce does not verify
-		if ( ! isset( $_POST["vgsr_{$this->type}_meta_nonce"] )
-			|| ! wp_verify_nonce( $_POST["vgsr_{$this->type}_meta_nonce"], vgsr_entity()->file )
-		)
-			return;
-
 		// Bail when the user is not capable
 		$cpt = get_post_type_object( $this->type );
 		if ( ! current_user_can( $cpt->cap->edit_posts ) || ! current_user_can( $cpt->cap->edit_post, $post_id ) )
@@ -391,6 +386,13 @@ abstract class VGSR_Entity_Base {
 
 		// Now, update meta fields
 		foreach ( $this->meta as $key => $args ) {
+
+			// Bail when the nonce does not verify
+			if ( ! isset( $_POST["vgsr_{$this->type}_meta_nonce_{$key}"] )
+				|| ! wp_verify_nonce( $_POST["vgsr_{$this->type}_meta_nonce_{$key}"], vgsr_entity()->file )
+			)
+				continue;
+
 			$value = isset( $_POST[ $args['name'] ] ) ? $_POST[ $args['name'] ] : null;
 
 			// Save when we have a value or when it is allowed to have none
@@ -495,6 +497,9 @@ abstract class VGSR_Entity_Base {
 
 				<fieldset class="inline-edit-col-right entity-quick-edit"><div class="inline-edit-col">
 					<div class="inline-edit-group">
+						<?php // Output nonce verification field ?>
+						<?php wp_nonce_field( vgsr_entity()->file, "vgsr_{$this->type}_meta_nonce_{$column}" ); ?>
+
 						<?php echo $field; ?>
 					</div>
 				</div></fieldset>

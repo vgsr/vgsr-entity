@@ -221,8 +221,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		switch ( $key ) {
 			case 'since' :
 			case 'ceased' :
-				$meta  = $this->meta[ $key ];
-				$value = get_post_meta( $post->ID, $meta['name'], true );
+				$value = get_post_meta( $post->ID, $key, true );
 				break;
 		}
 
