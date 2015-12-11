@@ -1095,7 +1095,7 @@ abstract class VGSR_Entity_Base {
 			if ( ! empty( $value ) || '0' === $value ) {
 				update_post_meta( $post->ID, $key, $value );
 
-			// Delete as post meta
+			// Delete empty values as post meta
 			} else {
 				delete_post_meta( $post->ID, $key );
 			}

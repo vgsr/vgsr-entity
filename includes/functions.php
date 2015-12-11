@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 
 if ( ! function_exists( 'pow2' ) ) :
 /**
- * Return a single value by applying the power of 2s
+ * Return a single value by applying the power of 2
  *
  * @since 1.1.0
  *
