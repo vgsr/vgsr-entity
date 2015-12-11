@@ -49,3 +49,28 @@ function unpow2( $value = 0 ) {
 	return $retval;
 }
 endif;
+
+/** Update *************************************************************/
+
+/**
+ * Update routine for version 1.1.0
+ *
+ * @since 1.1.0
+ *
+ * @global $wpdb
+ */
+function vgsr_entity_update_110() {
+	global $wpdb;
+
+	// Bestuur: Update old-style menu-order (+ 1950)
+	$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->posts} p SET p.menu_order = ( p.menu_order + %d ) WHERE p.post_type = %s AND p.menu_order < %d", 1950, 'bestuur', 1950 ) );
+
+	// Kast: Rename 'since' meta key
+	$wpdb->update(
+		$wpdb->postmeta,
+		array( 'meta_key' => 'since' ),
+		array( 'meta_key' => 'vgsr_entity_kast_since' ),
+		array( '%s' ),
+		array( '%s' )
+	);
+}

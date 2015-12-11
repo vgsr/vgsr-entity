@@ -131,7 +131,8 @@ final class VGSR_Entity {
 	private function setup_actions() {
 
 		// Plugin
-		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
+		add_action( 'plugins_loaded', array( $this, 'load_textdomain'  ) );
+		add_action( 'admin_init',     array( $this, 'check_for_update' ) );
 
 		// Entities
 		add_action( 'plugins_loaded', array( $this, 'setup_entities' ) );
@@ -336,6 +337,45 @@ final class VGSR_Entity {
 
 		// Nothing found
 		return false;
+	}
+
+	/**
+	 * Check if the plugin needs to run the update logic
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses get_site_option()
+	 * @uses VGSR_Entity::version_updater()
+	 */
+	public function check_for_update() {
+
+		// Get current version in DB
+		$version = get_site_option( '_vgsr_entity_version', false );
+
+		// Run updater when we're updating
+		if ( ! $version || version_compare( $version, $this->version, '<' ) ) {
+			$this->version_updater( $version );
+		}
+	}
+
+	/**
+	 * Run logic when updating the plugin
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses vgsr_entity_update_110()
+	 * @uses update_site_option()
+	 * @param string $version Version number
+	 */
+	public function version_updater( $version = '' ) {
+
+		// Pre-1.1.0
+		if ( false === $version ) {
+			vgsr_entity_update_110();
+		}
+
+		// Update current version in DB
+		update_site_option( '_vgsr_entity_version', $this->version );
 	}
 
 	/** Admin **********************************************************/
