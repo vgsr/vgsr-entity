@@ -1071,11 +1071,15 @@ abstract class VGSR_Entity_Base {
 			// Get value
 			$value = get_post_meta( $post->ID, $key, true );
 
+			// Consider meta type
 			switch ( $this->meta[ $key ]['type'] ) {
 				case 'date' :
+					$date = DateTime::createFromFormat( 'Y-m-d', $value );
+
 					if ( $display ) {
-						$date  = DateTime::createFromFormat( 'd/m/Y', $value );
 						$value = $date->format( get_option( 'date_format' ) );
+					} else {
+						$value = $date->format( 'd/m/Y' );
 					}
 			}
 		}
@@ -1105,9 +1109,24 @@ abstract class VGSR_Entity_Base {
 
 		// When this is a valid meta
 		if ( array_key_exists( $key, $this->meta ) ) {
+			// Expect d/m/Y
+			$x = DateTime::createFromFormat( 'd/m/Y', '01-01-2001' );
+			if ( ! $x ) {
+				$this->add_error( 1 );
+			}
 
 			// Update as post meta. Allow '0' values
 			if ( ! empty( $value ) || '0' === $value ) {
+
+				// Consider meta type
+				switch ( $this->meta[ $key ]['type'] ) {
+					case 'date' :
+						// Expect d/m/Y, transform to Y-m-d, which can be sorted.
+						$date  = DateTime::createFromFormat( 'd/m/Y', $value );
+						$value = $date->format( 'Y-m-d' );
+						break;
+				}
+
 				update_post_meta( $post->ID, $key, $value );
 
 			// Delete empty values as post meta

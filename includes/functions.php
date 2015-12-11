@@ -58,6 +58,9 @@ endif;
  * @since 1.1.0
  *
  * @global $wpdb
+ *
+ * @uses get_post_meta()
+ * @uses update_post_meta()
  */
 function vgsr_entity_update_110() {
 	global $wpdb;
@@ -73,4 +76,23 @@ function vgsr_entity_update_110() {
 		array( '%s' ),
 		array( '%s' )
 	);
+
+	// Kast: Change 'since' date format from d/m/Y to Y-m-d
+	if ( $query = new WP_Query( array(
+		'post_type'      => 'kast',
+		'fields'         => 'ids',
+		'posts_per_page' => -1,
+	) ) ) {
+		foreach ( $query->posts as $kast_id ) {
+			$value = get_post_meta( $kast_id, 'since', true );
+
+			if ( $value ) {
+				$date  = DateTime::createFromFormat( 'd/m/Y', $value );
+				if ( $date ) {
+					$value = $date->format( 'Y-m-d' );
+					update_post_meta( $kast_id, 'since', $value );
+				}
+			}
+		}
+	}
 }
