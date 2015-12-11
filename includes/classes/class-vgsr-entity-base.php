@@ -1130,7 +1130,7 @@ abstract class VGSR_Entity_Base {
 						break;
 					case 'year' :
 						$value = (int) $value;
-						$error = ( 1950 > $value || $value > date( 'Y' ) );
+						$error = ( vgsr_entity()->base_year > $value || $value > date( 'Y' ) );
 						break;
 				}
 

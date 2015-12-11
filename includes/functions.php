@@ -65,8 +65,11 @@ endif;
 function vgsr_entity_update_110() {
 	global $wpdb;
 
+	// Get VGSR Entity
+	$entity = vgsr_entity();
+
 	// Bestuur: Update old-style menu-order (+ 1950)
-	$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->posts} p SET p.menu_order = ( p.menu_order + %d ) WHERE p.post_type = %s AND p.menu_order < %d", 1950, 'bestuur', 1950 ) );
+	$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->posts} p SET p.menu_order = ( p.menu_order + %d ) WHERE p.post_type = %s AND p.menu_order < %d", $entity->base_year, 'bestuur', $entity->base_year ) );
 
 	// Kast: Rename 'since' meta key
 	$wpdb->update(
