@@ -63,7 +63,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 		// Errors
 		), array(
-			1 => sprintf( esc_html__( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>' . __( 'Season', 'vgsr-entity' ) . '</strong>' ),
+			2 => sprintf( esc_html__( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>' . __( 'Season', 'vgsr-entity' ) . '</strong>' ),
 		) );
 	}
 

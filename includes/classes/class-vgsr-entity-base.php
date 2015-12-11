@@ -109,7 +109,9 @@ abstract class VGSR_Entity_Base {
 		$this->meta = $meta;
 
 		// Set error messages
-		$this->errors = $errors;
+		$this->errors = wp_parse_args( $errors, array(
+			1 => esc_html__( 'Some of the provided values were not given in the valid format.', 'vgsr-entity' ),
+		) );
 
 		// Setup global entity
 		$this->entity_globals();
@@ -697,7 +699,7 @@ abstract class VGSR_Entity_Base {
 	 */
 	public function get_errors( $combine = false ) {
 		if ( $combine ) {
-			return pow2( $this->_errors );
+			return pow2( array_unique( $this->_errors ) );
 		} else {
 			return $this->_errors;
 		}
@@ -1112,14 +1114,30 @@ abstract class VGSR_Entity_Base {
 
 			// Update as post meta. Allow '0' values
 			if ( ! empty( $value ) || '0' === $value ) {
+				$error = false;
 
 				// Consider meta type
 				switch ( $this->meta[ $key ]['type'] ) {
 					case 'date' :
 						// Expect d/m/Y, transform to Y-m-d, which can be sorted.
 						$date  = DateTime::createFromFormat( 'd/m/Y', $value );
-						$value = $date->format( 'Y-m-d' );
+						if ( $date ) {
+							$value = $date->format( 'Y-m-d' );
+						} else {
+							$error = true;
+						}
+
 						break;
+					case 'year' :
+						$value = (int) $value;
+						$error = ( 1950 > $value || $value > date( 'Y' ) );
+						break;
+				}
+
+				// Report error and unset value
+				if ( $error ) {
+					$this->add_error( 1 );
+					$value = null;
 				}
 
 				update_post_meta( $post->ID, $key, $value );
