@@ -543,6 +543,7 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @uses wp_enqueue_style()
 	 * @uses wp_enqueue_script()
+	 * @uses wp_add_inline_style()
 	 * @uses wp_localize_script()
 	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_enqueue_scripts'
 	 */
@@ -571,6 +572,16 @@ abstract class VGSR_Entity_Base {
 
 		// When on the edit view
 		if ( $is_edit ) {
+
+			// Define additional column styles
+			$css = '';
+			foreach ( $this->meta as $key => $args ) {
+				$width = isset( $args['column-width'] ) ? $args['column-width'] : '10%';
+				$css .= ".fixed .column-{$key} { width: {$width} }\n";
+			}
+
+			// Append additional styles
+			wp_add_inline_style( 'vgsr-entity-admin', $css );
 
 			// Prepare meta for js
 			$meta = $this->meta;
