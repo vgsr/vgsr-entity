@@ -559,10 +559,10 @@ abstract class VGSR_Entity_Base {
 		if ( $is_edit || $is_post || $is_settings ) {
 			$entity = vgsr_entity();
 
-			// Enqueue date picker
+			// Date fields: Enqueue date picker
 			if ( wp_list_filter( $this->meta, array( 'type' => 'date' ) ) ) {
 				wp_enqueue_script( 'jquery-ui-datepicker' );
-				wp_enqueue_style( 'jquery-ui-theme-fresh', $entity->includes_url . 'assets/css/jquery.ui.theme.css' );
+				wp_enqueue_style( 'stuttter-datepicker', $entity->includes_url . 'assets/css/datepicker.css' );
 			}
 
 			// Enqueue admin scripts
