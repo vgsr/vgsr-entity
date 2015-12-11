@@ -1109,11 +1109,6 @@ abstract class VGSR_Entity_Base {
 
 		// When this is a valid meta
 		if ( array_key_exists( $key, $this->meta ) ) {
-			// Expect d/m/Y
-			$x = DateTime::createFromFormat( 'd/m/Y', '01-01-2001' );
-			if ( ! $x ) {
-				$this->add_error( 1 );
-			}
 
 			// Update as post meta. Allow '0' values
 			if ( ! empty( $value ) || '0' === $value ) {
