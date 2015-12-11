@@ -208,21 +208,23 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 * @since 1.1.0
 	 *
 	 * @param string $key
-	 * @param int|WP_Post $post
+	 * @param int|WP_Post $post Optional. Defaults to current post.
 	 * @param string $context Optional. Context, defaults to 'display'.
 	 * @return mixed Entity meta value
 	 */
-	protected function _get( $key, $post, $context ) {
+	public function get( $key, $post = 0, $context = 'display' ) {
 
 		// Define local variables
 		$value   = null;
 		$display = ( 'display' === $context );
 
-		switch ( $key ) {
-			case 'since' :
-			case 'ceased' :
-				$value = get_post_meta( $post->ID, $key, true );
-				break;
+		if ( $post = get_post( $post ) ) {
+			switch ( $key ) {
+				case 'since' :
+				case 'ceased' :
+					$value = parent::get( $key, $post, $context );
+					break;
+			}
 		}
 
 		return $value;

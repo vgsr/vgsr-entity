@@ -1050,7 +1050,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Return the requested entity meta value
 	 *
-	 * Override the `_get()` method in a child class to use this.
+	 * Override this method in a child class.
 	 *
 	 * @since 1.1.0
 	 *
@@ -1062,22 +1062,26 @@ abstract class VGSR_Entity_Base {
 	public function get( $key, $post = 0, $context = 'display' ) {
 
 		// Define default value
-		$value = null;
+		$value   = null;
+		$display = ( 'display' === $context );
 
 		// Bail when no post was found
 		if ( $post = get_post( $post ) ) {
-			$value = $this->_get( $key, $post, $context );
+
+			// Get value
+			$value = get_post_meta( $post->ID, $key, true );
+
+			switch ( $this->meta[ $key ]['type'] ) {
+				case 'date' :
+					if ( $display ) {
+						$date  = DateTime::createFromFormat( 'd/m/Y', $value );
+						$value = $date->format( get_option( 'date_format' ) );
+					}
+			}
 		}
 
 		return $value;
 	}
-
-	/**
-	 * Abstract method to return entity meta
-	 *
-	 * @since 1.1.0
-	 */
-	abstract protected function _get( $key, $post, $context );
 
 	/**
 	 * Sanitize the given entity meta value
