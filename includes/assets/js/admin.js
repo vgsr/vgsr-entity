@@ -7,12 +7,10 @@
 
 ( function( $ ) {
 
-	// Can I use datepicker?
+	// Can I use datepicker? Initiate datepickers
 	if ( $.fn.datepicker ) {
-
-		// Initiate datepickers
-		$( '.input-text-wrap .datepicker' ).datepicker({
-			dateFormat: 'dd/mm/yyyy',
+		$( '.input-text-wrap:not(#inline-edit .input-text-wrap) .datepicker' ).datepicker({
+			dateFormat: 'dd/mm/yy',
 			changeMonth: true,
 			changeYear: true
 		});
@@ -20,9 +18,8 @@
 
 	/* wp-admin/edit.php */
 
+	// Move entity quick edit lines into the right col
 	var $inline = $( '.inline-edit-row' );
-
-	// Move entity quick edit into the right col
 	$inline.find( '.entity-quick-edit .inline-edit-col' ).appendTo( $inline.find( '.inline-edit-col-right' ).first() );
 
 	/* global inlineEditPost, entityEditPost */
@@ -36,24 +33,33 @@
 		// Run the original inline edit function
 		wp_inline_edit.apply( this, arguments );
 
-		var t = this, editRow, rowData, fields, val;
+		var t = this, $editRow, $rowData, fields, val;
 
 		if ( typeof( id ) === 'object' ) {
 			id = t.getId( id );
 		}
 
-		editRow = $( '.inline-editor' );
-		rowData = $( '#post-' + id );
+		$editRow = $( '.inline-editor' );
+		$rowData = $( '#post-' + id );
+
+		// Can I use datepicker? Initiate datepickers inside the edit row
+		if ( $.fn.datepicker ) {
+			$editRow.find( '.input-text-wrap .datepicker' ).datepicker({
+				dateFormat: 'dd/mm/yy',
+				changeMonth: true,
+				changeYear: true
+			});
+		}
 
 		fields = entityEditPost.fields;
 
 		// Refresh input values for this post
 		for ( f = 0; f < fields.length; f++ ) {
-			val = $( '.' + fields[ f ].key + ' .edit-value', rowData );
+			val = $( '.' + fields[ f ].key + ' .edit-value', $rowData );
 			// Deal with Twemoji
 			val.find( 'img' ).replaceWith( function() { return this.alt; } );
 			val = val.text();
-			$( ':input[name="' + fields[ f ].name + '"]', editRow ).val( val );
+			$( ':input[name="' + fields[ f ].name + '"]', $editRow ).val( val );
 		}
 	};
 
