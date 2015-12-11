@@ -1139,20 +1139,46 @@ abstract class VGSR_Entity_Base {
 				return $this->meta;
 				break;
 
-			// Return meta fields for display
-			case 'display' :
+			// Return meta fields for edit
+			case 'edit' :
 				if ( $post = get_post( $post ) ) {
+					$meta = $this->meta;
 
-					// Get display met afields
-					$meta = wp_list_filter( $this->meta, array( 'display' => true ) );
-
-					// Provide with meta value
+					// Provide with meta edit value
 					foreach ( $meta as $key => $args ) {
 						$meta[ $key ]['value'] = $this->get( $key, $post, $context );
 					}
 
 					return $meta;
 				}
+
+				break;
+
+			// Return meta fields for display
+			case 'display' :
+				if ( $post = get_post( $post ) ) {
+
+					// Get display meta fields
+					$meta = wp_list_filter( $this->meta, array( 'display' => true ) );
+
+					// Provide with meta value
+					foreach ( $meta as $key => $args ) {
+						$value = $this->get( $key, $post, $context );
+
+						// Add when there is a value to display
+						if ( ! empty( $value ) ) {
+							$meta[ $key ]['value'] = $value;
+
+						// Remove field from display when emtpy
+						} else {
+							unset( $meta[ $key ] );
+						}
+					}
+
+					return $meta;
+				}
+
+				break;
 		}
 
 		return array();
