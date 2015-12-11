@@ -223,7 +223,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	public function filter_the_title( $title, $post_id ) {
 
 		// When this is our entity
-		if ( is_kast( $post_id ) ) {
+		if ( ! is_admin() && is_kast( $post_id ) ) {
 			$ceased = $this->get( 'ceased', $post_id );
 
 			// Append the 'ceased' date with a Latin Cross

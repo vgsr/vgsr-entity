@@ -102,7 +102,7 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 	public function filter_the_title( $title, $post_id ) {
 
 		// When this is our entity
-		if ( is_dispuut( $post_id ) ) {
+		if ( ! is_admin() && is_dispuut( $post_id ) ) {
 			$ceased = $this->get( 'ceased', $post_id );
 
 			// Append the 'ceased' date with a Latin Cross
