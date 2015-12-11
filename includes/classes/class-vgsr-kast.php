@@ -95,12 +95,18 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 */
 	public function setup_actions() {
 
-		// Actions
+		// Admin
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 
-		// Filters
+		// Thumbnails
 		add_filter( 'vgsr_kast_settings_load', array( $this, 'downsize_thumbs' ) );
+
+		// Post
+		add_filter( 'the_title',         array( $this, 'filter_the_title' ), 10, 2 );
+		add_filter( 'single_post_title', array( $this, 'filter_the_title' ), 10, 2 );
 	}
+
+	/** Settings *******************************************************/
 
 	/**
 	 * Add additional Kast settings fields
@@ -198,6 +204,35 @@ class VGSR_Kast extends VGSR_Entity_Base {
 
 		// Downsizing done, set option off
 		update_option( '_kast-downsize-thumbs', 0 );
+	}
+
+	/** Post ***********************************************************/
+
+	/**
+	 * Modify the post title for this entity
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses is_kast()
+	 * @uses VGSR_Kast::get()
+	 *
+	 * @param string $title Post title
+	 * @param int $post_id Post ID
+	 * @return string Post title
+	 */
+	public function filter_the_title( $title, $post_id ) {
+
+		// When this is our entity
+		if ( is_kast( $post_id ) ) {
+			$ceased = $this->get( 'ceased', $post_id );
+
+			// Append the 'ceased' date with a Latin Cross
+			if ( ! empty( $ceased ) ) {
+				$title .= sprintf( ' (&#10013; %s)', $ceased );
+			}
+		}
+
+		return $title;
 	}
 
 	/** Meta ***********************************************************/
