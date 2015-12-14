@@ -96,7 +96,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	public function setup_actions() {
 
 		// Admin
-		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'vgsr_entity_settings_fields', array( $this, 'add_settings_fields' ) );
 
 		// Thumbnails
 		add_filter( 'vgsr_kast_settings_load', array( $this, 'downsize_thumbs' ) );
@@ -113,11 +113,18 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 *
 	 * @since 1.0.0
 	 */
-	public function register_settings() {
+	public function add_settings_fields( $fields ) {
 
 		// Kast recreate thumbnail option
-		add_settings_field( '_kast-downsize-thumbs', __( 'Recreate Thumbnails', 'vgsr-entity' ), array( $this, 'settings_downsize_thumbs_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
-		register_setting( $this->args['settings']['page'], '_kast-downsize-thumbs', 'intval' );
+		$fields['main_settings']['downsize-thumbs'] = array(
+			'title'             => esc_html__( 'Recreate Thumbnails', 'vgsr-entity' ),
+			'callback'          => array( $this, 'settings_downsize_thumbs_field' ),
+			'sanitize_callback' => 'intval',
+			'entity'            => $this->type,
+			'args'              => array(),
+		);
+
+		return $fields;
 	}
 
 	/**
@@ -125,13 +132,12 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 *
 	 * @since 1.0.0
 	 */
-	public function settings_downsize_thumbs_field() {
-	?>
+	public function settings_downsize_thumbs_field() { ?>
 
 		<input type="checkbox" name="_kast-downsize-thumbs" id="_kast-downsize-thumbs" <?php checked( get_option( '_kast-downsize-thumbs' ) ); ?> value="1"/>
 		<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __( 'This is a one time resizing of thumbs for %s. NOTE: This option only <strong>adds</strong> new image sizes, it doesn\'t remove old ones.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></span></label>
 
-	<?php
+		<?php
 	}
 
 	/**

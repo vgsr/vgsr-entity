@@ -84,25 +84,18 @@ abstract class VGSR_Entity_Base {
 		$this->args = wp_parse_args( $args, array(
 
 			// Post type
-			'menu_icon'  => '',
-			'labels'     => array(),
+			'menu_icon'     => '',
+			'labels'        => array(),
 
 			// Parent
-			'parent'     => null,
-			'parent_key' => "_{$type}-parent-page",
+			'parent'        => null,
 
 			// Default thumbsize. @todo When theme does not support post-thumbnail image size
-			'thumbsize'  => 'post-thumbnail',
+			'thumbsize'     => 'post-thumbnail',
 
-			// Admin: Posts
-			'page'       => "edit.php?post_type={$type}",
-
-			// Admin: Settings
-			'settings'   => array(
-				'hook'    => '',
-				'page'    => "vgsr_{$type}_settings",
-				'section' => "vgsr_{$type}_options_main",
-			),
+			// Admin Pages
+			'posts_page'    => "edit.php?post_type={$type}",
+			'settings_page' => '',
 		) );
 
 		// Set meta fields
@@ -234,10 +227,13 @@ abstract class VGSR_Entity_Base {
 		add_action( 'vgsr_entity_init', array( $this, 'register_post_type' ) );
 
 		// Admin
-		add_action( 'admin_init',            array( $this, 'entity_register_settings' ) );
-		add_action( 'admin_menu',            array( $this, 'entity_admin_menu'        ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts'          ) );
-		add_action( 'admin_notices',         array( $this, 'display_errors'           ) );
+		add_action( 'admin_menu',            array( $this, 'entity_admin_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts'   ) );
+		add_action( 'admin_notices',         array( $this, 'display_errors'    ) );
+
+		// Settings
+		add_action( 'admin_init',    array( $this, 'entity_register_settings' )        );
+		add_action( 'update_option', array( $this, 'update_entity_parent'     ), 10, 3 );
 
 		// Post
 		add_filter( 'wp_insert_post_parent',   array( $this, 'filter_entity_parent' ), 10, 4 );
@@ -520,11 +516,21 @@ abstract class VGSR_Entity_Base {
 	public function entity_admin_menu() {
 
 		// Register menu page
-		$this->args['settings']['hook'] = add_submenu_page( $this->args['page'], $this->args['labels']['settings_title'], __( 'Settings' ), 'manage_options', "{$this->type}-settings", array( $this, 'settings_page' ) );
+		$hook = add_submenu_page(
+			$this->args['posts_page'],
+			$this->args['labels']['settings_title'],
+			__( 'Settings', 'vgsr-entity' ),
+			'manage_options',
+			"{$this->type}-settings",
+			array( $this, 'settings_page'
+		) );
 
-		// Setup settings specific hooks
-		add_action( "load-{$this->args['settings']['hook']}",         array( $this, 'settings_load'   ), 9 );
-		add_action( "admin_footer-{$this->args['settings']['hook']}", array( $this, 'settings_footer' )    );
+		// Setup settings page hooks
+		add_action( "load-{$hook}",         array( $this, 'settings_load'   ), 9 );
+		add_action( "admin_footer-{$hook}", array( $this, 'settings_footer' )    );
+
+		// Store $hook in class global
+		$this->args['settings_page'] = $hook;
 	}
 
 	/**
@@ -631,8 +637,8 @@ abstract class VGSR_Entity_Base {
 			<?php settings_errors(); ?>
 
 			<form method="post" action="options.php">
-				<?php settings_fields( $this->args['settings']['page'] ); ?>
-				<?php do_settings_sections( $this->args['settings']['page'] ); ?>
+				<?php settings_fields( "vgsr_{$this->type}_settings" ); ?>
+				<?php do_settings_sections( "vgsr_{$this->type}_settings" ); ?>
 				<?php submit_button(); ?>
 			</form>
 
@@ -646,19 +652,69 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @uses set_current_screen()
+	 * @uses vgsr_entity_settings_sections()
+	 * @uses vgsr_entity_settings_fields()
 	 * @uses add_settings_section()
 	 * @uses add_settings_field()
 	 * @uses register_setting()
 	 */
 	public function entity_register_settings() {
 
-		// Register main settings section
-		add_settings_section( $this->args['settings']['section'], __( 'Main Settings', 'vgsr-entity' ), '', $this->args['settings']['page'] );
+		// Bail when not in the admin
+		if ( ! get_current_screen() ) {
+			set_current_screen();
+		}
 
-		// Entity Parent
-		add_settings_field( $this->args['parent_key'], __( 'Parent Page', 'vgsr-entity' ), array( $this, 'entity_parent_settings_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
-		register_setting( $this->args['settings']['page'], $this->args['parent_key'], 'intval' );
-		add_action( 'update_option', array( $this, 'update_entity_parent' ), 10, 3 );
+		// Define local variables
+		$entity    = get_current_screen()->post_type;
+		$sections  = vgsr_entity_settings_sections();
+		$fields    = vgsr_entity_settings_fields();
+		$page_name = "vgsr_{$this->type}_settings";
+
+		// Walk registered sections
+		foreach ( $sections as $section => $s_args ) {
+
+			// Skip empty settings sections
+			if ( ! isset( $fields[ $section ] ) || empty( $fields[ $section ] ) )
+				continue;
+
+			// Prefix section name
+			$section_name = "vgsr_{$this->type}_{$section}";
+			$fields_count = 0;
+
+			// Use provided page name
+			if ( ! empty( $s_args['page'] ) ) {
+				$page_name = $s_args['page'];
+			}
+
+			// Walk registered section's fields
+			foreach ( $fields[ $section ] as $field => $f_args ) {
+
+				// Skip when it does not apply to this entity
+				if ( isset( $f_args['entity'] ) && ! in_array( $entity, (array) $f_args['entity'] ) )
+					continue;
+
+				// Prefix field name
+				$field_name = "_{$this->type}-{$field}";
+
+				// Add field when callable
+				if ( isset( $f_args['callback'] ) && is_callable( $f_args['callback'] ) ) {
+					add_settings_field( $field_name, $f_args['title'], $f_args['callback'], $page_name, $section_name, $f_args['args'] );
+
+					// Count registered section fields
+					$fields_count++;
+				}
+
+				// Register field either way
+				register_setting( $page_name, $field_name, $f_args['sanitize_callback'] );
+			}
+
+			// Register non-empty section
+			if ( $fields_count > 0 ) {
+				add_settings_section( $section_name, $s_args['title'], $s_args['callback'], $page_name );
+			}
+		}
 	}
 
 	/** Errors *********************************************************/
@@ -752,29 +808,6 @@ abstract class VGSR_Entity_Base {
 	/** Parent Page ****************************************************/
 
 	/**
-	 * Output entity parent page settings field
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses wp_dropdown_pages()
-	 * @uses VGSR_Entity_Base::get_entity_parent()
-	 */
-	public function entity_parent_settings_field() { ?>
-
-		<?php wp_dropdown_pages( array(
-			'name'             => $this->args['parent_key'],
-			'selected'         => $this->get_entity_parent(),
-			'show_option_none' => __( 'None', 'vgsr-entity' ),
-			'echo'             => true,
-		) ); ?>
-		<a class="button button-secondary" href="<?php echo esc_url( get_permalink( $this->get_entity_parent() ) ); ?>" target="_blank"><?php _e( 'View', 'vgsr-entity' ); ?></a>
-
-		<p class="description"><?php printf( __( 'Select the page that should act as the %s parent page.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></p>
-
-		<?php
-	}
-
-	/**
 	 * Return the entity's parent post ID
 	 *
 	 * @since 1.1.0
@@ -785,7 +818,7 @@ abstract class VGSR_Entity_Base {
 
 		// Get the parent post ID
 		if ( null === $this->args['parent'] ) {
-			$this->args['parent'] = (int) get_option( $this->args['parent_key'], 0 );
+			$this->args['parent'] = (int) get_option( "_{$this->type}-parent-page", 0 );
 		}
 
 		return $this->args['parent'];
@@ -828,7 +861,7 @@ abstract class VGSR_Entity_Base {
 	public function update_entity_parent( $option, $old_value, $value ) {
 
 		// Bail when this is not our option
-		if ( $option !== $this->args['parent_key'] )
+		if ( $option !== "_{$this->type}-parent-page" )
 			return;
 
 		global $wpdb;

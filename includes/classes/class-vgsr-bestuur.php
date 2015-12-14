@@ -48,7 +48,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 				'not_found_in_trash' => __( 'No Besturen found in trash', 'vgsr-entity' ),
 				'menu_name'          => __( 'Besturen',                   'vgsr-entity' ),
 				'settings_title'     => __( 'Besturen Settings',          'vgsr-entity' ),
-			)
+			),
 
 		// Meta
 		), array(
@@ -83,8 +83,8 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 */
 	public function setup_actions() {
 
-		add_action( 'vgsr_entity_init', array( $this, 'add_rewrite_rules' ) );
-		add_action( 'admin_init',       array( $this, 'register_settings' ) );
+		add_action( 'vgsr_entity_init',            array( $this, 'add_rewrite_rules'   ) );
+		add_action( 'vgsr_entity_settings_fields', array( $this, 'add_settings_fields' ) );
 
 		// Post
 		add_action( "save_post_{$this->type}", array( $this, 'save_current_bestuur' ), 10, 2 );
@@ -101,12 +101,22 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * Add additional Bestuur settings fields
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param array $fields Settings fields
+	 * @return array Settings fields
 	 */
-	public function register_settings() {
+	public function add_settings_fields( $fields ) {
 
-		// Bestuur widget menu order setting
-		add_settings_field( '_bestuur-menu-order', __( 'Menu Widget Order', 'vgsr-entity' ), array( $this, 'setting_menu_order_field' ), $this->args['settings']['page'], $this->args['settings']['section'] );
-		register_setting( $this->args['settings']['page'], '_bestuur-menu-order', 'intval' );
+		// Menu Order
+		$fields['main_settings']['menu-order'] = array(
+			'title'             => __( 'Menu Widget Order', 'vgsr-entity' ),
+			'callback'          => array( $this, 'setting_menu_order_field' ),
+			'sanitize_callback' => 'intval',
+			'entity'            => $this->type,
+			'args'              => array(),
+		);
+
+		return $fields;
 	}
 
 	/**
@@ -115,13 +125,17 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * @since 1.0.0
 	 */
 	public function setting_menu_order_field() {
-		$value = (int) get_option( '_bestuur-menu-order' ); ?>
 
-		<select name="_bestuur-menu-order" id="_bestuur-menu-order">
+		// Define local variables
+		$option_name = "_{$this->type}-menu-order";
+		$value       = (int) get_option( $option_name ); ?>
+
+		<select name="<?php echo esc_attr( $option_name ); ?>" id="<?php echo esc_attr( $option_name ); ?>">
 			<option value="0" <?php selected( $value, 0 ); ?>><?php _e( 'Seniority',         'vgsr-entity' ); ?></option>
 			<option value="1" <?php selected( $value, 1 ); ?>><?php _e( 'Reverse seniority', 'vgsr-entity' ); ?></option>
 		</select>
-		<label for="_bestuur-menu-order"><span class="description"><?php sprintf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></span></label>
+
+		<p for="<?php echo esc_attr( $option_name ); ?>" class="description"><?php printf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></p>
 
 		<?php
 	}

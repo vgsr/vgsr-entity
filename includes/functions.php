@@ -10,6 +10,88 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
+/** Settings ***********************************************************/
+
+/**
+ * Return entity admin settings sections
+ *
+ * @since 1.1.0
+ *
+ * @uses apply_filters() Calls 'vgsr_entity_settings_sections'
+ * @return array Settings sections
+ */
+function vgsr_entity_settings_sections() {
+	return (array) apply_filters( 'vgsr_entity_settings_sections', array(
+
+		// Main Settings
+		"main_settings" => array(
+			'title'    => esc_html__( 'Main Settings', 'vgsr-entity' ),
+			'callback' => '',
+			'page'     => '',
+		),
+	) );
+}
+
+/**
+ * Return entity admin settings fields
+ *
+ * @since 1.1.0
+ *
+ * @uses apply_filters() Calls 'vgsr_entity_settings_fields'
+ * @return array Settings fields
+ */
+function vgsr_entity_settings_fields() {
+	return (array) apply_filters( 'vgsr_entity_settings_fields', array(
+
+		// Main Settings
+		'main_settings' => array(
+
+			// Parent Page
+			'parent-page' => array(
+				'title'             => esc_html__( 'Parent Page', 'vgsr-entity' ),
+				'callback'          => 'vgsr_entity_settings_display_entity_parent_field',
+				'sanitize_callback' => 'intval',
+				'args'              => array()
+			),
+		)
+	) );
+}
+
+/**
+ * Output entity parent page settings field
+ *
+ * @since 1.0.0
+ *
+ * @uses VGSR_Entity_Base::get_entity_parent()
+ * @uses wp_dropdown_pages()
+ */
+function vgsr_entity_settings_display_entity_parent_field() {
+
+	// Get VGSR Entity
+	$post_type = get_current_screen()->post_type;
+	$entity    = vgsr_entity()->{$post_type};
+	$parent    = $entity->get_entity_parent();
+
+	// Display select box
+	wp_dropdown_pages( array(
+		'name'             => "_{$post_type}-parent-page",
+		'selected'         => $parent,
+		'show_option_none' => esc_html__( '&mdash; No Parent &mdash;', 'vgsr-entity' ),
+		'echo'             => true,
+	) );
+
+	// Display link to view the page
+	if ( $parent ) : ?>
+	<a class="button button-secondary" href="<?php echo esc_url( get_permalink( $parent ) ); ?>" target="_blank"><?php _e( 'View', 'vgsr-entity' ); ?></a>
+	<?php endif; ?>
+
+	<p class="description"><?php printf( __( 'Select the page that should act as the %s parent page.', 'vgsr-entity' ), $entity->args['labels']['name'] ); ?></p>
+
+	<?php
+}
+
+/** Utilities **********************************************************/
+
 if ( ! function_exists( 'pow2' ) ) :
 /**
  * Return a single value by applying the power of 2

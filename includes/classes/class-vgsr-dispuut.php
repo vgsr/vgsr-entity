@@ -45,7 +45,7 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 				'not_found_in_trash' => __( 'No Disputen found in trash', 'vgsr-entity' ),
 				'menu_name'          => __( 'Disputen',                   'vgsr-entity' ),
 				'settings_title'     => __( 'Disputen Settings',          'vgsr-entity' ),
-			)
+			),
 
 		// Meta
 		), array(
