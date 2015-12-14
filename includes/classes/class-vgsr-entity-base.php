@@ -1240,7 +1240,17 @@ abstract class VGSR_Entity_Base {
 						}
 					}
 
-					return $meta;
+					/**
+					 * Filter the entity's meta fields for display
+					 *
+					 * The variable part `$type` is the entity's post type.
+					 *
+					 * @since 1.1.0
+					 *
+					 * @param array $meta Meta fields with details
+					 * @param WP_Post $post Post object
+					 */
+					return apply_filters( "vgsr_{$this->type}_display_meta", $meta, $post );
 				}
 
 				break;
