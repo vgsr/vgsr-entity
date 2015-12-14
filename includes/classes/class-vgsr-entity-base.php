@@ -561,7 +561,7 @@ abstract class VGSR_Entity_Base {
 		$screen      = get_current_screen();
 		$is_edit     = "edit-{$this->type}" === $screen->id;
 		$is_post     = 'post' === $screen->base && $this->type === $screen->id;
-		$is_settings = $page_hook === $this->args['settings']['hook'];
+		$is_settings = $page_hook === $this->args['settings_page'];
 
 		// When on an entity admin page
 		if ( $is_edit || $is_post || $is_settings ) {
