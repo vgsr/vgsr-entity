@@ -667,7 +667,6 @@ abstract class VGSR_Entity_Base {
 		}
 
 		// Define local variables
-		$entity    = get_current_screen()->post_type;
 		$sections  = vgsr_entity_settings_sections();
 		$fields    = vgsr_entity_settings_fields();
 		$page_name = "vgsr_{$this->type}_settings";
@@ -692,7 +691,7 @@ abstract class VGSR_Entity_Base {
 			foreach ( $fields[ $section ] as $field => $f_args ) {
 
 				// Skip when it does not apply to this entity
-				if ( isset( $f_args['entity'] ) && ! in_array( $entity, (array) $f_args['entity'] ) )
+				if ( isset( $f_args['entity'] ) && ! in_array( $this->type, (array) $f_args['entity'] ) )
 					continue;
 
 				// Prefix field name
