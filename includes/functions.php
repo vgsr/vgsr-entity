@@ -58,6 +58,39 @@ function vgsr_entity_settings_fields() {
 }
 
 /**
+ * Return the settings fields that apply for the given entity
+ *
+ * @since 1.1.0
+ *
+ * @uses vgsr_entity_settings_fields()
+ *
+ * @param string $entity Post type
+ * @return array Settings fields
+ */
+function vgsr_entity_settings_fields_by_entity( $entity = '' ) {
+
+	// Bail when this is not an entity
+	if ( ! is_entity( $entity ) )
+		return array();
+
+	// Get settings fields
+	$fields = vgsr_entity_settings_fields();
+
+	// Walk all section's fields
+	foreach ( array_keys( $fields ) as $section ) {
+		foreach ( $fields[ $section ] as $field => $args ) {
+
+			// Remove fields from the set when they do not apply
+			if ( isset( $args['entity'] ) && ! in_array( $entity, (array) $args['entity'] ) ) {
+				unset( $fields[ $section ][ $field ] );
+			}
+		}
+	}
+
+	return $fields;
+}
+
+/**
  * Output entity parent page settings field
  *
  * @since 1.0.0
