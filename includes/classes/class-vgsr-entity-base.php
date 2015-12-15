@@ -416,7 +416,7 @@ abstract class VGSR_Entity_Base {
 
 		// Append meta columns
 		foreach ( $this->meta as $key => $args ) {
-			$columns[ $key ] = $args['label'];
+			$columns[ $key ] = $args['column_title'];
 		}
 
 		return $columns;
@@ -1052,7 +1052,7 @@ abstract class VGSR_Entity_Base {
 			case 'year' : ?>
 
 		<label class="alignleft">
-			<span class="title"><?php echo esc_html( $meta['label'] ); ?></span>
+			<span class="title"><?php echo esc_html( $meta['column_title'] ); ?></span>
 			<span class="input-text-wrap"><input type="number" size="4" placeholder="<?php esc_html_e( 'YYYY', 'vgsr-entity' ); ?>" name="<?php echo esc_attr( $meta['name'] ); ?>" value="<?php echo esc_attr( $meta['value'] ); ?>" min="<?php echo esc_attr( vgsr_entity()->base_year ); ?>" max="<?php echo date( 'Y' ); ?>" /></span>
 		</label>
 
@@ -1063,7 +1063,7 @@ abstract class VGSR_Entity_Base {
 			case 'date' : ?>
 
 		<label class="alignleft">
-			<span class="title"><?php echo esc_html( $meta['label'] ); ?></span>
+			<span class="title"><?php echo esc_html( $meta['column_title'] ); ?></span>
 			<span class="input-text-wrap"><input id="<?php echo $meta['id']; ?>" class="ui-widget-content ui-corner-all datepicker" type="text" size="10" placeholder="<?php esc_html_e( 'DD/MM/YYYY', 'vgsr-entity' ); ?>" name="<?php echo esc_attr( $meta['name'] ); ?>" value="<?php echo esc_attr( $meta['value'] ); ?>" /></span>
 		</label>
 

@@ -56,18 +56,20 @@ class VGSR_Kast extends VGSR_Entity_Base {
 
 			// Since
 			'since' => array(
-				'label'   => esc_html__( 'Since', 'vgsr-entity' ),
-				'type'    => 'date',
-				'name'    => 'vgsr_entity_kast_since',
-				'display' => true,
+				'column_title' => esc_html__( 'Since',    'vgsr-entity' ),
+				'label'        => esc_html__( 'Since %s', 'vgsr-entity' ),
+				'type'         => 'date',
+				'name'         => 'vgsr_entity_kast_since',
+				'display'      => true,
 			),
 
 			// Ceased
 			'ceased' => array(
-				'label'   => esc_html__( 'Ceased', 'vgsr-entity' ),
-				'type'    => 'year',
-				'name'    => 'vgsr_entity_kast_ceased',
-				'display' => true,
+				'column_title' => esc_html__( 'Ceased',    'vgsr-entity' ),
+				'label'        => esc_html__( 'Ceased %s', 'vgsr-entity' ),
+				'type'         => 'year',
+				'name'         => 'vgsr_entity_kast_ceased',
+				'display'      => true,
 			),
 
 		// Errors

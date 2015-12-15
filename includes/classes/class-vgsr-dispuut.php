@@ -52,18 +52,20 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 
 			// Since
 			'since' => array(
-				'label'   => esc_html__( 'Since', 'vgsr-entity' ),
-				'type'    => 'year',
-				'name'    => 'menu_order',
-				'display' => true,
+				'column_title' => esc_html__( 'Since',    'vgsr-entity' ),
+				'label'        => esc_html__( 'Since %s', 'vgsr-entity' ),
+				'type'         => 'year',
+				'name'         => 'menu_order',
+				'display'      => true,
 			),
 
 			// Ceased
 			'ceased' => array(
-				'label'   => esc_html__( 'Ceased', 'vgsr-entity' ),
-				'type'    => 'year',
-				'name'    => 'vgsr_entity_dispuut_ceased',
-				'display' => true,
+				'column_title' => esc_html__( 'Ceased',    'vgsr-entity' ),
+				'label'        => esc_html__( 'Ceased %s', 'vgsr-entity' ),
+				'type'         => 'year',
+				'name'         => 'vgsr_entity_dispuut_ceased',
+				'display'      => true,
 			),
 
 		// Errors
