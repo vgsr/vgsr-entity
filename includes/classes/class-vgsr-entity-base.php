@@ -227,9 +227,9 @@ abstract class VGSR_Entity_Base {
 		add_action( 'vgsr_entity_init', array( $this, 'register_post_type' ) );
 
 		// Admin
-		add_action( 'admin_menu',            array( $this, 'entity_admin_menu' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts'   ) );
-		add_action( 'admin_notices',         array( $this, 'display_errors'    ) );
+		add_action( 'admin_menu',            array( $this, 'entity_admin_menu'     ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'admin_notices',         array( $this, 'admin_display_errors'  ) );
 
 		// Settings
 		add_action( 'admin_init',    array( $this, 'entity_register_settings' )        );
@@ -555,7 +555,7 @@ abstract class VGSR_Entity_Base {
 	 * @uses wp_localize_script()
 	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_enqueue_scripts'
 	 */
-	public function enqueue_scripts( $page_hook ) {
+	public function admin_enqueue_scripts( $page_hook ) {
 
 		// Define local variables
 		$screen      = get_current_screen();
@@ -783,7 +783,7 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @uses unpow2()
 	 */
-	public function display_errors() {
+	public function admin_display_errors() {
 
 		// Bail when no valid errors are reported
 		if ( ! isset( $_REQUEST[ "{$this->type}-error" ] ) )
