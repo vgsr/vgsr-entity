@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VGSR Entity BuddyPress functions
+ * VGSR Entity BuddyPress Functions
  * 
  * @package VGSR Entity
  * @subpackage BuddyPress
@@ -41,7 +41,7 @@ class VGSR_Entity_BuddyPress {
 		add_filter( 'vgsr_entity_settings_fields',   array( $this, 'add_settings_fields'   ) );
 
 		// List Table
-		add_filter( 'admin_init', array( $this, 'add_list_table_columns' ) );
+		add_action( 'admin_init', array( $this, 'add_list_table_columns' ) );
 
 		// Post
 		add_filter( 'vgsr_entity_display_meta', array( $this, 'display_meta' ), 10, 2 );
@@ -123,7 +123,7 @@ class VGSR_Entity_BuddyPress {
 	}
 
 	/**
-	 * Display the members settings field
+	 * Display a XProfile field selector settings field
 	 *
 	 * @since 1.1.0
 	 *
@@ -208,7 +208,7 @@ class VGSR_Entity_BuddyPress {
 
 			// Walk profile group fields
 			foreach ( $field_group->fields as $field ) {
-				$dd .= sprintf( '<option value="%s" %s>%s</option>', esc_attr( $field->id ), selected( $args['selected'], $field->id, false ), esc_attr( $field->name ) );
+				$dd .= sprintf( '<option value="%s" %s>%s</option>', esc_attr( $field->id ), selected( $args['selected'], $field->id, false ), esc_html( $field->name ) );
 			}
 
 			// Close optgroup
