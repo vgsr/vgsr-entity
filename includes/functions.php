@@ -83,10 +83,10 @@ function vgsr_entity_settings_display_entity_parent_field() {
 
 	// Display link to view the page
 	if ( $parent ) : ?>
-	<a class="button button-secondary" href="<?php echo esc_url( get_permalink( $parent ) ); ?>" target="_blank"><?php _e( 'View', 'vgsr-entity' ); ?></a>
+	<a class="button button-secondary" href="<?php echo esc_url( get_permalink( $parent ) ); ?>" target="_blank"><?php esc_html_e( 'View', 'vgsr-entity' ); ?></a>
 	<?php endif; ?>
 
-	<p class="description"><?php printf( __( 'Select the page that should act as the %s parent page.', 'vgsr-entity' ), $entity->args['labels']['name'] ); ?></p>
+	<p class="description"><?php printf( __( 'Select the page that should act as the %s parent page.', 'vgsr-entity' ), get_post_type_object( $post_type )->labels->name ); ?></p>
 
 	<?php
 }
