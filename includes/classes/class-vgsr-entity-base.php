@@ -1110,10 +1110,10 @@ abstract class VGSR_Entity_Base {
 				case 'date' :
 					$date = DateTime::createFromFormat( 'Y-m-d', $value );
 
-					if ( $display ) {
+					if ( $display && ! is_admin() ) {
 						$value = $date->format( get_option( 'date_format' ) );
 					} else {
-						$value = $date->format( 'd/m/Y' );
+						$value = $date->format( 'Y/m/d' );
 					}
 			}
 		}
@@ -1151,8 +1151,8 @@ abstract class VGSR_Entity_Base {
 				// Consider meta type
 				switch ( $this->meta[ $key ]['type'] ) {
 					case 'date' :
-						// Expect d/m/Y, transform to Y-m-d, which can be sorted.
-						$date  = DateTime::createFromFormat( 'd/m/Y', $value );
+						// Expect Y/m/d, transform to Y-m-d, which can be sorted.
+						$date  = DateTime::createFromFormat( 'Y/m/d', $value );
 						if ( $date ) {
 							$value = $date->format( 'Y-m-d' );
 						} else {

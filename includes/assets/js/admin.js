@@ -9,11 +9,13 @@
 
 	// Can I use datepicker? Initiate datepickers
 	if ( $.fn.datepicker ) {
-		$( '.input-text-wrap:not(#inline-edit .input-text-wrap) .datepicker' ).datepicker({
-			dateFormat: 'dd/mm/yy',
+		var dp_args = {
+			dateFormat: 'yy/mm/dd',
 			changeMonth: true,
 			changeYear: true
-		});
+		};
+
+		$( '.input-text-wrap:not(#inline-edit .input-text-wrap) .datepicker' ).datepicker( dp_args );
 	}
 
 	/* wp-admin/edit.php */
@@ -44,11 +46,7 @@
 
 		// Can I use datepicker? Initiate datepickers inside the edit row
 		if ( $.fn.datepicker ) {
-			$editRow.find( '.input-text-wrap .datepicker' ).datepicker({
-				dateFormat: 'dd/mm/yy',
-				changeMonth: true,
-				changeYear: true
-			});
+			$editRow.find( '.input-text-wrap .datepicker' ).datepicker( dp_args );
 		}
 
 		fields = entityEditPost.fields;
