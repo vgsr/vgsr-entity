@@ -545,7 +545,7 @@ abstract class VGSR_Entity_Base {
 	}
 
 	/**
-	 * Create admin settings enqueue scripts hook
+	 * Output scripts on entity admin pages
 	 *
 	 * @since 1.0.0
 	 *

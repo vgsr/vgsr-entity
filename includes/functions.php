@@ -64,6 +64,7 @@ function vgsr_entity_settings_fields() {
  *
  * @uses VGSR_Entity_Base::get_entity_parent()
  * @uses wp_dropdown_pages()
+ * @uses get_post_type_object()
  */
 function vgsr_entity_settings_display_entity_parent_field() {
 
