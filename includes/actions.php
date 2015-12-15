@@ -12,7 +12,11 @@ defined( 'ABSPATH' ) || exit;
 
 /** Actions ************************************************************/
 
+// Core
 add_action( 'init', 'vgsr_entity_init' );
+
+// Extend
+add_action( 'bp_loaded', 'vgsr_entity_buddypress' );
 
 /** Sub-Actions ********************************************************/
 

@@ -108,6 +108,7 @@ final class VGSR_Entity {
 
 		/** Misc **************************************************************/
 
+		$this->extend        = new stdClass();
 		$this->menu_position = 35;
 		$this->base_year     = 1950; // 'Al sinds 1950!'
 	}
@@ -118,9 +119,14 @@ final class VGSR_Entity {
 	 * @since 1.0.0
 	 */
 	private function includes() {
+
+		// Core
 		require( $this->includes_dir . 'actions.php'       );
 		require( $this->includes_dir . 'functions.php'     );
 		require( $this->includes_dir . 'template-tags.php' );
+
+		// Extend
+		require( $this->includes_dir . 'extend/buddypress.php' );
 	}
 
 	/**
