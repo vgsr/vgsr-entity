@@ -338,6 +338,9 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @since 1.1.0
 	 *
+	 * @uses VGSR_Entity_Base::meta_input_field()
+	 * @uses do_action() Calls 'vgsr_{$post_type}_metabox'
+	 *
 	 * @param WP_Post $post
 	 */
 	public function details_metabox( $post ) {
@@ -366,6 +369,7 @@ abstract class VGSR_Entity_Base {
 	 * @since 1.1.0
 	 *
 	 * @uses wp_verify_nonce()
+	 * @uses VGSR_Entity_Base::save()
 	 * @uses VGSR_Entity_Base::has_errors()
 	 *
 	 * @param int $post_id Post ID
@@ -393,6 +397,7 @@ abstract class VGSR_Entity_Base {
 
 			$value = isset( $_POST[ $args['name'] ] ) ? $_POST[ $args['name'] ] : null;
 
+			// Save entity meta value
 			$this->save( $key, $value, $post );
 		}
 
@@ -1153,6 +1158,7 @@ abstract class VGSR_Entity_Base {
 					case 'date' :
 						// Expect Y/m/d, transform to Y-m-d, which can be sorted.
 						$date  = DateTime::createFromFormat( 'Y/m/d', $value );
+
 						if ( $date ) {
 							$value = $date->format( 'Y-m-d' );
 						} else {
