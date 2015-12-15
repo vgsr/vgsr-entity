@@ -524,7 +524,7 @@ abstract class VGSR_Entity_Base {
 		$hook = add_submenu_page(
 			$this->args['posts_page'],
 			$this->args['labels']['settings_title'],
-			__( 'Settings', 'vgsr-entity' ),
+			esc_html__( 'Settings', 'vgsr-entity' ),
 			'manage_options',
 			"{$this->type}-settings",
 			array( $this, 'settings_page'
