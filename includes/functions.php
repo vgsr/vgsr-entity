@@ -58,7 +58,7 @@ function vgsr_entity_settings_fields() {
 }
 
 /**
- * Return the settings fields that apply for the given entity
+ * Return the settings fields that apply for a given entity type
  *
  * @since 1.1.0
  *
@@ -67,7 +67,7 @@ function vgsr_entity_settings_fields() {
  * @param string $entity Post type
  * @return array Settings fields
  */
-function vgsr_entity_settings_fields_by_entity( $entity = '' ) {
+function vgsr_entity_settings_fields_by_type( $entity = '' ) {
 
 	// Bail when this is not an entity
 	if ( ! is_entity( $entity ) )
