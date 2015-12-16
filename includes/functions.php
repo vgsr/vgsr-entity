@@ -166,6 +166,172 @@ function unpow2( $value = 0 ) {
 }
 endif;
 
+/** Features ***********************************************************/
+
+/**
+ * Return the entity's logo ID
+ *
+ * @since 1.1.0
+ *
+ * @param int|WP_Post $post_id Post ID or object
+ * @return int|bool Logo post ID or False when not found
+ */
+function get_entity_logo( $post_id ) {
+	if ( ! $post = get_post( $post_id ) )
+		return false;
+
+	$logo_id = get_post_meta( $post->ID, "_{$post->post_type}-logo-id", true );
+
+	if ( get_post( $logo_id ) ) {
+		return $logo_id;
+	}
+
+	return false;
+}
+
+/**
+ * Output the logo feature metabox input field
+ *
+ * @since 1.1.0
+ *
+ * @uses get_post_meta()
+ * @uses _vgsr_entity_feature_logo_html()
+ * @param WP_Post $post
+ */
+function vgsr_entity_feature_logo_metabox( $post ) {
+	$logo_id = get_entity_logo( $post ); ?>
+
+	<p>
+		<label class="alignleft">
+			<span class="title"><?php esc_html_e( 'Logo', 'vgsr-entity' ); ?></span>
+			<span id="entity-logo"><?php echo _vgsr_entity_feature_logo_html( $logo_id, $post->ID ); ?></span>
+		</label>
+	</p>
+
+	<?php
+
+	// Enqueue media modal script
+	wp_enqueue_script( 'vgsr-entity-media-editor', vgsr_entity()->includes_url . 'assets/js/media-editor.js', array( 'vgsr-entity-admin', 'media-editor' ), '1.1.0', true );
+}
+
+	/**
+	 * Return the logo feature editor HTML
+	 *
+	 * @since 1.1.0
+	 *
+	 * @see _wp_post_thumbnail_html()
+	 *
+	 * @param int $post_id Post ID
+	 * @param int $logo_id Post ID
+	 * @return string Editor HTML
+	 */
+	function _vgsr_entity_feature_logo_html( $logo_id, $post_id ) {
+		global $_wp_additional_image_sizes;
+
+		// Define local variables
+		$post               = get_post( $post_id );
+		$post_type_object   = get_post_type_object( $post->post_type );
+		$set_action_text    = sprintf( __( 'Set %s Logo', 'vgsr-entity' ), $post_type_object->labels->singular_name );
+		$set_thumbnail_link = '<span class="hide-if-no-js"><a title="%s" href="#" id="set-entity-logo">%s</a></span>';
+
+		$content = sprintf( $set_thumbnail_link,
+			esc_attr( $set_action_text ),
+			esc_html( $set_action_text )
+		);
+
+		// This post has a logo
+		if ( $logo_id && get_post( $logo_id ) ) {
+			$size = isset( $_wp_additional_image_sizes['entity-logo'] ) ? 'entity-logo' : array( 266, 266 );
+			$thumbnail_html = wp_get_attachment_image( $logo_id, $size );
+
+			if ( ! empty( $thumbnail_html ) ) {
+				$remove_action_text = sprintf( __( 'Remove %s Logo', 'vgsr-entity' ), $post_type_object->labels->singular_name );
+				$content = sprintf( $set_thumbnail_link,
+					esc_attr( $set_action_text ),
+					$thumbnail_html
+				);
+				$content .= '<span class="hide-if-no-js"><a href="#" id="remove-entity-logo">' . esc_html( $remove_action_text ) . '</a></span>';
+			}
+		}
+
+		return $content;
+	}
+
+/**
+ * Modify the post's media settings
+ *
+ * @since 1.1.0
+ *
+ * @uses is_entity()
+ * @uses get_post_meta()
+ *
+ * @param array $settings Media settings
+ * @param WP_Post $post Post object
+ * @return array Media settings
+ */
+function vgsr_entity_feature_logo_media_settings( $settings, $post ) {
+
+	// Add logo ID to the post's media settings
+	if ( is_entity( $post->post_type ) ) {
+		$logo_id = get_entity_logo( $post );
+		$settings['post']['entityLogoId'] = $logo_id ? $logo_id : -1;
+	}
+
+	return $settings;
+}
+
+/**
+ * Save an entity's logo feature input
+ *
+ * @since 1.1.0
+ *
+ * @see wp_ajax_set_post_thumbnail()
+ *
+ * @uses delete_post_meta()
+ * @uses _vgsr_entity_feature_logo_html()
+ * @uses update_post_meta()
+ * @uses wp_send_json_success()
+ *
+ * @param int $post_id Post ID
+ * @param WP_Post $post Post object
+ */
+function vgsr_entity_feature_logo_save() {
+	$json = ! empty( $_REQUEST['json'] ); // New-style request
+
+	$post_ID = intval( $_POST['post_id'] );
+
+	if ( ! $post = get_post( $post_ID ) )
+		wp_die( -1 );
+	if ( ! current_user_can( 'edit_post', $post_ID ) )
+		wp_die( -1 );
+
+	$logo_id = intval( $_POST['logo_id'] );
+
+	if ( $json ) {
+		check_ajax_referer( "update-post_$post_ID" );
+	} else {
+		check_ajax_referer( "set_entity_logo-$post_ID" );
+	}
+
+	// Delete entity logo
+	if ( $logo_id == '-1' ) {
+		if ( delete_post_meta( $post_ID, "_{$post->post_type}-logo-id" ) ) {
+			$return = _vgsr_entity_feature_logo_html( null, $post_ID );
+			$json ? wp_send_json_success( $return ) : wp_die( $return );
+		} else {
+			wp_die( 0 );
+		}
+	}
+
+	// Update entity logo
+	if ( update_post_meta( $post_ID, "_{$post->post_type}-logo-id", $logo_id ) ) {
+		$return = _vgsr_entity_feature_logo_html( $logo_id, $post_ID );
+		$json ? wp_send_json_success( $return ) : wp_die( $return );
+	}
+
+	wp_die( 0 );
+}
+
 /** Update *************************************************************/
 
 /**

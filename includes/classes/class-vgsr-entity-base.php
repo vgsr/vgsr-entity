@@ -87,6 +87,9 @@ abstract class VGSR_Entity_Base {
 			'menu_icon'     => '',
 			'labels'        => array(),
 
+			// Features
+			'features'      => array( 'logo' ),
+
 			// Parent
 			'parent'        => null,
 
@@ -246,9 +249,11 @@ abstract class VGSR_Entity_Base {
 		add_action( "manage_{$this->type}_posts_custom_column", array( $this, 'column_content'        ), 10, 2 );
 		add_action( 'quick_edit_custom_box',                    array( $this, 'quick_edit_custom_box' ), 10, 2 );
 
+		// Features
+		add_action( 'vgsr_entity_init', array( $this, 'feature_logo_setup' ) );
+
 		// Entity children
 		add_filter( 'the_content', array( $this, 'entity_parent_page_children' ) );
-
 	}
 
 	/**
@@ -418,6 +423,45 @@ abstract class VGSR_Entity_Base {
 		}
 	}
 
+	/** Features *******************************************************/
+
+	/**
+	 * Return whether a given feature is active for this entity
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $feature Feature name
+	 * @return bool Entity feature is active
+	 */
+	public function has_feature( $feature = '' ) {
+		return in_array( $feature, $this->args['features'] );
+	}
+
+	/** Feature: Logo **************************************************/
+
+	/**
+	 * Setup main logic for the logo feature
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses VGSR_Entity_Base::has_feature()
+	 * @uses add_action()
+	 */
+	public function feature_logo_setup() {
+
+		// Bail when the logo feature is not active
+		if ( ! $this->has_feature( 'logo' ) )
+			return;
+
+		// Define logo image size
+		add_image_size( 'entity-logo', 500, 500, 1 );
+
+		// Hook feature actions
+		add_action( "vgsr_{$this->type}_metabox",   'vgsr_entity_feature_logo_metabox',         8    );
+		add_action( 'wp_ajax_vgsr_entity_set_logo', 'vgsr_entity_feature_logo_save'                  );
+		add_filter( 'media_view_settings',          'vgsr_entity_feature_logo_media_settings', 10, 2 );
+	}
+
 	/** List Table *****************************************************/
 
 	/**
@@ -579,20 +623,22 @@ abstract class VGSR_Entity_Base {
 		$is_post     = 'post' === $screen->base && $this->type === $screen->id;
 		$is_settings = $page_hook === $this->args['settings_page'];
 
-		// When on an entity admin page
-		if ( $is_edit || $is_post || $is_settings ) {
-			$entity = vgsr_entity();
+		// Bail when not on an entity admin page
+		if ( ! $is_edit && ! $is_post && ! $is_settings )
+			return;
 
-			// Date fields: Enqueue date picker
-			if ( wp_list_filter( $this->meta, array( 'type' => 'date' ) ) ) {
-				wp_enqueue_script( 'jquery-ui-datepicker' );
-				wp_enqueue_style( 'stuttter-datepicker', $entity->includes_url . 'assets/css/datepicker.css' );
-			}
+		// Get VGSR Entity
+		$entity = vgsr_entity();
 
-			// Enqueue admin scripts
-			wp_enqueue_style( 'vgsr-entity-admin', $entity->includes_url . 'assets/css/admin.css' );
-			wp_enqueue_script( 'vgsr-entity-admin', $entity->includes_url . 'assets/js/admin.js', array( 'jquery' ), '1.1.0', true );
+		// Date fields: Enqueue date picker
+		if ( wp_list_filter( $this->meta, array( 'type' => 'date' ) ) ) {
+			wp_enqueue_script( 'jquery-ui-datepicker' );
+			wp_enqueue_style( 'stuttter-datepicker', $entity->includes_url . 'assets/css/datepicker.css' );
 		}
+
+		// Enqueue admin scripts
+		wp_enqueue_style( 'vgsr-entity-admin', $entity->includes_url . 'assets/css/admin.css' );
+		wp_enqueue_script( 'vgsr-entity-admin', $entity->includes_url . 'assets/js/admin.js', array( 'jquery' ), '1.1.0', true );
 
 		// When on the edit view
 		if ( $is_edit ) {
@@ -606,6 +652,10 @@ abstract class VGSR_Entity_Base {
 
 			// Append additional styles
 			wp_add_inline_style( 'vgsr-entity-admin', $css );
+		}
+
+		// When on the edit or post view
+		if ( $is_edit || $is_post ) {
 
 			// Prepare meta for js
 			$meta = $this->meta;
@@ -615,6 +665,10 @@ abstract class VGSR_Entity_Base {
 
 			// Send data to admin js
 			wp_localize_script( 'vgsr-entity-admin', 'entityEditPost', array(
+				'l10n'   => array(
+					'entityLogoTitle' => sprintf( esc_html__( '%s Logo',     'vgsr-entity' ), $this->args['labels']['singular_name'] ),
+					'setEntityLogo'   => sprintf( esc_html__( 'Set %s Logo', 'vgsr-entity' ), $this->args['labels']['singular_name'] ),
+				),
 				'fields' => array_values( $meta ),
 			) );
 		}

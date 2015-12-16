@@ -19,7 +19,26 @@
 		display: inline-block;
 		width: 6em;
 		font-weight: bold;
+		vertical-align: middle;
 	}
+
+	/* Feature: Logo */
+
+	#vgsr-entity-details #entity-logo {
+		width: calc( 100% - 6.3em ); /* why cannot 6em ? */
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	#vgsr-entity-details #set-entity-logo {
+		display: inline-block;
+	}
+
+		#vgsr-entity-details #entity-logo img {
+			max-width: 100%;
+			height: auto;
+			width: auto;
+		}
 
 /* wp-admin/edit.php */
 
