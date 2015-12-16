@@ -236,8 +236,9 @@ abstract class VGSR_Entity_Base {
 		add_action( 'update_option', array( $this, 'update_entity_parent'     ), 10, 3 );
 
 		// Post
-		add_filter( 'wp_insert_post_parent',   array( $this, 'filter_entity_parent' ), 10, 4 );
-		add_action( "save_post_{$this->type}", array( $this, 'save_metabox'         ), 10, 2 );
+		add_filter( 'wp_insert_post_parent',      array( $this, 'filter_entity_parent' ), 10, 4 );
+		add_action( "vgsr_{$this->type}_metabox", array( $this, 'details_metabox'      )        );
+		add_action( "save_post_{$this->type}",    array( $this, 'save_metabox'         ), 10, 2 );
 
 		// List Table
 		add_filter( "manage_edit-{$this->type}_columns",        array( $this, 'meta_columns'          )        );
@@ -321,12 +322,22 @@ abstract class VGSR_Entity_Base {
 	 * @since 1.0.0
 	 *
 	 * @uses add_meta_box()
+	 * @uses do_action() Calls 'vgsr_{$post_type}_metabox'
 	 */
 	public function add_metabox() {
 		add_meta_box(
 			"vgsr-entity-details",
 			sprintf( __( '%s Details', 'vgsr-entity' ), $this->args['labels']['singular_name'] ),
-			array( $this, 'details_metabox' ),
+			/**
+			 * Run only a dedicated action in the metabox
+			 *
+			 * The `type` variable in the action name points to the post type.
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param WP_Post $post Post object
+			 */
+			function( $post ){ do_action( "vgsr_{$this->type}_metabox", $post ); },
 			$this->type,
 			'side',
 			'high'
@@ -339,7 +350,7 @@ abstract class VGSR_Entity_Base {
 	 * @since 1.1.0
 	 *
 	 * @uses VGSR_Entity_Base::meta_input_field()
-	 * @uses do_action() Calls 'vgsr_{$post_type}_metabox'
+	 * @uses wp_nonce_field()
 	 *
 	 * @param WP_Post $post
 	 */
@@ -348,23 +359,23 @@ abstract class VGSR_Entity_Base {
 		// Walk all meta fields
 		foreach ( array_keys( $this->meta ) as $key ) {
 
-			// Output the meta input field
+			// Get the meta input field
 			$field = $this->meta_input_field( $key, $post );
 
-			if ( $field ) {
+			// Output field and its nonce
+			if ( $field ) : ?>
 
-				// Output nonce verification field
+			<p><?php
+				echo $field;
 				wp_nonce_field( vgsr_entity()->file, "vgsr_{$this->type}_meta_nonce_{$key}" );
+			?></p>
 
-				printf( '<p>%s</p>', $field );
-			}
+			<?php endif;
 		}
-
-		do_action( "vgsr_{$this->type}_metabox", $post );
 	}
 
 	/**
-	 * Save details metabox input
+	 * Save an entity's details metabox input
 	 *
 	 * @since 1.1.0
 	 *
