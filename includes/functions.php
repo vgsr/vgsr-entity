@@ -194,7 +194,7 @@ function get_entity_logo( $post_id ) {
  *
  * @since 1.1.0
  *
- * @uses get_post_meta()
+ * @uses get_entity_logo()
  * @uses _vgsr_entity_feature_logo_html()
  * @param WP_Post $post
  */
@@ -202,10 +202,8 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 	$logo_id = get_entity_logo( $post ); ?>
 
 	<p>
-		<label class="alignleft">
-			<span class="title"><?php esc_html_e( 'Logo', 'vgsr-entity' ); ?></span>
-			<span id="entity-logo"><?php echo _vgsr_entity_feature_logo_html( $logo_id, $post->ID ); ?></span>
-		</label>
+		<span class="title"><?php esc_html_e( 'Logo', 'vgsr-entity' ); ?></span>
+		<span id="entity-logo"><?php echo _vgsr_entity_feature_logo_html( $logo_id, $post->ID ); ?></span>
 	</p>
 
 	<?php
@@ -229,12 +227,12 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 		global $_wp_additional_image_sizes;
 
 		// Define local variables
-		$post               = get_post( $post_id );
-		$post_type_object   = get_post_type_object( $post->post_type );
-		$set_action_text    = sprintf( __( 'Set %s Logo', 'vgsr-entity' ), $post_type_object->labels->singular_name );
-		$set_thumbnail_link = '<span class="hide-if-no-js"><a title="%s" href="#" id="set-entity-logo">%s</a></span>';
+		$post             = get_post( $post_id );
+		$post_type_object = get_post_type_object( $post->post_type );
+		$set_action_text  = sprintf( __( 'Set %s Logo', 'vgsr-entity' ), $post_type_object->labels->singular_name );
+		$set_image_link   = '<span class="hide-if-no-js"><a title="%s" href="#" id="set-entity-logo">%s</a></span>';
 
-		$content = sprintf( $set_thumbnail_link,
+		$content = sprintf( $set_image_link,
 			esc_attr( $set_action_text ),
 			esc_html( $set_action_text )
 		);
@@ -242,15 +240,19 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 		// This post has a logo
 		if ( $logo_id && get_post( $logo_id ) ) {
 			$size = isset( $_wp_additional_image_sizes['entity-logo'] ) ? 'entity-logo' : array( 266, 266 );
-			$thumbnail_html = wp_get_attachment_image( $logo_id, $size );
+			$image_html = wp_get_attachment_image( $logo_id, $size );
 
-			if ( ! empty( $thumbnail_html ) ) {
+			if ( ! empty( $image_html ) ) {
 				$remove_action_text = sprintf( __( 'Remove %s Logo', 'vgsr-entity' ), $post_type_object->labels->singular_name );
-				$content = sprintf( $set_thumbnail_link,
+				$remove_image_link  = '<span class="hide-if-no-js"><a href="#" id="remove-entity-logo" title="%s"><span class="screen-reader-text">%s</span></a></span>';
+
+				$content = sprintf( $set_image_link,
 					esc_attr( $set_action_text ),
-					$thumbnail_html
+					$image_html
+				) . sprintf( $remove_image_link,
+					esc_attr( $remove_action_text ),
+					esc_html( $remove_action_text )
 				);
-				$content .= '<span class="hide-if-no-js"><a href="#" id="remove-entity-logo">' . esc_html( $remove_action_text ) . '</a></span>';
 			}
 		}
 
@@ -263,7 +265,7 @@ function vgsr_entity_feature_logo_metabox( $post ) {
  * @since 1.1.0
  *
  * @uses is_entity()
- * @uses get_post_meta()
+ * @uses get_entity_logo()
  *
  * @param array $settings Media settings
  * @param WP_Post $post Post object

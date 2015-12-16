@@ -15,7 +15,7 @@
 	float: none;
 }
 
-	#vgsr-entity-details .alignleft span.title {
+	#vgsr-entity-details span.title {
 		display: inline-block;
 		width: 6em;
 		font-weight: bold;
@@ -25,6 +25,8 @@
 	/* Feature: Logo */
 
 	#vgsr-entity-details #entity-logo {
+		position: relative;
+		max-width: 266px;
 		width: calc( 100% - 6.3em ); /* why cannot 6em ? */
 		display: inline-block;
 		vertical-align: middle;
@@ -38,7 +40,48 @@
 			max-width: 100%;
 			height: auto;
 			width: auto;
+			vertical-align: bottom; /* remove trailing space in <a> */
 		}
+
+	#vgsr-entity-details #remove-entity-logo {
+		position: absolute;
+		right: 0;
+		text-decoration: none;
+		border-radius: 50%;
+		color: #a00;
+		visibility: hidden;
+	}
+
+		#vgsr-entity-details #remove-entity-logo:hover {
+			color: #f00;
+		}
+
+		#vgsr-entity-details #entity-logo:hover #remove-entity-logo {
+			visibility: visible;
+		}
+
+		#vgsr-entity-details #remove-entity-logo:after {
+			content: '\f158'; /* dashicons-no */
+			font-family: dashicons;
+			display: block;
+			width: 32px;
+			height: 32px;
+			font-size: 32px;
+			line-height: 33px;
+		}
+
+@media screen and (max-width: 782px) {
+	#vgsr-entity-details #remove-entity-logo {
+		visibility: visible;
+	}
+
+		#vgsr-entity-details #remove-entity-logo:after {
+			width: 42px;
+			height: 42px;
+			font-size: 42px;
+			line-height: 43px;
+		}
+}
 
 /* wp-admin/edit.php */
 
