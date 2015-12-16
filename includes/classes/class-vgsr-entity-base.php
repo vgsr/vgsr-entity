@@ -439,7 +439,7 @@ abstract class VGSR_Entity_Base {
 	public function hide_columns( $columns, $screen ) {
 
 		// Append meta columns for our entity's edit.php page
-		if ( "edit-{$this->type}" == $screen->id ) {
+		if ( "edit-{$this->type}" === $screen->id ) {
 			$columns = array_merge( $columns, array_keys( $this->meta ) );
 		}
 
@@ -485,7 +485,7 @@ abstract class VGSR_Entity_Base {
 	public function quick_edit_custom_box( $column, $post_type ) {
 
 		// When this is an entity and our meta field
-		if ( "edit-{$this->type}" == get_current_screen()->id && in_array( $column, array_keys( $this->meta ) ) ) {
+		if ( "edit-{$this->type}" === get_current_screen()->id && in_array( $column, array_keys( $this->meta ) ) ) {
 
 			// Get dummy post data
 			$post = get_default_post_to_edit( $post_type );
