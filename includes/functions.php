@@ -274,7 +274,7 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 function vgsr_entity_feature_logo_media_settings( $settings, $post ) {
 
 	// Add logo ID to the post's media settings
-	if ( is_entity( $post->post_type ) ) {
+	if ( is_a( $post, 'WP_Post' ) && is_entity( $post->post_type ) ) {
 		$logo_id = get_entity_logo( $post );
 		$settings['post']['entityLogoId'] = $logo_id ? $logo_id : -1;
 	}
