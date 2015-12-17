@@ -112,8 +112,8 @@
 
 	/* wp-admin/edit.php */
 
-	.wp-list-table tr th.column-entity-logo,
-	.wp-list-table tr td.column-entity-logo {
+	.wp-list-table.widefat th.column-entity-logo,
+	.wp-list-table.widefat td.column-entity-logo {
 		display: none !important;
 		padding: 0;
 	}
