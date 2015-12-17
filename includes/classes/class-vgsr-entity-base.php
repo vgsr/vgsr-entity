@@ -242,6 +242,7 @@ abstract class VGSR_Entity_Base {
 		add_filter( 'wp_insert_post_parent',      array( $this, 'filter_entity_parent' ), 10, 4 );
 		add_action( "vgsr_{$this->type}_metabox", array( $this, 'details_metabox'      )        );
 		add_action( "save_post_{$this->type}",    array( $this, 'save_metabox'         ), 10, 2 );
+		add_filter( 'the_content',                array( $this, 'content_with_details' )        );
 
 		// List Table
 		add_filter( "manage_edit-{$this->type}_columns",        array( $this, 'table_columns'         )        );
@@ -421,6 +422,30 @@ abstract class VGSR_Entity_Base {
 		if ( $this->has_errors() ) {
 			add_filter( 'redirect_post_location', array( $this, 'add_error_query_arg' ) );
 		}
+	}
+
+	/**
+	 * Modify the content by adding the entity details
+	 * 
+	 * @since 1.1.0
+	 *
+	 * @uses is_main_query()
+	 * @uses is_singular()
+	 * @uses vgsr_entity_details()
+	 *
+	 * @param string $content Post content
+	 * @return string Post content
+	 */
+	public function content_with_details( $content ) {
+
+		// When in the main query's single entity
+		if ( is_main_query() && is_singular( $this->type ) ) {
+
+			// Prepend details to content
+			$content = vgsr_entity_details() . $content;
+		}
+
+		return $content;
 	}
 
 	/** Features *******************************************************/

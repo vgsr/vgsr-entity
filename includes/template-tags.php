@@ -37,6 +37,54 @@ function vgsr_entity_get_meta( $post = 0 ) {
 	return apply_filters( 'vgsr_entity_get_meta', $meta, $post );
 }
 
+/** Details ************************************************************/
+
+/**
+ * Return the markup for a post's entity details
+ *
+ * @since 1.1.0
+ *
+ * @uses is_entity()
+ * @uses do_action() Calls 'vgsr_{$post_type}_details'
+ *
+ * @param int|WP_Post $post Optional. Post ID or object. Defaults to current post.
+ * @return string Entity details markup
+ */
+function vgsr_entity_details( $post = 0 ) {
+
+	// Bail when this is not a post
+	if ( ! $post = get_post( $post ) )
+		return;
+
+	// Bail when this is not an entity
+	if ( ! is_entity( $post->post_type ) )
+		return;
+
+	// Start output buffer
+	ob_start();
+
+	/**
+	 * Output entity details of the given post
+	 *
+	 * The `post_type` variable in the action name points to the post type.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param WP_Post $post Post object
+	 */
+	do_action( "vgsr_{$post->post_type}_details", $post );
+
+	// Close output buffer
+	$details = ob_get_clean();
+
+	// Wrap details in div
+	if ( ! empty( $details ) ) {
+		$details = sprintf( '<div class="entity-details">%s</div>', $details );
+	}
+
+	return $details;
+}
+
 /** Is *****************************************************************/
 
 if ( ! function_exists( 'is_entity' ) ) :
