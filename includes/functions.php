@@ -334,6 +334,54 @@ function vgsr_entity_feature_logo_save() {
 	wp_die( 0 );
 }
 
+/**
+ * Modify the current screen's columns
+ *
+ * @since 1.1.0
+ *
+ * @param array $columns Columns
+ * @return array Columns
+ */
+function vgsr_entity_feature_logo_list_column( $columns ) {
+
+	// Define new columns
+	$new_columns = array();
+
+	// Walk columns. Insert logo column right before 'title'
+	foreach ( $columns as $k => $label ) {
+
+		// This is the Title column
+		if ( 'title' === $k ) {
+			$new_columns['entity-logo'] = __( 'Logo', 'vgsr-entity' );
+		}
+
+		$new_columns[ $k ] = $label;
+	}
+
+	return $new_columns;
+}
+
+/**
+ * Output the list table column content
+ *
+ * @since 1.1.0
+ *
+ * @uses get_entity_logo()
+ * @uses wp_get_attachment_image()
+ *
+ * @param string $column Column name
+ * @param int $post_id Post ID
+ */
+function vgsr_entity_feature_logo_list_column_content( $column, $post_id ) {
+
+	// When this is our column
+	if ( 'entity-logo' === $column ) {
+		if ( $logo_id = get_entity_logo( $post_id ) ) {
+			echo wp_get_attachment_image( $logo_id, array( 38, 38 ) );
+		}
+	}
+}
+
 /** Update *************************************************************/
 
 /**

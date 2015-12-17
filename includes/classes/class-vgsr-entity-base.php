@@ -244,7 +244,7 @@ abstract class VGSR_Entity_Base {
 		add_action( "save_post_{$this->type}",    array( $this, 'save_metabox'         ), 10, 2 );
 
 		// List Table
-		add_filter( "manage_edit-{$this->type}_columns",        array( $this, 'meta_columns'          )        );
+		add_filter( "manage_edit-{$this->type}_columns",        array( $this, 'table_columns'         )        );
 		add_filter( 'hidden_columns',                           array( $this, 'hide_columns'          ), 10, 2 );
 		add_action( "manage_{$this->type}_posts_custom_column", array( $this, 'column_content'        ), 10, 2 );
 		add_action( 'quick_edit_custom_box',                    array( $this, 'quick_edit_custom_box' ), 10, 2 );
@@ -445,7 +445,9 @@ abstract class VGSR_Entity_Base {
 	 * @since 1.1.0
 	 *
 	 * @uses VGSR_Entity_Base::has_feature()
+	 * @uses add_image_size()
 	 * @uses add_action()
+	 * @uses add_filter()
 	 */
 	public function feature_logo_setup() {
 
@@ -456,10 +458,14 @@ abstract class VGSR_Entity_Base {
 		// Define logo image size
 		add_image_size( 'entity-logo', 500, 500, 1 );
 
-		// Hook feature actions
+		// Post actions
 		add_action( "vgsr_{$this->type}_metabox",   'vgsr_entity_feature_logo_metabox',         8    );
 		add_action( 'wp_ajax_vgsr_entity_set_logo', 'vgsr_entity_feature_logo_save'                  );
 		add_filter( 'media_view_settings',          'vgsr_entity_feature_logo_media_settings', 10, 2 );
+
+		// List table actions
+		add_filter( "manage_edit-{$this->type}_columns",        'vgsr_entity_feature_logo_list_column'                );
+		add_action( "manage_{$this->type}_posts_custom_column", 'vgsr_entity_feature_logo_list_column_content', 10, 2 );
 	}
 
 	/** List Table *****************************************************/
@@ -472,7 +478,7 @@ abstract class VGSR_Entity_Base {
 	 * @param array $columns Columns
 	 * @return array Columns
 	 */
-	public function meta_columns( $columns ) {
+	public function table_columns( $columns ) {
 
 		// Append meta columns
 		foreach ( $this->meta as $key => $args ) {
