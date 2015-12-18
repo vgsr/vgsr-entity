@@ -68,6 +68,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 				'label'        => esc_html__( 'Number', 'vgsr-entity' ),
 				'type'         => 'address-number',
 				'name'         => 'address_number',
+				'pair_with'    => 'address-addition',
 			),
 
 			// Address: Addition
@@ -360,13 +361,15 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 * @param int|WP_Post $post Post object
 	 * @param array $meta Meta arguments with value
 	 */
-	public function address_number_input_field( $key, $post, $meta ) { ?>
+	public function address_number_input_field( $key, $post, $meta ) {
+		$pair_with = $meta['pair_with'];
+		$addition  = $this->meta[ $pair_with ]; ?>
 
 		<label class="alignleft">
 			<span class="title"><?php echo esc_html( $meta['column_title'] ); ?></span>
 			<span class="input-text-wrap">
 				<input id="<?php echo $meta['id']; ?>" type="number" name="<?php echo esc_attr( $meta['name'] ); ?>" value="<?php echo esc_attr( $meta['value'] ); ?>" />
-				<input id="<?php echo "{$this->type}_address_addition"; ?>" type="text" name="address_addition" value="<?php echo esc_attr( $this->get( 'address-addition', $post, 'edit' ) ); ?>" />
+				<input id="<?php echo "{$this->type}_{$post->ID}_{$addition['name']}"; ?>" type="text" name="<?php echo "{$addition['name']}"; ?>" value="<?php echo esc_attr( $this->get( $pair_with, $post, 'edit' ) ); ?>" />
 			</span>
 		</label>
 
