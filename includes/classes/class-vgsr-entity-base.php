@@ -822,6 +822,18 @@ abstract class VGSR_Entity_Base {
 		}
 	}
 
+	/**
+	 * Return the setting's field value
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key Setting key
+	 * @return mixed|bool Setting value or False when not found
+	 */
+	public function get_setting( $key ) {
+		return get_option( "_{$this->type}-{$key}", false );
+	}
+
 	/** Errors *********************************************************/
 
 	/**
