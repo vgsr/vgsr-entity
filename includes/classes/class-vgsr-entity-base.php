@@ -1227,6 +1227,8 @@ abstract class VGSR_Entity_Base {
 
 			// Consider meta type
 			switch ( $this->meta[ $key ]['type'] ) {
+
+				// Date
 				case 'date' :
 					$date = DateTime::createFromFormat( 'Y-m-d', $value );
 
@@ -1235,6 +1237,18 @@ abstract class VGSR_Entity_Base {
 					} else {
 						$value = $date->format( 'Y/m/d' );
 					}
+					break;
+
+				// Phone Number
+				case 'phone' :
+
+					// Display clickable call link
+					if ( $display ) { //&& ! is_admin() ) {
+						$tel = preg_replace( '/^0/', '+31', str_replace( '-', '', $value ) );
+						// HTML5 uses `tel`, but Skype uses `callto`
+						$value = sprintf( '<a href="' . ( wp_is_mobile() ? 'callto' : 'tel' ) . ':%s">%s</a>', $tel, $value );
+					}
+					break;
 			}
 		}
 
@@ -1270,6 +1284,20 @@ abstract class VGSR_Entity_Base {
 
 				// Consider meta type
 				switch ( $this->meta[ $key ]['type'] ) {
+
+					// Number
+					case 'number' :
+						$value = absint( $value );
+						break;
+
+					// Year
+					case 'year' :
+						$value = (int) $value;
+						// Expect an integer between the base and current year
+						$error = ( vgsr_entity()->base_year > $value || $value > date( 'Y' ) );
+						break;
+
+					// Date
 					case 'date' :
 						// Expect Y/m/d, transform to Y-m-d, which can be sorted.
 						$date  = DateTime::createFromFormat( 'Y/m/d', $value );
@@ -1279,11 +1307,41 @@ abstract class VGSR_Entity_Base {
 						} else {
 							$error = true;
 						}
-
 						break;
-					case 'year' :
-						$value = (int) $value;
-						$error = ( vgsr_entity()->base_year > $value || $value > date( 'Y' ) );
+
+					// Postcode
+					case 'postcode' :
+						// Strip spaces, uppercase
+						$value = strtoupper( str_replace( ' ', '', trim( $value ) ) );
+						// Expect a string in the form of 9999YZ
+						$error = ! preg_match( "/^[0-9]{4}[A-Z]{2}/", $value );
+						break;
+
+					// Phone Number
+					case 'phone' :
+						// Strip all non-numeric chars
+						$value = preg_replace( '/\D/', '', trim( $value ) );
+
+						// Starts with 31
+						if ( '31' === substr( $value, 0, 2 ) ) {
+							$value = '0' . substr( $value, 2 );
+						}
+
+						// Expect a 10-digit number
+						if ( $error = ( 10 != strlen( $value ) ) )
+							break;
+
+						// Define number prefixes
+						$prefixes = dutch_net_numbers();
+						$prefixes[] = '06';
+
+						// Find the prefix applied
+						foreach ( $prefixes as $prefix ) {
+							if ( $prefix === substr( $value, 0, strlen( $prefix ) ) ) {
+								$value = str_replace( $prefix, "{$prefix}-", $value );
+								break;
+							}
+						}
 						break;
 				}
 

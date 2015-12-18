@@ -265,8 +265,8 @@ class VGSR_Kast extends VGSR_Entity_Base {
 			switch ( $key ) {
 				case 'since' :
 				case 'ceased' :
+				default :
 					$value = parent::get( $key, $post, $context );
-					break;
 			}
 		}
 
