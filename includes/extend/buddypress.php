@@ -44,7 +44,8 @@ class VGSR_Entity_BuddyPress {
 		add_action( 'admin_init', array( $this, 'add_list_table_columns' ) );
 
 		// Post
-		add_filter( 'vgsr_entity_display_meta', array( $this, 'display_meta' ), 10, 2 );
+		add_filter( 'vgsr_entity_display_meta', array( $this, 'display_meta'   ), 10, 2 );
+		add_action( 'vgsr_entity_init',         array( $this, 'entity_details' )        );
 	}
 
 	/** Settings **************************************************************/
@@ -99,6 +100,7 @@ class VGSR_Entity_BuddyPress {
 					'description' => esc_html__( 'Select the field that holds the %s members.', 'vgsr-entity' ),
 				),
 				'display'           => true,
+				'detail_callback'   => array( $this, 'entity_members_detail' ),
 			);
 
 			// Entity olim members
@@ -113,6 +115,7 @@ class VGSR_Entity_BuddyPress {
 					'setting'     => 'bp-olim-members-field',
 					'description' => esc_html__( 'Select the field that holds the %s former members.', 'vgsr-entity' ),
 				),
+				'detail_callback'   => array( $this, 'entity_olim_members_detail' ),
 			);
 		}
 
@@ -261,8 +264,10 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 1.1.0
 	 *
+	 * @uses vgsr_entity()
 	 * @uses VGSR_Entity::get_entities()
 	 * @uses vgsr_entity_settings_fields_by_type()
+	 * @uses VGSR_Entity_Base::get_setting()
 	 *
 	 * @param array $columns Columns
 	 * @return array Columns
@@ -270,7 +275,8 @@ class VGSR_Entity_BuddyPress {
 	public function table_columns( $columns ) {
 
 		// Define local variables
-		$entities  = vgsr_entity()->get_entities();
+		$entity    = vgsr_entity();
+		$entities  = $entity->get_entities();
 		$post_type = get_current_screen()->post_type;
 
 		// Define new columns
@@ -290,7 +296,7 @@ class VGSR_Entity_BuddyPress {
 				foreach ( $fields['buddypress'] as $field => $args ) {
 
 					// Skip fields without values
-					if ( ! get_option( "_{$post_type}-{$field}", false ) )
+					if ( ! $entity->{$post_type}->get_setting( $field ) )
 						continue;
 
 					// Add column
@@ -308,6 +314,7 @@ class VGSR_Entity_BuddyPress {
 	 * @since 1.1.0
 	 *
 	 * @uses VGSR_Entity_BuddyPress:get_post_users()
+	 * @uses VGSR_Entity_Base::get_setting()
 	 *
 	 * @param string $column Column name
 	 * @param int $post_id Post ID
@@ -321,7 +328,7 @@ class VGSR_Entity_BuddyPress {
 
 				// Get column user count
 				$post_type = get_post_type( $post_id );
-				$field_id  = get_option( "_{$post_type}-{$column}", false );
+				$field_id  = vgsr_entity()->{$post_type}->get_setting( $column );
 
 				// Display user count
 				if ( $users = $this->get_post_users( $field_id, $post_id ) ) {
@@ -400,7 +407,7 @@ class VGSR_Entity_BuddyPress {
 			'populate_extras' => false,
 			'count_total'     => false
 		) ) ) {
-			$users = $query->user_ids;
+			$users = $query->results;
 		}
 
 		return $users;
@@ -426,7 +433,7 @@ class VGSR_Entity_BuddyPress {
 
 		// Walk BP fields
 		foreach ( $fields as $field => $args ) {
-			$value = $this->get_post_users( get_option( "_{$post->post_type}-{$field}", false ), $post );
+			$value = $this->get_post_users( vgsr_entity()->{$post->post_type}->get_setting( $field ), $post );
 
 			// Add field with value to meta collection
 			if ( $value ) {
@@ -435,6 +442,71 @@ class VGSR_Entity_BuddyPress {
 		}
 
 		return $meta;
+	}
+
+	/**
+	 * Setup hooks for the BP fields entity details
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses vgsr_entity_settings_fields()
+	 * @uses VGSR_Entity::get_entities()
+	 * @uses add_action()
+	 */
+	public function entity_details() {
+
+		// Get registered settings fields
+		$fields = vgsr_entity_settings_fields();
+
+		// Walk BP fields
+		foreach ( $fields['buddypress'] as $field ) {
+
+			// Bail when without valid detail callback
+			if ( ! isset( $field['detail_callback'] ) || ! is_callable( $field['detail_callback'] ) )
+				continue;
+
+			// Default to all entities
+			if ( ! isset( $field['entity'] ) ) {
+				$field['entity'] = vgsr_entity()->get_entities();
+			}
+
+			// Hook detail callback
+			foreach ( (array) $field['entity'] as $post_type ) {
+				add_action( "vgsr_{$post_type}_details", $field['detail_callback'] );
+			}
+		}
+	}
+
+	/** Details ***************************************************************/
+
+	/**
+	 * Output the members entity detail
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses VGSR_Entity_BuddyPress::get_post_users()
+	 * @uses bp_core_get_userlink()
+	 * @param WP_Post $post Post object
+	 */
+	public function entity_members_detail( $post ) {
+
+		// Bail when no users were found
+		if ( ! $users = $this->get_post_users( vgsr_entity()->{$post->post_type}->get_setting( 'bp-members-field' ), $post->ID ) )
+			return;
+
+		?>
+
+		<div class="entity-members">
+			<h4><?php _e( 'Members', 'vgsr-entity' ); ?></h4>
+
+			<ul class="users">
+				<?php foreach ( $users as $user ) : ?>
+				<li class="user"><?php echo bp_core_get_userlink( $user->ID ); ?></li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+
+		<?php
 	}
 }
 
