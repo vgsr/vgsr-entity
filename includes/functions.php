@@ -219,12 +219,14 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 	 *
 	 * @see _wp_post_thumbnail_html()
 	 *
+	 * @uses has_image_size()
+	 * @uses wp_get_attachment_image()
+	 *
 	 * @param int $post_id Post ID
 	 * @param int $logo_id Post ID
 	 * @return string Editor HTML
 	 */
 	function _vgsr_entity_feature_logo_html( $logo_id, $post_id ) {
-		global $_wp_additional_image_sizes;
 
 		// Define local variables
 		$post             = get_post( $post_id );
@@ -239,7 +241,7 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 
 		// This post has a logo
 		if ( $logo_id && get_post( $logo_id ) ) {
-			$size = isset( $_wp_additional_image_sizes['entity-logo'] ) ? 'entity-logo' : array( 266, 266 );
+			$size = has_image_size( 'entity-logo' ) ? 'entity-logo' : array( 250, 250 );
 			$image_html = wp_get_attachment_image( $logo_id, $size );
 
 			if ( ! empty( $image_html ) ) {
