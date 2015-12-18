@@ -382,6 +382,26 @@ function vgsr_entity_feature_logo_list_column_content( $column, $post_id ) {
 	}
 }
 
+/**
+ * Output markup for the logo feature in the entity details
+ *
+ * @since 1.1.0
+ *
+ * @uses get_entity_logo()
+ * @uses has_image_size()
+ * @uses wp_get_attachment_image()
+ * @param WP_Post $post Post object
+ */
+function vgsr_entity_feature_logo_detail( $post ) {
+
+	// Bail when this post has no logo
+	if ( ! $logo_id = get_entity_logo( $post ) )
+		return;
+
+	$size = has_image_size( 'entity-logo' ) ? 'entity-logo' : array( 250, 250 );
+	printf( '<div class="entity-logo">%s</div>', wp_get_attachment_image( $logo_id, $size ) );
+}
+
 /** Update *************************************************************/
 
 /**
