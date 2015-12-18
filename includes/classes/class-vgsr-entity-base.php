@@ -1241,6 +1241,13 @@ abstract class VGSR_Entity_Base {
 					}
 					break;
 
+				// Postcode
+				case 'postcode' :
+					if ( $display && $value ) {
+						$value = substr( $value, 0, 4 ) . ' ' . substr( $value, 4 );
+					}
+					break;
+
 				// Phone Number
 				case 'phone' :
 
