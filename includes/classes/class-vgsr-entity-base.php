@@ -1243,7 +1243,7 @@ abstract class VGSR_Entity_Base {
 				case 'phone' :
 
 					// Display clickable call link
-					if ( $display ) { //&& ! is_admin() ) {
+					if ( $display && ! is_admin() ) {
 						$tel = preg_replace( '/^0/', '+31', str_replace( '-', '', $value ) );
 						// HTML5 uses `tel`, but Skype uses `callto`
 						$value = sprintf( '<a href="' . ( wp_is_mobile() ? 'callto' : 'tel' ) . ':%s">%s</a>', $tel, $value );
