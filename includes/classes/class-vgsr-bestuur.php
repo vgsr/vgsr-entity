@@ -323,6 +323,8 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 						$value = sprintf( "%s/%s", $value, $value + 1 );
 					}
 					break;
+				default :
+					$value = parent::get( $key, $post, $context );
 			}
 		}
 
@@ -353,7 +355,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 				if ( 'save_post' != current_filter() ) {
 					$wpdb->update( $wpdb->posts, array( 'menu_order' => $value ), array( 'ID' => $post->ID ), array( '%d' ), array( '%d' ) );
 				}
-
 				break;
 			default :
 				$value = parent::save( $key, $value, $post );

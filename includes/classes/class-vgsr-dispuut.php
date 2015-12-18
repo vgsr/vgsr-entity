@@ -140,6 +140,7 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 					$value = $post->menu_order;
 					break;
 				case 'ceased' :
+				default :
 					$value = parent::get( $key, $post, $context );
 					break;
 			}
@@ -172,7 +173,6 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 				if ( 'save_post' != current_filter() ) {
 					$wpdb->update( $wpdb->posts, array( 'menu_order' => $value ), array( 'ID' => $post->ID ), array( '%d' ), array( '%d' ) );
 				}
-
 				break;
 			case 'ceased' :
 			default :
