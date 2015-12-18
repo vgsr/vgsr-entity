@@ -1182,6 +1182,20 @@ abstract class VGSR_Entity_Base {
 
 		$field = ob_get_clean();
 
+		// Default to a text field
+		if ( empty( $field ) ) {
+			ob_start(); ?>
+
+		<label class="alignleft">
+			<span class="title"><?php echo esc_html( $meta['column_title'] ); ?></span>
+			<span class="input-text-wrap"><input type="text" name="<?php echo esc_attr( $meta['name'] ); ?>" value="<?php echo esc_attr( $meta['value'] ); ?>" /></span>
+		</label>
+
+			<?php
+
+			$field = ob_get_clean();
+		}
+
 		return $field;
 	}
 
