@@ -371,7 +371,7 @@ abstract class VGSR_Entity_Base {
 			// Output field and its nonce
 			if ( $field ) : ?>
 
-			<p><?php
+			<p class="<?php echo "{$post->post_type}-{$this->meta[ $key ]['type']}"; ?>"><?php
 				echo $field;
 				wp_nonce_field( vgsr_entity()->file, "vgsr_{$this->type}_meta_nonce_{$key}" );
 			?></p>
@@ -584,14 +584,16 @@ abstract class VGSR_Entity_Base {
 
 			if ( $field ) : ?>
 
-				<fieldset class="inline-edit-col-right entity-quick-edit"><div class="inline-edit-col">
-					<div class="inline-edit-group">
-						<?php // Output nonce verification field ?>
-						<?php wp_nonce_field( vgsr_entity()->file, "vgsr_{$this->type}_meta_nonce_{$column}" ); ?>
+				<fieldset class="inline-edit-col-right entity-quick-edit">
+					<div class="inline-edit-col <?php echo "{$post_type}-{$this->meta[ $column ]['type']}"; ?>">
+						<div class="inline-edit-group">
+							<?php // Output nonce verification field ?>
+							<?php wp_nonce_field( vgsr_entity()->file, "vgsr_{$this->type}_meta_nonce_{$column}" ); ?>
 
-						<?php echo $field; ?>
+							<?php echo $field; ?>
+						</div>
 					</div>
-				</div></fieldset>
+				</fieldset>
 
 			<?php endif;
 		}
