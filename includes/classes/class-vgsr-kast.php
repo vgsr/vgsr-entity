@@ -333,11 +333,14 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		?>
 
 		<div class="entity-address" itemscope itemtype="http://schema.org/ContactPoint">
+			<h4><?php _e( 'Address', 'vgsr-entity' ); ?></h4>
+
 			<div itemscope itemtype="http://schema.org/PostalAddress">
 				<span itemprop="streetAddress" class="address-street"><?php echo $street; ?></span><br/>
 				<span itemprop="postalCode" class="address-postcode"><?php echo $address['address-postcode']; ?></span>
 				<span itemprop="addressLocality" class="address-city"><?php echo $address['address-city']; ?></span><br/>
 			</div>
+
 			<?php if ( ! empty( $addressp['address-phone'] ) ) : ?>
 			<span itemprop="telephone" class="address-phone"><?php echo $address['address-phone']; ?></span>
 			<?php endif; ?>
