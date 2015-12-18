@@ -145,17 +145,18 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 */
 	public function setup_actions() {
 
-		// Admin
-		add_action( 'vgsr_entity_settings_fields',                   array( $this, 'add_settings_fields'          )        );
+		// Settings
+		add_action( 'vgsr_entity_settings_fields', array( $this, 'add_settings_fields' ) );
+		add_filter( 'vgsr_kast_settings_load',     array( $this, 'downsize_thumbs'     ) );
+
+		// Meta
 		add_action( 'vgsr_entity_meta_input_address-number_field',   array( $this, 'address_number_input_field'   ), 10, 3 );
 		add_action( 'vgsr_entity_meta_input_address-addition_field', array( $this, 'address_addition_input_field' ), 10, 3 );
 
-		// Thumbnails
-		add_filter( 'vgsr_kast_settings_load', array( $this, 'downsize_thumbs' ) );
-
 		// Post
-		add_filter( 'the_title',         array( $this, 'filter_the_title' ), 10, 2 );
-		add_filter( 'single_post_title', array( $this, 'filter_the_title' ), 10, 2 );
+		add_filter( 'the_title',                  array( $this, 'filter_the_title' ), 10, 2 );
+		add_filter( 'single_post_title',          array( $this, 'filter_the_title' ), 10, 2 );
+		add_action( "vgsr_{$this->type}_details", array( $this, 'entity_details'   )        );
 	}
 
 	/** Settings *******************************************************/
@@ -291,6 +292,58 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		}
 
 		return $title;
+	}
+
+	/**
+	 * Output the entity's details
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param WP_Post $post Post object
+	 */
+	public function entity_details( $post ) {
+
+		// Bail when the user is not VGSR
+		if ( ! function_exists( 'is_user_vgsr' ) || ! is_user_vgsr() )
+			return;
+
+		// Define local variables
+		$address = array();
+
+		// Walk address details
+		foreach ( array(
+			'address-street', 'address-number', 'address-addition',
+			'address-postcode', 'address-city', 'address-phone'
+		) as $detail ) {
+			$address[ $detail ] = $this->get( $detail, $post );
+		}
+
+		// Bail when whithout details
+		if ( ! array_filter( $address ) )
+			return;
+
+		// Concat street detail
+		$street = "{$address['address-street']} {$address['address-number']}{$address['address-addition']}";
+
+		/**
+		 * Define address markup using schema.org's PostalAddress definition
+		 * @see http://www.iandevlin.com/blog/2012/01/html/marking-up-a-postal-address-with-html
+		 */
+
+		?>
+
+		<div class="entity-address" itemscope itemtype="http://schema.org/ContactPoint">
+			<div itemscope itemtype="http://schema.org/PostalAddress">
+				<span itemprop="streetAddress" class="address-street"><?php echo $street; ?></span><br/>
+				<span itemprop="postalCode" class="address-postcode"><?php echo $address['address-postcode']; ?></span>
+				<span itemprop="addressLocality" class="address-city"><?php echo $address['address-city']; ?></span><br/>
+			</div>
+			<?php if ( ! empty( $addressp['address-phone'] ) ) : ?>
+			<span itemprop="telephone" class="address-phone"><?php echo $address['address-phone']; ?></span>
+			<?php endif; ?>
+		</div>
+
+		<?php
 	}
 
 	/** Meta ***********************************************************/
