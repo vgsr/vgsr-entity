@@ -54,6 +54,54 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		// Meta
 		), array(
 
+			// Address: Street
+			'address-street' => array(
+				'column_title' => esc_html__( 'Street', 'vgsr-entity' ),
+				'label'        => esc_html__( 'Street', 'vgsr-entity' ),
+				'type'         => 'text',
+				'name'         => 'address_street',
+			),
+
+			// Address: Number
+			'address-number' => array(
+				'column_title' => esc_html__( 'Number', 'vgsr-entity' ),
+				'label'        => esc_html__( 'Number', 'vgsr-entity' ),
+				'type'         => 'address-number',
+				'name'         => 'address_number',
+			),
+
+			// Address: Addition
+			'address-addition' => array(
+				'column_title' => esc_html__( 'Addition', 'vgsr-entity' ),
+				'label'        => esc_html__( 'Addition', 'vgsr-entity' ),
+				'type'         => 'address-addition',
+				'name'         => 'address_addition',
+			),
+
+			// Address: Postcode
+			'address-postcode' => array(
+				'column_title' => esc_html__( 'Postcode', 'vgsr-entity' ),
+				'label'        => esc_html__( 'Postcode', 'vgsr-entity' ),
+				'type'         => 'postcode',
+				'name'         => 'address_postcode',
+			),
+
+			// Address: City
+			'address-city' => array(
+				'column_title' => esc_html__( 'City', 'vgsr-entity' ),
+				'label'        => esc_html__( 'City', 'vgsr-entity' ),
+				'type'         => 'text',
+				'name'         => 'address_city',
+			),
+
+			// Address: Phone
+			'address-phone' => array(
+				'column_title' => esc_html__( 'Phone', 'vgsr-entity' ),
+				'label'        => esc_html__( 'Phone', 'vgsr-entity' ),
+				'type'         => 'phone',
+				'name'         => 'address_phone',
+			),
+
 			// Since
 			'since' => array(
 				'column_title' => esc_html__( 'Since',    'vgsr-entity' ),
@@ -98,7 +146,9 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	public function setup_actions() {
 
 		// Admin
-		add_action( 'vgsr_entity_settings_fields', array( $this, 'add_settings_fields' ) );
+		add_action( 'vgsr_entity_settings_fields',                   array( $this, 'add_settings_fields'          )        );
+		add_action( 'vgsr_entity_meta_input_address-number_field',   array( $this, 'address_number_input_field'   ), 10, 3 );
+		add_action( 'vgsr_entity_meta_input_address-addition_field', array( $this, 'address_addition_input_field' ), 10, 3 );
 
 		// Thumbnails
 		add_filter( 'vgsr_kast_settings_load', array( $this, 'downsize_thumbs' ) );
@@ -246,6 +296,42 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	/** Meta ***********************************************************/
 
 	/**
+	 * Return the input markup for the Address: Number meta field
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key Meta key
+	 * @param int|WP_Post $post Post object
+	 * @param array $meta Meta arguments with value
+	 */
+	public function address_number_input_field( $key, $post, $meta ) { ?>
+
+		<label class="alignleft">
+			<span class="title"><?php echo esc_html( $meta['column_title'] ); ?></span>
+			<span class="input-text-wrap">
+				<input id="<?php echo $meta['id']; ?>" type="number" name="<?php echo esc_attr( $meta['name'] ); ?>" value="<?php echo esc_attr( $meta['value'] ); ?>" />
+				<input id="<?php echo "{$this->type}_address_addition"; ?>" type="text" name="address_addition" value="<?php echo esc_attr( $this->get( 'address-addition', $post, 'edit' ) ); ?>" />
+			</span>
+		</label>
+
+		<?php
+	}
+
+	/**
+	 * Return the input markup for the Address: Addition meta field
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $key Meta key
+	 * @param int|WP_Post $post Post object
+	 * @param array $meta Meta arguments with value
+	 */
+	public function address_addition_input_field( $key, $post, $meta ) {
+		// Just output an HTML space, so the field is not empty while it is.
+		echo '&nbsp;';
+	}
+
+	/**
 	 * Return the requested entity meta value
 	 *
 	 * @since 1.1.0
@@ -289,6 +375,9 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		$value = sanitize_text_field( $value );
 
 		switch ( $key ) {
+			case 'address-addition' :
+				$value = parent::save( $key, strtoupper( $value ), $post );
+				break;
 			case 'since' :
 			case 'ceased' :
 			default :

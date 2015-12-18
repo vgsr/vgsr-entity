@@ -22,6 +22,19 @@
 		vertical-align: middle;
 	}
 
+	#vgsr-entity-details .kast-address-number input {
+		width: 82px !important;
+	}
+
+	.inline-edit-row .kast-address-number input {
+		width: 83.5px !important;
+	}
+
+	#vgsr-entity-details .kast-address-number + .kast-address-addition,
+	.inline-edit-row .kast-address-number + .kast-address-addition {
+		display: none;
+	}
+
 	/* Feature: Logo */
 
 	#vgsr-entity-details #entity-logo {
