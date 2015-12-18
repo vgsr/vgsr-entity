@@ -1217,7 +1217,7 @@ abstract class VGSR_Entity_Base {
 
 		// Define default value
 		$value   = null;
-		$display = ( 'display' === $context );
+		$display = ( 'display' === $context ) && ! is_admin();
 
 		// Bail when no post was found
 		if ( $post = get_post( $post ) ) {
@@ -1231,8 +1231,10 @@ abstract class VGSR_Entity_Base {
 				// Date
 				case 'date' :
 					$date = DateTime::createFromFormat( 'Y-m-d', $value );
+					if ( ! $date )
+						break;
 
-					if ( $display && ! is_admin() ) {
+					if ( $display ) {
 						$value = $date->format( get_option( 'date_format' ) );
 					} else {
 						$value = $date->format( 'Y/m/d' );
@@ -1243,7 +1245,7 @@ abstract class VGSR_Entity_Base {
 				case 'phone' :
 
 					// Display clickable call link
-					if ( $display && ! is_admin() ) {
+					if ( $display && $value ) {
 						$tel = preg_replace( '/^0/', '+31', str_replace( '-', '', $value ) );
 						// HTML5 uses `tel`, but Skype uses `callto`
 						$value = sprintf( '<a href="' . ( wp_is_mobile() ? 'callto' : 'tel' ) . ':%s">%s</a>', $tel, $value );
