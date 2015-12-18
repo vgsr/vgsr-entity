@@ -1138,14 +1138,14 @@ abstract class VGSR_Entity_Base {
 	 * @since 1.1.0
 	 *
 	 * @param string $key Meta key
-	 * @param int|WP_Post $post Current post
+	 * @param int|WP_Post $post Post object
 	 * @return string Meta input field
 	 */
 	public function meta_input_field( $key, $post ) {
 
 		// Define field variables
 		$meta          = $this->meta[ $key ];
-		$meta['id']    = esc_attr( "{$this->type}_{$meta['name']}" );
+		$meta['id']    = esc_attr( "{$this->type}_{$post->ID}_{$meta['name']}" );
 		$meta['value'] = esc_attr( $this->get( $key, $post, 'edit' ) );
 
 		// Start output buffer
