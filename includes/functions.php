@@ -196,6 +196,7 @@ function get_entity_logo( $post_id ) {
  *
  * @uses get_entity_logo()
  * @uses _vgsr_entity_feature_logo_html()
+ * @uses wp_enqueue_script()
  * @param WP_Post $post
  */
 function vgsr_entity_feature_logo_metabox( $post ) {
@@ -262,7 +263,7 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 	}
 
 /**
- * Modify the post's media settings
+ * Modify the post's media settings for the logo feature
  *
  * @since 1.1.0
  *
@@ -337,7 +338,7 @@ function vgsr_entity_feature_logo_save() {
 }
 
 /**
- * Modify the current screen's columns
+ * Modify the current screen's columns for the logo feature
  *
  * @since 1.1.0
  *
@@ -364,7 +365,7 @@ function vgsr_entity_feature_logo_list_column( $columns ) {
 }
 
 /**
- * Output the list table column content
+ * Output the list table column content for the logo feature
  *
  * @since 1.1.0
  *
