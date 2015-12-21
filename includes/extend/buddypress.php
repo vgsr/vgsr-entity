@@ -110,16 +110,16 @@ class VGSR_Entity_BuddyPress {
 		// When using XProfile
 		if ( bp_is_active( 'xprofile' ) ) {
 
-			// Entity members
+			// Dispuut members
 			$bp_fields['bp-members-field'] = array(
 				'title'             => esc_html__( 'Members Field', 'vgsr-entity' ),
 				'callback'          => array( $this, 'xprofile_field_setting' ),
 				'sanitize_callback' => 'intval',
-				'entity'            => array( 'dispuut', 'kast' ),
+				'entity'            => array( 'dispuut' ),
 				'column_title'      => esc_html__( 'Members', 'vgsr-entity' ),
 				'args'              => array(
 					'setting'     => 'bp-members-field',
-					'description' => esc_html__( 'Select the field that holds the %s members.', 'vgsr-entity' ),
+					'description' => esc_html__( 'Select the field that holds the Dispuut\'s members.', 'vgsr-entity' ),
 				),
 
 				// Field display
@@ -129,20 +129,39 @@ class VGSR_Entity_BuddyPress {
 				'show_detail'       => is_user_vgsr(),
 			);
 
-			// Entity olim members
-			$bp_fields['bp-olim-members-field'] = array(
-				'title'             => esc_html__( 'Former Members Field', 'vgsr-entity' ),
+			// Kast habitants
+			$bp_fields['bp-habitants-field'] = array(
+				'title'             => esc_html__( 'Habitants Field', 'vgsr-entity' ),
 				'callback'          => array( $this, 'xprofile_field_setting' ),
 				'sanitize_callback' => 'intval',
 				'entity'            => array( 'kast' ),
-				'column_title'      => esc_html__( 'Former Members', 'vgsr-entity' ),
+				'column_title'      => esc_html__( 'Habitants', 'vgsr-entity' ),
 				'args'              => array(
-					'setting'     => 'bp-olim-members-field',
-					'description' => esc_html__( 'Select the field that holds the %s former members.', 'vgsr-entity' ),
+					'setting'     => 'bp-habitants-field',
+					'description' => esc_html__( 'Select the field that holds the Kast\'s habitants.', 'vgsr-entity' ),
 				),
 
 				// Field display
-				'detail_callback'   => array( $this, 'entity_olim_members_detail' ),
+				'is_entry_meta'     => true,
+				'meta_label'        => esc_html__( '%d Habitants', 'vgsr-entity' ),
+				'detail_callback'   => array( $this, 'entity_habitants_detail' ),
+				'show_detail'       => is_user_vgsr(),
+			);
+
+			// Kast former habitants
+			$bp_fields['bp-olim-habitants-field'] = array(
+				'title'             => esc_html__( 'Former Habitants Field', 'vgsr-entity' ),
+				'callback'          => array( $this, 'xprofile_field_setting' ),
+				'sanitize_callback' => 'intval',
+				'entity'            => array( 'kast' ),
+				'column_title'      => esc_html__( 'Former Habitants', 'vgsr-entity' ),
+				'args'              => array(
+					'setting'     => 'bp-olim-habitants-field',
+					'description' => esc_html__( 'Select the field that holds the Kast\'s former habitants.', 'vgsr-entity' ),
+				),
+
+				// Field display
+				'detail_callback'   => array( $this, 'entity_olim_habitants_detail' ),
 				'show_detail'       => is_user_vgsr(),
 			);
 		}
@@ -348,7 +367,8 @@ class VGSR_Entity_BuddyPress {
 		// Check column name
 		switch ( $column ) {
 			case 'bp-members-field' :
-			case 'bp-olim-members-field' :
+			case 'bp-habitants-field' :
+			case 'bp-olim-habitants-field' :
 
 				// Display user count
 				if ( $users = $this->get( $column, $post_id ) ) {
@@ -436,13 +456,14 @@ class VGSR_Entity_BuddyPress {
 
 			// Members
 			case 'bp-members-field' :
+			case 'bp-habitants-field' :
 				if ( $display ) {
 					// For non-VGSR, discount oud-leden
 					$query_args = is_user_vgsr() ? array() : array( 'member_type__not_in' => array( 'oud-lid' ) );
 					$value = $this->get_post_users( $value, $post, $query_args );
 				}
 				break;
-			case 'bp-olim-members-field' :
+			case 'bp-olim-habitants-field' :
 				$value = $this->get_post_users( $value, $post );
 				break;
 		}
@@ -473,7 +494,8 @@ class VGSR_Entity_BuddyPress {
 
 		// Parse query args
 		$query_args = wp_parse_args( $query_args, array(
-			'type'            => 'alphabetical',
+			'type'            => '',    // Query $wpdb->users, sort by ID
+			'per_page'        => 0,     // No limit
 			'populate_extras' => false,
 			'count_total'     => false
 		) );
@@ -513,12 +535,16 @@ class VGSR_Entity_BuddyPress {
 	 */
 	public function bp_has_members_for_post( $field, $post = 0 ) {
 
-		// Bail when the field or post is invalid
-		if ( ! $field || ! $post = get_post( $post ) )
+		// Bail when the post is invalid
+		if ( ! $post = get_post( $post ) )
+			return false;
+
+		// Bail when the field is invalid
+		if ( ! $field_id = $this->get( $field, $post->post_type ) )
 			return false;
 
 		// Define global query ids
-		$this->query_field_id = (int) $this->get( $field, $post->post_type );
+		$this->query_field_id = (int) $field_id;
 		$this->query_post_id  = (int) $post->ID;
 
 		// Modify query vars
@@ -526,7 +552,8 @@ class VGSR_Entity_BuddyPress {
 
 		// Query members and setup members template
 		$has_members = bp_has_members( array(
-			'type'            => 'alphabetical',
+			'type'            => '',    // Query $wpdb->users, order by ID
+			'per_page'        => 0,     // No limit
 			'populate_extras' => false,
 		) );
 
@@ -636,24 +663,35 @@ class VGSR_Entity_BuddyPress {
 	/** Details ***************************************************************/
 
 	/**
-	 * Output the members entity detail
+	 * Output a list of members of the post's field
 	 *
 	 * @since 1.1.0
 	 *
 	 * @uses VGSR_Entity_BuddyPress::bp_has_members_for_post()
-	 * @uses bp_core_get_userlink()
+	 * @uses bp_member_class()
+	 * @uses bp_member_permalink()
+	 * @uses bp_member_avatar()
+	 * @uses bp_member_name()
+	 *
 	 * @param WP_Post $post Post object
+	 * @param array $args List arguments
 	 */
-	public function entity_members_detail( $post ) {
+	public function display_members_list( $post, $args = array() ) {
+
+		// Parse list args
+		$args = wp_parse_args( $args, array(
+			'field' => '',
+			'label' => esc_html__( 'Members', 'vgsr-entity' ),
+		) );
 
 		// Bail when this post has no members
-		if ( ! $this->bp_has_members_for_post( 'bp-members-field', $post->ID ) )
+		if ( ! $this->bp_has_members_for_post( $args['field'], $post->ID ) )
 			return;
 
 		?>
 
 		<div class="entity-members">
-			<h4><?php _e( 'Members', 'vgsr-entity' ); ?></h4>
+			<h4><?php echo $args['label']; ?></h4>
 
 			<ul class="bp-item-list">
 				<?php while ( bp_members() ) : bp_the_member(); ?>
@@ -673,6 +711,51 @@ class VGSR_Entity_BuddyPress {
 		</div>
 
 		<?php
+	}
+
+	/**
+	 * Display the Members entity detail
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses VGSR_Entity_BuddyPress::display_members_list()
+	 * @param WP_Post $post Post object
+	 */
+	public function entity_members_detail( $post ) {
+		$this->display_members_list( $post, array(
+			'field' => 'bp-members-field',
+			'label' => esc_html__( 'Members', 'vgsr-entity' ),
+		) );
+	}
+
+	/**
+	 * Display the Habitants entity detail
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses VGSR_Entity_BuddyPress::display_members_list()
+	 * @param WP_Post $post Post object
+	 */
+	public function entity_habitants_detail( $post ) {
+		$this->display_members_list( $post, array(
+			'field' => 'bp-habitants-field',
+			'label' => esc_html__( 'Habitants', 'vgsr-entity' ),
+		) );
+	}
+
+	/**
+	 * Display the Former Habitants entity detail
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses VGSR_Entity_BuddyPress::display_members_list()
+	 * @param WP_Post $post Post object
+	 */
+	public function entity_olim_habitants_detail( $post ) {
+		$this->display_members_list( $post, array(
+			'field' => 'bp-olim-habitants-field',
+			'label' => esc_html__( 'Former Habitants', 'vgsr-entity' ),
+		) );
 	}
 }
 
