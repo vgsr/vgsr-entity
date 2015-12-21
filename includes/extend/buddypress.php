@@ -383,11 +383,12 @@ class VGSR_Entity_BuddyPress {
 	 * @since 1.1.0
 	 *
 	 * @uses VGSR_Entity_Base::get_setting()
-	 * @uses VGSR_Entity_BuddyPress::get_post_users()
 	 * @uses is_user_vgsr()
+	 * @uses VGSR_Entity_BuddyPress::get_post_users()
 	 *
 	 * @param string $field Settings field
 	 * @param string|int|WP_Post $post Optional. Post type, post ID or object. Defaults to current post.
+	 * @param string $context Optional. Defaults to 'display'.
 	 * @return mixed Entity setting value
 	 */
 	public function get( $field, $post = 0, $context = 'display' ) {
@@ -453,7 +454,7 @@ class VGSR_Entity_BuddyPress {
 		if ( ! $post = get_post( $post ) )
 			return $users;
 
-		// Define query args
+		// Parse query args
 		$query_args = wp_parse_args( $query_args, array(
 			'type'            => 'alphabetical',
 			'populate_extras' => false,
