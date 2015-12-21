@@ -109,6 +109,7 @@ class VGSR_Entity_BuddyPress {
 				'is_entry_meta'     => true,
 				'meta_label'        => esc_html__( '%d Members', 'vgsr-entity' ),
 				'detail_callback'   => array( $this, 'entity_members_detail' ),
+				'show_detail'       => is_user_vgsr(),
 			);
 
 			// Entity olim members
@@ -125,6 +126,7 @@ class VGSR_Entity_BuddyPress {
 
 				// Field display
 				'detail_callback'   => array( $this, 'entity_olim_members_detail' ),
+				'show_detail'       => is_user_vgsr(),
 			);
 		}
 
@@ -470,11 +472,12 @@ class VGSR_Entity_BuddyPress {
 	 */
 	public function entity_details() {
 
-		// Get registered settings fields
+		// Get registered settings fields for display
 		$fields = vgsr_entity_settings_fields();
+		$fields = wp_list_filter( $fields['buddypress'], array( 'show_detail' => true ) );
 
 		// Walk BP fields
-		foreach ( $fields['buddypress'] as $field ) {
+		foreach ( $fields as $field ) {
 
 			// Bail when without valid detail callback
 			if ( ! isset( $field['detail_callback'] ) || ! is_callable( $field['detail_callback'] ) )
