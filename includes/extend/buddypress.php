@@ -386,9 +386,10 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @param int|string $field Field ID or name
 	 * @param int|WP_Post $post Optional. Post ID or post object. Defaults to current post.
+	 * @param array $query_args Additional query arguments for BP_User_Query
 	 * @return array User ids
 	 */
-	public function get_post_users( $field, $post = 0 ) {
+	public function get_post_users( $field, $post = 0, $query_args = array() ) {
 
 		// Define local variable
 		$users = array();
@@ -397,19 +398,24 @@ class VGSR_Entity_BuddyPress {
 		if ( ! $post = get_post( $post ) )
 			return $users;
 
-		// Query users that have registered to be a member of this entity
-		if ( $field && $query = new BP_User_Query( array(
+		// Define query args
+		$query_args = wp_parse_args( $query_args, array(
 			'type'            => 'alphabetical',
-			'xprofile_query'  => array(
-				array(
-					'field' => $field,
-					// Compare against post ID, title or slug
-					'value' => array( $post->ID, $post->post_title, $post->post_name ),
-				)
-			),
 			'populate_extras' => false,
 			'count_total'     => false
-		) ) ) {
+		) );
+
+		// Define XProfile query args
+		$xprofile_query   = isset( $query_args['xprofile_query'] ) ? $query_args['xprofile_query'] : array();
+		$xprofile_query[] = array(
+			'field' => $field,
+			// Compare against post ID, title or slug
+			'value' => array( $post->ID, $post->post_title, $post->post_name ),
+		);
+		$query_args['xprofile_query'] = $xprofile_query;
+
+		// Query users that are connected to this entity
+		if ( $field && $query = new BP_User_Query( $query_args ) ) {
 			$users = $query->results;
 		}
 
