@@ -26,6 +26,12 @@ class VGSR_Entity_BuddyPress {
 	 * @uses VGSR_Entity_BuddyPress::setup_actions()
 	 */
 	public function __construct() {
+
+		// Require the VGSR plugin, since we'll be working with member
+		// queries here.
+		if ( ! function_exists( 'vgsr' ) )
+			return;
+
 		$this->setup_actions();
 	}
 
