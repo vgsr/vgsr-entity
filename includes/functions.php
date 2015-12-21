@@ -482,3 +482,24 @@ function vgsr_entity_update_110() {
 		}
 	}
 }
+
+/** VGSR ***************************************************************/
+
+/**
+ * Define fallback functions for when the VGSR plugin is not active.
+ *
+ * @since 1.1.0
+ */
+function vgsr_entity_vgsr_fallback() {
+	if ( ! function_exists( 'is_user_vgsr' ) ) :
+		function is_user_vgsr() { return false; }
+	endif;
+
+	if ( ! function_exists( 'is_user_lid' ) ) :
+		function is_user_lid() { return false; }
+	endif;
+
+	if ( ! function_exists( 'is_user_oudlid' ) ) :
+		function is_user_oudlid() { return false; }
+	endif;
+}
