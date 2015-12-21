@@ -655,7 +655,7 @@ class VGSR_Entity_BuddyPress {
 		<div class="entity-members">
 			<h4><?php _e( 'Members', 'vgsr-entity' ); ?></h4>
 
-			<ul class="members">
+			<ul class="bp-item-list">
 				<?php while ( bp_members() ) : bp_the_member(); ?>
 				<li <?php bp_member_class( array( 'member' ) ); ?>>
 					<div class="item-avatar">
