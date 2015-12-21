@@ -141,33 +141,33 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @uses get_post_type_object()
+	 * @uses VGSR_Entity_BuddyPress::get()
 	 * @uses VGSR_Entity_BuddyPress::xprofile_fields_dropdown()
 	 * @uses xprofile_get_field()
 	 * @uses network_admin_url() Defaults to `admin_url()` when not in multisite
+	 * @uses get_post_type_object()
 	 */
 	public function xprofile_field_setting( $args = array() ) {
 
-		// Get current post type
+		// Get current post type and the settings field's value
 		$post_type = get_current_screen()->post_type;
-		$setting   = "_{$post_type}-{$args['setting']}";
-		$field     = get_option( $setting, false );
+		$field_id  = $this->get( $args['setting'], $post_type );
 
 		// Fields dropdown
 		$this->xprofile_fields_dropdown( array(
-			'name'     => $setting,
-			'selected' => $field,
+			'name'     => "_{$post_type}-{$args['setting']}",
+			'selected' => $field_id,
 			'echo'     => true,
 		) );
 
 		// Display View link
-		if ( $field && current_user_can( 'bp_moderate' ) ) {
+		if ( $field_id && current_user_can( 'bp_moderate' ) ) {
 			printf( ' <a class="button button-secondary" href="%s" target="_blank">%s</a>', 
 				esc_url( add_query_arg(
 					array(
 						'page'     => 'bp-profile-setup',
-						'group_id' => xprofile_get_field( $field )->group_id,
-						'field_id' => $field,
+						'group_id' => xprofile_get_field( $field_id )->group_id,
+						'field_id' => $field_id,
 						'mode'     => 'edit_field'
 					),
 					network_admin_url( 'users.php' )
@@ -275,10 +275,9 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @uses vgsr_entity()
 	 * @uses VGSR_Entity::get_entities()
 	 * @uses vgsr_entity_settings_fields_by_type()
-	 * @uses VGSR_Entity_Base::get_setting()
+	 * @uses VGSR_Entity_BuddyPress::get()
 	 *
 	 * @param array $columns Columns
 	 * @return array Columns
@@ -286,8 +285,6 @@ class VGSR_Entity_BuddyPress {
 	public function table_columns( $columns ) {
 
 		// Define local variables
-		$entity    = vgsr_entity();
-		$entities  = $entity->get_entities();
 		$post_type = get_current_screen()->post_type;
 
 		// Define new columns
@@ -307,7 +304,7 @@ class VGSR_Entity_BuddyPress {
 				foreach ( $fields['buddypress'] as $field => $args ) {
 
 					// Skip fields without values
-					if ( ! $entity->{$post_type}->get_setting( $field ) )
+					if ( ! $this->get( $field, $post_type ) )
 						continue;
 
 					// Add column
@@ -324,8 +321,7 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @uses VGSR_Entity_BuddyPress:get_post_users()
-	 * @uses VGSR_Entity_Base::get_setting()
+	 * @uses VGSR_Entity_BuddyPress::get()
 	 *
 	 * @param string $column Column name
 	 * @param int $post_id Post ID
@@ -337,12 +333,8 @@ class VGSR_Entity_BuddyPress {
 			case 'bp-members-field' :
 			case 'bp-olim-members-field' :
 
-				// Get column user count
-				$post_type = get_post_type( $post_id );
-				$field_id  = vgsr_entity()->{$post_type}->get_setting( $column );
-
 				// Display user count
-				if ( $users = $this->get_post_users( $field_id, $post_id ) ) {
+				if ( $users = $this->get( $column, $post_id ) ) {
 					echo count( $users );
 				}
 
@@ -384,6 +376,61 @@ class VGSR_Entity_BuddyPress {
 	}
 
 	/** Post ******************************************************************/
+
+	/**
+	 * Return the value for the given settings field of the post (type)
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses VGSR_Entity_Base::get_setting()
+	 * @uses VGSR_Entity_BuddyPress::get_post_users()
+	 * @uses is_user_vgsr()
+	 *
+	 * @param string $field Settings field
+	 * @param string|int|WP_Post $post Optional. Post type, post ID or object. Defaults to current post.
+	 * @return mixed Entity setting value
+	 */
+	public function get( $field, $post = 0, $context = 'display' ) {
+
+		// When not providing a post type
+		if ( ! post_type_exists( $post ) ) {
+
+			// Find a valid post, or bail
+			if ( $post = get_post( $post ) ) {
+				$post_type = $post->post_type;
+			} else {
+				return null;
+			}
+		} else {
+			$post_type = $post;
+		}
+
+		// Get settings field's value
+		$value   = vgsr_entity()->{$post_type}->get_setting( $field );
+		$display = ( 'display' === $context );
+
+		// Return early when not going into a post's detail
+		if ( ! is_a( $post, 'WP_Post' ) )
+			return $value;
+
+		// Consider settings field
+		switch ( $field ) {
+
+			// Members
+			case 'bp-members-field' :
+				if ( $display ) {
+					// For non-VGSR, discount oud-leden
+					$query_args = is_user_vgsr() ? array() : array( 'member_type__not_in' => array( 'oud-lid' ) );
+					$value = $this->get_post_users( $value, $post, $query_args );
+				}
+				break;
+			case 'bp-olim-members-field' :
+				$value = $this->get_post_users( $value, $post );
+				break;
+		}
+
+		return $value;
+	}
 
 	/**
 	 * Return the users that are have the post as a field value
@@ -436,7 +483,7 @@ class VGSR_Entity_BuddyPress {
 	 * @since 1.1.0
 	 *
 	 * @uses vgsr_entity_settings_fields_by_type()
-	 * @uses VGSR_Entity_BuddyPress::get_post_users()
+	 * @uses VGSR_Entity_BuddyPress::get()
 	 *
 	 * @param array $meta Display meta
 	 * @param WP_Post $post Post object
@@ -450,11 +497,16 @@ class VGSR_Entity_BuddyPress {
 
 		// Walk BP fields
 		foreach ( $fields as $field => $args ) {
-			$value = $this->get_post_users( vgsr_entity()->{$post->post_type}->get_setting( $field ), $post );
 
 			// Add field with value to meta collection
-			if ( $value ) {
-				$meta[ $field ] = array( 'value' => count( $value ), 'label' => $args['meta_label'] );
+			if ( $value = $this->get( $field, $post ) ) {
+
+				// Default to an array's count
+				if ( is_array( $value ) ) {
+					$value = count( $value );
+				}
+
+				$meta[ $field ] = array( 'value' => $value, 'label' => $args['meta_label'] );
 			}
 		}
 
@@ -502,14 +554,14 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @uses VGSR_Entity_BuddyPress::get_post_users()
+	 * @uses VGSR_Entity_BuddyPress::get()
 	 * @uses bp_core_get_userlink()
 	 * @param WP_Post $post Post object
 	 */
 	public function entity_members_detail( $post ) {
 
 		// Bail when no users were found
-		if ( ! $users = $this->get_post_users( vgsr_entity()->{$post->post_type}->get_setting( 'bp-members-field' ), $post->ID ) )
+		if ( ! $users = $this->get( 'bp-members-field', $post ) )
 			return;
 
 		?>
