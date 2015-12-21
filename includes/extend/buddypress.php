@@ -94,12 +94,14 @@ class VGSR_Entity_BuddyPress {
 				'sanitize_callback' => 'intval',
 				'entity'            => array( 'dispuut', 'kast' ),
 				'column_title'      => esc_html__( 'Members', 'vgsr-entity' ),
-				'label'             => esc_html__( '%d Members', 'vgsr-entity' ),
 				'args'              => array(
 					'setting'     => 'bp-members-field',
 					'description' => esc_html__( 'Select the field that holds the %s members.', 'vgsr-entity' ),
 				),
-				'display'           => true,
+
+				// Field display
+				'is_entry_meta'     => true,
+				'meta_label'        => esc_html__( '%d Members', 'vgsr-entity' ),
 				'detail_callback'   => array( $this, 'entity_members_detail' ),
 			);
 
@@ -110,11 +112,12 @@ class VGSR_Entity_BuddyPress {
 				'sanitize_callback' => 'intval',
 				'entity'            => array( 'kast' ),
 				'column_title'      => esc_html__( 'Former Members', 'vgsr-entity' ),
-				'label'             => esc_html__( '%d Former Members', 'vgsr-entity' ),
 				'args'              => array(
 					'setting'     => 'bp-olim-members-field',
 					'description' => esc_html__( 'Select the field that holds the %s former members.', 'vgsr-entity' ),
 				),
+
+				// Field display
 				'detail_callback'   => array( $this, 'entity_olim_members_detail' ),
 			);
 		}
@@ -429,7 +432,7 @@ class VGSR_Entity_BuddyPress {
 
 		// Get registered settings fields
 		$fields = vgsr_entity_settings_fields_by_type( $post->post_type );
-		$fields = wp_list_filter( $fields['buddypress'], array( 'display' => true ) );
+		$fields = wp_list_filter( $fields['buddypress'], array( 'is_entry_meta' => true ) );
 
 		// Walk BP fields
 		foreach ( $fields as $field => $args ) {
@@ -437,7 +440,7 @@ class VGSR_Entity_BuddyPress {
 
 			// Add field with value to meta collection
 			if ( $value ) {
-				$meta[ $field ] = array( 'value' => count( $value ), 'label' => $args['label'] );
+				$meta[ $field ] = array( 'value' => count( $value ), 'label' => $args['meta_label'] );
 			}
 		}
 
