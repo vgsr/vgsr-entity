@@ -19,6 +19,23 @@ if ( ! class_exists( 'VGSR_Entity_BuddyPress' ) ) :
 class VGSR_Entity_BuddyPress {
 
 	/**
+	 * Holds internal reference of the XProfile field ID for which
+	 * to query members.
+	 *
+	 * @since 1.1.0
+	 * @var int
+	 */
+	private $query_field_id = 0;
+
+	/**
+	 * Holds internal reference of the post ID for which to query members.
+	 *
+	 * @since 1.1.0
+	 * @var int
+	 */
+	private $query_post_id = 0;
+
+	/**
 	 * Class constructor
 	 *
 	 * @since 1.1.0
@@ -434,7 +451,7 @@ class VGSR_Entity_BuddyPress {
 	}
 
 	/**
-	 * Return the users that are have the post as a field value
+	 * Return the users that have the post as a field value
 	 *
 	 * @since 1.1.0
 	 *
@@ -450,8 +467,8 @@ class VGSR_Entity_BuddyPress {
 		// Define local variable
 		$users = array();
 
-		// Bail when the post is not valid
-		if ( ! $post = get_post( $post ) )
+		// Bail when the field or post is invalid
+		if ( ! $field || ! $post = get_post( $post ) )
 			return $users;
 
 		// Parse query args
@@ -471,11 +488,79 @@ class VGSR_Entity_BuddyPress {
 		$query_args['xprofile_query'] = $xprofile_query;
 
 		// Query users that are connected to this entity
-		if ( $field && $query = new BP_User_Query( $query_args ) ) {
+		if ( $query = new BP_User_Query( $query_args ) ) {
 			$users = $query->results;
 		}
 
 		return $users;
+	}
+
+	/**
+	 * Run a modified version of {@see bp_has_members()} for the given post users
+	 *
+	 * When the post has users, the `$members_template` global is setup for use.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @uses VGSR_Entity_BuddyPress::get()
+	 * @uses add_action()
+	 * @uses bp_has_members()
+	 * @uses remove_action()
+	 *
+	 * @param string $field Settings field name
+	 * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post.
+	 * @return bool Whether the post has any users
+	 */
+	public function bp_has_members_for_post( $field, $post = 0 ) {
+
+		// Bail when the field or post is invalid
+		if ( ! $field || ! $post = get_post( $post ) )
+			return false;
+
+		// Define global query ids
+		$this->query_field_id = (int) $this->get( $field, $post->post_type );
+		$this->query_post_id  = (int) $post->ID;
+
+		// Modify query vars
+		add_action( 'bp_pre_user_query_construct', array( $this, 'filter_user_query_post_users' ) );
+
+		// Query members and setup members template
+		$has_members = bp_has_members( array(
+			'type'            => 'alphabetical',
+			'populate_extras' => false,
+		) );
+
+		// Reset global query ids
+		$this->query_field_id = $this->query_post_id = 0;
+
+		// Unhook query modifier
+		remove_action( 'bp_pre_user_query_construct', array( $this, 'filter_user_query_post_users' ) );
+
+		return $has_members;
+	}
+
+	/**
+	 * Modify the BP_User_Query before query construction
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param BP_User_Query $query
+	 */
+	public function filter_user_query_post_users( $query ) {
+
+		// Bail when the field or post is invalid
+		if ( ! $this->query_field_id || ! $post = get_post( $this->query_post_id ) )
+			return;
+
+		// Define XProfile query args
+		$xprofile_query   = is_array( $query->query_vars['xprofile_query'] ) ? $query->query_vars['xprofile_query'] : array();
+		$xprofile_query[] = array(
+			'field' => $this->query_field_id,
+			// Compare against post ID, title or slug
+			'value' => array( $post->ID, $post->post_title, $post->post_name ),
+		);
+
+		$query->query_vars['xprofile_query'] = $xprofile_query;
 	}
 
 	/**
@@ -555,14 +640,14 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @uses VGSR_Entity_BuddyPress::get()
+	 * @uses VGSR_Entity_BuddyPress::bp_has_members_for_post()
 	 * @uses bp_core_get_userlink()
 	 * @param WP_Post $post Post object
 	 */
 	public function entity_members_detail( $post ) {
 
-		// Bail when no users were found
-		if ( ! $users = $this->get( 'bp-members-field', $post ) )
+		// Bail when this post has no members
+		if ( ! $this->bp_has_members_for_post( 'bp-members-field', $post->ID ) )
 			return;
 
 		?>
@@ -570,10 +655,20 @@ class VGSR_Entity_BuddyPress {
 		<div class="entity-members">
 			<h4><?php _e( 'Members', 'vgsr-entity' ); ?></h4>
 
-			<ul class="users">
-				<?php foreach ( $users as $user ) : ?>
-				<li class="user"><?php echo bp_core_get_userlink( $user->ID ); ?></li>
-				<?php endforeach; ?>
+			<ul class="members">
+				<?php while ( bp_members() ) : bp_the_member(); ?>
+				<li <?php bp_member_class( array( 'member' ) ); ?>>
+					<div class="item-avatar">
+						<a href="<?php bp_member_permalink(); ?>"><?php bp_member_avatar(); ?></a>
+					</div>
+
+					<div class="item">
+						<div class="item-title">
+							<a href="<?php bp_member_permalink(); ?>"><?php bp_member_name(); ?></a>
+						</div>
+					</div>
+				</li>
+				<?php endwhile; ?>
 			</ul>
 		</div>
 
