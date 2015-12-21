@@ -13,8 +13,8 @@ defined( 'ABSPATH' ) || exit;
 /** Actions ************************************************************/
 
 // Core
-add_action( 'init',             'vgsr_entity_init'          );
-add_action( 'vgsr_entity_init', 'vgsr_entity_vgsr_fallback' );
+add_action( 'init',           'vgsr_entity_init'          );
+add_action( 'plugins_loaded', 'vgsr_entity_vgsr_fallback' );
 
 // Extend
 add_action( 'bp_loaded', 'vgsr_entity_buddypress' );
