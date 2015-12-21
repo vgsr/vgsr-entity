@@ -1232,7 +1232,7 @@ abstract class VGSR_Entity_Base {
 		$display = ( 'display' === $context ) && ! is_admin();
 
 		// Bail when no post was found
-		if ( $post = get_post( $post ) )
+		if ( ! $post = get_post( $post ) )
 			return $value;
 
 		// Get value
