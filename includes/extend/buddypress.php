@@ -36,6 +36,14 @@ class VGSR_Entity_BuddyPress {
 	private $query_post_id = 0;
 
 	/**
+	 * Holds internal reference whether to query a multi-value field.
+	 *
+	 * @since 1.1.0
+	 * @var bool
+	 */
+	private $query_multiple = false;
+
+	/**
 	 * Class constructor
 	 *
 	 * @since 1.1.0
@@ -463,8 +471,10 @@ class VGSR_Entity_BuddyPress {
 					$value = $this->get_post_users( $value, $post, $query_args );
 				}
 				break;
+
+			// Private members
 			case 'bp-olim-habitants-field' :
-				$value = $this->get_post_users( $value, $post );
+				$value = $this->get_post_users( $value, $post, array(), true );
 				break;
 		}
 
@@ -481,9 +491,10 @@ class VGSR_Entity_BuddyPress {
 	 * @param int|string $field Field ID or name
 	 * @param int|WP_Post $post Optional. Post ID or post object. Defaults to current post.
 	 * @param array $query_args Additional query arguments for BP_User_Query
+	 * @param bool $multiple Optional. Whether the profile field holds multiple values.
 	 * @return array User ids
 	 */
-	public function get_post_users( $field, $post = 0, $query_args = array() ) {
+	public function get_post_users( $field, $post = 0, $query_args = array(), $multiple = false ) {
 
 		// Define local variable
 		$users = array();
@@ -500,14 +511,41 @@ class VGSR_Entity_BuddyPress {
 			'count_total'     => false
 		) );
 
-		// Define XProfile query args
-		$xprofile_query   = isset( $query_args['xprofile_query'] ) ? $query_args['xprofile_query'] : array();
-		$xprofile_query[] = array(
-			'field' => $field,
-			// Compare against post ID, title or slug
-			'value' => array( $post->ID, $post->post_title, $post->post_name ),
-		);
-		$query_args['xprofile_query'] = $xprofile_query;
+		/**
+		 * Account for multi-value profile fields which are stored as
+		 * serialized arrays.
+		 *
+		 * @see https://buddypress.trac.wordpress.org/ticket/6789
+		 */
+		if ( $multiple ) {
+			global $wpdb, $bp;
+
+			// Query user ids that compare against post ID, title or slug
+			$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$bp->profile->table_name_data} WHERE field_id = %d AND ( value LIKE %s OR value LIKE %s OR value LIKE %s )",
+				$field, '%"' . $post->ID . '"%', '%"' . $post->post_title . '"%', '%"' . $post->post_name . '"%'
+			) );
+
+			// Limit member query to the found users
+			if ( ! empty( $user_ids ) ) {
+				$query_args['include'] = $user_ids;
+
+			// Bail when no users were found
+			} else {
+				return $users;
+			}
+
+		// Use BP_XProfile_Query
+		} else {
+
+			// Define XProfile query args
+			$xprofile_query   = isset( $query_args['xprofile_query'] ) ? $query_args['xprofile_query'] : array();
+			$xprofile_query[] = array(
+				'field' => $field,
+				// Compare against post ID, title or slug
+				'value' => array( $post->ID, $post->post_title, $post->post_name ),
+			);
+			$query_args['xprofile_query'] = $xprofile_query;
+		}
 
 		// Query users that are connected to this entity
 		if ( $query = new BP_User_Query( $query_args ) ) {
@@ -531,9 +569,10 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @param string $field Settings field name
 	 * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post.
+	 * @param bool $multiple Optional. Whether the profile field holds multiple values.
 	 * @return bool Whether the post has any users
 	 */
-	public function bp_has_members_for_post( $field, $post = 0 ) {
+	public function bp_has_members_for_post( $field, $post = 0, $multiple = false ) {
 
 		// Bail when the post is invalid
 		if ( ! $post = get_post( $post ) )
@@ -546,6 +585,7 @@ class VGSR_Entity_BuddyPress {
 		// Define global query ids
 		$this->query_field_id = (int) $field_id;
 		$this->query_post_id  = (int) $post->ID;
+		$this->query_multiple = $multiple;
 
 		// Modify query vars
 		add_action( 'bp_pre_user_query_construct', array( $this, 'filter_user_query_post_users' ) );
@@ -557,11 +597,12 @@ class VGSR_Entity_BuddyPress {
 			'populate_extras' => false,
 		) );
 
-		// Reset global query ids
-		$this->query_field_id = $this->query_post_id = 0;
-
 		// Unhook query modifier
 		remove_action( 'bp_pre_user_query_construct', array( $this, 'filter_user_query_post_users' ) );
+
+		// Reset global query ids
+		$this->query_field_id = $this->query_post_id = 0;
+		$this->query_multiple = false;
 
 		return $has_members;
 	}
@@ -579,15 +620,41 @@ class VGSR_Entity_BuddyPress {
 		if ( ! $this->query_field_id || ! $post = get_post( $this->query_post_id ) )
 			return;
 
-		// Define XProfile query args
-		$xprofile_query   = is_array( $query->query_vars['xprofile_query'] ) ? $query->query_vars['xprofile_query'] : array();
-		$xprofile_query[] = array(
-			'field' => $this->query_field_id,
-			// Compare against post ID, title or slug
-			'value' => array( $post->ID, $post->post_title, $post->post_name ),
-		);
+		/**
+		 * Account for multi-value profile fields which are stored as
+		 * serialized arrays.
+		 *
+		 * @see https://buddypress.trac.wordpress.org/ticket/6789
+		 */
+		if ( $this->query_multiple ) {
+			global $wpdb, $bp;
 
-		$query->query_vars['xprofile_query'] = $xprofile_query;
+			// Query user ids that compare against post ID, title or slug
+			$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$bp->profile->table_name_data} WHERE field_id = %d AND ( value LIKE %s OR value LIKE %s OR value LIKE %s )",
+				$this->query_field_id, '%"' . $post->ID . '"%', '%"' . $post->post_title . '"%', '%"' . $post->post_name . '"%'
+			) );
+
+			// Bail query when nothing found
+			if ( empty( $user_ids ) ) {
+				$user_ids = array( 0 );
+			}
+
+			// Limit member query to the found users
+			$query->query_vars['include'] = $user_ids;
+
+		// Use BP_XProfile_Query
+		} else {
+
+			// Define XProfile query args
+			$xprofile_query   = is_array( $query->query_vars['xprofile_query'] ) ? $query->query_vars['xprofile_query'] : array();
+			$xprofile_query[] = array(
+				'field' => $this->query_field_id,
+				// Compare against post ID, title or slug
+				'value' => array( $post->ID, $post->post_title, $post->post_name ),
+			);
+
+			$query->query_vars['xprofile_query'] = $xprofile_query;
+		}
 	}
 
 	/**
@@ -680,12 +747,13 @@ class VGSR_Entity_BuddyPress {
 
 		// Parse list args
 		$args = wp_parse_args( $args, array(
-			'field' => '',
-			'label' => esc_html__( 'Members', 'vgsr-entity' ),
+			'field'    => '',
+			'label'    => esc_html__( 'Members', 'vgsr-entity' ),
+			'multiple' => false,
 		) );
 
 		// Bail when this post has no members
-		if ( ! $this->bp_has_members_for_post( $args['field'], $post->ID ) )
+		if ( ! $this->bp_has_members_for_post( $args['field'], $post->ID, $args['multiple'] ) )
 			return;
 
 		?>
@@ -753,8 +821,9 @@ class VGSR_Entity_BuddyPress {
 	 */
 	public function entity_olim_habitants_detail( $post ) {
 		$this->display_members_list( $post, array(
-			'field' => 'bp-olim-habitants-field',
-			'label' => esc_html__( 'Former Habitants', 'vgsr-entity' ),
+			'field'    => 'bp-olim-habitants-field',
+			'label'    => esc_html__( 'Former Habitants', 'vgsr-entity' ),
+			'multiple' => true,
 		) );
 	}
 }
