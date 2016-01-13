@@ -462,7 +462,7 @@ class VGSR_Entity_BuddyPress {
 		// Consider settings field
 		switch ( $field ) {
 
-			// Members
+			// Public members
 			case 'bp-members-field' :
 			case 'bp-habitants-field' :
 				if ( $display ) {
