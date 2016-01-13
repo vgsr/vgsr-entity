@@ -2,8 +2,8 @@
 Contributors: offereins
 Tags: vgsr, bestuur, dispuut, kast
 Requires at least: 3.6
-Tested up to: 4.0
-Stable tag: 1.0.2
+Tested up to: 4.4
+Stable tag: 2.0.0-alpha
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,9 @@ Custom post type management for besturen, disputen and kasten
 3. Activate VGSR Entity from your Plugins page.
 
 == Changelog ==
+
+= 2.0.0 =
+* Full rewrite of entity logic and entity metadata
 
 = 1.0.2 =
 * Fixed bug in adjacency logic
