@@ -63,17 +63,30 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @since 1.0.0
 	 * @since 1.1.0 Rearranged parameters and added `$meta` parameter.
-	 * 
-	 * @param string $type Post type name. Required
-	 * @param array $args Entity and post type arguments
-	 * @param array $meta Meta field arguments
-	 * @param array $errors Error messages with their numeric ids
 	 *
 	 * @uses VGSR_Entity_Base::entity_globals()
 	 * @uses VGSR_Entity_Base::entity_actions()
 	 * @uses VGSR_Entity_Base::setup_globals()
 	 * @uses VGSR_Entity_Base::setup_requires()
 	 * @uses VGSR_Entity_Base::setup_actions()
+	 *
+	 * @param string $type Post type name. Required
+	 * @param array $args {
+	 *     Optional. Array of entity arguments
+	 *
+	 *     @type array  $labels        A list of post type labels used in register_post_type(). Default
+	 *                                 to the function's default.
+	 *     @type string $menu_icon     The dashicon class name for a menu icon. Default to none.
+	 *     @type bool   $has_archive   Whether to enable archiving of entity posts. Default to false.
+	 *     @type array  $features      A collection of active entity features. Default to 'logo'.
+	 *     @type int    $parent        The post ID of the entity's post parent. Default to entity setting.
+	 *     @type string $posts_page    The admin url string that will serve as the parent menu slug.
+	 *                                 Default to the post type edit.php page.
+	 *     @type string $settings_page The settings page hook used for admin page targeting. Defaults to
+	 *                                 the result of add_submenu_page().
+	 * }
+	 * @param array $meta Meta field arguments
+	 * @param array $errors Error messages with their numeric ids
 	 */
 	public function __construct( $type, $args = array(), $meta = array(), $errors = array() ) {
 
