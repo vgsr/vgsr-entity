@@ -523,7 +523,7 @@ final class VGSR_Entity {
 
 				// Default to page and single template
 				'page.php',
-				'single.php'
+				'single.php',
 			);
 
 			// Generic entity template

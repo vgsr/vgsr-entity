@@ -82,21 +82,12 @@ abstract class VGSR_Entity_Base {
 
 		// Setup entity args
 		$this->args = wp_parse_args( $args, array(
-
-			// Post type
-			'menu_icon'     => '',
 			'labels'        => array(),
-
-			// Features
+			'menu_icon'     => '',
+			'has_archive'   => false,
 			'features'      => array( 'logo' ),
-
-			// Parent
 			'parent'        => null,
-
-			// Default thumbsize. @todo When theme does not support post-thumbnail image size
 			'thumbsize'     => 'post-thumbnail',
-
-			// Admin Pages
 			'posts_page'    => "edit.php?post_type={$type}",
 			'settings_page' => '',
 		) );
@@ -248,6 +239,7 @@ abstract class VGSR_Entity_Base {
 		add_filter( "manage_edit-{$this->type}_columns",        array( $this, 'table_columns'         )        );
 		add_filter( 'hidden_columns',                           array( $this, 'hide_columns'          ), 10, 2 );
 		add_action( "manage_{$this->type}_posts_custom_column", array( $this, 'column_content'        ), 10, 2 );
+		add_action( 'display_post_states',                      array( $this, 'post_states'           ), 10, 2 );
 		add_action( 'quick_edit_custom_box',                    array( $this, 'quick_edit_custom_box' ), 10, 2 );
 
 		// Features
@@ -288,6 +280,8 @@ abstract class VGSR_Entity_Base {
 	 * @uses register_post_type()
 	 * @uses VGSR_Entity_Base::get_entity_parent_slug()
 	 * @uses apply_filters() Calls 'vgsr_{$post_type}_register_post_type'
+	 * @uses register_post_status()
+	 * @uses is_user_vgsr()
 	 */
 	public function register_post_type() {
 
@@ -320,6 +314,20 @@ abstract class VGSR_Entity_Base {
 				'register_meta_box_cb' => array( $this, 'add_metabox' ),
 			) )
 		);
+
+		// The archive post status
+		$this->archive_status_id = 'archive';
+
+		// Register archive post status
+		if ( $this->args['has_archive'] ) {
+			register_post_status( $this->archive_status_id, array(
+				'label'               => esc_html__( 'Archived', 'vgsr-entity' ),
+				'label_count'         => _n_noop( 'Archived <span class="count">(%s)</span>', 'Archived <span class="count">(%s)</span>', 'vgsr-entity' ),
+				// Archived posts are only shown to VGSR users
+				'exclude_from_search' => ! is_user_vgsr(),
+				'public'              => is_user_vgsr(),
+			) );
+		}
 	}
 
 	/**
@@ -331,6 +339,8 @@ abstract class VGSR_Entity_Base {
 	 * @uses do_action() Calls 'vgsr_{$post_type}_metabox'
 	 */
 	public function add_metabox() {
+
+		// Details metabox
 		add_meta_box(
 			"vgsr-entity-details",
 			sprintf( __( '%s Details', 'vgsr-entity' ), $this->args['labels']['singular_name'] ),
@@ -561,6 +571,25 @@ abstract class VGSR_Entity_Base {
 	}
 
 	/**
+	 * Modify the entity post's display post states
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param array $states Post states
+	 * @param WP_Post $post Post object
+	 * @return array Post states
+	 */
+	public function post_states( $states, $post ) {
+
+		// Append a state for archived posts
+		if ( $this->type === $post->post_type && $this->args['has_archive'] && $this->archive_status_id === $post->post_status ) {
+			$states[] = __( 'Archived', 'vgsr-entity' );
+		}
+
+		return $states;
+	}
+
+	/**
 	 * Output the entity's meta input fields in the quick edit box
 	 *
 	 * @since 1.1.0
@@ -702,6 +731,16 @@ abstract class VGSR_Entity_Base {
 			// Send data to admin js
 			wp_localize_script( 'vgsr-entity-admin', 'entityEditPost', array(
 				'l10n'   => array(
+
+					// Archive post status
+					'archiveStatusId' => $this->archive_status_id,
+					'archiveLabel'    => esc_html__( 'Archived', 'vgsr-entity' ),
+					'publishStatusId' => 'publish',
+					'publishLabel'    => esc_html__( 'Published' ),
+					'hasArchive'      => (bool) $this->args['has_archive'],
+					'isArchived'      => $is_post ? ( $this->archive_status_id === get_post()->post_status ) : false,
+
+					// Logo feature
 					'entityLogoTitle' => sprintf( esc_html__( '%s Logo',     'vgsr-entity' ), $this->args['labels']['singular_name'] ),
 					'setEntityLogo'   => sprintf( esc_html__( 'Set %s Logo', 'vgsr-entity' ), $this->args['labels']['singular_name'] ),
 				),

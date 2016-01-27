@@ -30,8 +30,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 
 		// Construct entity
 		parent::__construct( 'kast', array(
-			'menu_icon' => 'dashicons-admin-home',
-			'labels'    => array(
+			'labels'      => array(
 				'name'               => __( 'Kasten',                   'vgsr-entity' ),
 				'singular_name'      => __( 'Kast',                     'vgsr-entity' ),
 				'add_new'            => __( 'New Kast',                 'vgsr-entity' ),
@@ -46,10 +45,12 @@ class VGSR_Kast extends VGSR_Entity_Base {
 				'menu_name'          => __( 'Kasten',                   'vgsr-entity' ),
 				'settings_title'     => __( 'Kasten Settings',          'vgsr-entity' ),
 			),
+			'menu_icon'   => 'dashicons-admin-home',
+			'has_archive' => true,
 
 			// Thumbnail
-			'thumbsize' => 'mini-thumb',
-			'mini_size' => 100,
+			'thumbsize'   => 'mini-thumb',
+			'mini_size'   => 100,
 
 		// Meta
 		), array(

@@ -8,22 +8,48 @@
 /* global inlineEditPost, entityEditPost */
 ( function( $ ) {
 
+	var settings = entityEditPost.l10n, _inline, dpArgs;
+
 	// Can I use datepicker? Initiate datepickers
 	if ( $.fn.datepicker ) {
-		var dp_args = {
+		dpArgs = {
 			dateFormat: 'yy/mm/dd',
 			changeMonth: true,
 			changeYear: true
 		};
 
-		$( '.input-text-wrap:not(#inline-edit .input-text-wrap) .datepicker' ).datepicker( dp_args );
+		$( '.input-text-wrap:not(#inline-edit .input-text-wrap) .datepicker' ).datepicker( dpArgs );
+	}
+
+	/* wp-admin/post.php */
+
+	// Archive post status
+	if ( settings.hasArchive ) {
+
+		// Prepend post status dropdown option
+		$( '<option />', {
+			value:    settings.archiveStatusId,
+			selected: settings.isArchived,
+			text:     settings.archiveLabel
+		}).prependTo( '#post_status' );
+
+		// Correct displayed status
+		if ( settings.isArchived ) {
+			$( '#post-status-display' ).text( settings.archiveLabel );
+
+			// Restore 'Published' dropdown option
+			$( '<option />', {
+				value:    settings.publishStatusId,
+				text:     settings.publishLabel
+			}).insertAfter( '#post_status option:first' );
+		}
 	}
 
 	/* wp-admin/edit.php */
 
 	// Move entity quick edit lines into the right col
-	var $inline = $( '.inline-edit-row' );
-	$inline.find( '.entity-quick-edit .inline-edit-col' ).appendTo( $inline.find( '.inline-edit-col-right' ).first() );
+	_inline = $( '.inline-edit-row' );
+	_inline.find( '.entity-quick-edit .inline-edit-col' ).appendTo( _inline.find( '.inline-edit-col-right' ).first() );
 
 	// When editing inline
 	if ( typeof inlineEditPost !== 'undefined' ) {
@@ -37,29 +63,69 @@
 			// Run the original inline edit function
 			wp_inline_edit.apply( this, arguments );
 
-			var t = this, $editRow, $rowData, fields, val;
+			/*
+			 * From here on we add to the original logic
+			 */
+			var t = this, _editRow, _rowData, fields, val;
 
 			if ( typeof( id ) === 'object' ) {
 				id = t.getId( id );
 			}
 
-			$editRow = $( '.inline-editor' );
-			$rowData = $( '#post-' + id );
+			_editRow = $( '.inline-editor' );
+			_rowData = $( '#post-' + id );
 
 			// Can I use datepicker? Initiate datepickers inside the edit row
 			if ( $.fn.datepicker ) {
-				$editRow.find( '.input-text-wrap .datepicker' ).datepicker( dp_args );
+				_editRow.find( '.input-text-wrap .datepicker' ).datepicker( dpArgs );
 			}
 
+			// Post type meta fields
 			fields = entityEditPost.fields;
 
-			// Refresh input values for this post
+			// Refresh input values for this post's meta fields
 			for ( f = 0; f < fields.length; f++ ) {
-				val = $( '.' + fields[ f ].key + ' .edit-value', $rowData );
+				val = $( '.' + fields[ f ].key + ' .edit-value', _rowData );
 				// Deal with Twemoji
 				val.find( 'img' ).replaceWith( function() { return this.alt; } );
 				val = val.text();
-				$( ':input[name="' + fields[ f ].name + '"]', $editRow ).val( val );
+				$( ':input[name="' + fields[ f ].name + '"]', _editRow ).val( val );
+			}
+
+			// Archive post status
+			if ( settings.hasArchive ) {
+
+				// Prepend post status dropdown option
+				$( '<option />', {
+					value:    settings.archiveStatusId,
+					selected: ( settings.archiveStatusId == _rowData.find( '#inline_' + id ).find( '._status' ).text() ),
+					text:     settings.archiveLabel
+				}).prependTo( _editRow.find( ':input[name="_status"]' ) );
+			}
+		};
+
+		// Create a copy of the WP inline bulk edit function
+		var wp_bulk_edit = inlineEditPost.setBulk;
+
+		// Overwrite the function with our own code
+		inlineEditPost.setBulk = function() {
+
+			// Run the original bulk edit function
+			wp_bulk_edit.apply( this, arguments );
+
+			/*
+			 * From here on we add to the original logic
+			 */
+			var _bulkRow = $( '.inline-editor' );
+
+			// Archive post status
+			if ( settings.hasArchive && ! _bulkRow.find( ':input[name="_status"] option[value="archive"]' ).length ) {
+
+				// Prepend post status dropdown option - after the select-none
+				$( '<option />', {
+					value: settings.archiveStatusId,
+					text:  settings.archiveLabel
+				}).insertAfter( _bulkRow.find( ':input[name="_status"] option:first' ) );
 			}
 		};
 	}

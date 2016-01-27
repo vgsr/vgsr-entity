@@ -30,8 +30,7 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 
 		// Construct entity
 		parent::__construct( 'dispuut', array(
-			'menu_icon' => 'dashicons-format-status',
-			'labels'    => array(
+			'labels'      => array(
 				'name'               => __( 'Disputen',                   'vgsr-entity' ),
 				'singular_name'      => __( 'Dispuut',                    'vgsr-entity' ),
 				'add_new'            => __( 'New Dispuut',                'vgsr-entity' ),
@@ -46,6 +45,8 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 				'menu_name'          => __( 'Disputen',                   'vgsr-entity' ),
 				'settings_title'     => __( 'Disputen Settings',          'vgsr-entity' ),
 			),
+			'menu_icon'   => 'dashicons-format-status',
+			'has_archive' => true,
 
 		// Meta
 		), array(
