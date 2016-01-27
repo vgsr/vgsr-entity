@@ -576,19 +576,17 @@ final class VGSR_Entity {
 	 * @param bool $in_same_term 
 	 * @param array $excluded_terms
 	 * @param string $taxonomy
-	 * @param WP_Post $post
+	 * @param WP_Post $post Post object. Added in WP 4.4
 	 * @return string WHERE clause
 	 */
-	public function adjacent_post_where( $where, $in_same_term, $excluded_terms, $taxonomy, $post ) {
+	public function adjacent_post_where( $where, $in_same_term, $excluded_terms, $taxonomy, $post = null ) {
+
+		// Get the post
+		$post = get_post( $post );
 
 		// When this is an entity
-		if ( is_entity() ) {
+		if ( is_entity( $post ) ) {
 			global $wpdb;
-
-			// Get the current post
-			if ( ! $post ) {
-				$post = get_post();
-			}
 
 			$previous = ( 'get_previous_post_where' === current_filter() );
 			$op = $previous ? '<' : '>';
@@ -612,13 +610,16 @@ final class VGSR_Entity {
 	 * @since 1.1.0 Added support for the `$post` param as per WP 4.4
 	 * 
 	 * @param string $order_by ORDER BY clause
-	 * @param WP_Post $post Post object
+	 * @param WP_Post $post Post object. Added in WP 4.4
 	 * @return string ORDER BY clause
 	 */
-	public function adjacent_post_sort( $order_by, $post ) {
+	public function adjacent_post_sort( $order_by, $post = null ) {
+
+		// Get the post
+		$post = get_post( $post );
 
 		// When this is an entity
-		if ( is_entity() ) {
+		if ( is_entity( $post ) ) {
 
 			// Order by the post menu order
 			$order_by = str_replace( 'p.post_date', 'p.menu_order', $order_by );
