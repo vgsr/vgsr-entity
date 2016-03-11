@@ -156,9 +156,9 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		add_action( 'vgsr_entity_meta_input_address-addition_field', array( $this, 'address_addition_input_field' ), 10, 3 );
 
 		// Post
-		add_filter( 'the_title',                  array( $this, 'filter_the_title' ), 10, 2 );
-		add_filter( 'single_post_title',          array( $this, 'filter_the_title' ), 10, 2 );
-		add_action( "vgsr_{$this->type}_details", array( $this, 'entity_details'   )        );
+		add_filter( 'the_title',                         array( $this, 'filter_the_title' ), 10, 2 );
+		add_filter( 'single_post_title',                 array( $this, 'filter_the_title' ), 10, 2 );
+		add_action( "vgsr_entity_{$this->type}_details", array( $this, 'entity_details'   )        );
 	}
 
 	/** Settings *******************************************************/

@@ -516,7 +516,7 @@ abstract class VGSR_Entity_Base {
 		add_action( "manage_{$this->type}_posts_custom_column", 'vgsr_entity_feature_logo_list_column_content', 10, 2 );
 
 		// Post details
-		add_action( "vgsr_{$this->type}_details", 'vgsr_entity_feature_logo_detail', 5 );
+		add_action( "vgsr_entity_{$this->type}_details", 'vgsr_entity_feature_logo_detail', 5 );
 	}
 
 	/** List Table *****************************************************/

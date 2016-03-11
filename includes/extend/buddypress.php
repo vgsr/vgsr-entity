@@ -722,7 +722,7 @@ class VGSR_Entity_BuddyPress {
 
 			// Hook detail callback
 			foreach ( (array) $field['entity'] as $post_type ) {
-				add_action( "vgsr_{$post_type}_details", $field['detail_callback'] );
+				add_action( "vgsr_entity_{$post_type}_details", $field['detail_callback'] );
 			}
 		}
 	}
