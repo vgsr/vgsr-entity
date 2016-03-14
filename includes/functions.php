@@ -212,6 +212,26 @@ function entity_has_more_tag( $post = 0 ) {
 /** Features ***********************************************************/
 
 /**
+ * Output an entity's logo
+ *
+ * @since 2.0.0
+ *
+ * @uses VGSR_Entity_Base::has_feature()
+ * @uses wp_get_attachment_image()
+ * @uses get_entity_logo()
+ * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post
+ */
+function the_entity_logo( $post = 0 ) {
+	if ( ! $post = get_post( $post ) )
+		return;
+
+	// Output entity logo image
+	if ( is_entity( $post ) && vgsr_entity()->{$post->post_type}->has_feature( 'logo' ) ) {
+		echo wp_get_attachment_image( get_entity_logo( $post->ID ) );
+	}
+}
+
+/**
  * Return the entity's logo ID
  *
  * @since 2.0.0
