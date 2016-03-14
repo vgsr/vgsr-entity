@@ -214,9 +214,13 @@ function entity_has_more_tag( $post = 0 ) {
 /**
  * Return the entity's logo ID
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
- * @param int|WP_Post $post_id Post ID or object
+ * @uses is_entity()
+ * @uses VGSR_Entity_Base::has_feature()
+ * @uses get_post_meta()
+ *
+ * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post
  * @return int|bool Logo post ID or False when not found
  */
 function get_entity_logo( $post_id ) {
@@ -235,7 +239,7 @@ function get_entity_logo( $post_id ) {
 /**
  * Output the logo feature metabox input field
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @uses get_entity_logo()
  * @uses _vgsr_entity_feature_logo_html()
@@ -253,13 +257,13 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 	<?php
 
 	// Enqueue media modal script
-	wp_enqueue_script( 'vgsr-entity-media-editor', vgsr_entity()->includes_url . 'assets/js/media-editor.js', array( 'vgsr-entity-admin', 'media-editor' ), '1.1.0', true );
+	wp_enqueue_script( 'vgsr-entity-media-editor', vgsr_entity()->includes_url . 'assets/js/media-editor.js', array( 'vgsr-entity-admin', 'media-editor' ), '2.0.0', true );
 }
 
 	/**
 	 * Return the logo feature editor HTML
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @see _wp_post_thumbnail_html()
 	 *
@@ -308,7 +312,7 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 /**
  * Modify the post's media settings for the logo feature
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @uses is_entity()
  * @uses get_entity_logo()
@@ -331,7 +335,7 @@ function vgsr_entity_feature_logo_media_settings( $settings, $post ) {
 /**
  * Save an entity's logo feature input
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @see wp_ajax_set_post_thumbnail()
  *
@@ -383,7 +387,7 @@ function vgsr_entity_feature_logo_save() {
 /**
  * Modify the current screen's columns for the logo feature
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @param array $columns Columns
  * @return array Columns
@@ -410,7 +414,7 @@ function vgsr_entity_feature_logo_list_column( $columns ) {
 /**
  * Output the list table column content for the logo feature
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @uses get_entity_logo()
  * @uses wp_get_attachment_image()
@@ -431,7 +435,7 @@ function vgsr_entity_feature_logo_list_column_content( $column, $post_id ) {
 /**
  * Output markup for the logo feature in the entity details
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @uses get_entity_logo()
  * @uses has_image_size()
