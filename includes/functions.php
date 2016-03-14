@@ -223,8 +223,12 @@ function entity_has_more_tag( $post = 0 ) {
  * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post
  * @return int|bool Logo post ID or False when not found
  */
-function get_entity_logo( $post_id ) {
-	if ( ! $post = get_post( $post_id ) )
+function get_entity_logo( $post = 0 ) {
+	if ( ! $post = get_post( $post ) )
+		return false;
+
+	// Bail when not an entity or has no logo
+	if ( ! is_entity( $post ) || ! vgsr_entity()->{$post->post_type}->has_feature( 'logo' ) )
 		return false;
 
 	$logo_id = get_post_meta( $post->ID, "_{$post->post_type}-logo-id", true );
