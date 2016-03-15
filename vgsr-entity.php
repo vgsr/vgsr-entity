@@ -148,8 +148,7 @@ final class VGSR_Entity {
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
 
 		// Theme
-		add_action( 'template_include',   array( $this, 'template_include' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts'  ) );
+		add_action( 'template_include', array( $this, 'template_include' ) );
 
 		// Query
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) );
