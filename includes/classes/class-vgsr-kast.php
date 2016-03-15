@@ -156,9 +156,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		add_action( 'vgsr_entity_meta_input_address-addition_field', array( $this, 'address_addition_input_field' ), 10, 3 );
 
 		// Post
-		add_filter( 'the_title',                         array( $this, 'filter_the_title' ), 10, 2 );
-		add_filter( 'single_post_title',                 array( $this, 'filter_the_title' ), 10, 2 );
-		add_action( "vgsr_entity_{$this->type}_details", array( $this, 'entity_details'   )        );
+		add_action( "vgsr_entity_{$this->type}_details", array( $this, 'entity_details' ) );
 	}
 
 	/** Settings *******************************************************/
@@ -268,33 +266,6 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	}
 
 	/** Post ***********************************************************/
-
-	/**
-	 * Modify the post title for this entity
-	 *
-	 * @since 1.1.0
-	 *
-	 * @uses is_kast()
-	 * @uses VGSR_Kast::get()
-	 *
-	 * @param string $title Post title
-	 * @param int $post_id Post ID
-	 * @return string Post title
-	 */
-	public function filter_the_title( $title, $post_id ) {
-
-		// When this is our entity
-		if ( ! is_admin() && is_kast( $post_id ) ) {
-			$ceased = $this->get( 'ceased', $post_id );
-
-			// Append the 'ceased' date with a Latin Cross
-			if ( ! empty( $ceased ) ) {
-				$title .= sprintf( ' (&#10013; %s)', $ceased );
-			}
-		}
-
-		return $title;
-	}
 
 	/**
 	 * Output the entity's details
