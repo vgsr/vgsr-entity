@@ -58,7 +58,7 @@ function vgsr_entity_details( $post = 0 ) {
 	return $details;
 }
 
-/** Children ***********************************************************/
+/** List ***************************************************************/
 
 /**
  * Return an entity parent's entity posts HTML markup
