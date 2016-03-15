@@ -25,7 +25,7 @@ add_action( 'bp_loaded', 'vgsr_entity_buddypress' );
  * Setup our own hook on 'init'
  *
  * @since 1.0.0
- * @since 1.1.0 Made the logic procedural.
+ * @since 2.0.0 Made the logic procedural.
  *
  * @uses do_action() Calls 'vgsr_entity_init'
  */

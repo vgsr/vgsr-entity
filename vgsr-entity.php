@@ -168,7 +168,7 @@ final class VGSR_Entity {
 	/**
 	 * Setup the registered entities
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses apply_filters() Calls 'vgsr_entity_entities'
 	 */
@@ -203,7 +203,7 @@ final class VGSR_Entity {
 	/**
 	 * Return the registered entity types
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @return array Registered entity types
 	 */
@@ -214,7 +214,7 @@ final class VGSR_Entity {
 	/**
 	 * Magic check for isset(). Handles protected entity objects
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key
 	 * @return bool
@@ -232,7 +232,7 @@ final class VGSR_Entity {
 	/**
 	 * Magic getter. Handles protected entity objects
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key
 	 * @return mixed
@@ -256,7 +256,7 @@ final class VGSR_Entity {
 	/**
 	 * Magic setter. Handles protected entity objects
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key
 	 * @param mixed $value
@@ -272,7 +272,7 @@ final class VGSR_Entity {
 	/**
 	 * Magic unsetter. Handles protected entity objects
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key
 	 */
@@ -347,7 +347,7 @@ final class VGSR_Entity {
 	/**
 	 * Check if the plugin needs to run the update logic
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses get_site_option()
 	 * @uses VGSR_Entity::version_updater()
@@ -366,7 +366,7 @@ final class VGSR_Entity {
 	/**
 	 * Run logic when updating the plugin
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses vgsr_entity_update_110()
 	 * @uses update_site_option()
@@ -374,7 +374,7 @@ final class VGSR_Entity {
 	 */
 	public function version_updater( $version = '' ) {
 
-		// Pre-1.1.0
+		// Pre-2.0.0
 		if ( false === $version ) {
 			vgsr_entity_update_110();
 		}
@@ -524,7 +524,7 @@ final class VGSR_Entity {
 	/**
 	 * Modify the post query vars
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity::get_entities()
 	 * @param WP_Query $query
@@ -549,7 +549,7 @@ final class VGSR_Entity {
 	 * parameter.
 	 *
 	 * @since 1.0.0
-	 * @since 1.1.0 Added support for the `$taxonomy` and `$post` params as per WP 4.4
+	 * @since 2.0.0 Added support for the `$taxonomy` and `$post` params as per WP 4.4
 	 *
 	 * @global $wpdb
 	 * 
@@ -588,7 +588,7 @@ final class VGSR_Entity {
 	 * Modify the adjacent post's ORDER BY query clause
 	 *
 	 * @since 1.0.0
-	 * @since 1.1.0 Added support for the `$post` param as per WP 4.4
+	 * @since 2.0.0 Added support for the `$post` param as per WP 4.4
 	 * 
 	 * @param string $order_by ORDER BY clause
 	 * @param WP_Post $post Post object. Added in WP 4.4
@@ -614,7 +614,7 @@ final class VGSR_Entity {
 	/**
 	 * Wrapper for a single entity's {@see VGSR_Entity::get_meta()}
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses is_entity()
 	 * @uses VGSR_Entity::get_meta()

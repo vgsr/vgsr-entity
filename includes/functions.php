@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Return the entity post's display meta
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @uses is_entity()
  * @uses VGSR_Entity_Base::get_meta()
@@ -42,7 +42,7 @@ function vgsr_entity_get_meta( $post = 0 ) {
 /**
  * Return entity admin settings sections
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @uses apply_filters() Calls 'vgsr_entity_settings_sections'
  * @return array Settings sections
@@ -62,7 +62,7 @@ function vgsr_entity_settings_sections() {
 /**
  * Return entity admin settings fields
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @uses apply_filters() Calls 'vgsr_entity_settings_fields'
  * @return array Settings fields
@@ -87,7 +87,7 @@ function vgsr_entity_settings_fields() {
 /**
  * Return the settings fields that apply for a given entity type
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @uses vgsr_entity_settings_fields()
  *
@@ -157,7 +157,7 @@ if ( ! function_exists( 'pow2' ) ) :
 /**
  * Return a single value by applying the power of 2
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @param array $values Values to convert from
  * @return int Value created out of power of 2
@@ -176,7 +176,7 @@ if ( ! function_exists( 'unpow2' ) ) :
 /**
  * Return all power of 2 values that are in the value
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @param int $value Value to convert back
  * @return array Values of power of 2 found
@@ -197,7 +197,7 @@ if ( ! function_exists( 'dutch_net_numbers' ) ) :
 /**
  * Return a collection of all Dutch net numbers
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @see nl.wikipedia.org/wiki/Lijst_van_Nederlandse_netnummers
  *
@@ -506,9 +506,9 @@ function vgsr_entity_feature_logo_detail( $post ) {
 /** Update *************************************************************/
 
 /**
- * Update routine for version 1.1.0
+ * Update routine for version 2.0.0
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @global $wpdb
  *

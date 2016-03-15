@@ -29,7 +29,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Holds the entity arguments
 	 * 
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 * @var array
 	 */
 	protected $args = array();
@@ -37,7 +37,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Holds the entity meta arguments
 	 * 
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 * @var array
 	 */
 	protected $meta = array();
@@ -45,7 +45,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Registered error messages
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 * @var array
 	 */
 	public $errors = array();
@@ -53,7 +53,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Reported error ids
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 * @var array
 	 */
 	protected $_errors = array();
@@ -62,7 +62,7 @@ abstract class VGSR_Entity_Base {
 	 * Construct the VGSR Entity
 	 *
 	 * @since 1.0.0
-	 * @since 1.1.0 Rearranged parameters and added `$meta` parameter.
+	 * @since 2.0.0 Rearranged parameters and added `$meta` parameter.
 	 *
 	 * @uses VGSR_Entity_Base::entity_globals()
 	 * @uses VGSR_Entity_Base::entity_actions()
@@ -126,7 +126,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Magic isset-er
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key
 	 * @return bool Value isset
@@ -142,7 +142,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Magic getter
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key
 	 * @return bool Value isset
@@ -164,7 +164,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Magic setter
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key
 	 * @param mixed $value
@@ -178,7 +178,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Magic unsetter
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key
 	 */
@@ -359,7 +359,7 @@ abstract class VGSR_Entity_Base {
 			 *
 			 * The `type` variable in the action name points to the post type.
 			 *
-			 * @since 1.1.0
+			 * @since 2.0.0
 			 *
 			 * @param WP_Post $post Post object
 			 */
@@ -373,7 +373,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Output the contents of the details metabox
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_Base::meta_input_field()
 	 * @uses wp_nonce_field()
@@ -403,7 +403,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Save an entity's details metabox input
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses wp_verify_nonce()
 	 * @uses VGSR_Entity_Base::save()
@@ -447,7 +447,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Modify the content by adding the entity details
 	 * 
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses is_main_query()
 	 * @uses is_singular()
@@ -473,7 +473,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Return whether a given feature is active for this entity
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $feature Feature name
 	 * @return bool Entity feature is active
@@ -487,7 +487,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Setup main logic for the logo feature
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_Base::has_feature()
 	 * @uses add_image_size()
@@ -521,7 +521,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Modify the current screen's columns
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param array $columns Columns
 	 * @return array Columns
@@ -539,7 +539,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Modify the current screen's hidden columns
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param array $columns Hidden columns
 	 * @param WP_Screen $screen
@@ -558,7 +558,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Output the list table column content
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_Base::get()
 	 *
@@ -602,7 +602,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Output the entity's meta input fields in the quick edit box
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses get_default_post_to_edit()
 	 * @uses VGSR_Entity_Base::met_input_field()
@@ -713,7 +713,7 @@ abstract class VGSR_Entity_Base {
 
 		// Enqueue admin scripts
 		wp_enqueue_style( 'vgsr-entity-admin', $entity->includes_url . 'assets/css/admin.css' );
-		wp_enqueue_script( 'vgsr-entity-admin', $entity->includes_url . 'assets/js/admin.js', array( 'jquery' ), '1.1.0', true );
+		wp_enqueue_script( 'vgsr-entity-admin', $entity->includes_url . 'assets/js/admin.js', array( 'jquery' ), '2.0.0', true );
 
 		// When on the edit view
 		if ( $is_edit ) {
@@ -874,7 +874,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Return the setting's field value
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key Setting key
 	 * @return mixed|bool Setting value or False when not found
@@ -888,7 +888,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Report an error
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param int $error_id Error ID
 	 */
@@ -901,7 +901,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Return whether errors are reported
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @return bool Errors are reported
 	 */
@@ -912,7 +912,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Return the reported errors
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses pow2()
 	 *
@@ -930,7 +930,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Add the error query argument to a given URI
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses add_query_arg()
 	 * @uses VGSR_Entity_Base::get_errors()
@@ -976,7 +976,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Return the entity's parent post ID
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @return int Post ID
 	 */
@@ -1014,7 +1014,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Run logic when updating the parent page option
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses wpdb::update()
 	 * @uses VGSR_Entity_Base::register_post_type()
@@ -1077,7 +1077,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Return the input markup for the entity's meta field
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key Meta key
 	 * @param int|WP_Post $post Post object
@@ -1148,7 +1148,7 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * Override this method in a child class.
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key Meta key
 	 * @param int|WP_Post $post Optional. Defaults to current post.
@@ -1211,7 +1211,7 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * Overwrite this method in a child class.
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses update_post_meta()
 	 * @uses sanitize_text_field()
@@ -1316,7 +1316,7 @@ abstract class VGSR_Entity_Base {
 	/**
 	 * Return the entity's meta data
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_Base::get_meta()
 	 *
@@ -1372,7 +1372,7 @@ abstract class VGSR_Entity_Base {
 					/**
 					 * Filter an entity's meta fields for display
 					 *
-					 * @since 1.1.0
+					 * @since 2.0.0
 					 *
 					 * @param array $meta Meta fields with details
 					 * @param WP_Post $post Post object
@@ -1384,7 +1384,7 @@ abstract class VGSR_Entity_Base {
 					 *
 					 * The variable part `$type` is the entity's post type.
 					 *
-					 * @since 1.1.0
+					 * @since 2.0.0
 					 *
 					 * @param array $meta Meta fields with details
 					 * @param WP_Post $post Post object

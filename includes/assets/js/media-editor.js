@@ -14,7 +14,7 @@
 	 * Construct implementation of the FeaturedImage modal controller
 	 * for the Entity Logo feature
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 */
 	wp.media.controller.vgsrEntityLogo = FeaturedImage.extend({
 		defaults: _.defaults({
@@ -26,7 +26,7 @@
 		/**
 		 * Overload the controller's native selection updater method
 		 *
-		 * @since 1.1.0
+		 * @since 2.0.0
 		 */
 		updateSelection: function() {
 			var selection = this.get('selection'),

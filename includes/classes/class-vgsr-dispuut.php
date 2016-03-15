@@ -81,7 +81,7 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 	/**
 	 * Return the requested entity meta value
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key
 	 * @param int|WP_Post $post Optional. Defaults to current post.
@@ -112,7 +112,7 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 	/**
 	 * Sanitize the given entity meta value
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param string $key Meta key
 	 * @param string $value Meta value

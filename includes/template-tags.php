@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Return the markup for a post's entity details
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @uses is_entity()
  * @uses do_action() Calls 'vgsr_entity_{$post_type}_details'
@@ -41,7 +41,7 @@ function vgsr_entity_details( $post = 0 ) {
 	 *
 	 * The `post_type` variable in the action name points to the post type.
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param WP_Post $post Post object
 	 */
@@ -142,7 +142,7 @@ if ( ! function_exists( 'is_entity' ) ) :
 /**
  * Return whether the post('s post) type is an entity
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @param string|int|WP_Post $post_type Optional. Post type, post ID or object. Defaults
  *                                      to current post's post type.
@@ -163,7 +163,7 @@ if ( ! function_exists( 'is_bestuur' ) ) :
 /**
  * Return whether the post is a Bestuur
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @param int|WP_Post $post Optional. Post ID or object
  * @return bool Post is a Bestuur
@@ -177,7 +177,7 @@ if ( ! function_exists( 'is_dispuut' ) ) :
 /**
  * Return whether the post is a Dispuut
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @param int|WP_Post $post Optional. Post ID or object
  * @return bool Post is a Dispuut
@@ -191,7 +191,7 @@ if ( ! function_exists( 'is_kast' ) ) :
 /**
  * Return whether the post is a Kast
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @param int|WP_Post $post Optional. Post ID or object
  * @return bool Post is a Kast
@@ -205,7 +205,7 @@ if ( ! function_exists( 'is_entity_parent' ) ) :
 /**
  * Return whether the post is an entity parent page
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @uses VGSR_Entity::get_entity_parents()
  * @uses post_type_exists()

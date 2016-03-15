@@ -14,7 +14,7 @@ if ( ! class_exists( 'VGSR_Entity_BuddyPress' ) ) :
 /**
  * The VGSR Entity BuddyPress Class
  *
- * @since 1.1.0
+ * @since 2.0.0
  */
 class VGSR_Entity_BuddyPress {
 
@@ -22,7 +22,7 @@ class VGSR_Entity_BuddyPress {
 	 * Holds internal reference of the XProfile field ID for which
 	 * to query members.
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 * @var int
 	 */
 	private $query_field_id = 0;
@@ -30,7 +30,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Holds internal reference of the post ID for which to query members.
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 * @var int
 	 */
 	private $query_post_id = 0;
@@ -38,7 +38,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Holds internal reference whether to query a multi-value field.
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 * @var bool
 	 */
 	private $query_multiple = false;
@@ -46,7 +46,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Class constructor
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_BuddyPress::setup_actions()
 	 */
@@ -63,7 +63,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Setup actions and filters
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 */
 	private function setup_actions() {
 
@@ -84,7 +84,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Add to the admin settings sections
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param array $sections Settings sections
 	 * @return array Settings sections
@@ -103,7 +103,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Add to the admin settings fields
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses bp_is_active()
 	 *
@@ -183,7 +183,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Display a XProfile field selector settings field
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_BuddyPress::get()
 	 * @uses VGSR_Entity_BuddyPress::xprofile_fields_dropdown()
@@ -228,7 +228,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Output or return a dropdown with XProfile fields
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses bp_xprofile_get_groups()
 	 *
@@ -288,7 +288,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Setup hooks for the entities' list tables
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses vgsr_entity_settings_fields()
 	 * @uses VGSR_Entity::get_entities()
@@ -317,7 +317,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Modify the current screen's columns
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity::get_entities()
 	 * @uses vgsr_entity_settings_fields_by_type()
@@ -363,7 +363,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Output the list table column content
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_BuddyPress::get()
 	 *
@@ -390,7 +390,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Output scripts on entity admin pages
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses vgsr_entity_settings_fields()
 	 * @uses VGSR_Entity::get_entities()
@@ -425,7 +425,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Return the value for the given settings field of the post (type)
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_Base::get_setting()
 	 * @uses is_user_vgsr()
@@ -484,7 +484,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Return the users that have the post as a field value
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses BP_User_Query
 	 *
@@ -560,7 +560,7 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * When the post has users, the `$members_template` global is setup for use.
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_BuddyPress::get()
 	 * @uses add_action()
@@ -610,7 +610,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Modify the BP_User_Query before query construction
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @param BP_User_Query $query
 	 */
@@ -660,7 +660,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Modify the entity's display meta
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses vgsr_entity_settings_fields_by_type()
 	 * @uses VGSR_Entity_BuddyPress::get()
@@ -696,7 +696,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Setup hooks for the BP fields entity details
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses vgsr_entity_settings_fields()
 	 * @uses VGSR_Entity::get_entities()
@@ -732,7 +732,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Output a list of members of the post's field
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_BuddyPress::bp_has_members_for_post()
 	 * @uses bp_member_class()
@@ -784,7 +784,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Display the Members entity detail
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_BuddyPress::display_members_list()
 	 * @param WP_Post $post Post object
@@ -799,7 +799,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Display the Habitants entity detail
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_BuddyPress::display_members_list()
 	 * @param WP_Post $post Post object
@@ -814,7 +814,7 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Display the Former Habitants entity detail
 	 *
-	 * @since 1.1.0
+	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_BuddyPress::display_members_list()
 	 * @param WP_Post $post Post object
@@ -831,7 +831,7 @@ class VGSR_Entity_BuddyPress {
 /**
  * Setup the VGSR Entity BuddyPress class
  *
- * @since 1.1.0
+ * @since 2.0.0
  *
  * @uses VGSR_Entity_BuddyPress
  */
