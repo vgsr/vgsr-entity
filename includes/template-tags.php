@@ -10,33 +10,6 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-/**
- * Return the entity post's display meta
- *
- * @since 1.1.0
- *
- * @uses is_entity()
- * @uses VGSR_Entity_Base::get_meta()
- * @uses apply_filters() Calls 'vgsr_entity_get_meta'
- *
- * @param int|WP_Post $post Optional. Post ID or object
- * @return array Array with entity meta. Empty array when post is not an entity.
- */
-function vgsr_entity_get_meta( $post = 0 ) {
-
-	// Get the post
-	$post = get_post( $post );
-
-	// Bail when this is not an entity
-	if ( ! is_entity( $post ) )
-		return array();
-
-	// Get post display meta fields
-	$meta = vgsr_entity()->get_meta( $post );
-
-	return apply_filters( 'vgsr_entity_get_meta', $meta, $post );
-}
-
 /** Details ************************************************************/
 
 /**
@@ -83,6 +56,84 @@ function vgsr_entity_details( $post = 0 ) {
 	}
 
 	return $details;
+}
+
+/** Children ***********************************************************/
+
+/**
+ * Return an entity parent's entity posts HTML markup
+ *
+ * Append the entity list to the parent's post content
+ *
+ * @since 2.0.0
+ *
+ * @uses is_entity_parent()
+ * @uses WP_Query
+ * @uses get_entity_logo()
+ * @uses the_permalink()
+ * @uses the_entity_logo()
+ * @uses the_title()
+ * @uses get_the_permalink()
+ * @uses entity_has_more_tag()
+ * @uses the_content()
+ *
+ * @param string $content The post content
+ * @return string $retval HTML
+ */
+function vgsr_entity_list( $content ) {
+
+	// Bail when this is not an entity parent
+	if ( ! $post_type = is_entity_parent() )
+		return $content;
+
+	// Get all entity posts
+	if ( $entities = new WP_Query( array(
+		'post_type'   => $post_type,
+		'numberposts' => -1,
+	) ) ) {
+
+		// Make use of the read-more tag
+		global $more; $more = 0;
+
+		// Start output buffer
+		ob_start(); ?>
+
+		<div class="entity-list <?php echo $post_type; ?>-entities">
+
+		<?php while ( $entities->have_posts() ) : $entities->the_post(); ?>
+			<article <?php post_class(); ?>>
+
+				<?php // Display entity logo ?>
+				<?php if ( get_entity_logo() ) : ?>
+				<div class="entity-logo">
+					<a href="<?php the_permalink(); ?>"><?php the_entity_logo(); ?></a>
+				</div>
+				<?php endif; ?>
+
+				<h3 class="entity-title"><?php the_title( sprintf( '<a href="%s">', get_the_permalink() ), '</a>' ); ?></h3>
+
+				<?php // Display teaser content ?>
+				<?php if ( entity_has_more_tag() ) : ?>
+				<div class="entity-content">
+					<?php the_content( '' ); ?>
+				</div>
+				<?php endif; ?>
+				
+			</article>
+		<?php endwhile; ?>
+
+		</div>
+
+		<?php
+
+		// Append output buffer to content
+		$content .= ob_get_clean();
+
+		// Reste global `$post`
+		wp_reset_postdata();
+	}
+
+	return $content;
 }
 
 /** Is *****************************************************************/

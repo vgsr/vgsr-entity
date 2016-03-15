@@ -257,9 +257,6 @@ abstract class VGSR_Entity_Base {
 
 		// Features
 		add_action( 'vgsr_entity_init', array( $this, 'feature_logo_setup' ) );
-
-		// Entity children
-		add_filter( 'the_content', array( $this, 'entity_parent_page_children' ) );
 	}
 
 	/**
@@ -1073,125 +1070,6 @@ abstract class VGSR_Entity_Base {
 		}
 
 		return $slug;
-	}
-
-	/** Theme **********************************************************/
-
-	/**
-	 * Append entity parent page content with entity children
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $content The post content
-	 * @return string $content
-	 */
-	public function entity_parent_page_children( $content ) {
-
-		// Append child entities if available
-		if ( $this->get_entity_parent() === get_the_ID() ) {
-			$content .= $this->parent_page_list_children();
-		}
-
-		return $content;
-	}
-
-	/**
-	 * Return entity posts HTML markup
-	 *
-	 * Creates a list of all posts with their respective post thumbnails.
-	 *
-	 * @since 1.0.0
-	 * 
-	 * @global array $_wp_additional_image_sizes
-	 *
-	 * @uses WP_Query
-	 * @uses setup_postdata()
-	 * @uses get_permalink()
-	 * @uses has_post_thumbnail()
-	 * @uses wp_get_attachment_image_src()
-	 * @uses get_post_thumbnail_id()
-	 * @uses get_children()
-	 *
-	 * @return string $retval HTML
-	 */
-	public function parent_page_list_children() {
-
-		// Define retval variable
-		$retval = '';
-
-		// Get all entity posts
-		if ( $children = new WP_Query( array(
-			'post_type'   => $this->type,
-			'numberposts' => -1,
-			'order'       => 'ASC'
-		) ) ) {
-
-			// Start output buffer
-			ob_start(); ?>
-
-			<ul class="parent-page-children <?php echo $this->type; ?>-children">
-
-			<?php while ( $children->have_posts() ) : $children->the_post(); ?>
-				<li class="parent-child <?php echo "{$this->type} {$this->type}-type"; ?>">
-					<a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( get_the_title() ); ?>">
-						<span class="parent-child-thumbnail <?php echo $this->type; ?>-thumbnail">
-
-						<?php // Get the post thumbnail ?>
-						<?php if ( has_post_thumbnail() ) :
-							$image = wp_get_attachment_image_src( get_post_thumbnail_id(), $this->args['thumbsize'] );
-						?>
-							<img src="<?php echo $image[0]; ?>" />
-
-						<?php // Get first image attachment ?>
-						<?php elseif ( $att = get_children( array( 'post_type' => 'attachment', 'post_mime_type' => 'image', 'post_parent' => get_the_ID() ) ) ) :
-							$att   = reset( $att );
-							$image = wp_get_attachment_image_src( $att->ID, $this->args['thumbsize'] );
-						?>
-							<img src="<?php echo $image[0]; ?>" />
-
-						<?php // Get dummy image ?>
-						<?php else :
-							if ( is_string( $this->args['thumbsize'] ) ) {
-								global $_wp_additional_image_sizes;
-								$format = $_wp_additional_image_sizes[ $this->args['thumbsize'] ];
-							} else {
-								$format = $this->args['thumbsize'];
-							}
-
-							// Setup dummy image size
-							if ( is_array( $format ) ) {
-								if ( isset( $format[0] ) ) // Numerical array
-									$size = $format[0] . 'x' . $format[1];
-								else // Textual string
-									$size = $format['width'] . 'x' . $format['height'];
-							} else {
-								$size = '200x200'; // Random default value
-							}
-						?>
-							<img src="http://dummyimage.com/<?php echo $size; ?>/fefefe/000&text=<?php _e( 'Placeholder', 'vgsr-entity' ); ?>" />
-
-						<?php endif; ?>
-
-						</span>
-						<span class="parent-child-title <?php echo $this->type; ?>-title">
-							<h3><?php the_title(); ?></h3>
-						</span>
-					</a>
-				</li>
-			<?php endwhile; ?>
-
-			</ul>
-
-			<?php
-
-			// Get output buffer content
-			$retval = ob_get_clean();
-
-			// Reste global `$post`
-			wp_reset_postdata();
-		}
-
-		return $retval;
 	}
 
 	/** Meta ***********************************************************/

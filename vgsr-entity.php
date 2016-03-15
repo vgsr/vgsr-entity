@@ -451,30 +451,12 @@ final class VGSR_Entity {
 	/** Theme **********************************************************/
 
 	/**
-	 * Enqueue scripts
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses VGSR_Entity::get_entitiy_parent_id()
-	 * @uses wp_register_style()
-	 * @uses wp_enqueue_style()
-	 */
-	public function enqueue_scripts() {
-
-		// Bail when not on entity parent page
-		if ( ! is_entity() && ! is_entity_parent() )
-			return;
-
-		wp_enqueue_style( 'vgsr-entity', $this->includes_url . 'assets/css/style.css' );
-	}
-
-	/**
 	 * Return all entity parent page ids
 	 *
 	 * @since 1.0.0
 	 *
 	 * @uses VGSR_Entity::get_entities()
-	 * @return array Parent page ids
+	 * @return array Entity parents. Keys are post type, values are post IDs
 	 */
 	public function get_entity_parents() {
 
