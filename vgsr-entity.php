@@ -247,9 +247,13 @@ final class VGSR_Entity {
 		} elseif ( 'entities' === $key ) {
 			return $this->get_entities();
 
+		// Key is present
+		} elseif ( isset( $this->{$key} ) ) {
+			return $this->{$key};
+
 		// Default
 		} else {
-			return $this->{$key};
+			return null;
 		}
 	}
 
