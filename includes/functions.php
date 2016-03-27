@@ -151,6 +151,45 @@ function vgsr_entity_settings_display_entity_parent_field() {
 	<?php
 }
 
+/** Nav Menus **********************************************************/
+
+/**
+ * Modify the nav item classes
+ *
+ * @since 2.0.0
+ *
+ * @uses is_entity()
+ *
+ * @param array $classes
+ * @param object $item
+ * @param array $args
+ * @param int $depth
+ * @return array Nav item classes
+ */
+function vgsr_entity_nav_menu_css_class( $classes, $item, $args, $depth ) {
+
+	// Current page is entity with parent
+	if ( 'post_type' == $item->type &&
+		! in_array( 'current-menu-ancestor', $classes ) &&
+		is_entity() && ( $post_type = get_post_type() ) &&
+		( $parent = vgsr_entity()->{$post_type}->parent ) &&
+		( $parent = get_post( $parent ) )
+	) {
+
+		// Nav item is parent
+		if ( $item->object_id == $parent->ID ) {
+			$classes[] = 'current-menu-parent';
+			$classes[] = 'current-menu-ancestor';
+
+		// Nav item is ancestor
+		} elseif ( in_array( $item->object_id, $parent->ancestors ) ) {
+			$classes[] = 'current-menu-ancestor';
+		}
+	}
+
+	return array_unique( $classes );
+}
+
 /** Utilities **********************************************************/
 
 if ( ! function_exists( 'pow2' ) ) :
