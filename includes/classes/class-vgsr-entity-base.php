@@ -687,6 +687,17 @@ abstract class VGSR_Entity_Base {
 	public function enqueue_settings_scripts() { /* Overwrite this method in a child class */ }
 
 	/**
+	 * Create admin footer hook
+	 *
+	 * @since 1.0.0
+	 *
+	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_footer'
+	 */
+	public function settings_footer() {
+		do_action( "vgsr_{$this->type}_settings_footer" );
+	}
+
+	/**
 	 * Output scripts on entity admin pages
 	 *
 	 * @since 1.0.0
@@ -771,17 +782,6 @@ abstract class VGSR_Entity_Base {
 				'fields' => array_values( $meta ),
 			) );
 		}
-	}
-
-	/**
-	 * Create admin footer hook
-	 *
-	 * @since 1.0.0
-	 *
-	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_footer'
-	 */
-	public function settings_footer() {
-		do_action( "vgsr_{$this->type}_settings_footer" );
 	}
 
 	/**
