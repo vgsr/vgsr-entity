@@ -688,18 +688,16 @@ abstract class VGSR_Entity_Base {
 	 * @uses wp_enqueue_script()
 	 * @uses wp_add_inline_style()
 	 * @uses wp_localize_script()
-	 * @uses do_action() Calls 'vgsr_{$post_type}_settings_enqueue_scripts'
 	 */
 	public function admin_enqueue_scripts( $page_hook ) {
 
 		// Define local variables
-		$screen      = get_current_screen();
-		$is_edit     = "edit-{$this->type}" === $screen->id;
-		$is_post     = 'post' === $screen->base && $this->type === $screen->id;
-		$is_settings = $page_hook === $this->args['settings_page'];
+		$screen  = get_current_screen();
+		$is_edit = "edit-{$this->type}" === $screen->id;
+		$is_post = 'post' === $screen->base && $this->type === $screen->id;
 
 		// Bail when not on an entity admin page
-		if ( ! $is_edit && ! $is_post && ! $is_settings )
+		if ( ! $is_edit && ! $is_post )
 			return;
 
 		// Get VGSR Entity
@@ -756,11 +754,6 @@ abstract class VGSR_Entity_Base {
 				),
 				'fields' => array_values( $meta ),
 			) );
-		}
-
-		// When on the settings page, run hook
-		if ( $is_settings ) {
-			do_action( "vgsr_{$this->type}_settings_enqueue_scripts" );
 		}
 	}
 
