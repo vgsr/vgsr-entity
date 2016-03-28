@@ -680,16 +680,32 @@ abstract class VGSR_Entity_Base {
 	}
 
 	/**
+	 * Enqueue child class settings scripts
+	 *
+	 * @since 2.0.0
+	 */
+	public function enqueue_settings_scripts() { /* Overwrite this method in a child class */ }
+
+	/**
 	 * Output scripts on entity admin pages
 	 *
 	 * @since 1.0.0
 	 *
+	 * @uses VGSR_Entity_Base::enqueue_settings_scripts()
 	 * @uses wp_enqueue_style()
 	 * @uses wp_enqueue_script()
 	 * @uses wp_add_inline_style()
 	 * @uses wp_localize_script()
+	 *
+	 * @param string $hook Admin page hook
 	 */
-	public function admin_enqueue_scripts( $page_hook ) {
+	public function admin_enqueue_scripts( $hook ) {
+
+		// Run admin settings scripts
+		if ( $hook === $this->settings_page ) {
+			$this->enqueue_settings_scripts();
+			return;
+		}
 
 		// Define local variables
 		$screen  = get_current_screen();
