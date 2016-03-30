@@ -89,6 +89,10 @@
 	display: none;
 }
 
+	.inline-edit-row input[type="number"] {
+		line-height: 1; /* correct forms.css inheriting from list-table.css */
+	}
+
 .column-entity-logo {
 	width: 38px; /* logo image width */
 }
