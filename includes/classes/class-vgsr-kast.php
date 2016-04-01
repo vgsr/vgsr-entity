@@ -169,7 +169,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	public function add_settings_fields( $fields ) {
 
 		// Kast recreate thumbnail option
-		$fields['main_settings']['downsize-thumbs'] = array(
+		$fields['main']['downsize-thumbs'] = array(
 			'title'             => esc_html__( 'Recreate Thumbnails', 'vgsr-entity' ),
 			'callback'          => array( $this, 'settings_downsize_thumbs_field' ),
 			'sanitize_callback' => 'intval',

@@ -51,7 +51,7 @@ function vgsr_entity_settings_sections() {
 	return (array) apply_filters( 'vgsr_entity_settings_sections', array(
 
 		// Main Settings
-		"main" => array(
+		'main' => array(
 			'title'    => esc_html__( 'Main Settings', 'vgsr-entity' ),
 			'callback' => '',
 			'page'     => '',

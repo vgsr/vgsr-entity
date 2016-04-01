@@ -127,7 +127,7 @@ class VGSR_Entity_BuddyPress {
 				'column_title'      => esc_html__( 'Members', 'vgsr-entity' ),
 				'args'              => array(
 					'setting'     => 'bp-members-field',
-					'description' => esc_html__( 'Select the field that holds the Dispuut\'s members.', 'vgsr-entity' ),
+					'description' => esc_html__( "Select the field that holds the Dispuut's members.", 'vgsr-entity' ),
 				),
 
 				// Field display
@@ -146,7 +146,7 @@ class VGSR_Entity_BuddyPress {
 				'column_title'      => esc_html__( 'Habitants', 'vgsr-entity' ),
 				'args'              => array(
 					'setting'     => 'bp-habitants-field',
-					'description' => esc_html__( 'Select the field that holds the Kast\'s habitants.', 'vgsr-entity' ),
+					'description' => esc_html__( "Select the field that holds the Kast's habitants.", 'vgsr-entity' ),
 				),
 
 				// Field display
@@ -165,7 +165,7 @@ class VGSR_Entity_BuddyPress {
 				'column_title'      => esc_html__( 'Former Habitants', 'vgsr-entity' ),
 				'args'              => array(
 					'setting'     => 'bp-olim-habitants-field',
-					'description' => esc_html__( 'Select the field that holds the Kast\'s former habitants.', 'vgsr-entity' ),
+					'description' => esc_html__( "Select the field that holds the Kast's former habitants.", 'vgsr-entity' ),
 				),
 
 				// Field display
