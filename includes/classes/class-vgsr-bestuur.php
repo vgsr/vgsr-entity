@@ -84,12 +84,18 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 */
 	public function setup_actions() {
 
-		add_action( 'vgsr_entity_init',            array( $this, 'add_rewrite_rules'   ) );
-		add_action( 'vgsr_entity_settings_fields', array( $this, 'add_settings_fields' ) );
+		add_action( 'vgsr_entity_init',                   array( $this, 'add_rewrite_rules'    ) );
+		add_action( 'vgsr_entity_settings_fields',        array( $this, 'add_settings_fields'  ) );
+		add_action( "vgsr_{$this->type}_settings_footer", array( $this, 'print_footer_scripts' ) );
 
 		// Post
 		add_action( "save_post_{$this->type}", array( $this, 'save_current_bestuur' ), 10, 2 );
 		add_filter( 'display_post_states',     array( $this, 'display_post_states'  ),  9, 2 );
+
+		// Positions
+		add_action( "vgsr_{$this->type}_metabox",        array( $this, 'positions_metabox' ), 20    );
+		add_action( "save_post_{$this->type}",           array( $this, 'positions_save'    ), 10, 2 );
+		add_action( "vgsr_entity_{$this->type}_details", array( $this, 'positions_detail'  )        );
 
 		// Theme
 		add_filter( 'document_title_parts',                      array( $this, 'document_title_parts' ) );
@@ -108,20 +114,99 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 */
 	public function add_settings_fields( $fields ) {
 
-		// Menu Order
-		$fields['main_settings']['menu-order'] = array(
-			'title'             => __( 'Menu Widget Order', 'vgsr-entity' ),
-			'callback'          => array( $this, 'setting_menu_order_field' ),
-			'sanitize_callback' => 'intval',
-			'entity'            => $this->type,
-			'args'              => array(),
+		// Define entity fields
+		$_fields = array(
+
+			// Bestuur Positions
+			'positions' => array(
+				'title'             => __( 'Positions', 'vgsr-entity' ),
+				'callback'          => array( $this, 'setting_positions_field' ),
+				'sanitize_callback' => array( $this, 'sanitize_positions_field' ),
+				'entity'            => $this->type,
+				'args'              => array(),
+			),
+
+			// Menu Order
+			'menu-order' => array(
+				'title'             => __( 'Menu Widget Order', 'vgsr-entity' ),
+				'callback'          => array( $this, 'setting_menu_order_field' ),
+				'sanitize_callback' => 'intval',
+				'entity'            => $this->type,
+				'args'              => array(),
+			)
 		);
+
+		// Append fields to Main Section
+		$fields['main'] += $_fields;
 
 		return $fields;
 	}
 
 	/**
-	 * Output the Bestuur menu order settings field
+	 * Output the Bestuur Positions settings field
+	 *
+	 * @since 2.0.0
+	 */
+	public function setting_positions_field() {
+
+		// Define table controls
+		$controls = '<a class="position-remove" href="#"><i class="dashicons-before dashicons-minus"></i></a><a class="position-add" href="#"><i class="dashicons-before dashicons-plus"></i></a>';
+
+		// Get all positions
+		$positions = $this->get_positions();
+
+		?>
+
+		<table class="widefat fixed striped <?php echo $this->type; ?>-positions">
+			<thead>
+				<tr>
+					<th class="hndl"></th>
+					<th class="slug"><?php _e( 'Slug', 'vgsr-entity' ); ?></th>
+					<th class="label"><?php _e( 'Label', 'vgsr-entity' ); ?></th>
+					<th class="controls"></th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th class="hndl"></th>
+					<th class="slug"><?php _e( 'Slug', 'vgsr-entity' ); ?></th>
+					<th class="label"><?php _e( 'Label', 'vgsr-entity' ); ?></th>
+					<th class="controls"></th>
+				</tr>
+			</tfoot>
+			<tbody>
+				<?php foreach ( $positions as $position => $args ) : ?>
+				<tr>
+					<td class="hndl"></td>
+					<td class="slug"><input type="text" name="positions[slug][]" value="<?php echo esc_attr( $args['slug'] ); ?>" /></td>
+					<td class="label"><input type="text" name="positions[label][]" value="<?php echo esc_attr( $args['label'] ); ?>" /></td>
+					<td class="controls"><?php echo $controls; ?></td>
+				</tr>
+				<?php endforeach; ?>
+
+				<?php if ( empty( $positions ) ) : ?>
+				<tr>
+					<td class="hndl"></td>
+					<td class="slug"><input type="text" name="positions[slug][]" value="" /></td>
+					<td class="label"><input type="text" name="positions[label][]" value="" /></td>
+					<td class="controls"><?php echo $controls; ?></td>
+				</tr>
+				<?php endif; ?>
+
+				<tr class="positions-add-row" style="display:none;">
+					<td class="hndl"></td>
+					<td class="slug"><input type="text" name="positions[slug][]" value="" /></td>
+					<td class="label"><input type="text" name="positions[label][]" value="" /></td>
+					<td class="controls"><?php echo $controls; ?></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<?php
+	}
+
+	/**
+	 * Output the Bestuur Menu Order settings field
 	 *
 	 * @since 1.0.0
 	 */
@@ -137,6 +222,125 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		</select>
 
 		<p for="<?php echo esc_attr( $option_name ); ?>" class="description"><?php printf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></p>
+
+		<?php
+	}
+
+	/**
+	 * Sanitize the Bestuur Positions settings field input
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param mixed $input Option input
+	 * @param string $option Option name
+	 * @param mixed $original_value Original option value
+	 * @return array Option input
+	 */
+	public function sanitize_positions_field( $input, $option = '', $original_value = null ) {
+
+		// No input available to sanitize
+		if ( ! $input && ! isset( $_REQUEST['positions'] ) ) {
+			$input = $original_value;
+		} else {
+			$_input = array();
+
+			// Values were passed
+			if ( ! empty( $input ) ) {
+				$_input = $input;
+
+			// Collect and sanitize input from `$_REQUEST`
+			} else {
+				foreach ( $_REQUEST['positions'] as $key => $values ) {
+					foreach ( $values as $k => $v ) {
+						$_input[ $k ][ $key ] = esc_html( $v );
+					}
+				}
+			}
+
+			// Process input
+			foreach ( $_input as $position => $args ) {
+
+				// Remove empty row
+				if ( empty( $args['slug'] ) && empty( $args['label'] ) ) {
+					unset( $_input[ $position ] );
+
+				// Add missing slug
+				} elseif ( empty( $args['slug'] ) ) {
+					$_input[ $position ]['slug'] = sanitize_title( $args['label'] );
+
+				// Add missing label
+				} elseif ( empty( $args['label'] ) ) {
+					$_input[ $position ]['label'] = ucfirst( $args['slug'] );
+				}
+			}
+
+			$input = ! empty( $_input ) ? $_input : $original_value;
+		}
+
+		return $input;
+	}
+
+	/**
+	 * Enqueue settings page scripts
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses wp_enqueue_script()
+	 * @uses wp_add_inline_style()
+	 */
+	public function enqueue_settings_scripts() {
+
+		// Enqueue sortable
+		wp_enqueue_script( 'jquery-ui-sortable' );
+
+		// Add styles
+		wp_add_inline_style( 'wp-admin', "
+			.form-table .widefat { width: auto; }
+			.form-table .widefat th, .form-table .widefat td { padding: 8px 10px; }
+			.widefat.{$this->type}-positions .hndl { width: 20px; padding: 0 10px; }
+			.widefat.{$this->type}-positions td.hndl:hover { cursor: move; }
+			.widefat.{$this->type}-positions td.hndl:before { content: '\\f333'; color: rgba(64, 64, 64, .3); font-family: dashicons; font-size: 20px; height: 20px; width: 20px; display: inline-block; line-height: 1; }
+			.widefat.{$this->type}-positions .controls { width: 40px; padding: 0 10px 0 0; }
+			.widefat.{$this->type}-positions .controls a { display: inline-block; width: 20px; height: 20px; border-radius: 50%; }
+			.widefat.{$this->type}-positions .controls a:not(:hover):not(:focus) { color: #32373c; }
+			.widefat.{$this->type}-positions tbody tr:first-child:not(:nth-last-child(n+2)) .controls a.position-remove { visibility: hidden; }
+			"
+		);
+	}
+
+	/**
+	 * Print settings page footer scripts
+	 *
+	 * @since 2.0.0
+	 */
+	public function print_footer_scripts() { ?>
+
+		<script type="text/javascript">
+			jQuery(document).ready( function( $ ) {
+				var $el = $( '.<?php echo $this->type; ?>-positions' ),
+				    $tr = $el.find( 'tr.positions-add-row' );
+
+				// Make list rows sortable
+				$el.sortable({
+					items: 'tbody tr',
+					axis: 'y',
+					containment: 'parent',
+					handle: 'td.hndl',
+					tolerance: 'pointer'
+				});
+
+				// Add row
+				$el.on( 'click', 'a.position-add', function( e ) {
+					e.preventDefault();
+					$tr.clone().removeClass( 'positions-add-row' ).insertAfter( $(this).parents( '.<?php echo $this->type; ?>-positions tr' ) ).show();
+
+				// Remove row
+				}).on( 'click', 'a.position-remove', function( e ) {
+					e.preventDefault();
+					$(this).parents( '.<?php echo $this->type; ?>-positions tr' ).remove();
+				});
+			});
+		</script>
 
 		<?php
 	}
@@ -255,6 +459,232 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		}
 
 		return $states;
+	}
+
+	/** Positions ******************************************************/
+
+	/**
+	 * Return the available positions
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param null|int|WP_Post $post Optional. Post ID or object.
+	 * @return array Available positions or positions of a post
+	 */
+	public function get_positions( $post = null ) {
+		$positions = (array) get_option( "_{$this->type}-positions", array() );
+
+		// Get positions for single entity
+		if ( null !== $post && $post = get_post( $post ) ) {
+
+			// Walk positions
+			foreach ( $positions as $position => $args ) {
+				if ( $user = get_post_meta( $post->ID, "position_{$args['slug']}", true ) ) {
+					$positions[ $position ]['user'] = $user ? $user : false;
+				} else {
+					unset( $positions[ $position ] );
+				}
+			}
+		}
+
+		return $positions;
+	}
+
+	/**
+	 * Output the Bestuur Positions metabox section
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses VGSR_Bestuur::get_positions()
+	 *
+	 * @param WP_Post $post Post object
+	 */
+	public function positions_metabox( $post ) {
+
+		// Get entity's positions and all positions
+		$positions  = $this->get_positions( $post );
+		$_positions = $this->get_positions();
+
+		// Define remove control
+		$remove_control = '<a href="#" class="position-remove dashicons-before dashicons-no-alt"><span class="screen-reader-text">' . __( 'Remove Position', 'vgsr-entity' ) . '</span></a>';
+
+		?>
+
+		<h4><?php _e( 'Positions', 'vgsr-entity' ); ?></h4>
+
+		<p class="bestuur-positions">
+			<?php foreach ( $positions as $args ) : ?>
+			<label class="alignleft">
+				<?php echo $remove_control; ?>
+				<span class="input-text-wrap">
+					<select name="positions[slug][]">
+						<option value=""><?php _e( '&mdash; Select Position &mdash;', 'vgsr-entity' ); ?></option>
+						<?php foreach ( $_positions as $position ) : ?>
+						<option value="<?php echo esc_attr( $position['slug'] ); ?>" <?php selected( $position['slug'], $args['slug'] ); ?>><?php echo esc_html( $position['label'] ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</span>
+				<span class="input-text-wrap">
+					<?php
+						// Get user details
+						$user       = get_user_by( is_numeric( $args['user'] ) ? 'id' : 'slug', $args['user'] );
+						$user_id    = $user ? $user->ID : '';
+						$user_name  = $user ? $user->user_login : $args['user'];
+						$user_class = $user ? 'is-user' : '';
+					?>
+					<input type="text" class="positions-user-name <?php echo $user_class; ?>" name="positions[user_name][]" value="<?php echo esc_attr( $user_name ); ?>" />
+					<input type="hidden" class="positions-user-id" name="positions[user_id][]" value="<?php echo $user_id; ?>" />
+				</span>
+			</label>
+			<?php endforeach; ?>
+
+			<?php if ( empty( $positions ) ) : ?>
+			<label class="alignleft">
+				<?php echo $remove_control; ?>
+				<span class="input-text-wrap">
+					<select name="positions[slug][]">
+						<option value=""><?php _e( '&mdash; Select Position &mdash;', 'vgsr-entity' ); ?></option>
+						<?php foreach ( $_positions as $position ) : ?>
+						<option value="<?php echo esc_attr( $position['slug'] ); ?>"><?php echo esc_html( $position['label'] ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</span>
+				<span class="input-text-wrap">
+					<input type="text" class="positions-user-name" name="positions[user_name][]" value="" />
+				</span>
+			</label>
+			<?php endif; ?>
+
+			<label class="alignleft positions-add-row" style="display:none;">
+				<?php echo $remove_control; ?>
+				<span class="input-text-wrap">
+					<select name="positions[slug][]">
+						<option value=""><?php _e( '&mdash; Select Position &mdash;', 'vgsr-entity' ); ?></option>
+						<?php foreach ( $_positions as $position ) : ?>
+						<option value="<?php echo esc_attr( $position['slug'] ); ?>"><?php echo esc_html( $position['label'] ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</span>
+				<span class="input-text-wrap">
+					<input type="text" class="positions-user-name" name="positions[user_name][]" value="" />
+				</span>
+			</label>
+
+			<input type="hidden" name="positions-ajax-url" value="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'vgsr_entity_suggest_user' ), admin_url( 'admin-ajax.php', 'relative' ) ), 'vgsr_entity_suggest_user_nonce' ) ); ?>" />
+
+			<span class="positions-actions">
+				<a href="#" class="positions-help">
+					<i class="dashicons-before dashicons-editor-help"></i>
+					<span><?php _e( 'Add a user to a position by inserting their user ID or user login name. Green bordered input fields contain a validated site user.', 'vgsr-entity' ); ?></span>
+				</a>
+				<a href="#" class="button position-add"><?php _e( 'Add Position', 'vgsr-entity' ); ?></a>
+			</span>
+		</p>
+
+		<?php
+	}
+
+	/**
+	 * Save the Bestuur Positions metabox input
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses delete_post_meta()
+	 * @uses update_post_meta()
+	 * @uses get_user_by()
+	 *
+	 * @param int $post_id Post ID
+	 * @param WP_Post $post Post object
+	 */
+	public function positions_save( $post_id, $post ) {
+
+		// Bail when doing outosave
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+			return;
+
+		// Bail when the user is not capable
+		$cpt = get_post_type_object( $this->type );
+		if ( ! current_user_can( $cpt->cap->edit_posts ) || ! current_user_can( $cpt->cap->edit_post, $post_id ) )
+			return;
+
+		// Bail when no positions were submitted
+		if ( ! isset( $_POST['positions'] ) || empty( $_POST['positions'] ) )
+			return;
+
+		// Collect and sanitize input
+		$positions = array();
+		foreach ( $_POST['positions'] as $key => $input ) {
+			foreach ( $input as $k => $v ) {
+				$positions[ $k ][ $key ] = esc_html( $v );
+			}
+		}
+
+		// Process removed positions
+		foreach ( array_diff( wp_list_pluck( $this->get_positions( $post ), 'slug' ), wp_list_pluck( $positions, 'slug' ) ) as $slug ) {
+			delete_post_meta( $post_id, "position_{$slug}" );
+		}
+
+		// Process input
+		foreach ( $positions as $args ) {
+
+			// Skip when without position or user
+			if ( empty( $args['slug'] ) || empty( $args['user_name'] ) )
+				continue;
+
+			// Accept user id input
+			$user_id = ! empty( $args['user_id'] ) ? $args['user_id'] : ( is_numeric( $args['user_name'] ) ? $args['user_name'] : false );
+
+			// Get user
+			if ( $user = $user_id ? get_user_by( 'id', $user_id ) : get_user_by( 'login', $args['user_name'] ) ) {
+				$user = $user->ID;
+			} else {
+				$user = $args['user_name'];
+			}
+
+			// Update position in post meta
+			update_post_meta( $post_id, "position_{$args['slug']}", $user );
+		}
+	}
+
+	/**
+	 * Display the Bestuur Positions entity detail
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses VGSR_Bestuur::get_positions()
+	 * @uses get_user_by()
+	 * @param WP_Post $post Post object
+	 */
+	public function positions_detail( $post ) {
+
+		// Bail when no positions are signed for this entity
+		if ( ! $positions = $this->get_positions( $post ) )
+			return;
+
+		?>
+
+		<div class="bestuur-positions">
+			<h4><?php _ex( 'Members', 'Bestuur positions', 'vgsr-entity' ) ?></h4>
+
+			<dl>
+				<?php foreach ( $positions as $args ) : ?>
+				<dt class="position position-<?php echo $args['slug']; ?>"><?php echo $args['label']; ?></dt>
+				<dd class="member"><?php
+
+					// Use existing user's display name
+					if ( $user = get_user_by( is_numeric( $args['user'] ) ? 'id' : 'slug', $args['user'] ) ) {
+						echo $user->display_name;
+
+					// Default to the provided 'user' name or content
+					} else {
+						echo $args['user'];
+					}
+				?></dd>
+				<?php endforeach; ?>
+			</dl>
+		</div>
+
+		<?php
 	}
 
 	/** Theme **********************************************************/

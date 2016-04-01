@@ -45,6 +45,42 @@
 		}
 	}
 
+	// Bestuur Positions
+	var $bestuurPositions = $( '.post-type-bestuur .bestuur-positions' ),
+		suggestAjaxUrl = $bestuurPositions.find( 'input[name="positions-ajax-url"]' ).val(),
+	    suggestArgs = {
+			onSelect: function() {
+				this.value = this.value.substr( 0, this.value.indexOf( ' (' ) );
+			}
+	    };
+
+	$bestuurPositions
+		// Add row
+		.on( 'click', 'a.position-add', function( e ) {
+			e.preventDefault();
+			$bestuurPositions
+				.find( '.positions-add-row' )
+					.clone()
+					.removeClass( 'positions-add-row' )
+					.insertBefore( '.positions-add-row' )
+					.show();
+					// Add suggest UI to cloned user input
+					// .suggest( suggestAjaxUrl, suggestArgs );
+		})
+		// Remove row
+		.on( 'click', 'a.position-remove', function( e ) {
+			e.preventDefault();
+			$(this).parent().remove();
+		})
+		// Help popup
+		.on( 'click', 'a.positions-help', function( e ) {
+			e.preventDefault();
+			$(this).toggleClass( 'popup' );
+		});
+		// Add suggest UI to user input
+		// .find( '.positions-user-name' )
+			// .suggest( suggestAjaxUrl, suggestArgs );
+
 	/* wp-admin/edit.php */
 
 	// Move entity quick edit lines into the right col

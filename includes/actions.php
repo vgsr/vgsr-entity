@@ -19,6 +19,9 @@ add_filter( 'the_content', 'vgsr_entity_list' );
 // Nav Menu
 add_filter( 'nav_menu_css_class', 'vgsr_entity_nav_menu_css_class', 10, 4 );
 
+// AJAX
+add_action( 'wp_ajax_vgsr_entity_suggest_user', 'vgsr_entity_suggest_user' );
+
 // Extend
 add_action( 'bp_loaded', 'vgsr_entity_buddypress' );
 

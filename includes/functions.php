@@ -190,6 +190,59 @@ function vgsr_entity_nav_menu_css_class( $classes, $item, $args, $depth ) {
 	return array_unique( $classes );
 }
 
+/** AJAX ***************************************************************/
+
+/**
+ * Output a list of suggested users for a $.suggest AJAX call
+ *
+ * @since 2.0.0
+ *
+ * @uses check_ajax_referer()
+ * @uses WP_User_Query
+ */
+function vgsr_entity_suggest_user() {
+	global $wpdb;
+
+	// Bail early when no request
+	if ( empty( $_REQUEST['q'] ) ) {
+		wp_die( '0' );
+	}
+
+	// NOTE: Suggest.js does not allow for sending the post ID along with
+	// the request to check for post type specific cap checking.
+	if ( ! current_user_can( 'create_posts' ) ) {
+		wp_die( '0' );
+	}
+
+	// Check the ajax nonce
+	check_ajax_referer( 'vgsr_entity_suggest_user_nonce' );
+
+	// Try to get some users
+	$users_query = new WP_User_Query( array(
+		'search'         => '*' . $wpdb->esc_like( $_REQUEST['q'] ) . '*',
+		'fields'         => array( 'ID' ),
+		'search_columns' => array( 'ID', 'user_nicename', 'user_login', 'user_email', 'display_name' ),
+		'orderby'        => 'user_login'
+	) );
+
+	// If we found some users, loop through and display them
+	if ( ! empty( $users_query->results ) ) {
+		foreach ( (array) $users_query->results as $user ) {
+			$user = new WP_User( $user->ID );
+
+			// Build selectable line for output as 'user login (ID) - display name'
+			$line = sprintf( '%s (%s)', $user->user_login, $user->ID );
+			if ( $user->user_login !== $user->display_name ) {
+				$line .= sprintf( ' - %s', $user->display_name );
+			}
+
+			echo $line . "\n";
+		}
+	}
+
+	die();
+}
+
 /** Utilities **********************************************************/
 
 if ( ! function_exists( 'pow2' ) ) :
