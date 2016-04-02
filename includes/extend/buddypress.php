@@ -725,6 +725,14 @@ class VGSR_Entity_BuddyPress {
 				add_action( "vgsr_entity_{$post_type}_details", $field['detail_callback'] );
 			}
 		}
+
+		// For VGSR members
+		if ( function_exists( 'vgsr' ) && is_user_vgsr() ) {
+
+			// Bestuur: Replace Positions detail
+			remove_action( 'vgsr_entity_bestuur_details', array( vgsr_entity()->bestuur, 'positions_detail' ) );
+			add_action( 'vgsr_entity_bestuur_details', array( $this, 'bestuur_positions_detail' ) );
+		}
 	}
 
 	/** Details ***************************************************************/
@@ -825,6 +833,71 @@ class VGSR_Entity_BuddyPress {
 			'label'    => esc_html__( 'Former Habitants', 'vgsr-entity' ),
 			'multiple' => true,
 		) );
+	}
+
+	/**
+	 * Display the Bestuur Positions entity detail with BP data
+	 *
+	 * Replaces the Positions detail with member profile links.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see VGSR_Bestuur::positions_detail()
+	 *
+	 * @uses VGSR_Bestuur::get_positions()
+	 * @uses get_user_by()
+	 * @param WP_Post $post Post object
+	 */
+	public function bestuur_positions_detail( $post ) {
+
+		// Bail when no positions are signed for this entity
+		if ( ! $positions = vgsr_entity()->bestuur->get_positions( $post ) )
+			return;
+
+		?>
+
+		<div class="bestuur-positions">
+			<h4><?php _ex( 'Members', 'Bestuur positions', 'vgsr-entity' ) ?></h4>
+
+			<dl>
+				<?php foreach ( $positions as $args ) : ?>
+				<dt class="position position-<?php echo $args['slug']; ?>"><?php echo $args['label']; ?></dt>
+				<dd class="member"><?php
+
+					// Use existing user's display name
+					if ( $user = get_user_by( is_numeric( $args['user'] ) ? 'id' : 'slug', $args['user'] ) ) {
+
+						// Collect template global
+						global $members_template;
+						$_members_template = $members_template;
+
+						/**
+						 * Use BP member loop for using template tags
+						 *
+						 * Setting up the template loop per member is really
+						 * not efficient, but for now it does the job.
+						 */
+						if ( bp_has_members( array( 'type' => '', 'include' => $user->ID ) ) ) :
+							while ( bp_members() ) : bp_the_member();
+
+								// Member profile link
+								printf( '<a href="%s">%s</a>', bp_get_member_permalink(), bp_get_member_name() );
+							endwhile;
+						endif;
+
+						// Reset global
+						$members_template = $_members_template;
+
+					// Default to the provided 'user' name or content
+					} else {
+						echo $args['user'];
+					}
+				?></dd>
+				<?php endforeach; ?>
+			</dl>
+		</div>
+
+		<?php
 	}
 }
 
