@@ -2,8 +2,8 @@
 Contributors: offereins
 Tags: vgsr, bestuur, dispuut, kast
 Requires at least: 3.6
-Tested up to: 4.4
-Stable tag: 2.0.0-alpha
+Tested up to: 4.5
+Stable tag: 2.0.0-beta-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,7 @@ Custom post type management for besturen, disputen and kasten
 
 = 2.0.0 =
 * Full rewrite of entity logic and entity metadata
+* Added Archived post status
 
 = 1.0.2 =
 * Fixed bug in adjacency logic
