@@ -325,6 +325,32 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	/** Meta ***********************************************************/
 
 	/**
+	 * Return a collection of address meta fields
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param int|WP_Post $post Optional. Post object or ID.
+	 * @param string $context Optional. The context to get the meta values for.
+	 * @return array Address meta fields
+	 */
+	public function address_meta( $post = null, $context = 'display' ) {
+
+		// Get address meta fields
+		$fields = array_filter( $this->meta, function( $v ){
+			return 0 === strpos( $v['name'], 'address' );
+		});
+
+		// Add post values
+		if ( null !== $post && $post = get_post( $post ) ) {
+			foreach ( array_keys( $fields ) as $k ) {
+				$fields[ $k ]['value'] = $this->get( $k, $post, $context );
+			}
+		}
+
+		return $fields;
+	}
+
+	/**
 	 * Return the input markup for the Address: Number meta field
 	 *
 	 * @since 2.0.0
