@@ -77,6 +77,11 @@ class VGSR_Entity_BuddyPress {
 		// Post
 		add_filter( 'vgsr_entity_display_meta', array( $this, 'display_meta'   ), 10, 2 );
 		add_action( 'vgsr_entity_init',         array( $this, 'entity_details' )        );
+
+		// Kast: Address
+		add_filter( 'bp_xprofile_get_groups',         array( $this, 'address_profile_groups_fields' ),  5, 2 );
+		add_filter( 'bp_get_the_profile_field_value', array( $this, 'address_profile_field_value'   ), 10, 3 );
+		add_filter( 'bp_get_member_profile_data',     array( $this, 'address_profile_field_data'    )        );
 	}
 
 	/** Settings **************************************************************/
@@ -172,6 +177,20 @@ class VGSR_Entity_BuddyPress {
 				'detail_callback'   => array( $this, 'entity_olim_habitants_detail' ),
 				'show_detail'       => is_user_vgsr(),
 			);
+
+			// Kast Address fields
+			foreach ( vgsr_entity()->kast->address_meta() as $meta ) {
+				$bp_fields["bp-address-map-{$meta['name']}"] = array(
+					'title'             => sprintf( esc_html__( 'Address Map: %s', 'vgsr-entity' ), $meta['column_title'] ),
+					'callback'          => array( $this, 'xprofile_field_setting' ),
+					'sanitize_callback' => 'intval',
+					'entity'            => array( 'kast' ),
+					'args'              => array(
+						'setting'     => "bp-address-map-{$meta['name']}",
+						'description' => sprintf( esc_html__( "Select the field that holds the member's %s address detail.", 'vgsr-entity' ), $meta['column_title'] ),
+					),
+				);
+			}
 		}
 
 		// Add fields to the BuddyPress section
@@ -348,7 +367,7 @@ class VGSR_Entity_BuddyPress {
 				foreach ( $fields['buddypress'] as $field => $args ) {
 
 					// Skip fields without values
-					if ( ! $this->get( $field, $post_type ) )
+					if ( ! isset( $args['column_title'] ) || ! $this->get( $field, $post_type ) )
 						continue;
 
 					// Add column
@@ -898,6 +917,317 @@ class VGSR_Entity_BuddyPress {
 		</div>
 
 		<?php
+	}
+
+	/** Kast: Address *********************************************************/
+
+	/**
+	 * Return the address meta and their profile field ids
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses VGSR_Kast::address_meta()
+	 * @uses VGSR_Entity_Base::get_setting()
+	 *
+	 * @return array Profile field ids
+	 */
+	public function address_get_field_ids() {
+
+		// Define local variables
+		$vgsr_entity = vgsr_entity();
+		$fields      = array();
+
+		foreach ( $vgsr_entity->kast->address_meta() as $meta ) {
+			$field_id = $vgsr_entity->kast->get_setting( "bp-address-map-{$meta['name']}" );
+
+			// Skip when field is not found
+			if ( ! $field_id || ! xprofile_get_field( $field_id ) )
+				continue;
+
+			$fields[ $meta['name'] ] = $field_id;
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * Return a member's Kast address field data
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param integer $user_id Optional. User ID. Defaults to displayed user.
+	 * @return array Field ids and their data
+	 */
+	public function address_get_field_data( $user_id = 0 ) {
+
+		// Default to displayed user
+		if ( ! $user_id ) {
+			$user_id = bp_displayed_user_id();
+		}
+
+		// Define local variable
+		$data = array();
+
+		// When member has a registered Kast
+		if ( $post = $this->address_get_member_kast( $user_id ) ) {
+
+			// Get profile fields to replace and replacement values
+			$fields = $this->address_get_field_ids();
+			$values = vgsr_entity()->kast->address_meta( $post );
+
+			// Map meta values to field ids
+			foreach ( $fields as $k => $field_id ) {
+				foreach ( $values as $meta ) {
+					if ( $meta['name'] === $k ) {
+						$data[ $field_id ] = $meta['value'];
+					}
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Return the member's registered Kast
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses VGSR_Entity_Base::get_setting()
+	 * @uses xprofile_get_field()
+	 * @uses bp_displayed_user_id()
+	 * @uses xprofile_get_field_data()
+	 *
+	 * @param int $user_id Optional. User ID. Defaults to displayed user ID.
+	 * @return WP_Post|bool Post object when found, False when not found.
+	 */
+	public function address_get_member_kast( $user_id = 0 ) {
+
+		// Get Kast setting
+		$field_id = vgsr_entity()->kast->get_setting( 'bp-habitants-field' );
+
+		// Bail when the Kast field is not found
+		if ( ! $field_id || ! xprofile_get_field( $field_id ) )
+			return false;
+
+		// Default to the displayed user
+		if ( empty( $user_id ) ) {
+			$user_id = bp_displayed_user_id();
+		}
+
+		// Get the member's kast post ID
+		$post_id = xprofile_get_field_data( $field_id, $user_id );
+		$post    = $post_id ? get_post( $post_id ) : false;
+
+		return $post;
+	}
+
+	/**
+	 * Filter profile groups to add missing address fields
+	 *
+	 * @since 2.0.0
+	 *
+	 * @see BP_XProfile_Field::get_fields_for_member_type()
+	 *
+	 * @uses VGSR_Entity_BuddyPress:address_get_field_data()
+	 * @uses xprofile_get_field()
+	 * @uses xprofile_get_field_group()
+	 *
+	 * @param array $groups Profile groups
+	 * @param array $args
+	 * @return array Profile groups
+	 */
+	public function address_profile_groups_fields( $groups, $args ) {
+
+		// Default query args
+		$r = wp_parse_args( $args, array(
+			'profile_group_id'  => false,
+			'user_id'           => bp_displayed_user_id(),
+			'member_type'       => false,
+			'hide_empty_groups' => false,
+			'hide_empty_fields' => false,
+			'fetch_fields'      => false,
+			'fetch_field_data'  => false,
+			'exclude_groups'    => false,
+			'exclude_fields'    => false,
+		) );
+
+		// Bail when no fields or field data are fetched
+		if ( ! $r['fetch_fields'] || ! $r['fetch_field_data'] )
+			return $groups;
+
+		// Member has replacement data
+		if ( $data = $this->address_get_field_data( $r['user_id'] ) ) {
+
+			// Empty fields are removed
+			if ( $args['hide_empty_fields'] ) {
+
+				// Define local variables
+				$member_type_fields = BP_XProfile_Field::get_fields_for_member_type( $r['member_type'] );
+				$groups_added = false;
+
+				foreach ( array_keys( $data ) as $field_id ) {
+
+					// Skip excluded field
+					if ( $r['exclude_fields'] && in_array( $field_id, (array) $r['exclude_fields'] ) )
+						continue;
+
+					// Skip restricted field
+					if ( ! in_array( $field_id, array_keys( $member_type_fields ) ) )
+						continue;
+
+					// Setup field
+					$field = xprofile_get_field( $field_id );
+
+					// Skip specific other field group
+					if ( $r['profile_group_id'] && $field->group_id != $r['profile_group_id'] )
+						continue;
+
+					// Skip excluded field group
+					if ( $r['exclude_groups'] && in_array( $field->group_id, (array) $r['exclude_groups'] ) )
+						continue;
+
+					// Add group when missing
+					if ( ! in_array( $field->group_id, wp_list_pluck( $groups, 'id' ) ) ) {
+						$groups[] = xprofile_get_field_group( $field->group_id );
+						$groups_added = true;
+					}
+
+					// Add field to group when missing
+					foreach ( $groups as $key => $group ) {
+						if ( $group->id != $field->group_id )
+							continue;
+
+						if ( ! in_array( $field->id, wp_list_pluck( $group->fields, 'id' ) ) ) {
+							$groups[ $key ]->fields[] = $field;
+
+							// Reset field order
+							usort( $groups[ $key ]->fields, function( $a, $b ) {
+								$x = (int) $a->field_order;
+								$y = (int) $b->field_order;
+
+								if ( $x === $y ) {
+									return 0;
+								} else {
+									return ( $x > $y ) ? 1 : -1;
+								}
+							});
+
+							break;
+						}
+					}
+				}
+
+				// Reset group order
+				if ( $groups_added ) {
+					usort( $groups, function( $a, $b ) {
+						$x = (int) $a->group_order;
+						$y = (int) $b->group_order;
+
+						if ( $x === $y ) {
+							return 0;
+						} else {
+							return ( $x > $y ) ? 1 : -1;
+						}
+					});
+				}
+			}
+
+			// Apply all new values to their respective fields
+			foreach ( $data as $field_id => $value ) {
+				foreach ( $groups as $gk => $group ) {
+					if ( ! isset( $group->fields ) )
+						continue;
+
+					foreach ( $group->fields as $fk => $field ) {
+						if ( $field->id == $field_id ) {
+							if ( ! $field->data ) {
+								$data        = new stdClass;
+								$data->id    = null;
+								$data->value = 'null';
+							} else {
+								$data = $field->data;
+							}
+
+							// Set extra replacement value
+							$data->_value = $value;
+
+							// Overwrite data object
+							$groups[ $gk ]->fields[ $fk ]->data = $data;
+
+							break 2;
+						}
+					}
+				}
+			}
+		}
+
+		return $groups;
+	}
+
+	/**
+	 * Replace a member's address details when they're a Kast habitant
+	 *
+	 * Filters {@see bp_get_the_profile_field_value()}
+	 *
+	 * @since 2.0.0
+	 *
+	 * @global BP_XProfile_Field $field
+	 *
+	 * @param mixed $value Field value
+	 * @param string $field_type Field type
+	 * @param string $field_id Field ID
+	 * @return mixed Field value
+	 */
+	public function address_profile_field_value( $value, $field_type, $field_id ) {
+		global $field;
+
+		/**
+		 * Replace field data value with the dummy value that was set
+		 * in {@see VGSR_Entity_BuddyPress::address_profile_groups_fields()}.
+		 */
+		if ( isset( $field->data->_value ) ) {
+			$value = $field->data->_value;
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Replace a member's address details when they're a Kast habitant
+	 *
+	 * Filters {@see bp_get_member_profile_data()}.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param mixed $data Field data
+	 * @return mixed Field data
+	 */
+	public function address_profile_field_data( $data ) {
+		global $members_template;
+
+		// Field is queried by name. It is not available in this filter (!)
+		$r = array(
+			'field'   => false,
+			'user_id' => $members_template->member->id,
+		);
+
+		/**
+		 * Dummy values assigned in {@see xprofile_get_groups()} are lost when used
+		 * in {@see BP_XProfile_ProfileData::get_all_for_user()}, so here we
+		 * re-fetch and overwrite the data from the address data collection.
+		 */
+		if ( isset( $members_template->member->field_data[ $r['field'] ]['field_id'] ) ) {
+			if ( $address = $this->address_get_field_data( $r['user_id'] ) ) {
+				$field_id = $members_template->member->field_data[ $r['field'] ]['field_id'];
+
+				if ( isset( $address[ $field_id ] ) ) {
+					$data = $address[ $field_id ];
+				}
+			}
+		}
+
+		return $data;
 	}
 }
 
