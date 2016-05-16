@@ -81,7 +81,8 @@ class VGSR_Entity_BuddyPress {
 		// Kast: Address
 		add_filter( 'bp_xprofile_get_groups',         array( $this, 'address_profile_groups_fields' ),  5, 2 );
 		add_filter( 'bp_get_the_profile_field_value', array( $this, 'address_profile_field_value'   ), 10, 3 );
-		add_filter( 'bp_get_member_profile_data',     array( $this, 'address_profile_field_data'    )        );
+		add_filter( 'bp_get_member_profile_data',     array( $this, 'address_profile_field_data'    ), 10, 2 );
+		add_filter( 'bp_get_profile_field_data',      array( $this, 'address_profile_field_data'    ), 10, 2 );
 	}
 
 	/** Settings **************************************************************/
@@ -1196,34 +1197,34 @@ class VGSR_Entity_BuddyPress {
 	/**
 	 * Replace a member's address details when they're a Kast habitant
 	 *
-	 * Filters {@see bp_get_member_profile_data()}.
+	 * Filters {@see bp_get_member_profile_data()} and {@see bp_get_profile_field_data()}.
 	 *
 	 * @since 2.0.0
 	 *
 	 * @param mixed $data Field data
+	 * @param array $args Query args. Since BP 2.6+
 	 * @return mixed Field data
 	 */
-	public function address_profile_field_data( $data ) {
+	public function address_profile_field_data( $data, $args = array() ) {
 		global $members_template;
 
 		// Field is queried by name. It is not available in this filter (!)
-		$r = array(
+		$r = wp_parse_args( $args, array(
 			'field'   => false,
-			'user_id' => $members_template->member->id,
-		);
+			'user_id' => isset( $members_template ) ? $members_template->member->id : bp_displayed_user_id(),
+		) );
+
+		// Get the field ID
+		$field_id = is_numeric( $r['field'] ) ? (int) $r['field'] : xprofile_get_field_id_from_name( $r['field'] );
 
 		/**
 		 * Dummy values assigned in {@see xprofile_get_groups()} are lost when used
 		 * in {@see BP_XProfile_ProfileData::get_all_for_user()}, so here we
 		 * re-fetch and overwrite the data from the address data collection.
 		 */
-		if ( isset( $members_template->member->field_data[ $r['field'] ]['field_id'] ) ) {
-			if ( $address = $this->address_get_field_data( $r['user_id'] ) ) {
-				$field_id = $members_template->member->field_data[ $r['field'] ]['field_id'];
-
-				if ( isset( $address[ $field_id ] ) ) {
-					$data = $address[ $field_id ];
-				}
+		if ( $field_id && $address = $this->address_get_field_data( $r['user_id'] ) ) {
+			if ( isset( $address[ $field_id ] ) ) {
+				$data = $address[ $field_id ];
 			}
 		}
 
