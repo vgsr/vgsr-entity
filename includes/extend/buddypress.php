@@ -1215,7 +1215,11 @@ class VGSR_Entity_BuddyPress {
 		) );
 
 		// Get the field ID
-		$field_id = is_numeric( $r['field'] ) ? (int) $r['field'] : xprofile_get_field_id_from_name( $r['field'] );
+		if ( $r['field'] ) {
+			$field_id = is_numeric( $r['field'] ) ? (int) $r['field'] : xprofile_get_field_id_from_name( $r['field'] );
+		} else {
+			$field_id = false;
+		}
 
 		/**
 		 * Dummy values assigned in {@see xprofile_get_groups()} are lost when used
