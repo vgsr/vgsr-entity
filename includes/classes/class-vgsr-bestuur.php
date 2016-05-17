@@ -687,6 +687,52 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		<?php
 	}
 
+	/**
+	 * Return the position for a given user
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses VGSR_Bestuur::get_positions()
+	 *
+	 * @param int $user_id Optional. User ID. Defaults to the current user.
+	 * @return array Position details or empty array when nothing found.
+	 */
+	public function get_user_position( $user_id = 0 ) {
+		global $wpdb;
+
+		// Default to the current user
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		// Define return variable
+		$retval = array();
+
+		// Get registered positions
+		$positions = $this->get_positions();
+		$position_map = implode( ', ', array_map( function( $v ){ return "'position_{$v['slug']}'"; }, $positions ) );
+
+		// Define query for the user's position(s)
+		$sql = $wpdb->prepare( "SELECT p.ID, pm.meta_key FROM {$wpdb->posts} p JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id WHERE 1=1 AND post_type = %s AND pm.meta_key IN ($position_map) AND pm.meta_value = %d", 'bestuur', $user_id );
+
+		// Run query
+		if ( $query = $wpdb->get_results( $sql ) ) {
+			$retval['position'] = str_replace( 'position_', '', $query[0]->meta_key );
+			$retval['bestuur']  = (int) $query[0]->ID;
+		}
+
+		/**
+		 * Filters the user's bestuur position(s)
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $value   User bestuur position details
+		 * @param int   $user_id User ID
+		 * @param array $query   Query results
+		 */
+		return apply_filters( 'vgsr_entity_bestuur_user_position', $retval, $user_id, $query );
+	}
+
 	/** Theme **********************************************************/
 
 	/**
