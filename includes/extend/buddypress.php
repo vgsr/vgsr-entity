@@ -1069,6 +1069,10 @@ class VGSR_Entity_BuddyPress {
 
 				foreach ( array_keys( $data ) as $field_id ) {
 
+					// Skip when without field data
+					if ( empty( $data[ $field_id ] ) )
+						continue;
+
 					// Skip excluded field
 					if ( $r['exclude_fields'] && in_array( $field_id, (array) $r['exclude_fields'] ) )
 						continue;
