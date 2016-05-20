@@ -1147,18 +1147,18 @@ class VGSR_Entity_BuddyPress {
 					foreach ( $group->fields as $fk => $field ) {
 						if ( $field->id == $field_id ) {
 							if ( ! $field->data ) {
-								$data        = new stdClass;
-								$data->id    = null;
-								$data->value = 'null';
+								$field_data        = new stdClass;
+								$field_data->id    = null;
+								$field_data->value = 'null';
 							} else {
-								$data = $field->data;
+								$field_data = $field->data;
 							}
 
 							// Set extra replacement value
-							$data->_value = $value;
+							$field_data->_value = $value;
 
 							// Overwrite data object
-							$groups[ $gk ]->fields[ $fk ]->data = $data;
+							$groups[ $gk ]->fields[ $fk ]->data = $field_data;
 
 							break 2;
 						}
