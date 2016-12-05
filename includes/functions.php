@@ -11,6 +11,24 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Return whether the user has access to hidden parts
+ *
+ * @since 2.0.0
+ *
+ * @param int $user_id Optional. Defaults to the current user.
+ * @return bool Has the user access?
+ */
+function vgsr_entity_check_access( $user_id = 0 ) {
+
+	// Default to the current user
+	if ( empty( $user_id ) ) {
+		$user_id = get_current_user_id();
+	}
+
+	return function_exists( 'vgsr' ) && is_user_vgsr( $user_id );
+}
+
+/**
  * Return the entity post's display meta
  *
  * @since 2.0.0

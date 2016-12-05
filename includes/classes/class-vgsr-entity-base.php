@@ -291,7 +291,6 @@ abstract class VGSR_Entity_Base {
 	 * @uses VGSR_Entity_Base::get_entity_parent_slug()
 	 * @uses apply_filters() Calls 'vgsr_{$post_type}_register_post_type'
 	 * @uses register_post_status()
-	 * @uses is_user_vgsr()
 	 */
 	public function register_post_type() {
 
@@ -330,12 +329,17 @@ abstract class VGSR_Entity_Base {
 
 		// Register archive post status
 		if ( $this->args['has_archive'] ) {
+
+			// User access
+			$access = vgsr_entity_check_access();
+
 			register_post_status( $this->archive_status_id, array(
 				'label'               => esc_html__( 'Archived', 'vgsr-entity' ),
 				'label_count'         => _n_noop( 'Archived <span class="count">(%s)</span>', 'Archived <span class="count">(%s)</span>', 'vgsr-entity' ),
-				// Archived posts are only shown to VGSR users
-				'exclude_from_search' => ! is_user_vgsr(),
-				'public'              => is_user_vgsr(),
+
+				// Limit access to archived posts
+				'exclude_from_search' => ! $access,
+				'public'              => $access,
 			) );
 		}
 	}

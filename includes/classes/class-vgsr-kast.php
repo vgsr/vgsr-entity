@@ -276,8 +276,8 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 */
 	public function entity_details( $post ) {
 
-		// Bail when the user is not VGSR
-		if ( ! function_exists( 'is_user_vgsr' ) || ! is_user_vgsr() )
+		// Bail when the user has no access
+		if ( ! vgsr_entity_check_access() )
 			return;
 
 		// Define local variables

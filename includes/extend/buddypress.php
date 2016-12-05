@@ -120,6 +120,7 @@ class VGSR_Entity_BuddyPress {
 
 		// Define local variable
 		$bp_fields = array();
+		$access    = vgsr_entity_check_access();
 
 		// When using XProfile
 		if ( bp_is_active( 'xprofile' ) ) {
@@ -140,7 +141,7 @@ class VGSR_Entity_BuddyPress {
 				'is_entry_meta'     => true,
 				'meta_label'        => esc_html__( '%d Members', 'vgsr-entity' ),
 				'detail_callback'   => array( $this, 'entity_members_detail' ),
-				'show_detail'       => is_user_vgsr(),
+				'show_detail'       => $access,
 			);
 
 			// Kast habitants
@@ -159,7 +160,7 @@ class VGSR_Entity_BuddyPress {
 				'is_entry_meta'     => true,
 				'meta_label'        => esc_html__( '%d Habitants', 'vgsr-entity' ),
 				'detail_callback'   => array( $this, 'entity_habitants_detail' ),
-				'show_detail'       => is_user_vgsr(),
+				'show_detail'       => $access,
 			);
 
 			// Kast former habitants
@@ -176,7 +177,7 @@ class VGSR_Entity_BuddyPress {
 
 				// Field display
 				'detail_callback'   => array( $this, 'entity_olim_habitants_detail' ),
-				'show_detail'       => is_user_vgsr(),
+				'show_detail'       => $access,
 			);
 
 			// Kast Address fields
@@ -448,7 +449,6 @@ class VGSR_Entity_BuddyPress {
 	 * @since 2.0.0
 	 *
 	 * @uses VGSR_Entity_Base::get_setting()
-	 * @uses is_user_vgsr()
 	 * @uses VGSR_Entity_BuddyPress::get_post_users()
 	 *
 	 * @param string $field Settings field
@@ -487,7 +487,7 @@ class VGSR_Entity_BuddyPress {
 			case 'bp-habitants-field' :
 				if ( $display ) {
 					// For non-VGSR, discount oud-leden
-					$query_args = is_user_vgsr() ? array() : array( 'member_type__not_in' => array( 'oud-lid' ) );
+					$query_args = vgsr_entity_check_access() ? array() : array( 'member_type__not_in' => array( 'oud-lid' ) );
 					$value = $this->get_post_users( $value, $post, $query_args );
 				}
 				break;
@@ -747,7 +747,7 @@ class VGSR_Entity_BuddyPress {
 		}
 
 		// For VGSR members
-		if ( function_exists( 'vgsr' ) && is_user_vgsr() ) {
+		if ( vgsr_entity_check_access() ) {
 
 			// Bestuur: Replace Positions detail
 			remove_action( 'vgsr_entity_bestuur_details', array( vgsr_entity()->bestuur, 'positions_detail' ) );
