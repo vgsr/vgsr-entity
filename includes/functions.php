@@ -349,11 +349,31 @@ function entity_has_more_tag( $post = 0 ) {
 /** Features ***********************************************************/
 
 /**
+ * Return whether the given entity supports the given feature
+ *
+ * @since 2.0.0
+ *
+ * @param string $feature Feature name
+ * @param string|WP_Post $entity Optional. Entity post type name or post object. Defaults to the current post.
+ * @return bool Entity supports the feature
+ */
+function entity_supports( $feature, $entity = 0 ) {
+	if ( ! is_string( $entity ) && ! $entity = get_post( $entity ) )
+		return;
+
+	// Get the post's post type
+	if ( is_a( $entity, 'WP_Post' ) ) {
+		$entity = $entity->post_type;
+	}
+
+	return is_entity( $entity ) && in_array( $feature, vgsr_entity()->{$entity}->args['features'] );
+}
+
+/**
  * Output an entity's logo
  *
  * @since 2.0.0
  *
- * @uses VGSR_Entity_Base::has_feature()
  * @uses wp_get_attachment_image()
  * @uses get_entity_logo()
  * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post
@@ -363,7 +383,7 @@ function the_entity_logo( $post = 0 ) {
 		return;
 
 	// Output entity logo image
-	if ( is_entity( $post ) && vgsr_entity()->{$post->post_type}->has_feature( 'logo' ) ) {
+	if ( entity_supports( 'logo', $post ) ) {
 		echo wp_get_attachment_image( get_entity_logo( $post->ID ) );
 	}
 }
@@ -374,7 +394,6 @@ function the_entity_logo( $post = 0 ) {
  * @since 2.0.0
  *
  * @uses is_entity()
- * @uses VGSR_Entity_Base::has_feature()
  * @uses get_post_meta()
  *
  * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post
@@ -385,7 +404,7 @@ function get_entity_logo( $post = 0 ) {
 		return false;
 
 	// Bail when not an entity or has no logo
-	if ( ! is_entity( $post ) || ! vgsr_entity()->{$post->post_type}->has_feature( 'logo' ) )
+	if ( ! entity_supports( 'logo', $post ) )
 		return false;
 
 	$logo_id = get_post_meta( $post->ID, "_{$post->post_type}-logo-id", true );

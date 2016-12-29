@@ -472,20 +472,6 @@ abstract class VGSR_Entity_Base {
 		return $content;
 	}
 
-	/** Features *******************************************************/
-
-	/**
-	 * Return whether a given feature is active for this entity
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $feature Feature name
-	 * @return bool Entity feature is active
-	 */
-	public function has_feature( $feature = '' ) {
-		return in_array( $feature, $this->args['features'] );
-	}
-
 	/** Feature: Logo **************************************************/
 
 	/**
@@ -493,15 +479,14 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses VGSR_Entity_Base::has_feature()
 	 * @uses add_image_size()
 	 * @uses add_action()
 	 * @uses add_filter()
 	 */
 	public function feature_logo_setup() {
 
-		// Bail when the logo feature is not active
-		if ( ! $this->has_feature( 'logo' ) )
+		// Bail when there's no logo feature support
+		if ( ! entity_supports( 'logo', $this->type ) )
 			return;
 
 		// Define logo image size
