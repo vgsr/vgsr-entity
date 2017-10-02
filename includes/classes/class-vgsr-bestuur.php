@@ -515,7 +515,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		<p class="bestuur-positions">
 			<?php foreach ( $positions as $args ) : ?>
 			<label class="alignleft">
-				<?php echo $remove_control; ?>
 				<span class="input-text-wrap">
 					<select name="positions[slug][]">
 						<option value=""><?php _e( '&mdash; Select Position &mdash;', 'vgsr-entity' ); ?></option>
@@ -535,12 +534,12 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 					<input type="text" class="positions-user-name <?php echo $user_class; ?>" name="positions[user_name][]" value="<?php echo esc_attr( $user_name ); ?>" />
 					<input type="hidden" class="positions-user-id" name="positions[user_id][]" value="<?php echo $user_id; ?>" />
 				</span>
+				<?php echo $remove_control; ?>
 			</label>
 			<?php endforeach; ?>
 
 			<?php if ( empty( $positions ) ) : ?>
 			<label class="alignleft">
-				<?php echo $remove_control; ?>
 				<span class="input-text-wrap">
 					<select name="positions[slug][]">
 						<option value=""><?php _e( '&mdash; Select Position &mdash;', 'vgsr-entity' ); ?></option>
@@ -552,11 +551,11 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 				<span class="input-text-wrap">
 					<input type="text" class="positions-user-name" name="positions[user_name][]" value="" />
 				</span>
+				<?php echo $remove_control; ?>
 			</label>
 			<?php endif; ?>
 
 			<label class="alignleft positions-add-row" style="display:none;">
-				<?php echo $remove_control; ?>
 				<span class="input-text-wrap">
 					<select name="positions[slug][]">
 						<option value=""><?php _e( '&mdash; Select Position &mdash;', 'vgsr-entity' ); ?></option>
@@ -568,6 +567,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 				<span class="input-text-wrap">
 					<input type="text" class="positions-user-name" name="positions[user_name][]" value="" />
 				</span>
+				<?php echo $remove_control; ?>
 			</label>
 
 			<input type="hidden" name="positions-ajax-url" value="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'vgsr_entity_suggest_user' ), admin_url( 'admin-ajax.php', 'relative' ) ), 'vgsr_entity_suggest_user_nonce' ) ); ?>" />

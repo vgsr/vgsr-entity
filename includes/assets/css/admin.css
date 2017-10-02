@@ -95,10 +95,12 @@
 
 	#vgsr-entity-details .bestuur-positions .position-remove {
 		position: absolute;
+		top: 0px;
 		width: 28px;
 		height: 28px;
-		margin: 1px 0;
+		margin: 1px 0px;
 		background: #fff;
+		color: #32373c;
 		border-left: 1px solid #e5e5e5;
 		border-radius: 14px 0 0 14px;
 		text-align: left;
@@ -106,12 +108,13 @@
 		z-index: 0;
 		-webkit-transform: translateX( 0 );
 		transform: translateX( 0 );
+		transition: transform .3s ease-out, width .3s ease-out;
 	}
 
 		#vgsr-entity-details .bestuur-positions .alignleft:hover .position-remove,
 		#vgsr-entity-details .bestuur-positions .alignleft .position-remove:hover,
 		#vgsr-entity-details .bestuur-positions .alignleft .position-remove:focus {
-			width: calc( 100% + 28px - 2px );
+			width: calc( 100% + 28px - 1px );
 			-webkit-transform: translateX( -28px );
 			transform: translateX( -28px );
 		}
