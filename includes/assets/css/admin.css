@@ -180,7 +180,7 @@
 				right: 100%;
 				width: 200px;
 				padding: 5px 8px;
-				background: #72777c;
+				background: #32373c;
 				color: #fff;
 				z-index: 1000; /* Above editor toolbar */
 				text-align: center;
@@ -213,7 +213,7 @@
 					height: 0px;
 					-webkit-transform: translateY( -5px );
 					transform: translateY( -5px );
-					border-left: 5px solid #72777c;
+					border-left: 5px solid #32373c;
 					border-top: 5px solid transparent;
 					border-bottom: 5px solid transparent;
 				}

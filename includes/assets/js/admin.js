@@ -56,8 +56,7 @@
 
 	$bestuurPositions
 		// Add row
-		.on( 'click', 'a.position-add', function( e ) {
-			e.preventDefault();
+		.on( 'click', '.position-add', function() {
 			$bestuurPositions
 				.find( '.positions-add-row' )
 					.clone()
@@ -68,8 +67,7 @@
 					// .suggest( suggestAjaxUrl, suggestArgs );
 		})
 		// Remove row
-		.on( 'click', 'a.position-remove', function( e ) {
-			e.preventDefault();
+		.on( 'click', '.position-remove', function() {
 			$(this).parent().remove();
 		});
 		// Add suggest UI to user input

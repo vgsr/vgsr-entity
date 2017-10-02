@@ -506,7 +506,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		$_positions = $this->get_positions();
 
 		// Define remove control
-		$remove_control = '<a href="#" class="position-remove dashicons-before dashicons-no-alt"><span class="screen-reader-text">' . __( 'Remove Position', 'vgsr-entity' ) . '</span></a>';
+		$remove_control = '<button type="button" class="button-link position-remove dashicons-before dashicons-no-alt"><span class="screen-reader-text">' . esc_html__( 'Remove position', 'vgsr-entity' ) . '</span></button>';
 
 		?>
 
@@ -573,11 +573,11 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 			<input type="hidden" name="positions-ajax-url" value="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'vgsr_entity_suggest_user' ), admin_url( 'admin-ajax.php', 'relative' ) ), 'vgsr_entity_suggest_user_nonce' ) ); ?>" />
 
 			<span class="positions-actions">
-				<a href="#" class="positions-help">
+				<button type="button" class="button-link positions-help">
 					<i class="dashicons-before dashicons-editor-help"></i>
-					<span><?php _e( 'Assign a site user (by ID or login) to a position or provide a full name. A green border indicates a verified site user.', 'vgsr-entity' ); ?></span>
-				</a>
-				<a href="#" class="button position-add"><?php _e( 'Add Position', 'vgsr-entity' ); ?></a>
+					<span><?php esc_html_e( 'Assign a site user (by ID or login) to a position or provide a full name. A green border indicates a verified site user.', 'vgsr-entity' ); ?></span>
+				</button>
+				<button type="button" class="button position-add"><?php esc_html_e( 'Add position', 'vgsr-entity' ); ?></button>
 			</span>
 		</p>
 
