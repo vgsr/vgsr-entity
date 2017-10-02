@@ -575,7 +575,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 			<span class="positions-actions">
 				<a href="#" class="positions-help">
 					<i class="dashicons-before dashicons-editor-help"></i>
-					<span><?php _e( 'Add a user to a position by inserting their user ID or user login name. Green bordered input fields contain a validated site user.', 'vgsr-entity' ); ?></span>
+					<span><?php _e( 'Assign a site user (by ID or login) to a position or provide a full name. A green border indicates a verified site user.', 'vgsr-entity' ); ?></span>
 				</a>
 				<a href="#" class="button position-add"><?php _e( 'Add Position', 'vgsr-entity' ); ?></a>
 			</span>

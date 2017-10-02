@@ -71,11 +71,6 @@
 		.on( 'click', 'a.position-remove', function( e ) {
 			e.preventDefault();
 			$(this).parent().remove();
-		})
-		// Help popup
-		.on( 'click', 'a.positions-help', function( e ) {
-			e.preventDefault();
-			$(this).toggleClass( 'popup' );
 		});
 		// Add suggest UI to user input
 		// .find( '.positions-user-name' )
