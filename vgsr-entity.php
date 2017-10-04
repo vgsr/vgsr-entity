@@ -90,6 +90,7 @@ final class VGSR_Entity {
 		/** Versions **********************************************************/
 
 		$this->version       = '2.0.0-beta-2';
+		$this->db_version    = '20000';
 
 		/** Paths *************************************************************/
 
@@ -362,7 +363,7 @@ final class VGSR_Entity {
 		$version = get_site_option( '_vgsr_entity_version', false );
 
 		// Run updater when we're updating
-		if ( ! $version || version_compare( $version, $this->version, '<' ) ) {
+		if ( ! $version || version_compare( $version, $this->db_version, '<' ) ) {
 			$this->version_updater( $version );
 		}
 	}
@@ -380,11 +381,11 @@ final class VGSR_Entity {
 
 		// Pre-2.0.0
 		if ( false === $version ) {
-			vgsr_entity_update_110();
+			vgsr_entity_update_20000();
 		}
 
 		// Update current version in DB
-		update_site_option( '_vgsr_entity_version', $this->version );
+		update_site_option( '_vgsr_entity_version', $this->db_version );
 	}
 
 	/** Admin **********************************************************/

@@ -644,7 +644,7 @@ function vgsr_entity_feature_logo_detail( $post ) {
  * @uses get_post_meta()
  * @uses update_post_meta()
  */
-function vgsr_entity_update_110() {
+function vgsr_entity_update_20000() {
 	global $wpdb;
 
 	// Get VGSR Entity
