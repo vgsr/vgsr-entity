@@ -35,19 +35,19 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		parent::__construct( 'bestuur', array(
 			'menu_icon' => 'dashicons-awards',
 			'labels'    => array(
-				'name'               => __( 'Besturen',                   'vgsr-entity' ),
-				'singular_name'      => __( 'Bestuur',                    'vgsr-entity' ),
-				'add_new'            => __( 'New Bestuur',                'vgsr-entity' ),
-				'add_new_item'       => __( 'Add new Bestuur',            'vgsr-entity' ),
-				'edit_item'          => __( 'Edit Bestuur',               'vgsr-entity' ),
-				'new_item'           => __( 'New Bestuur',                'vgsr-entity' ),
-				'all_items'          => __( 'All Besturen',               'vgsr-entity' ),
-				'view_item'          => __( 'View Bestuur',               'vgsr-entity' ),
-				'search_items'       => __( 'Search Besturen',            'vgsr-entity' ),
-				'not_found'          => __( 'No Besturen found',          'vgsr-entity' ),
-				'not_found_in_trash' => __( 'No Besturen found in trash', 'vgsr-entity' ),
-				'menu_name'          => __( 'Besturen',                   'vgsr-entity' ),
-				'settings_title'     => __( 'Besturen Settings',          'vgsr-entity' ),
+				'name'               => esc_html__( 'Besturen',                   'vgsr-entity' ),
+				'singular_name'      => esc_html__( 'Bestuur',                    'vgsr-entity' ),
+				'add_new'            => esc_html__( 'New Bestuur',                'vgsr-entity' ),
+				'add_new_item'       => esc_html__( 'Add new Bestuur',            'vgsr-entity' ),
+				'edit_item'          => esc_html__( 'Edit Bestuur',               'vgsr-entity' ),
+				'new_item'           => esc_html__( 'New Bestuur',                'vgsr-entity' ),
+				'all_items'          => esc_html__( 'All Besturen',               'vgsr-entity' ),
+				'view_item'          => esc_html__( 'View Bestuur',               'vgsr-entity' ),
+				'search_items'       => esc_html__( 'Search Besturen',            'vgsr-entity' ),
+				'not_found'          => esc_html__( 'No Besturen found',          'vgsr-entity' ),
+				'not_found_in_trash' => esc_html__( 'No Besturen found in trash', 'vgsr-entity' ),
+				'menu_name'          => esc_html__( 'Besturen',                   'vgsr-entity' ),
+				'settings_title'     => esc_html__( 'Besturen Settings',          'vgsr-entity' ),
 			),
 
 		// Meta
@@ -64,7 +64,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 		// Errors
 		), array(
-			2 => sprintf( esc_html__( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>' . __( 'Season', 'vgsr-entity' ) . '</strong>' ),
+			2 => sprintf( esc_html__( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' ), '<strong>' . esc_html__( 'Season', 'vgsr-entity' ) . '</strong>' ),
 		) );
 	}
 
@@ -119,7 +119,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 			// Bestuur Positions
 			'positions' => array(
-				'title'             => __( 'Positions', 'vgsr-entity' ),
+				'title'             => esc_html__( 'Positions', 'vgsr-entity' ),
 				'callback'          => array( $this, 'setting_positions_field' ),
 				'sanitize_callback' => array( $this, 'sanitize_positions_field' ),
 				'entity'            => $this->type,
@@ -128,7 +128,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 			// Menu Order
 			'menu-order' => array(
-				'title'             => __( 'Menu Widget Order', 'vgsr-entity' ),
+				'title'             => esc_html__( 'Menu Widget Order', 'vgsr-entity' ),
 				'callback'          => array( $this, 'setting_menu_order_field' ),
 				'sanitize_callback' => 'intval',
 				'entity'            => $this->type,
@@ -214,11 +214,11 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		$value       = (int) get_option( $option_name ); ?>
 
 		<select name="<?php echo esc_attr( $option_name ); ?>" id="<?php echo esc_attr( $option_name ); ?>">
-			<option value="0" <?php selected( $value, 0 ); ?>><?php _e( 'Seniority',         'vgsr-entity' ); ?></option>
-			<option value="1" <?php selected( $value, 1 ); ?>><?php _e( 'Reverse seniority', 'vgsr-entity' ); ?></option>
+			<option value="0" <?php selected( $value, 0 ); ?>><?php esc_html_e( 'Seniority',         'vgsr-entity' ); ?></option>
+			<option value="1" <?php selected( $value, 1 ); ?>><?php esc_html_e( 'Reverse seniority', 'vgsr-entity' ); ?></option>
 		</select>
 
-		<p for="<?php echo esc_attr( $option_name ); ?>" class="description"><?php printf( __( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></p>
+		<p for="<?php echo esc_attr( $option_name ); ?>" class="description"><?php printf( esc_html__( 'The order in which the %s will be displayed in the Menu Widget.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></p>
 
 		<?php
 	}
@@ -457,7 +457,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 		// Bestuur is the current one
 		if ( $post->post_type === $this->type && $post->ID == $this->current_bestuur ) {
-			$states['current'] = __( 'Current', 'vgsr-entity' );
+			$states['current'] = esc_html__( 'Current', 'vgsr-entity' );
 		}
 
 		return $states;
@@ -512,14 +512,14 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 		?>
 
-		<h4><?php _e( 'Positions', 'vgsr-entity' ); ?></h4>
+		<h4><?php esc_html_e( 'Positions', 'vgsr-entity' ); ?></h4>
 
 		<p class="bestuur-positions">
 			<?php foreach ( $positions as $args ) : ?>
 			<label class="alignleft">
 				<span class="input-text-wrap">
 					<select name="positions[slug][]">
-						<option value=""><?php _e( '&mdash; Select Position &mdash;', 'vgsr-entity' ); ?></option>
+						<option value=""><?php esc_html_e( '&mdash; Select position &mdash;', 'vgsr-entity' ); ?></option>
 						<?php foreach ( $_positions as $position ) : ?>
 						<option value="<?php echo esc_attr( $position['slug'] ); ?>" <?php selected( $position['slug'], $args['slug'] ); ?>><?php echo esc_html( $position['label'] ); ?></option>
 						<?php endforeach; ?>
@@ -544,7 +544,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 			<label class="alignleft">
 				<span class="input-text-wrap">
 					<select name="positions[slug][]">
-						<option value=""><?php _e( '&mdash; Select Position &mdash;', 'vgsr-entity' ); ?></option>
+						<option value=""><?php esc_html_e( '&mdash; Select position &mdash;', 'vgsr-entity' ); ?></option>
 						<?php foreach ( $_positions as $position ) : ?>
 						<option value="<?php echo esc_attr( $position['slug'] ); ?>"><?php echo esc_html( $position['label'] ); ?></option>
 						<?php endforeach; ?>
@@ -560,7 +560,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 			<label class="alignleft positions-add-row" style="display:none;">
 				<span class="input-text-wrap">
 					<select name="positions[slug][]">
-						<option value=""><?php _e( '&mdash; Select Position &mdash;', 'vgsr-entity' ); ?></option>
+						<option value=""><?php esc_html_e( '&mdash; Select position &mdash;', 'vgsr-entity' ); ?></option>
 						<?php foreach ( $_positions as $position ) : ?>
 						<option value="<?php echo esc_attr( $position['slug'] ); ?>"><?php echo esc_html( $position['label'] ); ?></option>
 						<?php endforeach; ?>
@@ -753,7 +753,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		// When this is our entity
 		if ( is_bestuur() ) {
 			/* translators: 1. Bestuur title, 2. Bestuur season */
-			$title['title'] = sprintf( __( '%1$s (%2$s)', 'vgsr-entity' ), $title['title'], $this->get( 'season' ) );
+			$title['title'] = sprintf( esc_html__( '%1$s (%2$s)', 'vgsr-entity' ), $title['title'], $this->get( 'season' ) );
 		}
 
 		return $title;

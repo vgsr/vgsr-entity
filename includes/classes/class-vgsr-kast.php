@@ -31,19 +31,19 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		// Construct entity
 		parent::__construct( 'kast', array(
 			'labels'      => array(
-				'name'               => __( 'Kasten',                   'vgsr-entity' ),
-				'singular_name'      => __( 'Kast',                     'vgsr-entity' ),
-				'add_new'            => __( 'New Kast',                 'vgsr-entity' ),
-				'add_new_item'       => __( 'Add new Kast',             'vgsr-entity' ),
-				'edit_item'          => __( 'Edit Kast',                'vgsr-entity' ),
-				'new_item'           => __( 'New Kast',                 'vgsr-entity' ),
-				'all_items'          => __( 'All Kasten',               'vgsr-entity' ),
-				'view_item'          => __( 'View Kast',                'vgsr-entity' ),
-				'search_items'       => __( 'Search Kasten',            'vgsr-entity' ),
-				'not_found'          => __( 'No Kasten found',          'vgsr-entity' ),
-				'not_found_in_trash' => __( 'No Kasten found in trash', 'vgsr-entity' ),
-				'menu_name'          => __( 'Kasten',                   'vgsr-entity' ),
-				'settings_title'     => __( 'Kasten Settings',          'vgsr-entity' ),
+				'name'               => esc_html__( 'Kasten',                   'vgsr-entity' ),
+				'singular_name'      => esc_html__( 'Kast',                     'vgsr-entity' ),
+				'add_new'            => esc_html__( 'New Kast',                 'vgsr-entity' ),
+				'add_new_item'       => esc_html__( 'Add new Kast',             'vgsr-entity' ),
+				'edit_item'          => esc_html__( 'Edit Kast',                'vgsr-entity' ),
+				'new_item'           => esc_html__( 'New Kast',                 'vgsr-entity' ),
+				'all_items'          => esc_html__( 'All Kasten',               'vgsr-entity' ),
+				'view_item'          => esc_html__( 'View Kast',                'vgsr-entity' ),
+				'search_items'       => esc_html__( 'Search Kasten',            'vgsr-entity' ),
+				'not_found'          => esc_html__( 'No Kasten found',          'vgsr-entity' ),
+				'not_found_in_trash' => esc_html__( 'No Kasten found in trash', 'vgsr-entity' ),
+				'menu_name'          => esc_html__( 'Kasten',                   'vgsr-entity' ),
+				'settings_title'     => esc_html__( 'Kasten Settings',          'vgsr-entity' ),
 			),
 			'menu_icon'   => 'dashicons-admin-home',
 			'has_archive' => true,
@@ -188,7 +188,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	public function settings_downsize_thumbs_field() { ?>
 
 		<input type="checkbox" name="_kast-downsize-thumbs" id="_kast-downsize-thumbs" <?php checked( get_option( '_kast-downsize-thumbs' ) ); ?> value="1"/>
-		<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __( 'This is a one time resizing of thumbs for %s. NOTE: This option only <strong>adds</strong> new image sizes, it doesn\'t remove old ones.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></span></label>
+		<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __( 'This is a one time resizing of thumbs for %s. NOTE: This option only <em>adds</em> new image sizes, it does not remove old ones.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></span></label>
 
 		<?php
 	}
