@@ -150,7 +150,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	public function setting_positions_field() {
 
 		// Define table controls
-		$controls = '<a class="position-remove" href="#"><i class="dashicons-before dashicons-minus"></i></a><a class="position-add" href="#"><i class="dashicons-before dashicons-plus"></i></a>';
+		$controls = '<button type="button" class="button-link position-remove dashicons-before dashicons-no-alt"><span class="screen-reader-text">' . esc_html__( 'Remove position', 'vgsr-entity' ) . '</span></button>';
 
 		// Get all positions
 		$positions = $this->get_positions();
@@ -160,43 +160,40 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		<table class="widefat fixed striped <?php echo $this->type; ?>-positions">
 			<thead>
 				<tr>
-					<th class="hndl"></th>
-					<th class="slug"><?php _e( 'Slug', 'vgsr-entity' ); ?></th>
-					<th class="label"><?php _e( 'Label', 'vgsr-entity' ); ?></th>
-					<th class="controls"></th>
+					<th class="label"><?php esc_html_e( 'Label', 'vgsr-entity' ); ?></th>
+					<th class="slug"><?php esc_html_e( 'Slug', 'vgsr-entity' ); ?></th>
+					<th class="controls">
+						<button type="button" class="button-link position-add dashicons-before dashicons-plus"><span class="screen-reader-text"><?php esc_html_e( 'Add position', 'vgsr-entity' ); ?></span></button>
+					</th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
-					<th class="hndl"></th>
-					<th class="slug"><?php _e( 'Slug', 'vgsr-entity' ); ?></th>
-					<th class="label"><?php _e( 'Label', 'vgsr-entity' ); ?></th>
+					<th class="label"><?php esc_html_e( 'Label', 'vgsr-entity' ); ?></th>
+					<th class="slug"><?php esc_html_e( 'Slug', 'vgsr-entity' ); ?></th>
 					<th class="controls"></th>
 				</tr>
 			</tfoot>
 			<tbody>
 				<?php foreach ( $positions as $position => $args ) : ?>
 				<tr>
-					<td class="hndl"></td>
-					<td class="slug"><input type="text" name="positions[slug][]" value="<?php echo esc_attr( $args['slug'] ); ?>" /></td>
 					<td class="label"><input type="text" name="positions[label][]" value="<?php echo esc_attr( $args['label'] ); ?>" /></td>
+					<td class="slug"><input type="text" name="positions[slug][]" value="<?php echo esc_attr( $args['slug'] ); ?>" /></td>
 					<td class="controls"><?php echo $controls; ?></td>
 				</tr>
 				<?php endforeach; ?>
 
 				<?php if ( empty( $positions ) ) : ?>
 				<tr>
-					<td class="hndl"></td>
-					<td class="slug"><input type="text" name="positions[slug][]" value="" /></td>
 					<td class="label"><input type="text" name="positions[label][]" value="" /></td>
+					<td class="slug"><input type="text" name="positions[slug][]" value="" /></td>
 					<td class="controls"><?php echo $controls; ?></td>
 				</tr>
 				<?php endif; ?>
 
 				<tr class="positions-add-row" style="display:none;">
-					<td class="hndl"></td>
-					<td class="slug"><input type="text" name="positions[slug][]" value="" /></td>
 					<td class="label"><input type="text" name="positions[label][]" value="" /></td>
+					<td class="slug"><input type="text" name="positions[slug][]" value="" /></td>
 					<td class="controls"><?php echo $controls; ?></td>
 				</tr>
 			</tbody>
@@ -295,15 +292,22 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 		// Add styles
 		wp_add_inline_style( 'wp-admin', "
-			.form-table .widefat { width: auto; }
-			.form-table .widefat th, .form-table .widefat td { padding: 8px 10px; }
-			.widefat.{$this->type}-positions .hndl { width: 20px; padding: 0 10px; }
-			.widefat.{$this->type}-positions td.hndl:hover { cursor: move; }
-			.widefat.{$this->type}-positions td.hndl:before { content: '\\f333'; color: rgba(64, 64, 64, .3); font-family: dashicons; font-size: 20px; height: 20px; width: 20px; display: inline-block; line-height: 1; }
-			.widefat.{$this->type}-positions .controls { width: 40px; padding: 0 10px 0 0; }
-			.widefat.{$this->type}-positions .controls a { display: inline-block; width: 20px; height: 20px; border-radius: 50%; }
-			.widefat.{$this->type}-positions .controls a:not(:hover):not(:focus) { color: #32373c; }
-			.widefat.{$this->type}-positions tbody tr:first-child:not(:nth-last-child(n+2)) .controls a.position-remove { visibility: hidden; }
+			.widefat.{$this->type}-positions { width: auto; }
+			.widefat.{$this->type}-positions th.slug, .widefat.{$this->type}-positions th.label { text-align: center; }
+			.widefat.{$this->type}-positions td.slug, .widefat.{$this->type}-positions td.label { width: 200px; }
+			.widefat.{$this->type}-positions th.controls button:before { margin-top: 1.5px; }
+			.widefat.{$this->type}-positions th, .form-table .widefat td { padding: 8px 10px; }
+			.widefat.{$this->type}-positions input { width: 100%; }
+			.widefat.{$this->type}-positions .controls { position: relative; width: auto; }
+			.widefat.{$this->type}-positions td.controls:before { content: '\\f333'; color: rgba(64, 64, 64, .3); font-family: dashicons; font-size: 20px; height: 20px; width: 20px; display: inline-block; line-height: 1; }
+			.widefat.{$this->type}-positions td.controls:hover { cursor: move; }
+			.widefat.{$this->type}-positions .controls button { display: inline-block; width: 20px; height: 20px; border-radius: 50%; color: #72777c; }
+			.widefat.{$this->type}-positions .controls .position-remove { position: absolute; top: 0px; left: 100%; width: 28px; height: 44.8px; background: #fff; border-right: 1px solid #e5e5e5; border-radius: 0 22.4px 22.4px 0; text-align: left; text-decoration: none; z-index: 0; -webkit-transform: translateX( 0 ); transform: translateX( 0 ); opacity: 0; pointer-events: none; }
+			.widefat.{$this->type}-positions.striped tbody > :nth-child(odd) .controls .position-remove { background: #f9f9f9; }
+			.widefat.{$this->type}-positions.striped tbody > .ui-sortable-helper:nth-child(even) { background: #fff; }
+			.widefat.{$this->type}-positions tr.ui-sortable-helper { box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); display: table !important; }
+			.widefat.{$this->type}-positions tr:not(.ui-sortable-helper):hover .controls .position-remove,
+			.widefat.{$this->type}-positions tr:not(.ui-sortable-helper) .controls .position-remove:focus { opacity: 1; pointer-events: inherit; }
 			"
 		);
 	}
@@ -325,18 +329,16 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 					items: 'tbody tr',
 					axis: 'y',
 					containment: 'parent',
-					handle: 'td.hndl',
+					handle: 'td.controls',
 					tolerance: 'pointer'
 				});
 
 				// Add row
-				$el.on( 'click', 'a.position-add', function( e ) {
-					e.preventDefault();
-					$tr.clone().removeClass( 'positions-add-row' ).insertAfter( $(this).parents( '.<?php echo $this->type; ?>-positions tr' ) ).show();
+				$el.on( 'click', '.position-add', function() {
+					$tr.clone().removeClass( 'positions-add-row' ).insertBefore( $tr ).show();
 
 				// Remove row
-				}).on( 'click', 'a.position-remove', function( e ) {
-					e.preventDefault();
+				}).on( 'click', '.position-remove', function() {
 					$(this).parents( '.<?php echo $this->type; ?>-positions tr' ).remove();
 				});
 			});
