@@ -226,16 +226,16 @@ class VGSR_Entity_BuddyPress {
 		) );
 
 		// Display View link
-		if ( $field_id && current_user_can( 'bp_moderate' ) ) {
+		if ( current_user_can( 'bp_moderate' ) && $field = xprofile_get_field( $field_id ) ) {
 			printf( ' <a class="button button-secondary" href="%s" target="_blank">%s</a>', 
 				esc_url( add_query_arg(
 					array(
 						'page'     => 'bp-profile-setup',
-						'group_id' => xprofile_get_field( $field_id )->group_id,
-						'field_id' => $field_id,
+						'group_id' => $field->group_id,
+						'field_id' => $field->id,
 						'mode'     => 'edit_field'
 					),
-					network_admin_url( 'users.php' )
+					bp_get_admin_url( 'users.php' )
 				) ),
 				esc_html__( 'View', 'vgsr-entity' )
 			);
