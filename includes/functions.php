@@ -33,8 +33,6 @@ function vgsr_entity_check_access( $user_id = 0 ) {
  *
  * @since 2.0.0
  *
- * @uses is_entity()
- * @uses VGSR_Entity_Base::get_meta()
  * @uses apply_filters() Calls 'vgsr_entity_get_meta'
  *
  * @param int|WP_Post $post Optional. Post ID or object
@@ -107,8 +105,6 @@ function vgsr_entity_settings_fields() {
  *
  * @since 2.0.0
  *
- * @uses vgsr_entity_settings_fields()
- *
  * @param string $entity Post type
  * @return array Settings fields
  */
@@ -139,10 +135,6 @@ function vgsr_entity_settings_fields_by_type( $entity = '' ) {
  * Output entity parent page settings field
  *
  * @since 1.0.0
- *
- * @uses VGSR_Entity_Base::get_entity_parent()
- * @uses wp_dropdown_pages()
- * @uses get_post_type_object()
  */
 function vgsr_entity_settings_display_entity_parent_field() {
 
@@ -175,8 +167,6 @@ function vgsr_entity_settings_display_entity_parent_field() {
  * Modify the nav item classes
  *
  * @since 2.0.0
- *
- * @uses is_entity()
  *
  * @param array $classes
  * @param object $item
@@ -214,9 +204,6 @@ function vgsr_entity_nav_menu_css_class( $classes, $item, $args, $depth ) {
  * Output a list of suggested users for a $.suggest AJAX call
  *
  * @since 2.0.0
- *
- * @uses check_ajax_referer()
- * @uses WP_User_Query
  */
 function vgsr_entity_suggest_user() {
 	global $wpdb;
@@ -374,8 +361,6 @@ function entity_supports( $feature, $entity = 0 ) {
  *
  * @since 2.0.0
  *
- * @uses wp_get_attachment_image()
- * @uses get_entity_logo()
  * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post
  */
 function the_entity_logo( $post = 0 ) {
@@ -392,9 +377,6 @@ function the_entity_logo( $post = 0 ) {
  * Return the entity's logo ID
  *
  * @since 2.0.0
- *
- * @uses is_entity()
- * @uses get_post_meta()
  *
  * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post
  * @return int|bool Logo post ID or False when not found
@@ -421,9 +403,6 @@ function get_entity_logo( $post = 0 ) {
  *
  * @since 2.0.0
  *
- * @uses get_entity_logo()
- * @uses _vgsr_entity_feature_logo_html()
- * @uses wp_enqueue_script()
  * @param WP_Post $post
  */
 function vgsr_entity_feature_logo_metabox( $post ) {
@@ -446,9 +425,6 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 	 * @since 2.0.0
 	 *
 	 * @see _wp_post_thumbnail_html()
-	 *
-	 * @uses has_image_size()
-	 * @uses wp_get_attachment_image()
 	 *
 	 * @param int $post_id Post ID
 	 * @param int $logo_id Post ID
@@ -494,9 +470,6 @@ function vgsr_entity_feature_logo_metabox( $post ) {
  *
  * @since 2.0.0
  *
- * @uses is_entity()
- * @uses get_entity_logo()
- *
  * @param array $settings Media settings
  * @param WP_Post $post Post object
  * @return array Media settings
@@ -518,11 +491,6 @@ function vgsr_entity_feature_logo_media_settings( $settings, $post ) {
  * @since 2.0.0
  *
  * @see wp_ajax_set_post_thumbnail()
- *
- * @uses delete_post_meta()
- * @uses _vgsr_entity_feature_logo_html()
- * @uses update_post_meta()
- * @uses wp_send_json_success()
  *
  * @param int $post_id Post ID
  * @param WP_Post $post Post object
@@ -596,9 +564,6 @@ function vgsr_entity_feature_logo_list_column( $columns ) {
  *
  * @since 2.0.0
  *
- * @uses get_entity_logo()
- * @uses wp_get_attachment_image()
- *
  * @param string $column Column name
  * @param int $post_id Post ID
  */
@@ -617,9 +582,6 @@ function vgsr_entity_feature_logo_list_column_content( $column, $post_id ) {
  *
  * @since 2.0.0
  *
- * @uses get_entity_logo()
- * @uses has_image_size()
- * @uses wp_get_attachment_image()
  * @param WP_Post $post Post object
  */
 function vgsr_entity_feature_logo_detail( $post ) {
@@ -639,10 +601,7 @@ function vgsr_entity_feature_logo_detail( $post ) {
  *
  * @since 2.0.0
  *
- * @global $wpdb
- *
- * @uses get_post_meta()
- * @uses update_post_meta()
+ * @global $wpdb WPDB
  */
 function vgsr_entity_update_20000() {
 	global $wpdb;

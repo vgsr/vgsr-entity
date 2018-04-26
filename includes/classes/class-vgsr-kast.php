@@ -133,8 +133,6 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 * Define default Kast globals
 	 *
 	 * @since 1.0.0
-	 *
-	 * @uses add_image_size()
 	 */
 	public function setup_globals() {
 		add_image_size( $this->args['thumbsize'], $this->args['mini_size'], $this->args['mini_size'], true );
@@ -199,13 +197,6 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 * Will only be run if the _kast-downsize-thumbs option is set.
 	 *
 	 * @since 1.0.0
-	 *
-	 * @uses get_posts()
-	 * @uses get_children()
-	 * @uses wp_get_attachment_image_src()
-	 * @uses image_resize()
-	 * @uses wp_get_attachment_metadata()
-	 * @uses wp_udpate_attachment_metadata()
 	 */
 	public function downsize_thumbs() {
 

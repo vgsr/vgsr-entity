@@ -17,7 +17,6 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 2.0.0
  *
- * @uses is_entity()
  * @uses do_action() Calls 'vgsr_entity_{$post_type}_details'
  *
  * @param int|WP_Post $post Optional. Post ID or object. Defaults to current post.
@@ -63,19 +62,9 @@ function vgsr_entity_details( $post = 0 ) {
 /**
  * Return an entity parent's entity posts HTML markup
  *
- * Append the entity list to the parent's post content
+ * Append the entity list to the parent's post content.
  *
  * @since 2.0.0
- *
- * @uses is_entity_parent()
- * @uses WP_Query
- * @uses get_entity_logo()
- * @uses the_permalink()
- * @uses the_entity_logo()
- * @uses the_title()
- * @uses get_the_permalink()
- * @uses entity_has_more_tag()
- * @uses the_content()
  *
  * @param string $content The post content
  * @return string $retval HTML
@@ -206,9 +195,6 @@ if ( ! function_exists( 'is_entity_parent' ) ) :
  * Return whether the post is an entity parent page
  *
  * @since 2.0.0
- *
- * @uses VGSR_Entity::get_entity_parents()
- * @uses post_type_exists()
  *
  * @param int|WP_Post $post Optional. Post ID or object
  * @return string|bool Post type of parent's entity or False if it is not.

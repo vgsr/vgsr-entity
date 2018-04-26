@@ -49,10 +49,6 @@ final class VGSR_Entity {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @staticvar object $instance
-	 * @uses VGSR_Entity::setup_globals() Setup the globals needed
-	 * @uses VGSR_Entity::includes() Include the required files
-	 * @uses VGSR_Entity::setup_actions() Setup the hooks and actions
 	 * @see vgsr_entity()
 	 * @return The one true VGSR_Entity
 	 */
@@ -295,10 +291,6 @@ final class VGSR_Entity {
 	 * Refresh permalink structure on activation
 	 *
 	 * @since 1.0.0
-	 *
-	 * @uses VGSR_Entity::setup_entities()
-	 * @uses VGSR_Entity_Base::register_post_type()
-	 * @uses flush_rewrite_rules()
 	 */
 	public function flush_rewrite_rules() {
 
@@ -324,7 +316,6 @@ final class VGSR_Entity {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses load_textdomain() To insert the matched language file
 	 * @return mixed Text domain if found, else boolean false
 	 */
 	public function load_textdomain() {
@@ -353,9 +344,6 @@ final class VGSR_Entity {
 	 * Check if the plugin needs to run the update logic
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses get_site_option()
-	 * @uses VGSR_Entity::version_updater()
 	 */
 	public function check_for_update() {
 
@@ -373,8 +361,6 @@ final class VGSR_Entity {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses vgsr_entity_update_110()
-	 * @uses update_site_option()
 	 * @param string $version Version number
 	 */
 	public function version_updater( $version = '' ) {
@@ -394,8 +380,6 @@ final class VGSR_Entity {
 	 * Filters the admin menu to add a separator
 	 *
 	 * @since 1.0.0
-	 *
-	 * @uses VGSR_Entity::add_separator()
 	 */
 	public function admin_menu() {
 
@@ -417,6 +401,7 @@ final class VGSR_Entity {
 	 * @since 1.0.0
 	 *
 	 * @global array $menu
+	 *
 	 * @param int $pos The position after which to add the sep
 	 */
 	public function add_separator( $pos ) {
@@ -440,8 +425,6 @@ final class VGSR_Entity {
 	 * Initiate entity widgets
 	 *
 	 * @since 1.0.0
-	 *
-	 * @uses register_widget()
 	 */
 	public function widgets_init() {
 
@@ -459,7 +442,6 @@ final class VGSR_Entity {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses VGSR_Entity::get_entities()
 	 * @return array Entity parents. Keys are post type, values are post IDs
 	 */
 	public function get_entity_parents() {
@@ -478,11 +460,6 @@ final class VGSR_Entity {
 	 * Intercept the template loader to load the entity template
 	 *
 	 * @since 1.0.0
-	 *
-	 * @uses is_entity()
-	 * @uses is_singular()
-	 * @uses get_post_type()
-	 * @uses get_query_template()
 	 *
 	 * @param string $template The current template match
 	 * @return string $template
@@ -531,7 +508,6 @@ final class VGSR_Entity {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses VGSR_Entity::get_entities()
 	 * @param WP_Query $query
 	 */
 	public function pre_get_posts( $query ) {
@@ -620,9 +596,6 @@ final class VGSR_Entity {
 	 * Wrapper for a single entity's {@see VGSR_Entity::get_meta()}
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses is_entity()
-	 * @uses VGSR_Entity::get_meta()
 	 *
 	 * @param int|WP_Post $post Optional. Post ID or object
 	 * @return array Entity meta

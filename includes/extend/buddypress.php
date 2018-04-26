@@ -47,8 +47,6 @@ class VGSR_Entity_BuddyPress {
 	 * Class constructor
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses VGSR_Entity_BuddyPress::setup_actions()
 	 */
 	public function __construct() {
 
@@ -110,8 +108,6 @@ class VGSR_Entity_BuddyPress {
 	 * Add to the admin settings fields
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses bp_is_active()
 	 *
 	 * @param array $fields Settings fields
 	 * @return array Settings fields
@@ -205,12 +201,6 @@ class VGSR_Entity_BuddyPress {
 	 * Display a XProfile field selector settings field
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses VGSR_Entity_BuddyPress::get()
-	 * @uses VGSR_Entity_BuddyPress::xprofile_fields_dropdown()
-	 * @uses xprofile_get_field()
-	 * @uses network_admin_url() Defaults to `admin_url()` when not in multisite
-	 * @uses get_post_type_object()
 	 */
 	public function xprofile_field_setting( $args = array() ) {
 
@@ -250,8 +240,6 @@ class VGSR_Entity_BuddyPress {
 	 * Output or return a dropdown with XProfile fields
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses bp_xprofile_get_groups()
 	 *
 	 * @param array $args Dropdown arguments
 	 * @return void|string Dropdown markup
@@ -310,11 +298,6 @@ class VGSR_Entity_BuddyPress {
 	 * Setup hooks for the entities' list tables
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses vgsr_entity_settings_fields()
-	 * @uses VGSR_Entity::get_entities()
-	 * @uses add_filter()
-	 * @uses add_action()
 	 */
 	public function add_list_table_columns() {
 
@@ -339,10 +322,6 @@ class VGSR_Entity_BuddyPress {
 	 * Modify the current screen's columns
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses VGSR_Entity::get_entities()
-	 * @uses vgsr_entity_settings_fields_by_type()
-	 * @uses VGSR_Entity_BuddyPress::get()
 	 *
 	 * @param array $columns Columns
 	 * @return array Columns
@@ -386,8 +365,6 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses VGSR_Entity_BuddyPress::get()
-	 *
 	 * @param string $column Column name
 	 * @param int $post_id Post ID
 	 */
@@ -412,10 +389,6 @@ class VGSR_Entity_BuddyPress {
 	 * Output scripts on entity admin pages
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses vgsr_entity_settings_fields()
-	 * @uses VGSR_Entity::get_entities()
-	 * @uses wp_add_inline_script()
 	 */
 	public function admin_enqueue_scripts() {
 
@@ -447,9 +420,6 @@ class VGSR_Entity_BuddyPress {
 	 * Return the value for the given settings field of the post (type)
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses VGSR_Entity_Base::get_setting()
-	 * @uses VGSR_Entity_BuddyPress::get_post_users()
 	 *
 	 * @param string $field Settings field
 	 * @param string|int|WP_Post $post Optional. Post type, post ID or object. Defaults to current post.
@@ -505,8 +475,6 @@ class VGSR_Entity_BuddyPress {
 	 * Return the users that have the post as a field value
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses BP_User_Query
 	 *
 	 * @param int|string $field Field ID or name
 	 * @param int|WP_Post $post Optional. Post ID or post object. Defaults to current post.
@@ -581,11 +549,6 @@ class VGSR_Entity_BuddyPress {
 	 * When the post has users, the `$members_template` global is setup for use.
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses VGSR_Entity_BuddyPress::get()
-	 * @uses add_action()
-	 * @uses bp_has_members()
-	 * @uses remove_action()
 	 *
 	 * @param string $field Settings field name
 	 * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post.
@@ -682,9 +645,6 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses vgsr_entity_settings_fields_by_type()
-	 * @uses VGSR_Entity_BuddyPress::get()
-	 *
 	 * @param array $meta Display meta
 	 * @param WP_Post $post Post object
 	 * @return array Display meta
@@ -717,10 +677,6 @@ class VGSR_Entity_BuddyPress {
 	 * Setup hooks for the BP fields entity details
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses vgsr_entity_settings_fields()
-	 * @uses VGSR_Entity::get_entities()
-	 * @uses add_action()
 	 */
 	public function entity_details() {
 
@@ -761,12 +717,6 @@ class VGSR_Entity_BuddyPress {
 	 * Output a list of members of the post's field
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses VGSR_Entity_BuddyPress::bp_has_members_for_post()
-	 * @uses bp_member_class()
-	 * @uses bp_member_permalink()
-	 * @uses bp_member_avatar()
-	 * @uses bp_member_name()
 	 *
 	 * @param WP_Post $post Post object
 	 * @param array $args List arguments
@@ -814,7 +764,6 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses VGSR_Entity_BuddyPress::display_members_list()
 	 * @param WP_Post $post Post object
 	 */
 	public function entity_members_detail( $post ) {
@@ -829,7 +778,6 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses VGSR_Entity_BuddyPress::display_members_list()
 	 * @param WP_Post $post Post object
 	 */
 	public function entity_residents_detail( $post ) {
@@ -844,7 +792,6 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses VGSR_Entity_BuddyPress::display_members_list()
 	 * @param WP_Post $post Post object
 	 */
 	public function entity_olim_residents_detail( $post ) {
@@ -864,8 +811,6 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @see VGSR_Bestuur::positions_detail()
 	 *
-	 * @uses VGSR_Bestuur::get_positions()
-	 * @uses get_user_by()
 	 * @param WP_Post $post Post object
 	 */
 	public function bestuur_positions_detail( $post ) {
@@ -926,9 +871,6 @@ class VGSR_Entity_BuddyPress {
 	 * Return the address meta and their profile field ids
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses VGSR_Kast::address_meta()
-	 * @uses VGSR_Entity_Base::get_setting()
 	 *
 	 * @return array Profile field ids
 	 */
@@ -994,11 +936,6 @@ class VGSR_Entity_BuddyPress {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses VGSR_Entity_Base::get_setting()
-	 * @uses xprofile_get_field()
-	 * @uses bp_displayed_user_id()
-	 * @uses xprofile_get_field_data()
-	 *
 	 * @param int $user_id Optional. User ID. Defaults to displayed user ID.
 	 * @return WP_Post|bool Post object when found, False when not found.
 	 */
@@ -1029,10 +966,6 @@ class VGSR_Entity_BuddyPress {
 	 * @since 2.0.0
 	 *
 	 * @see BP_XProfile_Field::get_fields_for_member_type()
-	 *
-	 * @uses VGSR_Entity_BuddyPress:address_get_field_data()
-	 * @uses xprofile_get_field()
-	 * @uses xprofile_get_field_group()
 	 *
 	 * @param array $groups Profile groups
 	 * @param array $args

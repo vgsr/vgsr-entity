@@ -281,9 +281,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * Enqueue settings page scripts
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses wp_enqueue_script()
-	 * @uses wp_add_inline_style()
 	 */
 	public function enqueue_settings_scripts() {
 
@@ -404,8 +401,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * Define custom rewrite rules
 	 *
 	 * @since 1.0.0
-	 *
-	 * @uses get_post_type_object() To find the post type slug for the parent
 	 */
 	public function add_rewrite_rules() {
 
@@ -426,7 +421,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses WP_Query
 	 * @return WP_Post|bool Post object on success, false if not found
 	 */
 	public function get_current_bestuur() {
@@ -496,8 +490,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * Output the Bestuur Positions metabox section
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses VGSR_Bestuur::get_positions()
 	 *
 	 * @param WP_Post $post Post object
 	 */
@@ -591,10 +583,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses delete_post_meta()
-	 * @uses update_post_meta()
-	 * @uses get_user_by()
-	 *
 	 * @param int $post_id Post ID
 	 * @param WP_Post $post Post object
 	 */
@@ -653,8 +641,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses VGSR_Bestuur::get_positions()
-	 * @uses get_user_by()
 	 * @param WP_Post $post Post object
 	 */
 	public function positions_detail( $post ) {
@@ -693,8 +679,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * Return the position for a given user
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses VGSR_Bestuur::get_positions()
 	 *
 	 * @param int $user_id Optional. User ID. Defaults to the current user.
 	 * @return array Position details or empty array when nothing found.
@@ -741,9 +725,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * Modify the document title for our entity
 	 *
 	 * @since 2.0.0
-	 *
-	 * @uses is_bestuur()
-	 * @uses VGSR_Bestuur::get()
 	 *
 	 * @param array $title Title parts
 	 * @return array Title parts

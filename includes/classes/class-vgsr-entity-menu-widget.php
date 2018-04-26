@@ -38,9 +38,7 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 *
 	 * @see WP_Widget::widget()
 	 *
-	 * @uses VGSR_Entity::get_entity_parents()
 	 * @uses apply_filters() Calls 'vgsr_entity_menu_widget_get_posts'
-	 * @uses get_post_type_object()
 	 *
 	 * @param array $args Widget arguments
 	 * @param array $instance Saved widget values from DB
