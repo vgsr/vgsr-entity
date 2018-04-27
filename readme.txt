@@ -1,27 +1,35 @@
 === VGSR Entity ===
 Contributors: offereins
 Tags: vgsr, bestuur, dispuut, kast
-Requires at least: 4.0
-Tested up to: 4.7
+Requires at least: 4.6
+Tested up to: 4.9
 Stable tag: 2.0.0-beta-2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Custom post type management for besturen, disputen and kasten
+Structured organization and presentation of VGSR entities.
+
+== Description ==
+
+The following entities are setup with their structured details:
+
+1. Bestuur - Logo, season year, positions with users or names
+2. Dispuut - Logo, since date, ceased date
+3. Kast - Logo, address, since date, ceased date
+
+A coupling with BuddyPress enables you to associate members with Disputen and Kasten. In the respective settings page you can select the profile field which holds the post ID by which to match the post type item with the members.
+
+=== Theme compatibility ===
+
+This plugin is developed with no particular design in mind, so the entities should fit nicely in any theme. Themes can support this plugin by adding the necessary style adjustments in their theme's `style.css` file.
 
 == Installation ==
 
-= From your WordPress dashboard =
+If you download VGSR Entity manually, make sure it is uploaded to "/wp-content/plugins/vgsr-entity/".
 
-1. Visit 'Plugins > Add New'
-2. Search for 'VGSR Entity'
-3. Activate VGSR Entity from your Plugins page.
+Activate VGSR Entity in the "Plugins" admin panel using the "Activate" link.
 
-= From WordPress.org =
-
-1. Download VGSR Entity.
-2. Upload the 'vgsr' directory to your '/wp-content/plugins/' directory, using your favorite method (ftp, sftp, scp, etc...)
-3. Activate VGSR Entity from your Plugins page.
+This plugin is not hosted in the official WordPress repository. Instead, updating is supported through use of the [GitHub Updater](https://github.com/afragen/github-updater/) plugin by @afragen and friends.
 
 == Changelog ==
 
