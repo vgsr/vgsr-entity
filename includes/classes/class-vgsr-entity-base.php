@@ -964,15 +964,20 @@ abstract class VGSR_Entity_Base {
 	 * @param mixed $value New option value
 	 */
 	public function update_entity_parent( $option, $old_value, $value ) {
+		global $wpdb;
 
 		// Bail when this is not our option
 		if ( $option !== "_{$this->type}-parent-page" )
 			return;
 
-		global $wpdb;
-
 		// Run single update query for entities' post_parent
-		$wpdb->update( $wpdb->posts, array( 'post_parent' => $value ), array( 'post_type' => $this->type ), array( '%d' ), array( '%s' ) );
+		$wpdb->update(
+			$wpdb->posts,
+			array( 'post_parent' => $value ),
+			array( 'post_type' => $this->type ),
+			array( '%d' ),
+			array( '%s' )
+		);
 
 		// Renew rewrite rules
 		$this->args['parent'] = $value;
