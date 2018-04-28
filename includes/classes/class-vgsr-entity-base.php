@@ -312,6 +312,7 @@ abstract class VGSR_Entity_Base {
 				'supports'             => $supports,
 				'menu_icon'            => $this->args['menu_icon'],
 				'register_meta_box_cb' => array( $this, 'add_metabox' ),
+				'vgsr-entity'          => true
 			) )
 		);
 

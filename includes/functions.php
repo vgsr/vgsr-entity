@@ -29,6 +29,18 @@ function vgsr_entity_check_access( $user_id = 0 ) {
 }
 
 /**
+ * Return the plugin post types
+ *
+ * @since 2.0.0
+ *
+ * @param string $output Optional. See {@see get_post_types()}. Defaults to 'names'.
+ * @return array Plugin post types
+ */
+function vgsr_entity_get_post_types( $output = 'names' ) {
+	return get_post_types( array( 'vgsr-entity' => true ), $output );
+}
+
+/**
  * Return the entity post's display meta
  *
  * @since 2.0.0
