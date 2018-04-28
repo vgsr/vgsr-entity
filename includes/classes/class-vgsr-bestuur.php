@@ -66,7 +66,8 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * @since 2.0.0
 	 */
 	public function includes() {
-		require( vgsr_entity()->includes_dir . 'besturen/template.php' );
+		require( vgsr_entity()->includes_dir . 'besturen/functions.php' );
+		require( vgsr_entity()->includes_dir . 'besturen/template.php'  );
 	}
 
 	/**
@@ -419,33 +420,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	/** Positions ******************************************************/
 
 	/**
-	 * Return the available positions
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param null|int|WP_Post $post Optional. Post ID or object.
-	 * @return array Available positions or positions of a post
-	 */
-	public function get_positions( $post = null ) {
-		$positions = (array) get_option( "_{$this->type}-positions", array() );
-
-		// Get positions for single entity
-		if ( null !== $post && $post = get_post( $post ) ) {
-
-			// Walk positions
-			foreach ( $positions as $position => $args ) {
-				if ( $user = get_post_meta( $post->ID, "position_{$args['slug']}", true ) ) {
-					$positions[ $position ]['user'] = $user ? $user : false;
-				} else {
-					unset( $positions[ $position ] );
-				}
-			}
-		}
-
-		return $positions;
-	}
-
-	/**
 	 * Output the Bestuur Positions metabox section
 	 *
 	 * @since 2.0.0
@@ -455,8 +429,8 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	public function positions_metabox( $post ) {
 
 		// Get entity's positions and all positions
-		$positions  = $this->get_positions( $post );
-		$_positions = $this->get_positions();
+		$positions  = vgsr_entity_bestuur_get_positions( $post );
+		$_positions = vgsr_entity_bestuur_get_positions();
 
 		// Define remove control
 		$remove_control = '<button type="button" class="button-link position-remove dashicons-before dashicons-no-alt"><span class="screen-reader-text">' . esc_html__( 'Remove position', 'vgsr-entity' ) . '</span></button>';
@@ -569,7 +543,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		}
 
 		// Process removed positions
-		foreach ( array_diff( wp_list_pluck( $this->get_positions( $post ), 'slug' ), wp_list_pluck( $positions, 'slug' ) ) as $slug ) {
+		foreach ( array_diff( wp_list_pluck( vgsr_entity_bestuur_get_positions( $post ), 'slug' ), wp_list_pluck( $positions, 'slug' ) ) as $slug ) {
 			delete_post_meta( $post_id, "position_{$slug}" );
 		}
 
@@ -605,7 +579,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	public function positions_detail( $post ) {
 
 		// Bail when no positions are signed for this entity
-		if ( ! $positions = $this->get_positions( $post ) )
+		if ( ! $positions = vgsr_entity_bestuur_get_positions( $post ) )
 			return;
 
 		?>
@@ -632,50 +606,6 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		</div>
 
 		<?php
-	}
-
-	/**
-	 * Return the position for a given user
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param int $user_id Optional. User ID. Defaults to the current user.
-	 * @return array Position details or empty array when nothing found.
-	 */
-	public function get_user_position( $user_id = 0 ) {
-		global $wpdb;
-
-		// Default to the current user
-		if ( ! $user_id ) {
-			$user_id = get_current_user_id();
-		}
-
-		// Define return variable
-		$retval = array();
-
-		// Get registered positions
-		$positions = $this->get_positions();
-		$position_map = implode( ', ', array_map( function( $v ){ return "'position_{$v['slug']}'"; }, $positions ) );
-
-		// Define query for the user's position(s)
-		$sql = $wpdb->prepare( "SELECT p.ID, pm.meta_key FROM {$wpdb->posts} p JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id WHERE 1=1 AND post_type = %s AND pm.meta_key IN ($position_map) AND pm.meta_value = %d", 'bestuur', $user_id );
-
-		// Run query
-		if ( $query = $wpdb->get_results( $sql ) ) {
-			$retval['position'] = str_replace( 'position_', '', $query[0]->meta_key );
-			$retval['bestuur']  = (int) $query[0]->ID;
-		}
-
-		/**
-		 * Filters the user's bestuur position(s)
-		 *
-		 * @since 2.0.0
-		 *
-		 * @param array $value   User bestuur position details
-		 * @param int   $user_id User ID
-		 * @param array $query   Query results
-		 */
-		return apply_filters( 'vgsr_entity_bestuur_user_position', $retval, $user_id, $query );
 	}
 
 	/** Theme **********************************************************/
