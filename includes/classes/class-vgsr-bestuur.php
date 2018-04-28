@@ -19,14 +19,6 @@ if ( ! class_exists( 'VGSR_Bestuur' ) ) :
 class VGSR_Bestuur extends VGSR_Entity_Base {
 
 	/**
-	 * Holds the current Bestuur post ID
-	 *
-	 * @since 1.0.0
-	 * @var int
-	 */
-	protected $current_bestuur;
-
-	/**
 	 * Construct Bestuur Entity
 	 *
 	 * @since 1.0.0
@@ -69,12 +61,12 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	}
 
 	/**
-	 * Define default Bestuur globals
+	 * Include required files
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 */
-	public function setup_globals() {
-		$this->current_bestuur = get_option( '_bestuur-latest-bestuur' );
+	public function includes() {
+		require( vgsr_entity()->includes_dir . 'besturen/template.php' );
 	}
 
 	/**
@@ -349,30 +341,37 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		if ( ! current_user_can( $cpt->cap->edit_posts ) || ! current_user_can( $cpt->cap->edit_post, $post_id ) )
 			return;
 
-		// Check if this bestuur is already known as the current one
-		if ( $post_id == $this->current_bestuur ) {
+		// Get registered current bestuur
+		$current = vgsr_entity_get_current_bestuur();
 
-			// Bail when status isn't changed
-			if ( 'publish' == $post->post_status )
-				return;
+		// Bail when the bestuur is not published, when editing an older bestuur or when keeping the current bestuur published
+		if (
+			'publish' != $post->post_status
+			|| ( $post->menu_order <= get_post( $current )->menu_order )
+			|| ( $current === $post_id && 'publish' == $post->post_status )
+		)
+			return;
 
-			// Find the current bestuur
-			if ( $_post = $this->get_current_bestuur() ) {
-				$post_id = $_post->ID;
+		// Current bestuur was edited
+		if ( $current === $post_id ) {
+
+			// Get the current bestuur
+			if ( $query = new WP_Query( array(
+				'posts_per_page' => 1,
+				'post_type'      => $this->type,
+				'post_status'    => 'publish',
+				'orderby'        => 'menu_order',
+			) ) && $query->posts ) {
+				$post_id = $query->posts[0]->ID;
 
 			// Default to 0
 			} else {
 				$post_id = 0;
 			}
-
-		// Bail when when the post is not published or is an older bestuur
-		} elseif ( 'publish' != $post->post_status || ( $post->menu_order <= get_post( $this->current_bestuur )->menu_order ) ) {
-			return;
 		}
 
 		// Update current bestuur
 		update_option( '_bestuur-latest-bestuur', $post_id );
-		$this->current_bestuur = $post_id;
 
 		// Refresh rewrite rules to properly point to the current bestuur
 		add_action( "save_post_{$this->type}", array( $this, 'add_rewrite_rules' ), 99 );
@@ -387,37 +386,15 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	public function add_rewrite_rules() {
 
 		// Redirect requests for the entity parent page to the current bestuur
-		if ( $this->current_bestuur ) {
+		if ( $current = vgsr_entity_get_current_bestuur() ) {
 			add_rewrite_rule(
 				// The parent page ...
 				get_post_type_object( $this->type )->rewrite['slug'] . '/?$',
 				// ... should be interpreted as the current Bestuur
-				'index.php?p=' . $this->current_bestuur,
+				'index.php?p=' . $current,
 				'top'
 			);
 		}
-	}
-
-	/**
-	 * Returns the current (or current) bestuur
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return WP_Post|bool Post object on success, false if not found
-	 */
-	public function get_current_bestuur() {
-
-		// Get the current bestuur
-		if ( $query = new WP_Query( array(
-			'posts_per_page' => 1,
-			'post_type'      => $this->type,
-			'post_status'    => 'publish',
-			'orderby'        => 'menu_order',
-		) ) ) {
-			return $query->posts[0];
-		}
-
-		return false;
 	}
 
 	/**
@@ -431,8 +408,8 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 */
 	public function display_post_states( $states, $post ) {
 
-		// Bestuur is the current one
-		if ( $post->post_type === $this->type && $post->ID == $this->current_bestuur ) {
+		// The current bestuur
+		if ( vgsr_entity_is_current_bestuur( $post ) ) {
 			$states['current'] = esc_html__( 'Current', 'vgsr-entity' );
 		}
 

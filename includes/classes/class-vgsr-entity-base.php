@@ -113,7 +113,7 @@ abstract class VGSR_Entity_Base {
 
 		// Setup specific entity
 		$this->setup_globals();
-		$this->setup_requires();
+		$this->includes();
 		$this->setup_actions();
 	}
 
@@ -265,7 +265,7 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @since 1.0.0
 	 */
-	public function setup_requires() { /* Overwrite this method in a child class */ }
+	public function includes() { /* Overwrite this method in a child class */ }
 
 	/**
 	 * Setup child class actions and filters
