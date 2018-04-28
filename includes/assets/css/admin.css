@@ -87,13 +87,15 @@
 			line-height: 33px;
 		}
 
-#vgsr-entity-details .bestuur-positions .alignleft {
+/** Entity: Bestuur */
+
+#vgsr-entity-details .positions .alignleft {
 	position: relative;
 	display: block;
 	width: 100%;
 }
 
-	#vgsr-entity-details .bestuur-positions .position-remove {
+	#vgsr-entity-details .positions .position-remove {
 		position: absolute;
 		top: 0px;
 		width: 28px;
@@ -111,55 +113,55 @@
 		transition: transform .3s ease-out, width .3s ease-out;
 	}
 
-		#vgsr-entity-details .bestuur-positions .alignleft:hover .position-remove,
-		#vgsr-entity-details .bestuur-positions .alignleft .position-remove:hover,
-		#vgsr-entity-details .bestuur-positions .alignleft .position-remove:focus {
+		#vgsr-entity-details .positions .alignleft:hover .position-remove,
+		#vgsr-entity-details .positions .alignleft .position-remove:hover,
+		#vgsr-entity-details .positions .alignleft .position-remove:focus {
 			width: calc( 100% + 28px - 1px );
 			-webkit-transform: translateX( -28px );
 			transform: translateX( -28px );
 		}
 
-		#vgsr-entity-details .bestuur-positions .position-remove:not(:hover):not(:focus),
-		#vgsr-entity-details .bestuur-positions .positions-help:not(:hover):not(:focus) {
+		#vgsr-entity-details .positions .position-remove:not(:hover):not(:focus),
+		#vgsr-entity-details .positions .positions-help:not(:hover):not(:focus) {
 			color: #72777c;
 		}
 
-		#vgsr-entity-details .bestuur-positions .position-remove:before {
+		#vgsr-entity-details .positions .position-remove:before {
 			margin: 4px;
 		}
 
-	#vgsr-entity-details .bestuur-positions .input-text-wrap {
+	#vgsr-entity-details .positions .input-text-wrap {
 		position: relative;
 		z-index: 1;
 	}
 
-		#vgsr-entity-details .bestuur-positions .input-text-wrap select {
+		#vgsr-entity-details .positions .input-text-wrap select {
 			width: calc( 50% - 4px );
 			margin: 1px 0; /* remove horizontal margin */
 		}
 
-		#vgsr-entity-details .bestuur-positions .input-text-wrap input[type="text"] {
+		#vgsr-entity-details .positions .input-text-wrap input[type="text"] {
 			width: 50%;
 			height: 28px;
 			margin: 1px 0; /* remove horizontal margin */
 		}
 
-		#vgsr-entity-details .bestuur-positions .positions-user-name.is-user {
+		#vgsr-entity-details .positions .positions-user-name.is-user {
 			border-color: rgba(0, 100, 0, .5); /* green-ish color */
 		}
 
-	#vgsr-entity-details .bestuur-positions .positions-actions {
+	#vgsr-entity-details .positions .positions-actions {
 		display: block;
 		width: 100%;
 		margin-top: 10px;
 		text-align: right;
 	}
 
-		#vgsr-entity-details .bestuur-positions .alignleft:first-child:last-of-type ~ .positions-actions {
+		#vgsr-entity-details .positions .alignleft:first-child:last-of-type ~ .positions-actions {
 			text-align: left;
 		}
 
-		#vgsr-entity-details .bestuur-positions .positions-help {
+		#vgsr-entity-details .positions .positions-help {
 			position: relative;
 			display: inline-block;
 			width: 24px;
@@ -169,15 +171,15 @@
 			border-radius: 50%;
 		}
 
-			#vgsr-entity-details .bestuur-positions .positions-help i {
+			#vgsr-entity-details .positions .positions-help i {
 				text-decoration: none;
 			}
 
-				#vgsr-entity-details .bestuur-positions .positions-help i:before {
+				#vgsr-entity-details .positions .positions-help i:before {
 					margin: 2px;
 				}
 
-			#vgsr-entity-details .bestuur-positions .positions-help span {
+			#vgsr-entity-details .positions .positions-help span {
 				position: absolute;
 				top: 50%;
 				right: 100%;
@@ -198,15 +200,15 @@
 				transition: transform .3s ease-out, opacity .3s ease-out;
 			}
 
-			#vgsr-entity-details .bestuur-positions .positions-help:hover span,
-			#vgsr-entity-details .bestuur-positions .positions-help:focus span {
+			#vgsr-entity-details .positions .positions-help:hover span,
+			#vgsr-entity-details .positions .positions-help:focus span {
 				pointer-events: initial;
 				opacity: 1;
 				-webkit-transform: translateY( -50% ) translateX( -8px );
 				transform: translateY( -50% ) translateX( -8px );
 			}
 
-				#vgsr-entity-details .bestuur-positions .positions-help span:before {
+				#vgsr-entity-details .positions .positions-help span:before {
 					content: '';
 					display: block;
 					position: absolute;
@@ -223,10 +225,10 @@
 
 /* Admin: single column */
 @media only screen and (max-width: 850px) {
-	#vgsr-entity-details .bestuur-positions .position-remove,
-	#vgsr-entity-details .bestuur-positions .alignleft:hover .position-remove,
-	#vgsr-entity-details .bestuur-positions .alignleft .position-remove:hover,
-	#vgsr-entity-details .bestuur-positions .alignleft .position-remove:focus {
+	#vgsr-entity-details .positions .position-remove,
+	#vgsr-entity-details .positions .alignleft:hover .position-remove,
+	#vgsr-entity-details .positions .alignleft .position-remove:hover,
+	#vgsr-entity-details .positions .alignleft .position-remove:focus {
 		right: 0;
 		width: 100%;
 		text-align: right;
@@ -235,38 +237,137 @@
 		transform: translateX( 0 );
 	}
 
-	#vgsr-entity-details .bestuur-positions .input-text-wrap select {
+	#vgsr-entity-details .positions .input-text-wrap select {
 		width: calc( 50% - 4px - 28px - 4px );
 	}
 }
 
 /* Admin: small screens */
 @media screen and (max-width: 782px) {
-	#vgsr-entity-details .bestuur-positions .position-remove,
-	#vgsr-entity-details .bestuur-positions .alignleft:hover .position-remove,
-	#vgsr-entity-details .bestuur-positions .alignleft .position-remove:hover,
-	#vgsr-entity-details .bestuur-positions .alignleft .position-remove:focus {
+	#vgsr-entity-details .positions .position-remove,
+	#vgsr-entity-details .positions .alignleft:hover .position-remove,
+	#vgsr-entity-details .positions .alignleft .position-remove:hover,
+	#vgsr-entity-details .positions .alignleft .position-remove:focus {
 		height: 36px;
 		background: none;
 		border: none;
 		border-radius: 0 18px 18px 0;
 	}
 
-	#vgsr-entity-details .bestuur-positions .position-remove:before {
+	#vgsr-entity-details .positions .position-remove:before {
 		width: 36px;
 		height: 36px;
 		font-size: 36px;
 		margin: 1px 0 0;
 	}
 
-	#vgsr-entity-details .bestuur-positions .input-text-wrap select {
+	#vgsr-entity-details .positions .input-text-wrap select {
 		width: calc( 50% - 4px - 36px - 4px );
 	}
 
-	#vgsr-entity-details .bestuur-positions .input-text-wrap input[type="text"] {
+	#vgsr-entity-details .positions .input-text-wrap input[type="text"] {
 		height: auto;
 	}
 }
+
+/* Bestuur Settings */
+.widefat.positions {
+	width: auto;
+}
+
+.widefat.positions th.slug,
+.widefat.positions th.label {
+	text-align: center;
+}
+
+.widefat.positions td.slug,
+.widefat.positions td.label {
+	width: 200px;
+}
+
+.widefat.positions th.controls button:before {
+	margin-top: 1.5px;
+}
+
+.widefat.positions th,
+.form-table .widefat td {
+	padding: 8px 10px;
+}
+
+.widefat.positions input {
+	width: 100%;
+}
+
+.widefat.positions .controls {
+	position: relative;
+	width: auto;
+}
+
+.widefat.positions td.controls:before {
+	content: '\f333';
+	color: rgba(64, 64, 64, .3);
+	font-family: dashicons;
+	font-size: 20px;
+	height: 20px;
+	width: 20px;
+	display: inline-block;
+	line-height: 1;
+}
+
+.widefat.positions td.controls:hover {
+	cursor: move;
+}
+
+.widefat.positions .controls button {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	color: #72777c;
+}
+
+.widefat.positions .controls button:focus,
+.widefat.positions .controls button:hover {
+	color: #32373c;
+}
+
+.widefat.positions .controls .position-remove {
+	position: absolute;
+	top: 0px;
+	left: 100%;
+	width: 28px;
+	height: 44.8px;
+	background: #fff;
+	border-right: 1px solid #e5e5e5;
+	border-radius: 0 22.4px 22.4px 0;
+	text-align: left;
+	text-decoration: none;
+	z-index: 0;
+	-webkit-transform: translateX( 0 );
+	transform: translateX( 0 );
+	opacity: 0;
+	pointer-events: none;
+}
+
+.widefat.positions.striped tbody > :nth-child(odd) .controls .position-remove {
+	background: #f9f9f9;
+}
+
+.widefat.positions.striped tbody > .ui-sortable-helper:nth-child(even) {
+	background: #fff;
+}
+
+.widefat.positions tr.ui-sortable-helper {
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+	display: table !important;
+}
+
+.widefat.positions tr:not(.ui-sortable-helper):hover .controls .position-remove,
+.widefat.positions tr:not(.ui-sortable-helper) .controls .position-remove:focus {
+	opacity: 1;
+	pointer-events: inherit;
+}
+
 
 /* wp-admin/edit.php */
 

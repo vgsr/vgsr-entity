@@ -46,7 +46,7 @@
 	}
 
 	// Bestuur Positions
-	var $bestuurPositions = $( '.post-type-bestuur .bestuur-positions' ),
+	var $bestuurPositions = $( '.post-type-bestuur .positions' ),
 		suggestAjaxUrl = $bestuurPositions.find( 'input[name="positions-ajax-url"]' ).val(),
 	    suggestArgs = {
 			onSelect: function() {

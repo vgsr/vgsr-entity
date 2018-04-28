@@ -157,7 +157,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 		?>
 
-		<table class="widefat fixed striped <?php echo $this->type; ?>-positions">
+		<table class="widefat fixed striped positions">
 			<thead>
 				<tr>
 					<th class="label"><?php esc_html_e( 'Label', 'vgsr-entity' ); ?></th>
@@ -287,26 +287,8 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 		// Enqueue sortable
 		wp_enqueue_script( 'jquery-ui-sortable' );
 
-		// Add styles
-		wp_add_inline_style( 'wp-admin', "
-			.widefat.{$this->type}-positions { width: auto; }
-			.widefat.{$this->type}-positions th.slug, .widefat.{$this->type}-positions th.label { text-align: center; }
-			.widefat.{$this->type}-positions td.slug, .widefat.{$this->type}-positions td.label { width: 200px; }
-			.widefat.{$this->type}-positions th.controls button:before { margin-top: 1.5px; }
-			.widefat.{$this->type}-positions th, .form-table .widefat td { padding: 8px 10px; }
-			.widefat.{$this->type}-positions input { width: 100%; }
-			.widefat.{$this->type}-positions .controls { position: relative; width: auto; }
-			.widefat.{$this->type}-positions td.controls:before { content: '\\f333'; color: rgba(64, 64, 64, .3); font-family: dashicons; font-size: 20px; height: 20px; width: 20px; display: inline-block; line-height: 1; }
-			.widefat.{$this->type}-positions td.controls:hover { cursor: move; }
-			.widefat.{$this->type}-positions .controls button { display: inline-block; width: 20px; height: 20px; border-radius: 50%; color: #72777c; }
-			.widefat.{$this->type}-positions .controls .position-remove { position: absolute; top: 0px; left: 100%; width: 28px; height: 44.8px; background: #fff; border-right: 1px solid #e5e5e5; border-radius: 0 22.4px 22.4px 0; text-align: left; text-decoration: none; z-index: 0; -webkit-transform: translateX( 0 ); transform: translateX( 0 ); opacity: 0; pointer-events: none; }
-			.widefat.{$this->type}-positions.striped tbody > :nth-child(odd) .controls .position-remove { background: #f9f9f9; }
-			.widefat.{$this->type}-positions.striped tbody > .ui-sortable-helper:nth-child(even) { background: #fff; }
-			.widefat.{$this->type}-positions tr.ui-sortable-helper { box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); display: table !important; }
-			.widefat.{$this->type}-positions tr:not(.ui-sortable-helper):hover .controls .position-remove,
-			.widefat.{$this->type}-positions tr:not(.ui-sortable-helper) .controls .position-remove:focus { opacity: 1; pointer-events: inherit; }
-			"
-		);
+		// Enqueue admin scripts
+		wp_enqueue_style( 'vgsr-entity-admin', vgsr_entity()->includes_url . 'assets/css/admin.css' );
 	}
 
 	/**
@@ -318,7 +300,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 		<script type="text/javascript">
 			jQuery(document).ready( function( $ ) {
-				var $el = $( '.<?php echo $this->type; ?>-positions' ),
+				var $el = $( '.positions' ),
 				    $tr = $el.find( 'tr.positions-add-row' );
 
 				// Make list rows sortable
@@ -336,7 +318,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 				// Remove row
 				}).on( 'click', '.position-remove', function() {
-					$(this).parents( '.<?php echo $this->type; ?>-positions tr' ).remove();
+					$(this).parents( '.positions tr' ).remove();
 				});
 			});
 		</script>
@@ -506,7 +488,7 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 
 		<h4><?php esc_html_e( 'Positions', 'vgsr-entity' ); ?></h4>
 
-		<p class="bestuur-positions">
+		<p class="positions">
 			<?php foreach ( $positions as $args ) : ?>
 			<label class="alignleft">
 				<span class="input-text-wrap">
