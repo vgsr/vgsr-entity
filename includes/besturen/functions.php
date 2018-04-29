@@ -10,6 +10,20 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
+/** Post Type ******************************************************/
+
+/**
+ * Return the Bestuur post type name
+ *
+ * @since 2.0.0
+ *
+ * @uses apply_filters() Calls 'vgsr_entity_bestuur_get_post_type'
+ * @return string Post type name
+ */
+function vgsr_entity_bestuur_get_post_type() {
+	return apply_filters( 'vgsr_entity_bestuur_get_post_type', 'bestuur' );
+}
+
 /** Positions ******************************************************/
 
 /**
