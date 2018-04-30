@@ -65,7 +65,7 @@ function vgsr_entity_bestuur_get_positions( $post = null ) {
  * @since 2.0.0
  *
  * @uses $wpdb WPDB
- * @uses apply_filters() Calls 'vgsr_entity_bestuur_user_position'
+ * @uses apply_filters() Calls 'vgsr_entity_bestuur_get_user_position'
  *
  * @param int $user_id Optional. User ID. Defaults to the current user.
  * @return array Position details or empty array when nothing found.
@@ -106,5 +106,5 @@ function vgsr_entity_bestuur_get_user_position( $user_id = 0 ) {
 	 * @param int   $user_id User ID
 	 * @param array $query   Query results
 	 */
-	return (array) apply_filters( 'vgsr_entity_bestuur_user_position', $retval, $user_id, $query );
+	return (array) apply_filters( 'vgsr_entity_bestuur_get_user_position', $retval, $user_id, $query );
 }
