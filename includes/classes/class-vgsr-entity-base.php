@@ -240,7 +240,6 @@ abstract class VGSR_Entity_Base {
 		add_filter( 'wp_insert_post_parent',      array( $this, 'filter_entity_parent' ), 10, 4 );
 		add_action( "vgsr_{$this->type}_metabox", array( $this, 'details_metabox'      )        );
 		add_action( "save_post_{$this->type}",    array( $this, 'save_metabox'         ), 10, 2 );
-		add_filter( 'the_content',                array( $this, 'content_with_details' )        );
 
 		// List Table
 		add_filter( "manage_edit-{$this->type}_columns",        array( $this, 'table_columns'         )        );
@@ -433,23 +432,15 @@ abstract class VGSR_Entity_Base {
 	}
 
 	/**
-	 * Modify the content by adding the entity details
-	 * 
+	 * Return the entity's option field value
+	 *
 	 * @since 2.0.0
 	 *
-	 * @param string $content Post content
-	 * @return string Post content
+	 * @param string $key Setting key
+	 * @return mixed|bool Setting value or False when not found
 	 */
-	public function content_with_details( $content ) {
-
-		// When in the main query's single entity
-		if ( is_main_query() && is_singular( $this->type ) ) {
-
-			// Prepend details to content
-			$content = vgsr_entity_details() . $content;
-		}
-
-		return $content;
+	public function get_setting( $key ) {
+		return get_option( "_{$this->type}-{$key}", false );
 	}
 
 	/** Feature: Logo **************************************************/

@@ -13,6 +13,26 @@ defined( 'ABSPATH' ) || exit;
 /** Details ************************************************************/
 
 /**
+ * Modify the post content by adding entity details
+ *
+ * @since 2.0.0
+ *
+ * @param string $content Post content
+ * @return string Post content
+ */
+function vgsr_entity_filter_content( $content ) {
+
+	// When in the main query's single entity
+	if ( is_main_query() && is_entity() ) {
+
+		// Prepend details to content
+		$content = vgsr_entity_details() . $content;
+	}
+
+	return $content;
+}
+
+/**
  * Return the markup for a post's entity details
  *
  * @since 2.0.0

@@ -16,6 +16,9 @@ defined( 'ABSPATH' ) || exit;
 add_action( 'init',        'vgsr_entity_init' );
 add_filter( 'the_content', 'vgsr_entity_list' );
 
+// Post
+add_filter( 'the_content', 'vgsr_entity_filter_content' );
+
 // Nav Menu
 add_filter( 'nav_menu_css_class', 'vgsr_entity_nav_menu_css_class', 10, 4 );
 
