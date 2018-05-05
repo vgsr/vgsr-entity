@@ -22,14 +22,16 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 * Construct Kast Entity
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param string $type Entity type name
 	 */
-	public function __construct() {
+	public function __construct( $type ) {
 
 		// Default error strings
 		$error_wrong_format = esc_html__( 'The submitted value for %s is not given in the valid format.', 'vgsr-entity' );
 
 		// Construct entity
-		parent::__construct( 'kast', array(
+		parent::__construct( $type, array(
 			'labels'      => array(
 				'name'               => esc_html__( 'Kasten',                   'vgsr-entity' ),
 				'singular_name'      => esc_html__( 'Kast',                     'vgsr-entity' ),

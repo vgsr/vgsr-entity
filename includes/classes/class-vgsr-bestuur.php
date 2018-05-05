@@ -22,9 +22,11 @@ class VGSR_Bestuur extends VGSR_Entity_Base {
 	 * Construct Bestuur Entity
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param string $type Entity type name
 	 */
-	public function __construct() {
-		parent::__construct( 'bestuur', array(
+	public function __construct( $type ) {
+		parent::__construct( $type, array(
 			'menu_icon' => 'dashicons-awards',
 			'labels'    => array(
 				'name'               => esc_html__( 'Besturen',                   'vgsr-entity' ),
