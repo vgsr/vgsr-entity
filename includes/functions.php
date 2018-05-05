@@ -187,6 +187,19 @@ function vgsr_entity_settings_display_entity_parent_field() {
 	<?php
 }
 
+/** Post ***************************************************************/
+
+/**
+ * Return the archive post status id
+ *
+ * @since 2.0.0
+ *
+ * @return string Archive status id
+ */
+function vgsr_entity_get_archive_status_id() {
+	return vgsr_entity()->archive_status_id;
+}
+
 /** Nav Menus **********************************************************/
 
 /**

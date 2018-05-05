@@ -103,6 +103,10 @@ final class VGSR_Entity {
 		// Languages
 		$this->lang_dir      = trailingslashit( $this->plugin_dir . 'languages' );
 
+		/** Identifiers *******************************************************/
+
+		$this->archive_status_id = apply_filters( 'vgsr_entity_archive_status', 'archive' );
+
 		/** Misc **************************************************************/
 
 		$this->extend        = new stdClass();
