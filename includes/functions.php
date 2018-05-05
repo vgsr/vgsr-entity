@@ -28,8 +28,22 @@ function vgsr_entity_check_access( $user_id = 0 ) {
 	return function_exists( 'vgsr' ) && is_user_vgsr( $user_id );
 }
 
+/** Entities ***********************************************************/
+
 /**
- * Return the plugin post types
+ * Return whether the type is a valid entity type
+ *
+ * @since 2.0.0
+ *
+ * @param  string $type Entity type name
+ * @return bool Is this a valid entity type?
+ */
+function vgsr_entity_exists( $type ) {
+	return in_array( $type, vgsr_entity()->get_entities(), true );
+}
+
+/**
+ * Return the plugin's post types
  *
  * @since 2.0.0
  *
