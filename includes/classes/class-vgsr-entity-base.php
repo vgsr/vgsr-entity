@@ -314,25 +314,6 @@ abstract class VGSR_Entity_Base {
 				'vgsr-entity'          => $this->type
 			) )
 		);
-
-		// The archive post status
-		$this->archive_status_id = 'archive';
-
-		// Register archive post status
-		if ( $this->args['has_archive'] ) {
-
-			// User access
-			$access = vgsr_entity_check_access();
-
-			register_post_status( $this->archive_status_id, array(
-				'label'               => esc_html__( 'Archived', 'vgsr-entity' ),
-				'label_count'         => _n_noop( 'Archived <span class="count">(%s)</span>', 'Archived <span class="count">(%s)</span>', 'vgsr-entity' ),
-
-				// Limit access to archived posts
-				'exclude_from_search' => ! $access,
-				'public'              => $access,
-			) );
-		}
 	}
 
 	/**

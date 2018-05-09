@@ -142,7 +142,8 @@ final class VGSR_Entity {
 		add_action( 'admin_init',     array( $this, 'check_for_update' ) );
 
 		// Entities
-		add_action( 'plugins_loaded', array( $this, 'setup_entities' ) );
+		add_action( 'plugins_loaded',   array( $this, 'setup_entities'         ) );
+		add_action( 'vgsr_entity_init', array( $this, 'register_post_statuses' ) );
 
 		// Admin & Widgets
 		add_action( 'admin_menu',   array( $this, 'admin_menu'   ) );
@@ -376,6 +377,33 @@ final class VGSR_Entity {
 
 		// Update current version in DB
 		update_site_option( '_vgsr_entity_version', $this->db_version );
+	}
+
+	/** Posts **********************************************************/
+
+	/**
+	 * Register plugin post statuses
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses apply_filters() Calls 'vgsr_entity_register_archive_post_status'
+	 */
+	public function register_post_statuses() {
+
+		// Get whether the current user has access
+		$access = vgsr_entity_check_access();
+
+		/** Archive ****************************************************/
+
+		register_post_status( vgsr_entity_get_archive_status_id(),
+			(array) apply_filters( 'vgsr_entity_register_archive_post_status', array(
+				'label'               => esc_html__( 'Archived', 'vgsr-entity' ),
+				'label_count'         => _n_noop( 'Archived <span class="count">(%s)</span>', 'Archived <span class="count">(%s)</span>', 'vgsr-entity' ),
+
+				// Limit access to archived posts
+				'exclude_from_search' => ! $access,
+				'public'              => $access,
+		) ) );
 	}
 
 	/** Admin **********************************************************/
