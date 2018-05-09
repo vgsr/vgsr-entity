@@ -280,7 +280,7 @@ abstract class VGSR_Entity_Base {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @uses apply_filters() Calls 'vgsr_{$post_type}_register_post_type'
+	 * @uses apply_filters() Calls 'vgsr_entity_{$type}_register_post_type'
 	 */
 	public function register_post_type() {
 
@@ -311,7 +311,7 @@ abstract class VGSR_Entity_Base {
 				'supports'             => $supports,
 				'menu_icon'            => $this->args['menu_icon'],
 				'register_meta_box_cb' => array( $this, 'add_metabox' ),
-				'vgsr-entity'          => true
+				'vgsr-entity'          => $this->type
 			) )
 		);
 
