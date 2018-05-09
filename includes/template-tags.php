@@ -113,9 +113,9 @@ function vgsr_entity_list( $content ) {
 			<article <?php post_class(); ?>>
 
 				<?php // Display entity logo ?>
-				<?php if ( get_entity_logo() ) : ?>
+				<?php if ( vgsr_entity_get_logo() ) : ?>
 				<div class="entity-logo">
-					<a href="<?php the_permalink(); ?>"><?php the_entity_logo(); ?></a>
+					<a href="<?php the_permalink(); ?>"><?php vgsr_entity_the_logo(); ?></a>
 				</div>
 				<?php endif; ?>
 

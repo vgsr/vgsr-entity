@@ -379,20 +379,21 @@ function entity_has_more_tag( $post = 0 ) {
  *
  * @since 2.0.0
  *
+ * @uses apply_filters() Calls 'vgsr_entity_supports'
+ *
  * @param string $feature Feature name
- * @param string|WP_Post $entity Optional. Entity post type name or post object. Defaults to the current post.
- * @return bool Entity supports the feature
+ * @param string|WP_Post $type Optional. Entity type name or post object. Defaults to the current post.
+ * @return bool Is feature supported for type?
  */
-function entity_supports( $feature, $entity = 0 ) {
-	if ( ! is_string( $entity ) && ! $entity = get_post( $entity ) )
-		return;
+function vgsr_entity_supports( $feature, $type = 0 ) {
 
-	// Get the post's post type
-	if ( is_a( $entity, 'WP_Post' ) ) {
-		$entity = $entity->post_type;
-	}
+	// Get entity type
+	$type = vgsr_entity_get_type( $type, true );
 
-	return is_entity( $entity ) && in_array( $feature, vgsr_entity()->{$entity}->args['features'] );
+	// Is feature supported?
+	$supports = $type ? in_array( $feature, $type->features, true ) : false;
+
+	return apply_filters( 'vgsr_entity_supports', $supports, $type );
 }
 
 /**
@@ -400,15 +401,17 @@ function entity_supports( $feature, $entity = 0 ) {
  *
  * @since 2.0.0
  *
- * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post
+ * @param WP_Post|int $post Optional. Post object or ID. Defaults to the current post.
  */
-function the_entity_logo( $post = 0 ) {
+function vgsr_entity_the_logo( $post = 0 ) {
+
+	// Bail when the post is invalid
 	if ( ! $post = get_post( $post ) )
 		return;
 
 	// Output entity logo image
-	if ( entity_supports( 'logo', $post ) ) {
-		echo wp_get_attachment_image( get_entity_logo( $post->ID ) );
+	if ( vgsr_entity_supports( 'logo', $post ) ) {
+		echo wp_get_attachment_image( vgsr_entity_get_logo( $post->ID ) );
 	}
 }
 
@@ -417,24 +420,35 @@ function the_entity_logo( $post = 0 ) {
  *
  * @since 2.0.0
  *
- * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post
+ * @uses apply_filters() Calls 'vgsr_entity_get_logo'
+ *
+ * @param WP_Post|int $post Optional. Post object or ID. Defaults to the current post.
  * @return int|bool Logo post ID or False when not found
  */
-function get_entity_logo( $post = 0 ) {
-	if ( ! $post = get_post( $post ) )
+function vgsr_entity_get_logo( $post = 0 ) {
+
+	// Bail when the post is invalid
+	if ( ! $post = get_post( $post ) ) {
 		return false;
-
-	// Bail when not an entity or has no logo
-	if ( ! entity_supports( 'logo', $post ) )
-		return false;
-
-	$logo_id = get_post_meta( $post->ID, "_{$post->post_type}-logo-id", true );
-
-	if ( get_post( $logo_id ) ) {
-		return $logo_id;
 	}
 
-	return false;
+	// Bail when not an entity or has no logo
+	if ( ! vgsr_entity_supports( 'logo', $post ) ) {
+		return false;
+	}
+
+	// Get the post's entity type
+	$type = vgsr_entity_get_type( $post );
+
+	// Get the logo attachment post ID
+	$logo_id = get_post_meta( $post->ID, "_{$type}-logo-id", true );
+
+	// Check if the logo still exists
+	if ( ! get_post( $logo_id ) ) {
+		$logo_id = false;
+	}
+
+	return apply_filters( 'vgsr_entity_get_logo', $logo_id, $post );
 }
 
 /**
@@ -445,7 +459,7 @@ function get_entity_logo( $post = 0 ) {
  * @param WP_Post $post
  */
 function vgsr_entity_feature_logo_metabox( $post ) {
-	$logo_id = get_entity_logo( $post ); ?>
+	$logo_id = vgsr_entity_get_logo( $post ); ?>
 
 	<p>
 		<span class="title"><?php esc_html_e( 'Logo', 'vgsr-entity' ); ?></span>
@@ -516,8 +530,8 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 function vgsr_entity_feature_logo_media_settings( $settings, $post ) {
 
 	// Add logo ID to the post's media settings
-	if ( is_a( $post, 'WP_Post' ) && is_entity( $post->post_type ) ) {
-		$logo_id = get_entity_logo( $post );
+	if ( is_a( $post, 'WP_Post' ) && is_entity( $post ) ) {
+		$logo_id = vgsr_entity_get_logo( $post );
 		$settings['post']['entityLogoId'] = $logo_id ? $logo_id : -1;
 	}
 
@@ -589,7 +603,7 @@ function vgsr_entity_feature_logo_list_column( $columns ) {
 
 		// This is the Title column
 		if ( 'title' === $k ) {
-			$new_columns['entity-logo'] = __( 'Logo', 'vgsr-entity' );
+			$new_columns['entity-logo'] = esc_html__( 'Logo', 'vgsr-entity' );
 		}
 
 		$new_columns[ $k ] = $label;
@@ -610,7 +624,7 @@ function vgsr_entity_feature_logo_list_column_content( $column, $post_id ) {
 
 	// When this is our column
 	if ( 'entity-logo' === $column ) {
-		if ( $logo_id = get_entity_logo( $post_id ) ) {
+		if ( $logo_id = vgsr_entity_get_logo( $post_id ) ) {
 			echo wp_get_attachment_image( $logo_id, array( 38, 38 ) );
 		}
 	}
@@ -626,10 +640,12 @@ function vgsr_entity_feature_logo_list_column_content( $column, $post_id ) {
 function vgsr_entity_feature_logo_detail( $post ) {
 
 	// Bail when this post has no logo
-	if ( ! $logo_id = get_entity_logo( $post ) )
+	if ( ! $logo_id = vgsr_entity_get_logo( $post ) )
 		return;
 
+	// Get image size
 	$size = has_image_size( 'entity-logo' ) ? 'entity-logo' : array( 250, 250 );
+
 	printf( '<div class="entity-logo">%s</div>', wp_get_attachment_image( $logo_id, $size ) );
 }
 
