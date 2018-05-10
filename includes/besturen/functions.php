@@ -17,39 +17,111 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 2.0.0
  *
- * @uses apply_filters() Calls 'vgsr_entity_bestuur_get_post_type'
  * @return string Post type name
  */
-function vgsr_entity_bestuur_get_post_type() {
-	return apply_filters( 'vgsr_entity_bestuur_get_post_type', 'bestuur' );
+function vgsr_entity_get_bestuur_post_type() {
+	return vgsr_entity_get_type( 'bestuur', true )->post_type;
+}
+
+/**
+ * Return the Bestuur post type labels
+ *
+ * @since 2.0.0
+ *
+ * @uses apply_filters() Calls 'vgsr_entity_get_bestuur_post_type_labels'
+ * @return array Post type labels
+ */
+function vgsr_entity_get_bestuur_post_type_labels() {
+	return (array) apply_filters( 'vgsr_entity_get_bestuur_post_type_labels', array(
+		'name'                  => esc_html__( 'Besturen',                   'vgsr-entity' ),
+		'menu_name'             => esc_html__( 'Besturen',                   'vgsr-entity' ),
+		'singular_name'         => esc_html__( 'Bestuur',                    'vgsr-entity' ),
+		'all_items'             => esc_html__( 'All Besturen',               'vgsr-entity' ),
+		'add_new'               => esc_html__( 'New Bestuur',                'vgsr-entity' ),
+		'add_new_item'          => esc_html__( 'Add new Bestuur',            'vgsr-entity' ),
+		'edit'                  => esc_html__( 'Edit',                       'vgsr-entity' ),
+		'edit_item'             => esc_html__( 'Edit Bestuur',               'vgsr-entity' ),
+		'new_item'              => esc_html__( 'New Bestuur',                'vgsr-entity' ),
+		'view'                  => esc_html__( 'View Bestuur',               'vgsr-entity' ),
+		'view_item'             => esc_html__( 'View Bestuur',               'vgsr-entity' ),
+		'view_items'            => esc_html__( 'View Besturen',              'vgsr-entity' ), // Since WP 4.7
+		'search_items'          => esc_html__( 'Search Besturen',            'vgsr-entity' ),
+		'not_found'             => esc_html__( 'No Besturen found',          'vgsr-entity' ),
+		'not_found_in_trash'    => esc_html__( 'No Besturen found in trash', 'vgsr-entity' ),
+		'insert_into_item'      => esc_html__( 'Insert into bestuur',        'vgsr-entity' ),
+		'uploaded_to_this_item' => esc_html__( 'Uploaded to this bestuur',   'vgsr-entity' ),
+		'filter_items_list'     => esc_html__( 'Filter besturen list',       'vgsr-entity' ),
+		'items_list_navigation' => esc_html__( 'Besturen list navigation',   'vgsr-entity' ),
+		'items_list'            => esc_html__( 'Besturen list',              'vgsr-entity' ),
+
+		// Custom
+		'settings_title'        => esc_html__( 'Besturen Settings',          'vgsr-entity' ),
+	) );
+}
+
+/** Current Bestuur ************************************************/
+
+/**
+ * Update which post is the current bestuur
+ *
+ * @since 2.0.0
+ *
+ * @param int $post_id Optional. Post ID of new current bestuur. Defaults to the newest bestuur.
+ * @return bool Update success
+ */
+function vgsr_entity_update_current_bestuur( $post_id = 0 ) {
+
+	// Query newest bestuur
+	if ( empty( $post_id ) ) {
+		if ( $query = new WP_Query( array(
+			'posts_per_page' => 1,
+			'post_type'      => vgsr_entity_get_post_type( 'bestuur' ),
+			'post_status'    => 'publish',
+			'orderby'        => 'menu_order',
+		) ) ) {
+			if ( $query->posts ) {
+				$post_id = $query->posts[0]->ID;
+			}
+		}
+
+	// Validate post ID
+	} elseif ( $post = get_post( $post_id ) ) {
+		$post_id = $post->ID;
+
+	// Default to none
+	} else {
+		$post_id = 0;
+	}
+
+	return update_option( '_bestuur-latest-bestuur', (int) $post_id );
 }
 
 /** Positions ******************************************************/
 
 /**
- * Return the available Bestuur positions or a single bestuur's filled positions
+ * Return the available Bestuur positions or a single bestuur's signed positions
  *
  * @since 2.0.0
  *
  * @uses apply_filters() Calls 'vgsr_entity_bestuur_get_positions'
  *
  * @param WP_Post|int|null $post Optional. Post ID or object. Defaults to `null`.
- * @return array Available positions or a single bestuur's filled positions
+ * @return array Available positions or a single bestuur's signed positions
  */
 function vgsr_entity_bestuur_get_positions( $post = null ) {
 	$positions = (array) get_option( '_bestuur-positions', array() );
 
-	// Get filled positions for a single bestuur
+	// Get signed positions for a single bestuur
 	if ( null !== $post && $post = get_post( $post ) ) {
 
 		// Walk positions
 		foreach ( $positions as $position => $args ) {
 
-			// Position slot is filled
+			// Position slot is signed
 			if ( $user = get_post_meta( $post->ID, "position_{$args['slug']}", true ) ) {
 				$positions[ $position ]['user'] = $user ? $user : false;
 
-			// Unfilled position
+			// Unsigned position
 			} else {
 				unset( $positions[ $position ] );
 			}

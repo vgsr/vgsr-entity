@@ -26,8 +26,8 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 * @see WP_Widget::__construct()
 	 */
 	public function __construct() {
-		parent::__construct( 'vgsr_entity_family', __( 'VGSR Entity Menu', 'vgsr-entity' ), array(
-			'description' => __( 'Display a list of all the entities of the type of the current page', 'vgsr-entity' )
+		parent::__construct( 'vgsr_entity_family', esc_html__( 'VGSR Entity Menu', 'vgsr-entity' ), array(
+			'description' => esc_html__( 'Display a list of all the entities of the type of the current page', 'vgsr-entity' )
 		) );
 	}
 
@@ -38,7 +38,7 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 *
 	 * @see WP_Widget::widget()
 	 *
-	 * @uses apply_filters() Calls 'vgsr_entity_menu_widget_get_posts'
+	 * @uses apply_filters() Calls 'vgsr_entity_{$type}_menu_widget_query_args'
 	 *
 	 * @param array $args Widget arguments
 	 * @param array $instance Saved widget values from DB
@@ -66,9 +66,10 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 
 		// Get the current post
 		$post_id = get_the_ID();
+		$type    = vgsr_entity_get_type( $post_type );
 
 		// Get all post type items
-		if ( $query = new WP_Query( apply_filters( "vgsr_{$post_type}_menu_widget_query_args", array(
+		if ( $query = new WP_Query( apply_filters( "vgsr_entity_{$type}_menu_widget_query_args", array(
 			'post_type'      => $post_type,
 			'post_parent'    => $parent,
 			'post_status'    => 'publish',
@@ -125,8 +126,8 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 */
 	public function form( $instance ) { ?>
 
-		<p><?php _e( "This widget will only display a list of entities on a entity related page.", 'vgsr-entity' ); ?></p>
-		<p class="description"><?php _e( 'There are no settings for this widget.', 'vgsr-entity' ); ?></p>
+		<p><?php esc_html_e( 'This widget will only display a list of entities on a entity related page.', 'vgsr-entity' ); ?></p>
+		<p class="description"><?php esc_html_e( 'There are no settings for this widget.', 'vgsr-entity' ); ?></p>
 
 		<?php
 	}

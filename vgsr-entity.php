@@ -138,8 +138,8 @@ final class VGSR_Entity {
 	private function setup_actions() {
 
 		// Plugin
-		add_action( 'plugins_loaded', array( $this, 'load_textdomain'  ) );
-		add_action( 'admin_init',     array( $this, 'check_for_update' ) );
+		add_action( 'plugins_loaded',        array( $this, 'load_textdomain'  ) );
+		add_action( 'vgsr_entity_admin_init', array( $this, 'check_for_update' ) );
 
 		// Entities
 		add_action( 'plugins_loaded',   array( $this, 'setup_entities'         ) );
@@ -176,10 +176,11 @@ final class VGSR_Entity {
 	 */
 	public function setup_entities() {
 
-		// Load base class
-		require_once( $this->includes_dir . "classes/class-vgsr-entity-base.php" );
+		// Load base classes
+		require_once( $this->includes_dir . 'classes/class-vgsr-entity-base.php'       );
+		require_once( $this->includes_dir . 'classes/class-vgsr-entity-type-admin.php' );
 
-		// Define the entities as post_type => class_name|file
+		// Define the entities as type => class_name
 		$entities = apply_filters( 'vgsr_entity_entities', array(
 			'bestuur' => 'VGSR_Bestuur',
 			'dispuut' => 'VGSR_Dispuut',
@@ -269,7 +270,7 @@ final class VGSR_Entity {
 	 */
 	public function __set( $key, $value ) {
 
-		// Prevent overwriting entity object when present
+		// Prevent overwriting entity objects when present
 		if ( ! array_key_exists( $key, $this->entities ) && 'entities' !== $key ) {
 			$this->{$key} = $value;
 		}
@@ -284,7 +285,7 @@ final class VGSR_Entity {
 	 */
 	public function __unset( $key ) {
 
-		// Prevent overwriting entity object when present
+		// Prevent overwriting entity objects when present
 		if ( ! array_key_exists( $key, $this->entities ) && 'entities' !== $key ) {
 			unset( $this->{$key} );
 		}
@@ -625,21 +626,25 @@ final class VGSR_Entity {
 	/** Wrappers *******************************************************/
 
 	/**
-	 * Wrapper for a single entity's {@see VGSR_Entity::get_meta()}
+	 * Wrapper for a single entity's meta getter
+	 *
+	 * @see VGSR_Entity_Base::meta()
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param int|WP_Post $post Optional. Post ID or object
+	 * @param WP_Post|int $post Optional. Post ID or object. Defaults to the current post.
 	 * @return array Entity meta
 	 */
 	public function get_meta( $post = 0 ) {
 		$post = get_post( $post );
+		$meta = array();
 
-		if ( $post && is_entity( $post->post_type ) ) {
-			return $this->{$post->post_type}->meta( $post, 'display' );
-		} else {
-			return array();
+		// Get entity type from post
+		if ( $post && $type = vgsr_entity_get_type( $post, true ) ) {
+			$meta = $type->meta( $post, 'display' );
 		}
+
+		return $meta;
 	}
 }
 

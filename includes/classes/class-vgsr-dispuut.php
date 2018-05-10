@@ -32,23 +32,11 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 
 		// Construct entity
 		parent::__construct( $type, array(
-			'labels'      => array(
-				'name'               => esc_html__( 'Disputen',                   'vgsr-entity' ),
-				'singular_name'      => esc_html__( 'Dispuut',                    'vgsr-entity' ),
-				'add_new'            => esc_html__( 'New Dispuut',                'vgsr-entity' ),
-				'add_new_item'       => esc_html__( 'Add new Dispuut',            'vgsr-entity' ),
-				'edit_item'          => esc_html__( 'Edit Dispuut',               'vgsr-entity' ),
-				'new_item'           => esc_html__( 'New Dispuut',                'vgsr-entity' ),
-				'all_items'          => esc_html__( 'All Disputen',               'vgsr-entity' ),
-				'view_item'          => esc_html__( 'View Dispuut',               'vgsr-entity' ),
-				'search_items'       => esc_html__( 'Search Disputen',            'vgsr-entity' ),
-				'not_found'          => esc_html__( 'No Disputen found',          'vgsr-entity' ),
-				'not_found_in_trash' => esc_html__( 'No Disputen found in trash', 'vgsr-entity' ),
-				'menu_name'          => esc_html__( 'Disputen',                   'vgsr-entity' ),
-				'settings_title'     => esc_html__( 'Disputen Settings',          'vgsr-entity' ),
+			'path'           => 'disputen',
+			'post_type_args' => array(
+				'menu_icon' => 'dashicons-format-status',
 			),
-			'menu_icon'   => 'dashicons-format-status',
-			'has_archive' => true,
+			'has_archive'    => true,
 
 		// Meta
 		), array(
@@ -76,6 +64,23 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 			2 => sprintf( $error_wrong_format, '<strong>' . esc_html__( 'Since',  'vgsr-entity' ) . '</strong>' ),
 			3 => sprintf( $error_wrong_format, '<strong>' . esc_html__( 'Ceased', 'vgsr-entity' ) . '</strong>' ),
 		) );
+	}
+
+	/**
+	 * Include required files
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $includes See VGSR_Entity_Base::includes() for description.
+	 */
+	public function includes( $includes = array() ) {
+
+		// Default
+		$includes = array(
+			'functions',
+		);
+
+		parent::includes( $includes );
 	}
 
 	/** Meta ***********************************************************/

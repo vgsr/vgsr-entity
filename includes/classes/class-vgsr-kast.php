@@ -32,27 +32,14 @@ class VGSR_Kast extends VGSR_Entity_Base {
 
 		// Construct entity
 		parent::__construct( $type, array(
-			'labels'      => array(
-				'name'               => esc_html__( 'Kasten',                   'vgsr-entity' ),
-				'singular_name'      => esc_html__( 'Kast',                     'vgsr-entity' ),
-				'add_new'            => esc_html__( 'New Kast',                 'vgsr-entity' ),
-				'add_new_item'       => esc_html__( 'Add new Kast',             'vgsr-entity' ),
-				'edit_item'          => esc_html__( 'Edit Kast',                'vgsr-entity' ),
-				'new_item'           => esc_html__( 'New Kast',                 'vgsr-entity' ),
-				'all_items'          => esc_html__( 'All Kasten',               'vgsr-entity' ),
-				'view_item'          => esc_html__( 'View Kast',                'vgsr-entity' ),
-				'search_items'       => esc_html__( 'Search Kasten',            'vgsr-entity' ),
-				'not_found'          => esc_html__( 'No Kasten found',          'vgsr-entity' ),
-				'not_found_in_trash' => esc_html__( 'No Kasten found in trash', 'vgsr-entity' ),
-				'menu_name'          => esc_html__( 'Kasten',                   'vgsr-entity' ),
-				'settings_title'     => esc_html__( 'Kasten Settings',          'vgsr-entity' ),
+			'path'           => 'kasten',
+			'post_type_args' => array(
+				'menu_icon' => 'dashicons-admin-home',
 			),
-			'menu_icon'   => 'dashicons-admin-home',
-			'has_archive' => true,
-
-			// Thumbnail
-			'thumbsize'   => 'mini-thumb',
-			'mini_size'   => 100,
+			'has_archive'    => true,
+			'thumbsize'      => 'mini-thumb',
+			'mini_size'      => 100,
+			'admin_class'    => 'VGSR_Kast_Admin'
 
 		// Meta
 		), array(
@@ -132,11 +119,36 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	}
 
 	/**
+	 * Include required files
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $includes See VGSR_Entity_Base::includes() for description.
+	 */
+	public function includes( $includes = array() ) {
+
+		// Default
+		$includes = array(
+			'functions',
+		);
+
+		// Admin
+		if ( is_admin() ) {
+			$includes[] = 'admin';
+			$includes[] = 'settings';
+		}
+
+		parent::includes( $includes );
+	}
+
+	/**
 	 * Define default Kast globals
 	 *
 	 * @since 1.0.0
 	 */
 	public function setup_globals() {
+		parent::setup_globals();
+
 		add_image_size( $this->args['thumbsize'], $this->args['mini_size'], $this->args['mini_size'], true );
 	}
 
@@ -146,10 +158,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 * @since 1.0.0
 	 */
 	public function setup_actions() {
-
-		// Settings
-		add_action( 'vgsr_entity_settings_fields', array( $this, 'add_settings_fields' ) );
-		add_filter( 'vgsr_kast_settings_load',     array( $this, 'downsize_thumbs'     ) );
+		parent::setup_actions();
 
 		// Meta
 		add_action( 'vgsr_entity_meta_input_address-number_field',   array( $this, 'address_number_input_field'   ), 10, 3 );
@@ -157,105 +166,6 @@ class VGSR_Kast extends VGSR_Entity_Base {
 
 		// Post
 		add_action( "vgsr_entity_{$this->type}_details", array( $this, 'entity_details' ) );
-	}
-
-	/** Settings *******************************************************/
-
-	/**
-	 * Add additional Kast settings fields
-	 *
-	 * @since 1.0.0
-	 */
-	public function add_settings_fields( $fields ) {
-
-		// Kast recreate thumbnail option
-		$fields['main']['downsize-thumbs'] = array(
-			'title'             => esc_html__( 'Recreate Thumbnails', 'vgsr-entity' ),
-			'callback'          => array( $this, 'settings_downsize_thumbs_field' ),
-			'sanitize_callback' => 'intval',
-			'entity'            => $this->type,
-			'args'              => array(),
-		);
-
-		return $fields;
-	}
-
-	/**
-	 * Output the Kast downsize thumbs settings field
-	 *
-	 * @since 1.0.0
-	 */
-	public function settings_downsize_thumbs_field() { ?>
-
-		<input type="checkbox" name="_kast-downsize-thumbs" id="_kast-downsize-thumbs" <?php checked( get_option( '_kast-downsize-thumbs' ) ); ?> value="1"/>
-		<label for="_kast-downsize_thumbs"><span class="description"><?php echo sprintf( __( 'This is a one time resizing of thumbs for %s. NOTE: This option only <em>adds</em> new image sizes, it does not remove old ones.', 'vgsr-entity' ), $this->args['labels']['name'] ); ?></span></label>
-
-		<?php
-	}
-
-	/**
-	 * Resize Kast thumbs of all kasten first attachments
-	 *
-	 * Will only be run if the _kast-downsize-thumbs option is set.
-	 *
-	 * @since 1.0.0
-	 */
-	public function downsize_thumbs() {
-
-		// Only do this if we're asked to
-		if ( ! get_option( '_kast-downsize-thumbs' ) )
-			return;
-
-		// Get all kasten
-		$kasten = get_posts( array(
-			'post_type'   => $this->type,
-			'numberposts' => -1
-		) );
-
-		// Loop over all kasten
-		foreach ( $kasten as $kast ) :
-
-			// Get first attachment - assuming that's the one we want to convert
-			$logo = get_children( array( 'post_type' => 'attachment', 'post_mime_type' => 'image', 'post_parent' => $kast->ID ) );
-			$logo = is_array( $logo ) ? reset( $logo ) : false;
-
-			// Do not continue without any attachment
-			if ( ! $logo )
-				continue;
-
-			// Juggling with {$logo} so storing ID separately
-			$logo_id = $logo->ID;
-			$logo    = wp_get_attachment_image_src( $logo_id, $this->args['thumbsize'] );
-
-			if ( $logo[1] == $this->args['mini_size'] && $logo[2] == $this->args['mini_size'] )
-				continue;
-
-			//
-			// No perfect match found so continue to edit images
-			//
-
-			// Create absolute file path
-			$file_path = ABSPATH . substr( dirname( $logo[0] ), ( strpos( $logo[0], parse_url( site_url(), PHP_URL_PATH ) ) + strlen( parse_url( site_url(), PHP_URL_PATH ) ) + 1 ) ) . '/'. basename( $logo[0] );
-
-			// Do the resizing
-			$logo = image_resize( $file_path, $this->args['mini_size'], $this->args['mini_size'], true );
-
-			// Setup image size meta
-			$args = array(
-				'file'   => basename( $logo ),
-				'width'  => $this->args['mini_size'],
-				'height' => $this->args['mini_size']
-			);
-
-			// Store attachment metadata > we're havin a mini-thumb!
-			$meta = wp_get_attachment_metadata( $logo_id );
-			$meta['sizes'][ $this->args['thumbsize'] ] = $args;
-			wp_update_attachment_metadata( $logo_id, $meta );
-
-		endforeach;
-
-		// Downsizing done, set option off
-		update_option( '_kast-downsize-thumbs', 0 );
 	}
 
 	/** Post ***********************************************************/
@@ -299,7 +209,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 		?>
 
 		<div class="entity-address" itemscope itemtype="http://schema.org/ContactPoint">
-			<h4><?php _e( 'Address', 'vgsr-entity' ); ?></h4>
+			<h4><?php esc_html_e( 'Address', 'vgsr-entity' ); ?></h4>
 
 			<div itemscope itemtype="http://schema.org/PostalAddress">
 				<span itemprop="streetAddress" class="address-street"><?php echo $street; ?></span><br/>

@@ -55,28 +55,105 @@ function vgsr_entity_get_post_types( $output = 'names' ) {
 }
 
 /**
+ * Return the plugin entity type's post types
+ *
+ * @since 2.0.0
+ *
+ * @param string $type Entity type name
+ * @param bool $object Optional. Whether to return the post type object. Defaults to false.
+ * @return string|WP_Post_Type|bool Plugin post type name or object, False when not found.
+ */
+function vgsr_entity_get_post_type( $type, $object = false ) {
+
+	// Get post type from entity
+	$post_type = vgsr_entity_exists( $type ) ? vgsr_entity_get_type( $type, true )->post_type : false;
+
+	// Get post type object
+	if ( $post_type && $object ) {
+		$post_type = get_post_type_object( $post_type );
+	}
+
+	return $post_type;
+}
+
+/**
+ * Return the entity type or post's entity type
+ *
+ * @since 2.0.0
+ *
+ * @param WP_Post|int|string $post Optional. Post object or ID or post type or entity type. Defaults to the current post.
+ * @param bool $object Optional. Whether to return the registered entity type object. Defaults to false.
+ * @return string|VGSR_Entity_Base|bool Entity type name or object or False when not found.
+ */
+function vgsr_entity_get_type( $post = 0, $object = false ) {
+
+	// Bail early when a type was already provided
+	if ( vgsr_entity_exists( $post ) ) {
+		return $object ? vgsr_entity()->{$post} : $post;
+	}
+
+	// Setup return variable
+	$type = false;
+
+	// Get post type from post
+	if ( ! post_type_exists( $post ) ) {
+		$post = get_post( $post );
+		$post_type = $post ? $post->post_type : false;
+
+	// Post type
+	} else {
+		$post_type = $post;
+	}
+
+	$post_type_object = get_post_type_object( $post_type );
+
+	// Get entity from post type object
+	if ( $post_type_object ) {
+		$post_type_object = (array) $post_type_object;
+
+		if ( isset( $post_type_object['vgsr-entity'] ) ) {
+			$type = $post_type_object['vgsr-entity'];
+		}
+	}
+
+	// Get the entity type object
+	if ( $type && $object ) {
+		$type = vgsr_entity()->{$type};
+	}
+
+	return $type;
+}
+
+/**
  * Return the entity post's display meta
  *
  * @since 2.0.0
  *
  * @uses apply_filters() Calls 'vgsr_entity_get_meta'
  *
- * @param int|WP_Post $post Optional. Post ID or object
- * @return array Array with entity meta. Empty array when post is not an entity.
+ * @param WP_Post|int $post Optional. Post ID or object. Defaults to current post.
+ * @param string $field Optional. Specific meta field to return for the post. Defaults to all fields.
+ * @return array|mixed Array with entity meta or mixed
  */
-function vgsr_entity_get_meta( $post = 0 ) {
+function vgsr_entity_get_meta( $post = 0, $field = '' ) {
 
 	// Get the post
 	$post = get_post( $post );
 
 	// Bail when this is not an entity
-	if ( ! is_entity( $post ) )
-		return array();
+	if ( ! is_entity( $post ) ) {
+		return empty( $field ) ? array() : null;
+	}
 
 	// Get post display meta fields
 	$meta = vgsr_entity()->get_meta( $post );
 
-	return apply_filters( 'vgsr_entity_get_meta', $meta, $post );
+	// Get specified field
+	if ( ! empty( $field ) ) {
+		$meta = isset( $meta[ $field ] ) ? $meta[ $field ] : null;
+	}
+
+	return apply_filters( 'vgsr_entity_get_meta', $meta, $post, $field );
 }
 
 /** Settings ***********************************************************/
@@ -131,14 +208,18 @@ function vgsr_entity_settings_fields() {
  *
  * @since 2.0.0
  *
- * @param string $entity Post type
+ * @param string $type Entity type name
  * @return array Settings fields
  */
-function vgsr_entity_settings_fields_by_type( $entity = '' ) {
+function vgsr_entity_settings_fields_by_type( $type = '' ) {
+
+	// Get entity type
+	$type = vgsr_entity_get_type( $type );
 
 	// Bail when this is not an entity
-	if ( ! is_entity( $entity ) )
+	if ( ! $type ) {
 		return array();
+	}
 
 	// Get settings fields
 	$fields = vgsr_entity_settings_fields();
@@ -148,7 +229,7 @@ function vgsr_entity_settings_fields_by_type( $entity = '' ) {
 		foreach ( $fields[ $section ] as $field => $args ) {
 
 			// Remove fields from the set when they do not apply
-			if ( isset( $args['entity'] ) && ! in_array( $entity, (array) $args['entity'] ) ) {
+			if ( isset( $args['entity'] ) && ! in_array( $type, (array) $args['entity'], true ) ) {
 				unset( $fields[ $section ][ $field ] );
 			}
 		}
@@ -166,12 +247,18 @@ function vgsr_entity_settings_display_entity_parent_field() {
 
 	// Get VGSR Entity
 	$post_type = get_current_screen()->post_type;
-	$entity    = vgsr_entity()->{$post_type};
-	$parent    = $entity->get_entity_parent();
+	$type      = vgsr_entity_get_type( $post_type, true );
+
+	// Bail when this is not an entity
+	if ( ! $type )
+		return;
+
+	// Get the entity parent page ID
+	$parent = $type->get_entity_parent();
 
 	// Display select box
 	wp_dropdown_pages( array(
-		'name'             => "_{$post_type}-parent-page",
+		'name'             => "_{$type->type}-parent-page",
 		'selected'         => $parent,
 		'show_option_none' => esc_html__( '&mdash; No Parent &mdash;', 'vgsr-entity' ),
 		'echo'             => true,
@@ -179,6 +266,7 @@ function vgsr_entity_settings_display_entity_parent_field() {
 
 	// Display link to view the page
 	if ( $parent ) : ?>
+
 	<a class="button button-secondary" href="<?php echo esc_url( get_permalink( $parent ) ); ?>" target="_blank"><?php esc_html_e( 'View', 'vgsr-entity' ); ?></a>
 	<?php endif; ?>
 
@@ -362,10 +450,12 @@ endif;
  *
  * @since 2.0.0
  *
- * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post
+ * @param WP_Post|int $post Optional. Post object or ID. Defaults to the current post.
  * @return bool Post has more tag
  */
 function entity_has_more_tag( $post = 0 ) {
+
+	// Bail when the post is invalid
 	if ( ! $post = get_post( $post ) )
 		return false;
 
@@ -682,14 +772,14 @@ function vgsr_entity_update_20000() {
 		'fields'         => 'ids',
 		'posts_per_page' => -1,
 	) ) ) {
-		foreach ( $query->posts as $kast_id ) {
-			$value = get_post_meta( $kast_id, 'since', true );
+		foreach ( $query->posts as $post_id ) {
+			$value = get_post_meta( $post_id, 'since', true );
 
 			if ( $value ) {
 				$date  = DateTime::createFromFormat( 'd/m/Y', $value );
 				if ( $date ) {
 					$value = $date->format( 'Y-m-d' );
-					update_post_meta( $kast_id, 'since', $value );
+					update_post_meta( $post_id, 'since', $value );
 				}
 			}
 		}

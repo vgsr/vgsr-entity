@@ -308,7 +308,7 @@ class VGSR_Entity_BuddyPress {
 		if ( ! empty( $fields['buddypress'] ) ) {
 
 			// Setup column hooks for all entities
-			foreach ( vgsr_entity()->get_entities() as $post_type ) {
+			foreach ( vgsr_entity_get_post_types() as $post_type ) {
 				add_filter( "manage_edit-{$post_type}_columns",        array( $this, 'table_columns'  )        );
 				add_filter( "manage_{$post_type}_posts_custom_column", array( $this, 'column_content' ), 10, 2 );
 			}
@@ -328,8 +328,8 @@ class VGSR_Entity_BuddyPress {
 	 */
 	public function table_columns( $columns ) {
 
-		// Define local variables
-		$post_type = get_current_screen()->post_type;
+		// Get admin page's entity type
+		$type = vgsr_entity_get_type( get_current_screen()->post_type );
 
 		// Define new columns
 		$new_columns = array();
@@ -342,13 +342,13 @@ class VGSR_Entity_BuddyPress {
 			if ( 'title' === $k ) {
 
 				// Get registered settings fields
-				$fields = vgsr_entity_settings_fields_by_type( $post_type );
+				$fields = vgsr_entity_settings_fields_by_type( $type );
 
 				// Walk BP fields
 				foreach ( $fields['buddypress'] as $field => $args ) {
 
 					// Skip fields without values
-					if ( ! isset( $args['column_title'] ) || ! $this->get( $field, $post_type ) )
+					if ( ! isset( $args['column_title'] ) || ! $this->get( $field, $type ) )
 						continue;
 
 					// Add column
@@ -396,7 +396,7 @@ class VGSR_Entity_BuddyPress {
 		$fields = vgsr_entity_settings_fields();
 
 		// Walk entities
-		foreach ( vgsr_entity()->get_entities() as $post_type ) {
+		foreach ( vgsr_entity_get_post_types() as $post_type ) {
 
 			// Skip when this page does not apply
 			if ( "edit-{$post_type}" !== get_current_screen()->id )
@@ -404,6 +404,7 @@ class VGSR_Entity_BuddyPress {
 
 			// Define additional column styles
 			$css = '';
+
 			foreach ( $fields['buddypress'] as $key => $args ) {
 				$width = isset( $args['column-width'] ) ? $args['column-width'] : '10%';
 				$css .= ".fixed .column-{$key} { width: {$width} }\n";
@@ -422,50 +423,41 @@ class VGSR_Entity_BuddyPress {
 	 * @since 2.0.0
 	 *
 	 * @param string $field Settings field
-	 * @param string|int|WP_Post $post Optional. Post type, post ID or object. Defaults to current post.
+	 * @param WP_Post|int|string $post Optional. Post object or ID or post type or entity type. Defaults to the current post.
 	 * @param string $context Optional. Defaults to 'display'.
 	 * @return mixed Entity setting value
 	 */
 	public function get( $field, $post = 0, $context = 'display' ) {
 
-		// When not providing a post type
-		if ( ! post_type_exists( $post ) ) {
-
-			// Find a valid post, or bail
-			if ( $post = get_post( $post ) ) {
-				$post_type = $post->post_type;
-			} else {
-				return null;
-			}
-		} else {
-			$post_type = $post;
-		}
+		// Get the entity type object
+		$type = vgsr_entity_get_type( $post, true );
+		$post = get_post( $post );
 
 		// Get settings field's value
-		$value   = vgsr_entity()->{$post_type}->get_setting( $field );
+		$value   = $type->get_setting( $field );
 		$display = ( 'display' === $context );
 
-		// Return early when not going into a post's detail
-		if ( ! is_a( $post, 'WP_Post' ) )
-			return $value;
+		// When requesting a single post's detail
+		if ( $post ) {
 
-		// Consider settings field
-		switch ( $field ) {
+			// Consider settings field
+			switch ( $field ) {
 
-			// Public members
-			case 'bp-members-field' :
-			case 'bp-residents-field' :
-				if ( $display ) {
-					// For non-VGSR, discount oud-leden
-					$query_args = vgsr_entity_check_access() ? array() : array( 'member_type__not_in' => array( 'oud-lid' ) );
-					$value = $this->get_post_users( $value, $post, $query_args );
-				}
-				break;
+				// Public members
+				case 'bp-members-field' :
+				case 'bp-residents-field' :
+					if ( $display ) {
+						// For non-VGSR, discount oud-leden
+						$query_args = vgsr_entity_check_access() ? array() : array( 'member_type__not_in' => array( vgsr_bp_oudlid_member_type() ) );
+						$value = $this->get_post_users( $value, $post, $query_args );
+					}
+					break;
 
-			// Private members
-			case 'bp-olim-residents-field' :
-				$value = $this->get_post_users( $value, $post, array(), true );
-				break;
+				// Private members
+				case 'bp-olim-residents-field' :
+					$value = $this->get_post_users( $value, $post, array(), true );
+					break;
+			}
 		}
 
 		return $value;
@@ -561,8 +553,10 @@ class VGSR_Entity_BuddyPress {
 		if ( ! $post = get_post( $post ) )
 			return false;
 
+		$type = vgsr_entity_get_type( $post, true );
+
 		// Bail when the field is invalid
-		if ( ! $field_id = $this->get( $field, $post->post_type ) )
+		if ( ! $type || ! $field_id = $type->get_setting( $field ) )
 			return false;
 
 		// Define global query ids
@@ -697,8 +691,8 @@ class VGSR_Entity_BuddyPress {
 			}
 
 			// Hook detail callback
-			foreach ( (array) $field['entity'] as $post_type ) {
-				add_action( "vgsr_entity_{$post_type}_details", $field['detail_callback'] );
+			foreach ( (array) $field['entity'] as $type ) {
+				add_action( "vgsr_entity_{$type}_details", $field['detail_callback'] );
 			}
 		}
 
@@ -706,7 +700,7 @@ class VGSR_Entity_BuddyPress {
 		if ( vgsr_entity_check_access() ) {
 
 			// Bestuur: Replace Positions detail
-			remove_action( 'vgsr_entity_bestuur_details', array( vgsr_entity()->bestuur, 'positions_detail' ) );
+			remove_action( 'vgsr_entity_bestuur_details', 'vgsr_entity_bestuur_positions_detail' );
 			add_action( 'vgsr_entity_bestuur_details', array( $this, 'bestuur_positions_detail' ) );
 		}
 	}
@@ -816,7 +810,7 @@ class VGSR_Entity_BuddyPress {
 	public function bestuur_positions_detail( $post ) {
 
 		// Bail when no positions are signed for this entity
-		if ( ! $positions = vgsr_entity()->bestuur->get_positions( $post ) )
+		if ( ! $positions = vgsr_entity_bestuur_get_positions( $post ) )
 			return;
 
 		?>
@@ -877,11 +871,11 @@ class VGSR_Entity_BuddyPress {
 	public function address_get_field_ids() {
 
 		// Define local variables
-		$vgsr_entity = vgsr_entity();
-		$fields      = array();
+		$type   = vgsr_entity_get_type( 'kast', true );
+		$fields = array();
 
-		foreach ( $vgsr_entity->kast->address_meta() as $meta ) {
-			$field_id = $vgsr_entity->kast->get_setting( "bp-address-map-{$meta['name']}" );
+		foreach ( $type->address_meta() as $meta ) {
+			$field_id = $type->get_setting( "bp-address-map-{$meta['name']}" );
 
 			// Skip when field is not found
 			if ( ! $field_id || ! xprofile_get_field( $field_id ) )
@@ -910,13 +904,14 @@ class VGSR_Entity_BuddyPress {
 
 		// Define local variable
 		$data = array();
+		$type = vgsr_entity_get_type( 'kast', true );
 
 		// When member has a registered Kast
 		if ( $post = $this->address_get_member_kast( $user_id ) ) {
 
 			// Get profile fields to replace and replacement values
 			$fields = $this->address_get_field_ids();
-			$values = vgsr_entity()->kast->address_meta( $post );
+			$values = $type->address_meta( $post );
 
 			// Map meta values to field ids
 			foreach ( $fields as $k => $field_id ) {
@@ -942,7 +937,7 @@ class VGSR_Entity_BuddyPress {
 	public function address_get_member_kast( $user_id = 0 ) {
 
 		// Get Kast setting
-		$field_id = vgsr_entity()->kast->get_setting( 'bp-residents-field' );
+		$field_id = vgsr_entity_get_type( 'kast', true )->get_setting( 'bp-residents-field' );
 
 		// Bail when the Kast field is not found
 		if ( ! $field_id || ! xprofile_get_field( $field_id ) )
