@@ -133,9 +133,10 @@ function vgsr_entity_get_type( $post = 0, $object = false ) {
  *
  * @param WP_Post|int $post Optional. Post ID or object. Defaults to current post.
  * @param string $field Optional. Specific meta field to return for the post. Defaults to all fields.
+ * @param bool $return_value Optional. When fetching a single field, whether to return just the value. Defaults to true.
  * @return array|mixed Array with entity meta or mixed
  */
-function vgsr_entity_get_meta( $post = 0, $field = '' ) {
+function vgsr_entity_get_meta( $post = 0, $field = '', $return_value = true ) {
 
 	// Get the post
 	$post = get_post( $post );
@@ -151,9 +152,14 @@ function vgsr_entity_get_meta( $post = 0, $field = '' ) {
 	// Get specified field
 	if ( ! empty( $field ) ) {
 		$meta = isset( $meta[ $field ] ) ? $meta[ $field ] : null;
+
+		// Return meta value
+		if ( $meta && $return_value ) {
+			$meta = $meta['value'];
+		}
 	}
 
-	return apply_filters( 'vgsr_entity_get_meta', $meta, $post, $field );
+	return apply_filters( 'vgsr_entity_get_meta', $meta, $post, $field, $return_value );
 }
 
 /** Settings ***********************************************************/
