@@ -30,4 +30,5 @@ add_action( 'wp_ajax_vgsr_entity_suggest_user', 'vgsr_entity_suggest_user' );
 
 /** Extensions *********************************************************/
 
-add_action( 'bp_loaded', 'vgsr_entity_buddypress' );
+add_action( 'bp_loaded',        'vgsr_entity_buddypress'      );
+add_action( 'vgsr_entity_init', 'vgsr_entity_setup_wpseo', 99 );

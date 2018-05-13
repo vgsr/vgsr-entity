@@ -97,8 +97,12 @@ final class VGSR_Entity {
 		$this->plugin_url    = plugin_dir_url ( $this->file );
 
 		// Includes
-		$this->includes_dir  = trailingslashit( $this->plugin_dir . 'includes'  );
-		$this->includes_url  = trailingslashit( $this->plugin_url . 'includes'  );
+		$this->includes_dir  = trailingslashit( $this->plugin_dir . 'includes' );
+		$this->includes_url  = trailingslashit( $this->plugin_url . 'includes' );
+
+		// Extensions
+		$this->extend_dir    = trailingslashit( $this->includes_dir . 'extend' );
+		$this->extend_url    = trailingslashit( $this->includes_url . 'extend' );
 
 		// Languages
 		$this->lang_dir      = trailingslashit( $this->plugin_dir . 'languages' );
@@ -128,6 +132,7 @@ final class VGSR_Entity {
 		require( $this->includes_dir . 'template-tags.php' );
 
 		// Extend
+		require( $this->includes_dir . 'extend.php'            );
 		require( $this->includes_dir . 'extend/buddypress.php' );
 	}
 
@@ -139,7 +144,7 @@ final class VGSR_Entity {
 	private function setup_actions() {
 
 		// Plugin
-		add_action( 'plugins_loaded',        array( $this, 'load_textdomain'  ) );
+		add_action( 'plugins_loaded',         array( $this, 'load_textdomain'  ) );
 		add_action( 'vgsr_entity_admin_init', array( $this, 'check_for_update' ) );
 
 		// Entities
