@@ -124,6 +124,7 @@ final class VGSR_Entity {
 		// Core
 		require( $this->includes_dir . 'actions.php'       );
 		require( $this->includes_dir . 'functions.php'     );
+		require( $this->includes_dir . 'sub-actions.php'   );
 		require( $this->includes_dir . 'template-tags.php' );
 
 		// Extend
