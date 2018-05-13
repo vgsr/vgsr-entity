@@ -55,7 +55,32 @@ class VGSR_Entity_BuddyPress {
 		if ( ! function_exists( 'vgsr' ) )
 			return;
 
+		$this->setup_globals();
+		$this->includes();
 		$this->setup_actions();
+	}
+
+	/**
+	 * Setup actions and filters
+	 *
+	 * @since 2.0.0
+	 */
+	private function setup_globals() {
+
+		/** Paths *************************************************************/
+		
+		$this->includes_dir = trailingslashit( vgsr_entity()->extend_dir . 'buddypress' );
+		$this->includes_url = trailingslashit( vgsr_entity()->extend_url . 'buddypress' );
+	}
+
+	/**
+	 * Setup actions and filters
+	 *
+	 * @since 2.0.0
+	 */
+	private function includes() {
+		require( $this->includes_dir . 'functions.php' );
+		require( $this->includes_dir . 'settings.php'  );
 	}
 
 	/**
@@ -124,7 +149,7 @@ class VGSR_Entity_BuddyPress {
 			// Dispuut members
 			$bp_fields['bp-members-field'] = array(
 				'title'             => esc_html__( 'Members Field', 'vgsr-entity' ),
-				'callback'          => array( $this, 'xprofile_field_setting' ),
+				'callback'          => 'vgsr_entity_bp_xprofile_field_setting',
 				'sanitize_callback' => 'intval',
 				'entity'            => array( 'dispuut' ),
 				'column_title'      => esc_html__( 'Members', 'vgsr-entity' ),
@@ -143,7 +168,7 @@ class VGSR_Entity_BuddyPress {
 			// Kast residents
 			$bp_fields['bp-residents-field'] = array(
 				'title'             => esc_html__( 'Residents Field', 'vgsr-entity' ),
-				'callback'          => array( $this, 'xprofile_field_setting' ),
+				'callback'          => 'vgsr_entity_bp_xprofile_field_setting',
 				'sanitize_callback' => 'intval',
 				'entity'            => array( 'kast' ),
 				'column_title'      => esc_html__( 'Residents', 'vgsr-entity' ),
@@ -162,7 +187,7 @@ class VGSR_Entity_BuddyPress {
 			// Kast former residents
 			$bp_fields['bp-olim-residents-field'] = array(
 				'title'             => esc_html__( 'Former Residents Field', 'vgsr-entity' ),
-				'callback'          => array( $this, 'xprofile_field_setting' ),
+				'callback'          => 'vgsr_entity_bp_xprofile_field_setting',
 				'sanitize_callback' => 'intval',
 				'entity'            => array( 'kast' ),
 				'column_title'      => esc_html__( 'Former Residents', 'vgsr-entity' ),
@@ -180,7 +205,7 @@ class VGSR_Entity_BuddyPress {
 			foreach ( vgsr_entity()->kast->address_meta() as $meta ) {
 				$bp_fields["bp-address-map-{$meta['name']}"] = array(
 					'title'             => sprintf( esc_html__( 'Address Map: %s', 'vgsr-entity' ), $meta['column_title'] ),
-					'callback'          => array( $this, 'xprofile_field_setting' ),
+					'callback'          => 'vgsr_entity_bp_xprofile_field_setting',
 					'sanitize_callback' => 'intval',
 					'entity'            => array( 'kast' ),
 					'args'              => array(
@@ -195,101 +220,6 @@ class VGSR_Entity_BuddyPress {
 		$fields['buddypress'] = $bp_fields;
 
 		return $fields;
-	}
-
-	/**
-	 * Display a XProfile field selector settings field
-	 *
-	 * @since 2.0.0
-	 */
-	public function xprofile_field_setting( $args = array() ) {
-
-		// Get current post type and the settings field's value
-		$post_type = get_current_screen()->post_type;
-		$field_id  = $this->get( $args['setting'], $post_type );
-
-		// Fields dropdown
-		$this->xprofile_fields_dropdown( array(
-			'name'     => "_{$post_type}-{$args['setting']}",
-			'selected' => $field_id,
-			'echo'     => true,
-		) );
-
-		// Display View link
-		if ( current_user_can( 'bp_moderate' ) && $field = xprofile_get_field( $field_id ) ) {
-			printf( ' <a class="button button-secondary" href="%s" target="_blank">%s</a>', 
-				esc_url( add_query_arg(
-					array(
-						'page'     => 'bp-profile-setup',
-						'group_id' => $field->group_id,
-						'field_id' => $field->id,
-						'mode'     => 'edit_field'
-					),
-					bp_get_admin_url( 'users.php' )
-				) ),
-				esc_html__( 'View', 'vgsr-entity' )
-			);
-		} ?>
-
-		<p class="description"><?php printf( $args['description'], get_post_type_object( $post_type )->labels->name ); ?></p>
-
-		<?php
-	}
-
-	/**
-	 * Output or return a dropdown with XProfile fields
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $args Dropdown arguments
-	 * @return void|string Dropdown markup
-	 */
-	public function xprofile_fields_dropdown( $args = array() ) {
-
-		// Parse default args
-		$args = wp_parse_args( $args, array(
-			'id' => '', 'name' => '', 'multiselect' => false, 'selected' => 0, 'echo' => false,
-		) );
-
-		// Bail when missing attributes
-		if ( empty( $args['name'] ) )
-			return '';
-
-		// Default id attribute to name
-		if ( empty( $args['id'] ) ) {
-			$args['id'] = $args['name'];
-		}
-
-		// Get all field groups with their fields
-		$xprofile = bp_xprofile_get_groups( array( 'fetch_fields' => true, 'hide_empty_groups' => true ) );
-
-		// Start dropdown markup
-		$dd  = sprintf( '<select id="%s" name="%s" %s>', esc_attr( $args['id'] ), esc_attr( $args['name'] ), $args['multiselect'] ? 'multiple="multiple"' : '' );
-		$dd .= '<option value="">' . __( '&mdash; No Field &mdash;', 'vgsr-entity' )  . '</option>';
-
-		// Walk profile groups
-		foreach ( $xprofile as $field_group ) {
-
-			// Start optgroup
-			$dd .= sprintf( '<optgroup label="%s">', esc_attr( $field_group->name ) );
-
-			// Walk profile group fields
-			foreach ( $field_group->fields as $field ) {
-				$dd .= sprintf( '<option value="%s" %s>%s</option>', esc_attr( $field->id ), selected( $args['selected'], $field->id, false ), esc_html( $field->name ) );
-			}
-
-			// Close optgroup
-			$dd .= '</optgroup>';
-		}
-
-		// Close dropdown
-		$dd .= '</select>';
-
-		if ( $args['echo'] ) {
-			echo $dd;
-		} else {
-			return $dd;
-		}
 	}
 
 	/** List Table ************************************************************/
@@ -348,7 +278,7 @@ class VGSR_Entity_BuddyPress {
 				foreach ( $fields['buddypress'] as $field => $args ) {
 
 					// Skip fields without values
-					if ( ! isset( $args['column_title'] ) || ! $this->get( $field, $type ) )
+					if ( ! isset( $args['column_title'] ) || ! vgsr_entity_bp_get_field( $field, $type ) )
 						continue;
 
 					// Add column
@@ -377,7 +307,7 @@ class VGSR_Entity_BuddyPress {
 			case 'bp-olim-residents-field' :
 
 				// Display user count
-				if ( $users = $this->get( $column, $post_id ) ) {
+				if ( $users = vgsr_entity_bp_get_field( $column, $post_id ) ) {
 					echo count( $users );
 				}
 
@@ -416,124 +346,6 @@ class VGSR_Entity_BuddyPress {
 	}
 
 	/** Post ******************************************************************/
-
-	/**
-	 * Return the value for the given settings field of the post (type)
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $field Settings field
-	 * @param WP_Post|int|string $post Optional. Post object or ID or post type or entity type. Defaults to the current post.
-	 * @param string $context Optional. Defaults to 'display'.
-	 * @return mixed Entity setting value
-	 */
-	public function get( $field, $post = 0, $context = 'display' ) {
-
-		// Get the entity type object
-		$type = vgsr_entity_get_type( $post, true );
-		$post = get_post( $post );
-
-		// Get settings field's value
-		$value   = $type->get_setting( $field );
-		$display = ( 'display' === $context );
-
-		// When requesting a single post's detail
-		if ( $post ) {
-
-			// Consider settings field
-			switch ( $field ) {
-
-				// Public members
-				case 'bp-members-field' :
-				case 'bp-residents-field' :
-					if ( $display ) {
-						// For non-VGSR, discount oud-leden
-						$query_args = vgsr_entity_check_access() ? array() : array( 'member_type__not_in' => array( vgsr_bp_oudlid_member_type() ) );
-						$value = $this->get_post_users( $value, $post, $query_args );
-					}
-					break;
-
-				// Private members
-				case 'bp-olim-residents-field' :
-					$value = $this->get_post_users( $value, $post, array(), true );
-					break;
-			}
-		}
-
-		return $value;
-	}
-
-	/**
-	 * Return the users that have the post as a field value
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param int|string $field Field ID or name
-	 * @param int|WP_Post $post Optional. Post ID or post object. Defaults to current post.
-	 * @param array $query_args Additional query arguments for BP_User_Query
-	 * @param bool $multiple Optional. Whether the profile field holds multiple values.
-	 * @return array User ids
-	 */
-	public function get_post_users( $field, $post = 0, $query_args = array(), $multiple = false ) {
-
-		// Define local variable
-		$users = array();
-
-		// Bail when the field or post is invalid
-		if ( ! $field || ! $post = get_post( $post ) )
-			return $users;
-
-		// Parse query args
-		$query_args = wp_parse_args( $query_args, array(
-			'type'            => '',    // Query $wpdb->users, sort by ID
-			'per_page'        => 0,     // No limit
-			'populate_extras' => false,
-			'count_total'     => false
-		) );
-
-		/**
-		 * Account for multi-value profile fields which are stored as
-		 * serialized arrays.
-		 *
-		 * @see https://buddypress.trac.wordpress.org/ticket/6789
-		 */
-		if ( $multiple ) {
-			global $wpdb, $bp;
-
-			// Query user ids that compare against post ID, title or slug
-			$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$bp->profile->table_name_data} WHERE field_id = %d AND ( value LIKE %s OR value LIKE %s OR value LIKE %s )",
-				$field, '%"' . $post->ID . '"%', '%"' . $post->post_title . '"%', '%"' . $post->post_name . '"%'
-			) );
-
-			// Limit member query to the found users
-			if ( ! empty( $user_ids ) ) {
-				$query_args['include'] = $user_ids;
-
-			// Bail when no users were found
-			} else {
-				return $users;
-			}
-
-		// Use BP_XProfile_Query
-		} else {
-
-			// Define XProfile query args
-			$xprofile_query   = isset( $query_args['xprofile_query'] ) ? $query_args['xprofile_query'] : array();
-			$xprofile_query[] = array(
-				'field' => $field,
-				// Compare against post ID, title or slug
-				'value' => array( $post->ID, $post->post_title, $post->post_name ),
-			);
-			$query_args['xprofile_query'] = $xprofile_query;
-		}
-
-		// Query users that are connected to this entity
-		if ( $query = new BP_User_Query( $query_args ) ) {
-			$users = $query->results;
-		}
-
-		return $users;
-	}
 
 	/**
 	 * Run a modified version of {@see bp_has_members()} for the given post users
@@ -653,7 +465,7 @@ class VGSR_Entity_BuddyPress {
 		foreach ( $fields as $field => $args ) {
 
 			// Add field with value to meta collection
-			if ( $value = $this->get( $field, $post ) ) {
+			if ( $value = vgsr_entity_bp_get_field( $field, $post ) ) {
 
 				// Default to an array's count
 				if ( is_array( $value ) ) {
@@ -1166,17 +978,6 @@ class VGSR_Entity_BuddyPress {
 
 		return $data;
 	}
-}
-
-/**
- * Setup the VGSR Entity BuddyPress class
- *
- * @since 2.0.0
- *
- * @uses VGSR_Entity_BuddyPress
- */
-function vgsr_entity_buddypress() {
-	vgsr_entity()->extend->bp = new VGSR_Entity_BuddyPress;
 }
 
 endif; // class_exists
