@@ -83,7 +83,7 @@ function vgsr_entity_get_post_type( $type, $object = false ) {
  *
  * @param WP_Post|int|string $post Optional. Post object or ID or post type or entity type. Defaults to the current post.
  * @param bool $object Optional. Whether to return the registered entity type object. Defaults to false.
- * @return string|VGSR_Entity_Base|bool Entity type name or object or False when not found.
+ * @return string|VGSR_Entity_Type|bool Entity type name or object or False when not found.
  */
 function vgsr_entity_get_type( $post = 0, $object = false ) {
 

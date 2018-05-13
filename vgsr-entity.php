@@ -177,7 +177,7 @@ final class VGSR_Entity {
 	public function setup_entities() {
 
 		// Load base classes
-		require_once( $this->includes_dir . 'classes/class-vgsr-entity-base.php'       );
+		require_once( $this->includes_dir . 'classes/class-vgsr-entity-type.php'       );
 		require_once( $this->includes_dir . 'classes/class-vgsr-entity-type-admin.php' );
 
 		// Define the entities as type => class_name
@@ -628,7 +628,7 @@ final class VGSR_Entity {
 	/**
 	 * Wrapper for a single entity's meta getter
 	 *
-	 * @see VGSR_Entity_Base::meta()
+	 * @see VGSR_Entity_Type::meta()
 	 *
 	 * @since 2.0.0
 	 *

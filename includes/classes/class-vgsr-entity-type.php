@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VGSR Entity Base Class
+ * VGSR Entity Type Class
  * 
  * @package VGSR Entity
  * @subpackage Main
@@ -10,13 +10,13 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'VGSR_Entity_Base' ) ) :
+if ( ! class_exists( 'VGSR_Entity_Type' ) ) :
 /**
- * Single entity base class
+ * Single Entity Type base class
  *
  * @since 1.0.0
  */
-abstract class VGSR_Entity_Base {
+abstract class VGSR_Entity_Type {
 
 	/**
 	 * Holds tye entity type name
@@ -81,7 +81,7 @@ abstract class VGSR_Entity_Base {
 
 		// Bail when type name contains invalid chars
 		if ( sanitize_key( $type ) !== $type ) {
-			_doing_it_wrong( 'VGSR_Entity_Base', 'The provided entity type name contains invalid characters', '2.0.0' );
+			_doing_it_wrong( 'VGSR_Entity_Type', 'The provided entity type name contains invalid characters', '2.0.0' );
 			return;
 		}
 
@@ -197,7 +197,7 @@ abstract class VGSR_Entity_Base {
 		}
 	}
 
-	/** Setup Base *****************************************************/
+	/** Setup Type *****************************************************/
 
 	/**
 	 * Define child class globals
@@ -392,7 +392,7 @@ abstract class VGSR_Entity_Base {
 	 */
 	public function admin_init() {
 
-		// Load base admin class
+		// Load type admin base class
 		require_once( vgsr_entity()->includes_dir . 'classes/class-vgsr-entity-type-admin.php' );
 
 		// Load entity admin class

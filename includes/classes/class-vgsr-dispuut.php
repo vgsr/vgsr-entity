@@ -16,7 +16,7 @@ if ( ! class_exists( 'VGSR_Dispuut' ) ) :
  *
  * @since 1.0.0
  */
-class VGSR_Dispuut extends VGSR_Entity_Base {
+class VGSR_Dispuut extends VGSR_Entity_Type {
 
 	/**
 	 * Construct Dispuut Entity
@@ -71,7 +71,7 @@ class VGSR_Dispuut extends VGSR_Entity_Base {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $includes See VGSR_Entity_Base::includes() for description.
+	 * @param array $includes See VGSR_Entity_Type::includes() for description.
 	 */
 	public function includes( $includes = array() ) {
 

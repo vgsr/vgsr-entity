@@ -16,7 +16,7 @@ if ( ! class_exists( 'VGSR_Kast' ) ) :
  *
  * @since 1.0.0
  */
-class VGSR_Kast extends VGSR_Entity_Base {
+class VGSR_Kast extends VGSR_Entity_Type {
 
 	/**
 	 * Construct Kast Entity
@@ -123,7 +123,7 @@ class VGSR_Kast extends VGSR_Entity_Base {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $includes See VGSR_Entity_Base::includes() for description.
+	 * @param array $includes See VGSR_Entity_Type::includes() for description.
 	 */
 	public function includes( $includes = array() ) {
 

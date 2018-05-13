@@ -140,7 +140,7 @@ class VGSR_Entity_Type_Admin {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @return VGSR_Entity_Base
+	 * @return VGSR_Entity_Type
 	 */
 	private function type() {
 		return vgsr_entity()->{$this->type};
