@@ -19,7 +19,8 @@ defined( 'ABSPATH' ) || exit;
  */
 function vgsr_entity_setup_buddypress() {
 
-	// Bail if no VGSR
+	// Require the VGSR plugin, since we'll be working with member
+	// queries here.
 	if ( ! function_exists( 'vgsr' ) )
 		return;
 
