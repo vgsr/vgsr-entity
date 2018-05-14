@@ -128,11 +128,18 @@ final class VGSR_Entity {
 	 * @since 1.0.0
 	 */
 	private function includes() {
+
+		// Core
 		require( $this->includes_dir . 'actions.php'       );
 		require( $this->includes_dir . 'extend.php'        );
 		require( $this->includes_dir . 'functions.php'     );
 		require( $this->includes_dir . 'sub-actions.php'   );
 		require( $this->includes_dir . 'template-tags.php' );
+
+		// Admin
+		if ( is_admin() ) {
+			require( $this->includes_dir . 'settings.php' );
+		}
 	}
 
 	/**

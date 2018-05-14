@@ -453,6 +453,9 @@ class VGSR_Entity_BuddyPress {
 	 */
 	public function display_meta( $meta, $post ) {
 
+		// Make settings functions available
+		require_once( vgsr_entity()->includes_dir . 'settings.php' );
+
 		// Get registered settings fields
 		$fields = vgsr_entity_settings_fields_by_type( $post->post_type );
 		$fields = wp_list_filter( $fields['buddypress'], array( 'is_entry_meta' => true ) );
@@ -481,6 +484,9 @@ class VGSR_Entity_BuddyPress {
 	 * @since 2.0.0
 	 */
 	public function entity_details() {
+
+		// Make settings functions available
+		require_once( vgsr_entity()->includes_dir . 'settings.php' );
 
 		// Get registered settings fields for display
 		$fields = vgsr_entity_settings_fields();
