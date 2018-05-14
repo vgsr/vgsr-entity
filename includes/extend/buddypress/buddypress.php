@@ -79,10 +79,17 @@ class VGSR_Entity_BuddyPress {
 	 * @since 2.0.0
 	 */
 	private function includes() {
+
+		// Core
 		require( $this->includes_dir . 'actions.php'   );
 		require( $this->includes_dir . 'functions.php' );
 		require( $this->includes_dir . 'kasten.php'    );
-		require( $this->includes_dir . 'settings.php'  );
+		require( $this->includes_dir . 'members.php'   );
+
+		// Admin
+		if ( is_admin() ) {
+			require( $this->includes_dir . 'settings.php' );
+		}
 	}
 
 	/**
@@ -157,7 +164,7 @@ class VGSR_Entity_BuddyPress {
 				// Field display
 				'is_entry_meta'     => true,
 				'meta_label'        => esc_html__( '%d Members', 'vgsr-entity' ),
-				'detail_callback'   => array( $this, 'entity_members_detail' ),
+				'detail_callback'   => 'vgsr_entity_bp_list_post_members',
 				'show_detail'       => $access,
 			);
 
@@ -176,7 +183,7 @@ class VGSR_Entity_BuddyPress {
 				// Field display
 				'is_entry_meta'     => true,
 				'meta_label'        => esc_html__( '%d Residents', 'vgsr-entity' ),
-				'detail_callback'   => array( $this, 'entity_residents_detail' ),
+				'detail_callback'   => 'vgsr_entity_bp_list_post_residents',
 				'show_detail'       => $access,
 			);
 
@@ -193,7 +200,7 @@ class VGSR_Entity_BuddyPress {
 				),
 
 				// Field display
-				'detail_callback'   => array( $this, 'entity_olim_residents_detail' ),
+				'detail_callback'   => 'vgsr_entity_bp_list_post_olim_residents',
 				'show_detail'       => $access,
 			);
 
@@ -206,7 +213,7 @@ class VGSR_Entity_BuddyPress {
 					'entity'            => array( 'kast' ),
 					'args'              => array(
 						'setting'     => "bp-address-map-{$meta['name']}",
-						'description' => sprintf( esc_html__( "Select the field that holds the member's %s address detail.", 'vgsr-entity' ), $meta['column_title'] ),
+						'description' => sprintf( esc_html__( "Select the profile field that holds this address detail: %s.", 'vgsr-entity' ), $meta['column_title'] ),
 					),
 				);
 			}
@@ -216,6 +223,61 @@ class VGSR_Entity_BuddyPress {
 		$fields['buddypress'] = $bp_fields;
 
 		return $fields;
+	}
+
+	/** Query *****************************************************************/
+
+	/**
+	 * Setup global query vars for querying post members
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param int $field_id Profile field ID
+	 * @param WP_Post|int $post Optional. Post object or ID. Defaults to the current post.
+	 * @param bool $multiple Optional. Whether the profile field allows for multiple values.
+	 */
+	public function set_post_query_vars( $args = array() ) {
+
+		// Parse args
+		$args = wp_parse_args( $args, array(
+			'field_id' => 0,
+			'post'     => 0,
+			'multiple' => false
+		) );
+
+		// Get the post
+		$post = get_post( $args['post'] );
+
+		// Set class globals
+		$this->query_field_id = (int) $args['field_id'];
+		$this->query_post_id  = $post ? (int) $post->ID : 0;
+		$this->query_multiple = (bool) $args['multiple'];
+	}
+
+	/**
+	 * Return the global query vars for querying post members
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return object Post query vars
+	 */
+	public function get_post_query_vars() {
+		return (object) array(
+			'field_id' => $this->query_field_id,
+			'post_id'  => $this->query_post_id,
+			'multiple' => $this->query_multiple,
+		);
+	}
+
+	/**
+	 * Reset global query vars for querying post members
+	 *
+	 * @since 2.0.0
+	 */
+	public function reset_post_query_vars() {
+		$this->query_field_id = 0;
+		$this->query_post_id  = 0;
+		$this->query_multiple = false;
 	}
 
 	/** List Table ************************************************************/
@@ -344,105 +406,6 @@ class VGSR_Entity_BuddyPress {
 	/** Post ******************************************************************/
 
 	/**
-	 * Run a modified version of {@see bp_has_members()} for the given post users
-	 *
-	 * When the post has users, the `$members_template` global is setup for use.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $field Settings field name
-	 * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post.
-	 * @param bool $multiple Optional. Whether the profile field holds multiple values.
-	 * @return bool Whether the post has any users
-	 */
-	public function bp_has_members_for_post( $field, $post = 0, $multiple = false ) {
-
-		// Bail when the post is invalid
-		if ( ! $post = get_post( $post ) )
-			return false;
-
-		$type = vgsr_entity_get_type( $post, true );
-
-		// Bail when the field is invalid
-		if ( ! $type || ! $field_id = $type->get_setting( $field ) )
-			return false;
-
-		// Define global query ids
-		$this->query_field_id = (int) $field_id;
-		$this->query_post_id  = (int) $post->ID;
-		$this->query_multiple = $multiple;
-
-		// Modify query vars
-		add_action( 'bp_pre_user_query_construct', array( $this, 'filter_user_query_post_users' ) );
-
-		// Query members and setup members template
-		$has_members = bp_has_members( array(
-			'type'            => '',    // Query $wpdb->users, order by ID
-			'per_page'        => 0,     // No limit
-			'populate_extras' => false,
-		) );
-
-		// Unhook query modifier
-		remove_action( 'bp_pre_user_query_construct', array( $this, 'filter_user_query_post_users' ) );
-
-		// Reset global query ids
-		$this->query_field_id = $this->query_post_id = 0;
-		$this->query_multiple = false;
-
-		return $has_members;
-	}
-
-	/**
-	 * Modify the BP_User_Query before query construction
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param BP_User_Query $query
-	 */
-	public function filter_user_query_post_users( $query ) {
-
-		// Bail when the field or post is invalid
-		if ( ! $this->query_field_id || ! $post = get_post( $this->query_post_id ) )
-			return;
-
-		/**
-		 * Account for multi-value profile fields which are stored as
-		 * serialized arrays.
-		 *
-		 * @see https://buddypress.trac.wordpress.org/ticket/6789
-		 */
-		if ( $this->query_multiple ) {
-			global $wpdb, $bp;
-
-			// Query user ids that compare against post ID, title or slug
-			$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$bp->profile->table_name_data} WHERE field_id = %d AND ( value LIKE %s OR value LIKE %s OR value LIKE %s )",
-				$this->query_field_id, '%"' . $post->ID . '"%', '%"' . $post->post_title . '"%', '%"' . $post->post_name . '"%'
-			) );
-
-			// Bail query when nothing found
-			if ( empty( $user_ids ) ) {
-				$user_ids = array( 0 );
-			}
-
-			// Limit member query to the found users
-			$query->query_vars['include'] = $user_ids;
-
-		// Use BP_XProfile_Query
-		} else {
-
-			// Define XProfile query args
-			$xprofile_query   = is_array( $query->query_vars['xprofile_query'] ) ? $query->query_vars['xprofile_query'] : array();
-			$xprofile_query[] = array(
-				'field' => $this->query_field_id,
-				// Compare against post ID, title or slug
-				'value' => array( $post->ID, $post->post_title, $post->post_name ),
-			);
-
-			$query->query_vars['xprofile_query'] = $xprofile_query;
-		}
-	}
-
-	/**
 	 * Modify the entity's display meta
 	 *
 	 * @since 2.0.0
@@ -520,95 +483,6 @@ class VGSR_Entity_BuddyPress {
 	}
 
 	/** Details ***************************************************************/
-
-	/**
-	 * Output a list of members of the post's field
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param WP_Post $post Post object
-	 * @param array $args List arguments
-	 */
-	public function display_members_list( $post, $args = array() ) {
-
-		// Parse list args
-		$args = wp_parse_args( $args, array(
-			'field'    => '',
-			'label'    => esc_html__( 'Members', 'vgsr-entity' ),
-			'multiple' => false,
-		) );
-
-		// Bail when this post has no members
-		if ( ! $this->bp_has_members_for_post( $args['field'], $post->ID, $args['multiple'] ) )
-			return;
-
-		?>
-
-		<div class="entity-members">
-			<h4><?php echo $args['label']; ?></h4>
-
-			<ul class="bp-item-list">
-				<?php while ( bp_members() ) : bp_the_member(); ?>
-				<li <?php bp_member_class( array( 'member' ) ); ?>>
-					<div class="item-avatar">
-						<a href="<?php bp_member_permalink(); ?>"><?php bp_member_avatar(); ?></a>
-					</div>
-
-					<div class="item">
-						<div class="item-title">
-							<a href="<?php bp_member_permalink(); ?>"><?php bp_member_name(); ?></a>
-						</div>
-					</div>
-				</li>
-				<?php endwhile; ?>
-			</ul>
-		</div>
-
-		<?php
-	}
-
-	/**
-	 * Display the Members entity detail
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param WP_Post $post Post object
-	 */
-	public function entity_members_detail( $post ) {
-		$this->display_members_list( $post, array(
-			'field' => 'bp-members-field',
-			'label' => esc_html__( 'Members', 'vgsr-entity' ),
-		) );
-	}
-
-	/**
-	 * Display the Residents entity detail
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param WP_Post $post Post object
-	 */
-	public function entity_residents_detail( $post ) {
-		$this->display_members_list( $post, array(
-			'field' => 'bp-residents-field',
-			'label' => esc_html__( 'Residents', 'vgsr-entity' ),
-		) );
-	}
-
-	/**
-	 * Display the Former Residents entity detail
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param WP_Post $post Post object
-	 */
-	public function entity_olim_residents_detail( $post ) {
-		$this->display_members_list( $post, array(
-			'field'    => 'bp-olim-residents-field',
-			'label'    => esc_html__( 'Former Residents', 'vgsr-entity' ),
-			'multiple' => true,
-		) );
-	}
 
 	/**
 	 * Display the Bestuur Positions entity detail with BP data
