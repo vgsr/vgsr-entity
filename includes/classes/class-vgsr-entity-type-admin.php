@@ -386,12 +386,12 @@ class VGSR_Entity_Type_Admin {
 		// Date fields: Enqueue date picker
 		if ( wp_list_filter( $type_meta, array( 'type' => 'date' ) ) ) {
 			wp_enqueue_script( 'jquery-ui-datepicker' );
-			wp_enqueue_style( 'stuttter-datepicker', $entity->includes_url . 'assets/css/datepicker.css' );
+			wp_enqueue_style( 'stuttter-datepicker', $entity->assets_url . 'css/datepicker.css' );
 		}
 
 		// Enqueue admin scripts
-		wp_enqueue_style( 'vgsr-entity-admin', $entity->includes_url . 'assets/css/admin.css' );
-		wp_enqueue_script( 'vgsr-entity-admin', $entity->includes_url . 'assets/js/admin.js', array( 'jquery' ), '2.0.0', true );
+		wp_enqueue_style( 'vgsr-entity-admin', $entity->assets_url . 'css/admin.css' );
+		wp_enqueue_script( 'vgsr-entity-admin', $entity->assets_url . 'js/admin.js', array( 'jquery' ), '2.0.0', true );
 
 		// When on the edit view
 		if ( $is_edit ) {
@@ -443,7 +443,7 @@ class VGSR_Entity_Type_Admin {
 	 * @since 2.0.0
 	 */
 	public function enqueue_settings_scripts() {
-		wp_enqueue_style( 'vgsr-entity-admin', vgsr_entity()->includes_url . 'assets/css/admin.css' );
+		wp_enqueue_style( 'vgsr-entity-admin', vgsr_entity()->assets_url . 'css/admin.css' );
 	}
 
 	/**

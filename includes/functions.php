@@ -565,7 +565,7 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 	<?php
 
 	// Enqueue media modal script
-	wp_enqueue_script( 'vgsr-entity-media-editor', vgsr_entity()->includes_url . 'assets/js/media-editor.js', array( 'vgsr-entity-admin', 'media-editor' ), '2.0.0', true );
+	wp_enqueue_script( 'vgsr-entity-media-editor', vgsr_entity()->assets_url . 'js/media-editor.js', array( 'vgsr-entity-admin', 'media-editor' ), '2.0.0', true );
 }
 
 	/**
