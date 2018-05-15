@@ -108,6 +108,10 @@ final class VGSR_Entity {
 		$this->extend_dir    = trailingslashit( $this->includes_dir . 'extend' );
 		$this->extend_url    = trailingslashit( $this->includes_url . 'extend' );
 
+		// Templates
+		$this->themes_dir    = trailingslashit( $this->includes_dir . 'templates' );
+		$this->themes_url    = trailingslashit( $this->includes_url . 'templates' );
+
 		// Languages
 		$this->lang_dir      = trailingslashit( $this->plugin_dir . 'languages' );
 
@@ -135,6 +139,7 @@ final class VGSR_Entity {
 		require( $this->includes_dir . 'functions.php'     );
 		require( $this->includes_dir . 'sub-actions.php'   );
 		require( $this->includes_dir . 'template-tags.php' );
+		require( $this->includes_dir . 'theme-compat.php'  );
 
 		// Admin
 		if ( is_admin() ) {
@@ -160,9 +165,6 @@ final class VGSR_Entity {
 		// Admin & Widgets
 		add_action( 'admin_menu',   array( $this, 'admin_menu'   ) );
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
-
-		// Theme
-		add_action( 'template_include', array( $this, 'template_include' ) );
 
 		// Query
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) );
@@ -499,51 +501,6 @@ final class VGSR_Entity {
 		}
 
 		return $parents;
-	}
-
-	/**
-	 * Intercept the template loader to load the entity template
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $template The current template match
-	 * @return string $template
-	 */
-	public function template_include( $template ) {
-
-		// Single entity requested
-		if ( is_entity() && is_singular() ) {
-
-			// Get the current post type
-			$post_type = get_post_type();
-
-			/**
-			 * Define our own tempate stack
-			 *
-			 * The template(s) should be defined in the current child 
-			 * or parent theme.
-			 */
-			$templates = array(
-
-				// Post-type specific template
-				"single-{$post_type}.php",
-				"{$post_type}.php",
-
-				// Default to page and single template
-				'page.php',
-				'single.php',
-			);
-
-			// Generic entity template
-			if ( ! post_type_exists( 'entity' ) ) {
-				array_splice( $templates, 2, 0, 'single-entity.php' );
-			}
-
-			// Query for a usable template
-			$template = get_query_template( $post_type, $templates );
-		}
-
-		return $template;
 	}
 
 	/** Queries ********************************************************/

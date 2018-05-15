@@ -10,25 +10,29 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-/** Sub-actions ********************************************************/
+/** Sub-actions ***************************************************************/
 
 add_action( 'init',       'vgsr_entity_init'       );
 add_action( 'admin_init', 'vgsr_entity_admin_init' );
 
-/** Post ***************************************************************/
+/** Post **********************************************************************/
 
 add_filter( 'the_content', 'vgsr_entity_list'           );
 add_filter( 'the_content', 'vgsr_entity_filter_content' );
 
-/** Nav menus **********************************************************/
+/** Nav menus *****************************************************************/
 
 add_filter( 'nav_menu_css_class', 'vgsr_entity_nav_menu_css_class', 10, 4 );
 
-/** AJAX ***************************************************************/
+/** Theme *********************************************************************/
+
+add_action( 'template_include', 'vgsr_entity_template_include' );
+
+/** AJAX **********************************************************************/
 
 add_action( 'wp_ajax_vgsr_entity_suggest_user', 'vgsr_entity_suggest_user' );
 
-/** Extensions *********************************************************/
+/** Extensions ****************************************************************/
 
 add_action( 'bp_loaded',        'vgsr_entity_setup_buddypress', 10 );
 add_action( 'vgsr_entity_init', 'vgsr_entity_setup_wpseo',      99 );
