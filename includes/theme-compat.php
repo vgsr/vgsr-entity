@@ -104,6 +104,7 @@ function vgsr_entity_get_template_part( $slug, $name = '' ) {
 	$templates = array();
 	if ( $name )
 		$templates[] = $slug . '-' . $name . '.php';
+	$templates[] = $slug . '-entity.php';
 	$templates[] = $slug . '.php';
 
 	// Allow template part to be filtered
