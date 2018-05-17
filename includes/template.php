@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VGSR Entity Template Tags
+ * VGSR Entity Template Functions
  * 
  * @package VGSR Entity
  * @subpackage Main
