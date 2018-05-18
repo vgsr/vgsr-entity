@@ -95,14 +95,14 @@ function vgsr_entity_get_type( $post = 0, $object = false ) {
 	// Setup return variable
 	$type = false;
 
+	// Post type provided
+	if ( post_type_exists( $post ) ) {
+		$post_type = $post;
+
 	// Get post type from post
-	if ( ! post_type_exists( $post ) ) {
+	} else {
 		$post = get_post( $post );
 		$post_type = $post ? $post->post_type : false;
-
-	// Post type
-	} else {
-		$post_type = $post;
 	}
 
 	$post_type_object = get_post_type_object( $post_type );
@@ -114,6 +114,11 @@ function vgsr_entity_get_type( $post = 0, $object = false ) {
 		if ( isset( $post_type_object['vgsr-entity'] ) ) {
 			$type = $post_type_object['vgsr-entity'];
 		}
+	}
+
+	// Try to get type by parent post
+	if ( ! $type && $post ) {
+		$type = vgsr_entity_is_parent( $post );
 	}
 
 	// Get the entity type object
