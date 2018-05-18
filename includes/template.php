@@ -24,7 +24,7 @@ function vgsr_entity_query_entities( $args = array() ) {
 
 	// Parse args
 	$args = wp_parse_args( $args, array(
-		'type'           => false,
+		'type'           => vgsr_entity_get_type(),
 		'post_type'      => false,
 		'posts_per_page' => -1
 	) );
@@ -34,6 +34,7 @@ function vgsr_entity_query_entities( $args = array() ) {
 		return false;
 	}
 
+	// Get entity type object
 	$type = vgsr_entity_get_type( $args['type'], true );
 
 	// Default to entity post type
