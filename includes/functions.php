@@ -190,6 +190,28 @@ function vgsr_entity_get_entity_parents() {
 }
 
 /**
+ * Return the entity type's parent page
+ *
+ * @since 2.0.0
+ *
+ * @uses apply_filters() Calls 'vgsr_entity_get_entity_parent'
+ *
+ * @param string $type Optional. Entity type name. Defaults to the current entity type.
+ * @return int|bool Post ID or False when not found
+ */
+function vgsr_entity_get_entity_parent( $type = '' ) {
+	$type   = vgsr_entity_get_type( $type );
+	$parent = false;
+
+	if ( $type ) {
+		$parents = vgsr_entity_get_entity_parents();
+		$parent  = $parents[ $type ];
+	}
+
+	return apply_filters( 'vgsr_entity_get_entity_parent', $parent, $type );
+}
+
+/**
  * Return the archive post status id
  *
  * @since 2.0.0
