@@ -482,27 +482,6 @@ final class VGSR_Entity {
 		register_widget( 'VGSR_Entity_Menu_Widget' );
 	}
 
-	/** Theme **********************************************************/
-
-	/**
-	 * Return all entity parent page ids
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array Entity parents. Keys are post type, values are post IDs
-	 */
-	public function get_entity_parents() {
-
-		// Define local variable
-		$parents = array();
-
-		foreach ( $this->get_entities() as $type ) {
-			$parents[ $type ] = $this->{$type}->parent;
-		}
-
-		return $parents;
-	}
-
 	/** Queries ********************************************************/
 
 	/**

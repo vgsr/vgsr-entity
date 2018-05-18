@@ -46,15 +46,19 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	public function widget( $args, $instance ) {
 
 		// This is an entity parent page
-		if ( $post_type = is_entity_parent() ) {
-			$parent    = get_post()->ID;
+		if ( $type = vgsr_entity_is_parent() ) {
+			$post_type = vgsr_entity_get_post_type( $type );
+			$parent    = $post_id = get_post()->ID;
 			$is_parent = true;
 
 		// This is an entity
 		} elseif ( is_entity() ) {
-			$parent    = get_post()->post_parent;
-			$post_type = get_post_type();
+			$post      = get_post();
+			$parent    = $post->post_parent;
+			$post_type = $post->post_type;
+			$post_id   = $post->ID;
 			$is_parent = false;
+			$type      = vgsr_entity_get_type( $post_type );
 
 		/**
 		 * Without any explicit relation to an entity type, this
@@ -63,10 +67,6 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 		} else {
 			return;
 		}
-
-		// Get the current post
-		$post_id = get_the_ID();
-		$type    = vgsr_entity_get_type( $post_type );
 
 		// Get all post type items
 		if ( $query = new WP_Query( apply_filters( "vgsr_entity_{$type}_menu_widget_query_args", array(

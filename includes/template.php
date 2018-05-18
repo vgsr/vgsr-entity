@@ -306,25 +306,22 @@ function is_kast( $post = 0 ) {
 }
 endif;
 
-if ( ! function_exists( 'is_entity_parent' ) ) :
 /**
  * Return whether the post is an entity parent page
  *
  * @since 2.0.0
  *
- * @param int|WP_Post $post Optional. Post ID or object
- * @return string|bool Post type of the parent page's entities or False when not a parent.
+ * @param WP_Post|int $post Optional. Post object or ID. Defaults to the current post.
+ * @return string|bool Entity type name related to the parent page or False when not a parent.
  */
-function is_entity_parent( $post = 0 ) {
+function vgsr_entity_is_parent( $post = 0 ) {
 
 	// Bail when the post is invalid
 	if ( ! $post = get_post( $post ) )
 		return false;
 
 	// Find this post as a parent
-	$type      = array_search( $post->ID, vgsr_entity()->get_entity_parents() );
-	$post_type = $type ? vgsr_entity_get_post_type( $type ) : false;
+	$type = array_search( $post->ID, vgsr_entity_get_entity_parents(), true );
 
-	return ( post_type_exists( $post_type ) ? $post_type : false );
+	return $type;
 }
-endif;

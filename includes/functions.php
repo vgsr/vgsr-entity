@@ -165,6 +165,26 @@ function vgsr_entity_get_meta( $post = 0, $field = '', $return_value = true ) {
 /** Post ***************************************************************/
 
 /**
+ * Return all entity parent page ids
+ *
+ * @since 1.0.0
+ *
+ * @return array Entity parents as entity type name => parent post ID.
+ */
+function vgsr_entity_get_entity_parents() {
+
+	// Define local variable
+	$parents = array();
+
+	// Fetch registered parents
+	foreach ( vgsr_entity()->get_entities() as $type ) {
+		$parents[ $type ] = vgsr_entity()->{$type}->parent;
+	}
+
+	return $parents;
+}
+
+/**
  * Return the archive post status id
  *
  * @since 2.0.0
