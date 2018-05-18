@@ -45,69 +45,59 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 
-		// This is an entity parent page
-		if ( $type = vgsr_entity_is_parent() ) {
-			$post_type = vgsr_entity_get_post_type( $type );
-			$parent    = $post_id = get_post()->ID;
-			$is_parent = true;
-
-		// This is an entity
-		} elseif ( is_entity() ) {
-			$post      = get_post();
-			$parent    = $post->post_parent;
-			$post_type = $post->post_type;
-			$post_id   = $post->ID;
-			$is_parent = false;
-			$type      = vgsr_entity_get_type( $post_type );
-
-		/**
-		 * Without any explicit relation to an entity type, this
-		 * widget is not displayed.
-		 */
-		} else {
+		// Bail when there's no related entity type, hiding the widget
+		if ( ! $type = vgsr_entity_get_type() ) {
 			return;
 		}
 
-		// Get all post type items
-		if ( $query = new WP_Query( apply_filters( "vgsr_entity_{$type}_menu_widget_query_args", array(
-			'post_type'      => $post_type,
-			'post_parent'    => $parent,
-			'post_status'    => 'publish',
-			'posts_per_page' => -1,
-		) ) ) ) {
+		// Define local variables
+		$post_id = get_the_ID();
+		$qargs   = apply_filters( "vgsr_entity_{$type}_menu_widget_query_args", array(), $type );
 
-			// Define widget title
-			$title = get_post_type_object( $post_type )->labels->name;
-			if ( ! $is_parent ) {
-				$title = sprintf( '<a href="%s">%s</a>', get_permalink( $parent ), $title );
+		// Query entities
+		if ( vgsr_entity_query_entities( $qargs ) ) {
+
+			// Setup widget title
+			$title = vgsr_entity_get_post_type( $type, true )->labels->name;
+
+			// Provide link to parent page when we're not already there
+			if ( ! vgsr_entity_is_parent() ) {
+				$title = sprintf( '<a href="%s">%s</a>',
+					esc_url( get_permalink( vgsr_entity_get_entity_parent( $type ) ) ),
+					$title
+				);
 			}
 
+			// Open widget structure
 			echo $args['before_widget'];
 			echo $args['before_title'] . $title . $args['after_title'];
-
-			printf( '<ul id="menu-%s" class="menu">', $post_type );
+			echo '<ul id="menu-{$type}" class="menu">';
 
 			// Walk queried posts
-			while ( $query->have_posts() ) : $query->the_post();
+			while ( vgsr_entity_has_entities( $type ) ) : vgsr_entity_the_entity( $type );
 
 				// Mimic nav-menu list classes
-				$class = sprintf( "menu-item menu-item-type-post_type menu-item-object-%s menu-item-%d", get_post_type(), get_the_ID() );
+				$class = sprintf( "menu-item menu-item-type-post_type menu-item-object-%s menu-item-%d",
+					get_post_type(),
+					get_the_ID()
+				);
 
-				// This is the current post
-				if ( is_single() && $post_id === get_the_ID() ) {
+				// Mark the current post
+				if ( is_single() && get_the_ID() === $post_id ) {
 					$class .= sprintf( ' current-menu-item current_%s_item', get_post_type() );
 				}
 
 				// Print post list item
-				printf( '<li class="%s"><a href="%s">%s</a></li>', esc_attr( $class ), esc_url( get_permalink() ), get_the_title() );
+				printf( '<li class="%s"><a href="%s">%s</a></li>',
+					esc_attr( $class ),
+					esc_url( get_permalink() ),
+					get_the_title()
+				);
 
 			endwhile;
 
-			// Reset globa post data
-			wp_reset_postdata();
-
+			// Close widget structure
 			echo '</ul>';
-
 			echo $args['after_widget'];
 		}
 	}
