@@ -10,6 +10,101 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
+/** Query **************************************************************/
+
+/**
+ * Setup and run the entity query
+ *
+ * @since 2.0.0
+ *
+ * @param array $args Query arguments. See {@see WP_Query}.
+ * @return bool Query has entities
+ */
+function vgsr_entity_query_entities( $args = array() ) {
+
+	// Parse args
+	$args = wp_parse_args( $args, array(
+		'type'           => false,
+		'post_type'      => false,
+		'posts_per_page' => -1
+	) );
+
+	// Bail when entity type is invalid
+	if ( ! vgsr_entity_exists( $args['type'] ) ) {
+		return false;
+	}
+
+	$type = vgsr_entity_get_type( $args['type'], true );
+
+	// Default to entity post type
+	if ( ! $args['post_type'] ) {
+		$args['post_type'] = $type->post_type;
+	}
+
+	// Get query and store in type object
+	$type->query = new WP_Query( $args );
+
+	return $type->query->have_posts();
+}
+
+/**
+ * Return whether the query has entities to loop over
+ *
+ * @since 2.0.0
+ *
+ * @param string $type Optional. Entity type name. Defaults to current entity type.
+ * @return bool Query has entities
+ */
+function vgsr_entity_has_entities( $type = '' ) {
+	$type = vgsr_entity_get_type( $type, true );
+
+	return $type ? $type->query->have_posts() : false;
+}
+
+/**
+ * Setup next entity in the current loop
+ *
+ * @since 2.0.0
+ *
+ * @param string $type Optional. Entity type name. Defaults to current entity type.
+ */
+function vgsr_entity_the_entity( $type = '' ) {
+	$type = vgsr_entity_get_type( $type, true );
+
+	if ( $type ) {
+		$type->query->the_post();
+	}
+}
+
+/**
+ * Rewind the entities and reset post index
+ *
+ * @since 2.0.0
+ *
+ * @param string $type Optional. Entity type name. Defaults to current entity type.
+ */
+function vgsr_entity_rewind_entities( $type = '' ) {
+	$type = vgsr_entity_get_type( $type, true );
+
+	if ( $type ) {
+		$type->query->rewind_posts();
+	}
+}
+
+/**
+ * Return whether we're in the entity loop
+ *
+ * @since 2.0.0
+ *
+ * @param string $type Optional. Entity type name. Defaults to current entity type.
+ * @return bool Are we in the entity loop?
+ */
+function vgsr_entity_in_the_entity_loop( $type = '' ) {
+	$type = vgsr_entity_get_type( $type, true );
+
+	return $type ? $type->query->in_the_loop : false;
+}
+
 /** Details ************************************************************/
 
 /**

@@ -119,6 +119,9 @@ abstract class VGSR_Entity_Type {
 			1 => esc_html__( 'Some of the provided values were not given in the valid format.', 'vgsr-entity' ),
 		) );
 
+		// Set entity query
+		$this->query = new WP_Query;
+
 		// Setup entity globals
 		$this->setup_globals();
 
