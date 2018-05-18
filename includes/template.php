@@ -113,6 +113,26 @@ function vgsr_entity_in_the_entity_loop( $type = '' ) {
 	return $type ? $type->query->in_the_loop : false;
 }
 
+/**
+ * Return the current entity post from the loop
+ *
+ * @since 2.0.0
+ *
+ * @param string $type Optional. Entity type name. Defaults to current entity type.
+ * @return WP_Post|bool Post object or False when not found
+ */
+function vgsr_entity_get_entity( $type = '' ) {
+	$type = vgsr_entity_get_type( $type, true );
+	$post = false;
+
+	// When in the loop, get the post
+	if ( $type && $type->query->in_the_loop ) {
+		$post = $type->query->post;
+	}
+
+	return $post;
+}
+
 /** Details ************************************************************/
 
 /**
