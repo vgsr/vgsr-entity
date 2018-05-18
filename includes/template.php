@@ -26,6 +26,7 @@ function vgsr_entity_query_entities( $args = array() ) {
 	$args = wp_parse_args( $args, array(
 		'type'           => vgsr_entity_get_type(),
 		'post_type'      => false,
+		'post_status'    => 'publish',
 		'posts_per_page' => -1
 	) );
 
