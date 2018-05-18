@@ -58,7 +58,15 @@ function vgsr_entity_query_entities( $args = array() ) {
 function vgsr_entity_has_entities( $type = '' ) {
 	$type = vgsr_entity_get_type( $type, true );
 
-	return $type ? $type->query->have_posts() : false;
+	// Has query a next post?
+	$has_next = $type ? $type->query->have_posts() : false;
+
+	// Clean up after ourselves
+	if ( ! $has_next ) {
+		wp_reset_postdata();
+	}
+
+	return $has_next;
 }
 
 /**
