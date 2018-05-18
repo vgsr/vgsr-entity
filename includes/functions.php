@@ -365,7 +365,7 @@ endif;
  * @param WP_Post|int $post Optional. Post object or ID. Defaults to the current post.
  * @return bool Post has more tag
  */
-function entity_has_more_tag( $post = 0 ) {
+function vgsr_entity_has_more_tag( $post = 0 ) {
 
 	// Bail when the post is invalid
 	if ( ! $post = get_post( $post ) )
