@@ -331,9 +331,9 @@ class VGSR_Entity_BuddyPress {
 			if ( ! isset( $field['detail_callback'] ) || ! is_callable( $field['detail_callback'] ) )
 				continue;
 
-			// Default to all entities
+			// Default to all entity types
 			if ( ! isset( $field['entity'] ) ) {
-				$field['entity'] = vgsr_entity()->get_entities();
+				$field['entity'] = vgsr_entity_get_types();
 			}
 
 			// Hook detail callback

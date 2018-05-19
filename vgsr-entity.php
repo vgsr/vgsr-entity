@@ -31,12 +31,12 @@ if ( ! class_exists( 'VGSR_Entity' ) ) :
 final class VGSR_Entity {
 
 	/**
-	 * Holds all built-in entity names
+	 * Holds all built-in entity types
 	 *
 	 * @since 1.0.0
 	 * @var array
 	 */
-	protected $entities = array();
+	protected $types = array();
 
 	/** Singleton *************************************************************/
 
@@ -194,14 +194,14 @@ final class VGSR_Entity {
 		require_once( $this->includes_dir . 'classes/class-vgsr-entity-type.php'       );
 		require_once( $this->includes_dir . 'classes/class-vgsr-entity-type-admin.php' );
 
-		// Define the entities as type => class_name
+		// Define the entity types as type_name => class_name
 		$entities = apply_filters( 'vgsr_entity_entities', array(
 			'bestuur' => 'VGSR_Bestuur',
 			'dispuut' => 'VGSR_Dispuut',
 			'kast'    => 'VGSR_Kast',
 		) );
 
-		// Walk registered entities
+		// Walk registered entity types
 		foreach ( $entities as $type => $class ) {
 
 			// Load class file
@@ -211,21 +211,21 @@ final class VGSR_Entity {
 			}
 
 			// Load entity class
-			if ( ! array_key_exists( $type, $this->entities ) && class_exists( $class ) ) {
-				$this->entities[ $type ] = new $class( $type );
+			if ( ! array_key_exists( $type, $this->types ) && class_exists( $class ) ) {
+				$this->types[ $type ] = new $class( $type );
 			}
 		}
 	}
 
 	/**
-	 * Return the registered entity types
+	 * Return the registered entity type names
 	 *
 	 * @since 2.0.0
 	 *
-	 * @return array Registered entity types
+	 * @return array Registered entity type names
 	 */
-	public function get_entities() {
-		return array_keys( $this->entities );
+	public function get_types() {
+		return array_keys( $this->types );
 	}
 
 	/**
@@ -239,7 +239,7 @@ final class VGSR_Entity {
 	public function __isset( $key ) {
 
 		// Check for protected entity object when present
-		if ( array_key_exists( $key, $this->entities ) ) {
+		if ( array_key_exists( $key, $this->types ) ) {
 			return true;
 		} else {
 			return isset( $this->{$key} );
@@ -257,12 +257,12 @@ final class VGSR_Entity {
 	public function __get( $key ) {
 
 		// Return protected entity object when present
-		if ( array_key_exists( $key, $this->entities ) ) {
-			return $this->entities[ $key ];
+		if ( array_key_exists( $key, $this->types ) ) {
+			return $this->types[ $key ];
 
 		// Return registered types for 'entities'
 		} elseif ( 'entities' === $key ) {
-			return $this->get_entities();
+			return $this->get_types();
 
 		// Key is present
 		} elseif ( isset( $this->{$key} ) ) {
@@ -285,7 +285,7 @@ final class VGSR_Entity {
 	public function __set( $key, $value ) {
 
 		// Prevent overwriting entity objects when present
-		if ( ! array_key_exists( $key, $this->entities ) && 'entities' !== $key ) {
+		if ( ! array_key_exists( $key, $this->types ) && 'entities' !== $key ) {
 			$this->{$key} = $value;
 		}
 	}
@@ -300,7 +300,7 @@ final class VGSR_Entity {
 	public function __unset( $key ) {
 
 		// Prevent overwriting entity objects when present
-		if ( ! array_key_exists( $key, $this->entities ) && 'entities' !== $key ) {
+		if ( ! array_key_exists( $key, $this->types ) && 'entities' !== $key ) {
 			unset( $this->{$key} );
 		}
 	}
@@ -323,7 +323,7 @@ final class VGSR_Entity {
 		$this->setup_entities();
 
 		// Call post type registration
-		foreach ( $this->entities as $type_obj ) {
+		foreach ( $this->types as $type_obj ) {
 			$type_obj->register_post_type();
 		}
 
@@ -431,7 +431,7 @@ final class VGSR_Entity {
 	public function admin_menu() {
 
 		// Bail when there are no entities registered
-		if ( empty( $this->entities ) )
+		if ( empty( $this->types ) )
 			return;
 
 		$this->add_separator( $this->menu_position - 1 );
@@ -494,7 +494,7 @@ final class VGSR_Entity {
 	public function pre_get_posts( $query ) {
 
 		// Force entity ordering by menu_order
-		if ( isset( $query->query_vars['post_type'] ) && in_array( $query->query_vars['post_type'], $this->get_entities() ) ) {
+		if ( isset( $query->query_vars['post_type'] ) && in_array( $query->query_vars['post_type'], $this->get_types() ) ) {
 			$query->query_vars['orderby'] = 'menu_order';
 
 			// Define sort order

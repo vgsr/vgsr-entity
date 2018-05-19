@@ -31,6 +31,30 @@ function vgsr_entity_check_access( $user_id = 0 ) {
 /** Entities ***********************************************************/
 
 /**
+ * Return the registered entity types
+ *
+ * @since 2.0.0
+ *
+ * @param bool $object Optional. Whether to return type objects. Defaults to false.
+ * @return array Entity type names or objects
+ */
+function vgsr_entity_get_types( $object = false ) {
+
+	// Get entity types
+	$types = vgsr_entity()->get_types();
+
+	// Get type objects
+	if ( $object ) {
+		foreach ( $types as $key => $type ) {
+			unset( $types[ $key ] );
+			$types[ $type ] = vgsr_entity()->{$type};
+		}
+	}
+
+	return $types;
+}
+
+/**
  * Return whether the type is a valid entity type
  *
  * @since 2.0.0
@@ -39,7 +63,7 @@ function vgsr_entity_check_access( $user_id = 0 ) {
  * @return bool Is this a valid entity type?
  */
 function vgsr_entity_exists( $type ) {
-	return in_array( $type, vgsr_entity()->get_entities(), true );
+	return in_array( $type, vgsr_entity_get_types(), true );
 }
 
 /**
@@ -182,8 +206,8 @@ function vgsr_entity_get_entity_parents() {
 	$parents = array();
 
 	// Fetch registered parents
-	foreach ( vgsr_entity()->get_entities() as $type ) {
-		$parents[ $type ] = vgsr_entity()->{$type}->parent;
+	foreach ( vgsr_entity_get_types( true ) as $name => $type ) {
+		$parents[ $name ] = $type->parent;
 	}
 
 	return $parents;
