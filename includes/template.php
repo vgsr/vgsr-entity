@@ -116,6 +116,29 @@ function vgsr_entity_in_the_entity_loop( $type = '' ) {
 }
 
 /**
+ * Return whether we're in the main query loop
+ *
+ * @since 2.0.0
+ *
+ * @return bool Are we in the main query loop?
+ */
+function vgsr_entity_is_main_query() {
+
+	// Is this the main query?
+	$main = is_main_query();
+
+	// Check whether we're in any sort of entity loop
+	foreach ( vgsr_entity_get_types( true ) as $type ) {
+		if ( $type->query->in_the_loop ) {
+			$main = false;
+			break;
+		}
+	}
+
+	return $main;
+}
+
+/**
  * Return the current entity post from the loop
  *
  * @since 2.0.0
@@ -148,7 +171,7 @@ function vgsr_entity_get_entity( $type = '' ) {
 function vgsr_entity_filter_content( $content ) {
 
 	// When in the main query's single entity
-	if ( is_main_query() && ! vgsr_entity_in_the_entity_loop() && is_entity() ) {
+	if ( vgsr_entity_is_main_query() && is_entity() ) {
 
 		// Prepend details to content
 		$content = vgsr_entity_details() . $content;
