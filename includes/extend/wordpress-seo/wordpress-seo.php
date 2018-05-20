@@ -49,7 +49,7 @@ class VGSR_Entity_WPSEO {
 	public function wpseo_title( $title ) {
 
 		// Bestuur
-		if ( is_bestuur() ) {
+		if ( vgsr_is_bestuur() ) {
 
 			// Apply title parts filter
 			$parts  = array( 'title' => get_the_title() );

@@ -171,7 +171,7 @@ function vgsr_entity_get_meta( $post = 0, $field = '', $return_value = true ) {
 	$post = get_post( $post );
 
 	// Bail when this is not an entity
-	if ( ! is_entity( $post ) ) {
+	if ( ! vgsr_is_entity( $post ) ) {
 		return empty( $field ) ? array() : null;
 	}
 
@@ -264,7 +264,7 @@ function vgsr_entity_nav_menu_css_class( $classes, $item, $args, $depth ) {
 	// Current page is entity with parent
 	if ( 'post_type' == $item->type &&
 		! in_array( 'current-menu-ancestor', $classes ) &&
-		is_entity() && ( $post_type = get_post_type() ) &&
+		vgsr_is_entity() && ( $post_type = get_post_type() ) &&
 		( $parent = vgsr_entity()->{$post_type}->parent ) &&
 		( $parent = get_post( $parent ) )
 	) {
@@ -578,7 +578,7 @@ function vgsr_entity_feature_logo_metabox( $post ) {
 function vgsr_entity_feature_logo_media_settings( $settings, $post ) {
 
 	// Add logo ID to the post's media settings
-	if ( is_a( $post, 'WP_Post' ) && is_entity( $post ) ) {
+	if ( is_a( $post, 'WP_Post' ) && vgsr_is_entity( $post ) ) {
 		$logo_id = vgsr_entity_get_logo( $post );
 		$settings['post']['entityLogoId'] = $logo_id ? $logo_id : -1;
 	}

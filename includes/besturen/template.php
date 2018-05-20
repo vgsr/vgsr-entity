@@ -111,7 +111,7 @@ function vgsr_entity_bestuur_positions_detail( $post ) {
 function vgsr_entity_bestuur_document_title_parts( $title ) {
 
 	// When this is our entity
-	if ( is_bestuur() ) {
+	if ( vgsr_is_bestuur() ) {
 		$title['title'] = sprintf(
 			/* translators: 1. Bestuur title, 2. Bestuur season */
 			esc_html__( '%1$s (%2$s)', 'vgsr-entity' ),

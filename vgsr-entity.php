@@ -528,7 +528,7 @@ final class VGSR_Entity {
 		$post = get_post( $post );
 
 		// When this is an entity
-		if ( is_entity( $post ) ) {
+		if ( vgsr_is_entity( $post ) ) {
 			global $wpdb;
 
 			$previous = ( 'get_previous_post_where' === current_filter() );
@@ -562,7 +562,7 @@ final class VGSR_Entity {
 		$post = get_post( $post );
 
 		// When this is an entity
-		if ( is_entity( $post ) ) {
+		if ( vgsr_is_entity( $post ) ) {
 
 			// Order by the post menu order
 			$order_by = str_replace( 'p.post_date', 'p.menu_order', $order_by );

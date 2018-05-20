@@ -181,7 +181,7 @@ function vgsr_entity_locate_template( $template_names, $load = false, $require_o
 function vgsr_entity_template_include( $template ) {
 
 	// Single entity requested
-	if ( is_entity() && is_singular() ) {
+	if ( vgsr_is_entity() && is_singular() ) {
 
 		// Get the current entity type
 		$type = vgsr_entity_get_type();

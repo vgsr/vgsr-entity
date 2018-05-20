@@ -171,7 +171,7 @@ function vgsr_entity_get_entity( $type = '' ) {
 function vgsr_entity_filter_content( $content ) {
 
 	// When in the main query's single entity
-	if ( vgsr_entity_is_main_query() && is_entity() ) {
+	if ( vgsr_entity_is_main_query() && vgsr_is_entity() ) {
 
 		// Prepend details to content
 		$content = vgsr_entity_details() . $content;
@@ -197,7 +197,7 @@ function vgsr_entity_details( $post = 0 ) {
 		return;
 
 	// Bail when this is not an entity
-	if ( ! is_entity( $post ) )
+	if ( ! vgsr_is_entity( $post ) )
 		return;
 
 	$type = vgsr_entity_get_type( $post );
