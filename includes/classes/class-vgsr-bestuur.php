@@ -87,6 +87,9 @@ class VGSR_Bestuur extends VGSR_Entity_Type {
 		add_action( "save_post_{$this->post_type}", array( $this, 'save_current_bestuur' ), 10, 2 );
 		add_action( 'vgsr_entity_init',             array( $this, 'add_rewrite_rules'    )        );
 
+		// Menus
+		add_filter( "nav_menu_items_{$this->post_type}", 'vgsr_entity_bestuur_nav_menu_items_metabox', 10, 3 );
+
 		parent::setup_actions();
 	}
 
