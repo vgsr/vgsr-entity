@@ -142,7 +142,7 @@ function vgsr_entity_get_type( $post = 0, $object = false ) {
 
 	// Try to get type by parent post
 	if ( ! $type && $post ) {
-		$type = vgsr_entity_is_parent( $post );
+		$type = vgsr_is_entity_parent( $post );
 	}
 
 	// Get the entity type object

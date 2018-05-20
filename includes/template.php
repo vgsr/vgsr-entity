@@ -295,18 +295,17 @@ function vgsr_entity_list( $content ) {
 	return $content;
 }
 
-/** Is *****************************************************************/
+/** Is_* ***************************************************************/
 
-if ( ! function_exists( 'is_entity' ) ) :
 /**
  * Return whether the post or post type is an entity
  *
  * @since 2.0.0
  *
  * @param WP_Post|int|string $post_type Optional. Post object or ID or post type. Defaults to the current post.
- * @return bool Is post (type) a VGSR entity?
+ * @return bool Is post (type) an entity?
  */
-function is_entity( $post_type = 0 ) {
+function vgsr_is_entity( $post_type = 0 ) {
 
 	// Default to the current post's post type
 	if ( ! is_string( $post_type ) || ! post_type_exists( $post_type ) ) {
@@ -315,49 +314,42 @@ function is_entity( $post_type = 0 ) {
 
 	return in_array( $post_type, vgsr_entity_get_post_types(), true );
 }
-endif;
 
-if ( ! function_exists( 'is_bestuur' ) ) :
 /**
  * Return whether the post is a Bestuur
  *
  * @since 2.0.0
  *
- * @param int|WP_Post $post Optional. Post ID or object
- * @return bool Post is a Bestuur
+ * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post.
+ * @return bool Is post a Bestuur?
  */
-function is_bestuur( $post = 0 ) {
-	return vgsr_entity_exists( 'bestuur' ) && get_post_type( $post ) === vgsr_entity_get_post_type( 'bestuur' );
+function vgsr_is_bestuur( $post = 0 ) {
+	return get_post_type( $post ) === vgsr_entity_get_post_type( 'bestuur' );
 }
-endif;
 
-if ( ! function_exists( 'is_dispuut' ) ) :
 /**
  * Return whether the post is a Dispuut
  *
  * @since 2.0.0
  *
- * @param int|WP_Post $post Optional. Post ID or object
- * @return bool Post is a Dispuut
+ * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post.
+ * @return bool Is post a Dispuut?
  */
-function is_dispuut( $post = 0 ) {
-	return vgsr_entity_exists( 'dispuut' ) && get_post_type( $post ) === vgsr_entity_get_post_type( 'dispuut' );
+function vgsr_is_dispuut( $post = 0 ) {
+	return get_post_type( $post ) === vgsr_entity_get_post_type( 'dispuut' );
 }
-endif;
 
-if ( ! function_exists( 'is_kast' ) ) :
 /**
  * Return whether the post is a Kast
  *
  * @since 2.0.0
  *
- * @param int|WP_Post $post Optional. Post ID or object
- * @return bool Post is a Kast
+ * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post.
+ * @return bool Is post a Kast?
  */
-function is_kast( $post = 0 ) {
-	return vgsr_entity_exists( 'kast' ) && get_post_type( $post ) === vgsr_entity_get_post_type( 'kast' );
+function vgsr_is_kast( $post = 0 ) {
+	return get_post_type( $post ) === vgsr_entity_get_post_type( 'kast' );
 }
-endif;
 
 /**
  * Return whether the post is an entity parent page
@@ -367,7 +359,7 @@ endif;
  * @param WP_Post|int $post Optional. Post object or ID. Defaults to the current post.
  * @return string|bool Entity type name related to the parent page or False when not a parent.
  */
-function vgsr_entity_is_parent( $post = 0 ) {
+function vgsr_is_entity_parent( $post = 0 ) {
 
 	// Bail when the post is invalid
 	if ( ! $post = get_post( $post ) )

@@ -61,7 +61,7 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 			$title = vgsr_entity_get_post_type( $type, true )->labels->name;
 
 			// Provide link to parent page when we're not already there
-			if ( ! vgsr_entity_is_parent() ) {
+			if ( ! vgsr_is_entity_parent() ) {
 				$title = sprintf( '<a href="%s">%s</a>',
 					esc_url( get_permalink( vgsr_entity_get_entity_parent( $type ) ) ),
 					$title
