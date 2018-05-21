@@ -109,8 +109,8 @@ final class VGSR_Entity {
 		$this->extend_url    = trailingslashit( $this->includes_url . 'extend' );
 
 		// Templates
-		$this->themes_dir    = trailingslashit( $this->includes_dir . 'templates' );
-		$this->themes_url    = trailingslashit( $this->includes_url . 'templates' );
+		$this->themes_dir    = trailingslashit( $this->plugin_dir . 'templates' );
+		$this->themes_url    = trailingslashit( $this->plugin_url . 'templates' );
 
 		// Languages
 		$this->lang_dir      = trailingslashit( $this->plugin_dir . 'languages' );
