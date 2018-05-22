@@ -21,6 +21,4 @@ add_filter( 'vgsr_bestuur_menu_widget_query_args', 'vgsr_entity_bestuur_widget_m
 
 /** Menus *********************************************************************/
 
-add_filter( 'customize_nav_menu_available_items', 'vgsr_entity_bestuur_customize_nav_menu_available_items', 10, 4 );
-add_filter( 'customize_nav_menu_searched_items',  'vgsr_entity_bestuur_customize_nav_menu_searched_items',  10, 2 );
-add_filter( 'wp_setup_nav_menu_item',             'vgsr_entity_bestuur_setup_nav_menu_item'                       );
+add_filter( 'vgsr_entity_get_nav_menu_items', 'vgsr_entity_bestuur_nav_menu_items' );

@@ -131,6 +131,9 @@ class VGSR_Entity_Type_Admin {
 		add_action( "manage_{$this->type}_posts_custom_column", array( $this, 'column_content'        ), 10, 2 );
 		add_action( 'display_post_states',                      array( $this, 'post_states'           ), 10, 2 );
 		add_action( 'quick_edit_custom_box',                    array( $this, 'quick_edit_custom_box' ), 10, 2 );
+
+		// Menus
+		add_filter( "nav_menu_items_{$this->post_type}", 'vgsr_entity_nav_menu_items_metabox', 10, 3 );
 	}
 
 	/** Entity Type ****************************************************/

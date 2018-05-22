@@ -22,7 +22,10 @@ add_filter( 'the_content', 'vgsr_entity_filter_content' );
 
 /** Nav menus *****************************************************************/
 
-add_filter( 'nav_menu_css_class', 'vgsr_entity_nav_menu_css_class', 10, 4 );
+add_filter( 'customize_nav_menu_available_items', 'vgsr_entity_customize_nav_menu_available_items', 10, 4 );
+add_filter( 'customize_nav_menu_searched_items',  'vgsr_entity_customize_nav_menu_searched_items',  10, 2 );
+add_filter( 'wp_setup_nav_menu_item',             'vgsr_entity_setup_nav_menu_item'                       );
+add_filter( 'nav_menu_css_class',                 'vgsr_entity_nav_menu_css_class',                 10, 4 );
 
 /** Theme *********************************************************************/
 

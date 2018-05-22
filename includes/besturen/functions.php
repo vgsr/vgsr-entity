@@ -190,24 +190,15 @@ function vgsr_entity_bestuur_get_user_position( $user_id = 0 ) {
  *
  * @return array Custom nav menu items
  */
-function vgsr_entity_bestuur_nav_menu_get_items() {
+function vgsr_entity_bestuur_nav_menu_items( $items ) {
 
 	// Get type object
-	$type = vgsr_entity_get_type( 'bestuur', true );
-
-	// Try to return items from cache
-	if ( ! empty( $type->wp_nav_menu_items ) ) {
-		return $type->wp_nav_menu_items;
-	} else {
-		$type->wp_nav_menu_items = new stdClass;
-	}
-
-	// Setup nav menu items
-	$items = array();
+	$type   = vgsr_entity_get_type( 'bestuur', true );
+	$_items = array();
 
 	// Entity parent
 	if ( $parent = vgsr_entity_get_entity_parent( $type->type ) ) {
-		$items['parent'] = array(
+		$_items['bestuur-parent'] = array(
 			'title'      => get_the_title( $parent ),
 			'type_label' => esc_html__( 'Bestuur Parent', 'vgsr-entity' ),
 			'url'        => get_permalink( $parent ),
@@ -218,7 +209,7 @@ function vgsr_entity_bestuur_nav_menu_get_items() {
 
 	// Current bestuur
 	if ( $current = vgsr_entity_get_current_bestuur() ) {
-		$items['current'] = array(
+		$_items['bestuur-current'] = array(
 			'title'      => esc_html__( 'Current Bestuur', 'vgsr-entity' ),
 			'type_label' => esc_html__( 'Current Bestuur', 'vgsr-entity' ),
 			'url'        => get_permalink( $current ),
@@ -228,179 +219,22 @@ function vgsr_entity_bestuur_nav_menu_get_items() {
 	}
 
 	// Setup nav menu items
-	$items = (array) apply_filters( 'vgsr_entity_bestuur_nav_menu_get_items', $items );
+	$_items = (array) apply_filters( 'vgsr_entity_bestuur_nav_menu_get_items', $_items );
 
 	// Set default arguments
-	foreach ( $items as $item_id => &$item ) {
+	foreach ( $_items as $item_id => &$item ) {
 		$item = wp_parse_args( $item, array(
-			'id'          => $item_id,
-			'title'       => '',
-			'type'        => vgsr_entity_get_bestuur_post_type(),
-			'type_label'  => esc_html_x( 'Bestuur Page', 'Customizer menu type label', 'vgsr-entity' ),
-			'url'         => '',
-			'is_current'  => false,
-			'is_parent'   => false,
-			'is_ancestor' => false,
+			'id'           => $item_id,
+			'title'        => '',
+			'type'         => vgsr_entity_get_bestuur_post_type(),
+			'type_label'   => esc_html_x( 'Bestuur Page', 'Customizer menu type label', 'vgsr-entity' ),
+			'url'          => '',
+			'is_current'   => false,
+			'is_parent'    => false,
+			'is_ancestor'  => false,
+			'search_terms' => isset( $item['title'] ) ? strtolower( $item['title'] ) : 'bestuur'
 		) );
 	}
 
-	// Assign items to global
-	$type->wp_nav_menu_items = $items;
-
-	return $items;
-}
-
-/**
- * Add custom Bestuur pages to the available nav menu items metabox
- *
- * @since 2.0.0
- *
- * @param array $items The nav menu items for the current post type.
- * @param array $args An array of WP_Query arguments.
- * @param WP_Post_Type $post_type The current post type object for this menu item meta box.
- * @return array $items Nav menu items
- */
-function vgsr_entity_bestuur_nav_menu_items_metabox( $items, $args, $post_type ) {
-	global $_wp_nav_menu_placeholder;
-
-	// Bestuur items
-	if ( vgsr_entity_get_bestuur_post_type() === $post_type->name ) {
-		$_items = vgsr_entity_bestuur_nav_menu_get_items();
-
-		// Prepend all custom items
-		foreach ( array_reverse( $_items ) as $item_id => $item ) {
-			$_wp_nav_menu_placeholder = ( 0 > $_wp_nav_menu_placeholder ) ? intval( $_wp_nav_menu_placeholder ) -1 : -1;
-
-			// Prepend item
-			array_unshift( $items, (object) array(
-				'ID'           => $post_type->name . '-' . $item_id,
-				'object_id'    => $_wp_nav_menu_placeholder,
-				'object'       => $item_id,
-				'post_content' => '',
-				'post_excerpt' => '',
-				'post_title'   => $item['title'],
-				'post_type'    => 'nav_menu_item',
-				'type'         => $item['type'],
-				'type_label'   => $item['type_label'],
-				'url'          => $item['url'],
-			) );
-		}
-	}
-
-	return $items;
-}
-
-/**
- * Add custom Bestuur pages to the available menu items in the Customizer
- *
- * @since 2.0.0
- *
- * @param array $items The array of menu items.
- * @param string $type The object type.
- * @param string $object The object name.
- * @param int $page The current page number.
- * @return array Menu items
- */
-function vgsr_entity_bestuur_customize_nav_menu_available_items( $items, $type, $object, $page ) {
-
-	// First page of Besturen list
-	if ( vgsr_entity_get_bestuur_post_type() === $object && 0 === $page ) {
-		$_items = vgsr_entity_bestuur_nav_menu_get_items();
-
-		// Prepend all custom items
-		foreach ( array_reverse( $_items ) as $item_id => $item ) {
-
-			// Redefine item details
-			$item['id']     = $object . '-' . $item_id;
-			$item['object'] = $item_id;
-
-			// Prepend item
-			array_unshift( $items, $item );
-		}
-	}
-
-	return $items;
-}
-
-/**
- * Add custom Bestuur pages to the searched menu items in the Customizer
- *
- * @since 2.0.0
- *
- * @param array $items The array of menu items.
- * @param array $args Includes 'pagenum' and 's' (search) arguments.
- * @return array Menu items
- */
-function vgsr_entity_bestuur_customize_nav_menu_searched_items( $items, $args ) {
-
-	// Search query matches a part of the term 'bestuur'
-	if ( false !== strpos( 'bestuur', strtolower( $args['s'] ) ) ) {
-		$post_type = vgsr_entity_get_bestuur_post_type();
-
-		// Append all custom items
-		foreach ( vgsr_entity_bestuur_nav_menu_get_items() as $item_id => $item ) {
-
-			// Redefine item details
-			$item['id']     = $post_type . '-' . $item_id;
-			$item['object'] = $item_id;
-
-			// Append item
-			$items[] = $item;
-		}
-	}
-
-	return $items;
-}
-
-/**
- * Setup details of nav menu item for Bestuur pages
- *
- * @since 2.0.0
- *
- * @param WP_Post $menu_item Nav menu item object
- * @return WP_Post Nav menu item object
- */
-function vgsr_entity_bestuur_setup_nav_menu_item( $menu_item ) {
-
-	// Bestuur
-	if ( vgsr_entity_get_bestuur_post_type() === $menu_item->type ) {
-
-		// This is a registered custom menu item
-		if ( $item = wp_list_filter( vgsr_entity_bestuur_nav_menu_get_items(), array( 'id' => $menu_item->object ) ) ) {
-			$item = (object) reset( $item );
-
-			// Set item details
-			$menu_item->type_label = $item->type_label;
-			$menu_item->url        = $item->url;
-
-			// Set item classes
-			if ( ! is_array( $menu_item->classes ) ) {
-				$menu_item->classes = array();
-			}
-
-			// This is the current page
-			if ( $item->is_current ) {
-				$menu_item->classes[] = 'current_page_item';
-				$menu_item->classes[] = 'current-menu-item';
-
-			// This is the parent page
-			} elseif ( $item->is_parent ) {
-				$menu_item->classes[] = 'current_page_parent';
-				$menu_item->classes[] = 'current-menu-parent';
-
-			// This is an ancestor page
-			} elseif ( $item->is_ancestor ) {
-				$menu_item->classes[] = 'current_page_ancestor';
-				$menu_item->classes[] = 'current-menu-ancestor';
-			}
-		}
-
-		// Prevent rendering when the link is empty
-		if ( empty( $menu_item->url ) ) {
-			$menu_item->_invalid = true;
-		}
-	}
-
-	// Enable plugin filtering
-	return apply_filters( 'vgsr_entity_bestuur_setup_nav_menu_item', $menu_item );
+	return array_merge( $items, $_items );
 }

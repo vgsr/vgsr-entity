@@ -249,6 +249,209 @@ function vgsr_entity_get_archive_status_id() {
 /** Nav Menus **********************************************************/
 
 /**
+ * Return the available custom plugin nav menu items
+ *
+ * @since 2.0.0
+ *
+ * @return array Custom nav menu items
+ */
+function vgsr_entity_get_nav_menu_items() {
+
+	// Setup items in cache
+	if ( empty( vgsr_entity()->wp_nav_menu_items ) ) {
+
+		// Setup plugin nav menu items
+		$items = (array) apply_filters( 'vgsr_entity_get_nav_menu_items', array() );
+
+		// Set default arguments
+		foreach ( $items as $item_id => &$item ) {
+			$item = wp_parse_args( $item, array(
+				'id'           => $item_id,
+				'title'        => '',
+				'type'         => 'vgsr-entity',
+				'type_label'   => esc_html_x( 'Entity Page', 'Customizer menu type label', 'vgsr-entity' ),
+				'url'          => '',
+				'is_current'   => false,
+				'is_parent'    => false,
+				'is_ancestor'  => false,
+				'prepend_item' => true,
+				'search_terms' => ''
+			) );
+		}
+
+		// Assign items to global
+		vgsr_entity()->wp_nav_menu_items = $items;
+	}
+
+	return vgsr_entity()->wp_nav_menu_items;
+}
+
+/**
+ * Add custom plugin pages to the available nav menu items metabox
+ *
+ * @since 2.0.0
+ *
+ * @global int $_wp_nav_menu_placeholder
+ *
+ * @param array $items The nav menu items for the current post type.
+ * @param array $args An array of WP_Query arguments.
+ * @param WP_Post_Type $post_type The current post type object for this menu item meta box.
+ * @return array $items Nav menu items
+ */
+function vgsr_entity_nav_menu_items_metabox( $items, $args, $post_type ) {
+	global $_wp_nav_menu_placeholder;
+
+	// Walk plugin nav items
+	foreach ( vgsr_entity_get_nav_menu_items() as $item_id => $item ) {
+
+		// Skip for unmatched post types
+		if ( $item['type'] !== $post_type->name )
+			continue;
+
+		$_wp_nav_menu_placeholder = ( 0 > $_wp_nav_menu_placeholder ) ? intval( $_wp_nav_menu_placeholder ) -1 : -1;
+
+		// Prepend item
+		$metabox_item = (object) array(
+			'ID'           => $post_type->name . '-' . $item_id,
+			'object_id'    => $_wp_nav_menu_placeholder,
+			'object'       => $item_id,
+			'post_content' => '',
+			'post_excerpt' => '',
+			'post_title'   => $item['title'],
+			'post_type'    => 'nav_menu_item',
+			'type'         => $item['type'],
+			'type_label'   => $item['type_label'],
+			'url'          => $item['url'],
+		);
+
+		// Add to metabox items
+		if ( $item['prepend_item'] ) {
+			array_unshift( $items, $metabox_item );
+		} else {
+			$items[] = $metabox_item;
+		}
+	}
+
+	return $items;
+}
+
+/**
+ * Add custom plugin pages to the available menu items in the Customizer
+ *
+ * @since 2.0.0
+ *
+ * @param array $items The array of menu items.
+ * @param string $type The object type.
+ * @param string $object The object name.
+ * @param int $page The current page number.
+ * @return array Menu items
+ */
+function vgsr_entity_customize_nav_menu_available_items( $items, $type, $object, $page ) {
+
+	// Walk plugin nav items
+	foreach ( vgsr_entity_get_nav_menu_items() as $item_id => $item ) {
+
+		// Skip for unmatched post types and non-first page loads
+		if ( $item['type'] !== $object || 0 !== $page )
+			continue;
+
+		// Redefine item details
+		$item['id']     = $object . '-' . $item_id;
+		$item['object'] = $item_id;
+
+		// Prepend item
+		if ( $item['prepend_item'] ) {
+			array_unshift( $items, $item );
+		} else {
+			$items[] = $item;
+		}
+	}
+
+	return $items;
+}
+
+/**
+ * Add custom plugin pages to the searched menu items in the Customizer
+ *
+ * @since 2.0.0
+ *
+ * @param array $items The array of menu items.
+ * @param array $args Includes 'pagenum' and 's' (search) arguments.
+ * @return array Menu items
+ */
+function vgsr_entity_customize_nav_menu_searched_items( $items, $args ) {
+
+	// Walk plugin nav items
+	foreach ( vgsr_entity_get_nav_menu_items() as $item_id => $item ) {
+
+		// Skip when without search terms or serach did not match
+		if ( ! $item['search_terms'] || false === strpos( $item['search_terms'], strtolower( $args['s'] ) ) )
+			continue;
+
+		// Redefine item details
+		$item['id']     = $item['type'] . '-' . $item_id;
+		$item['object'] = $item_id;
+
+		// Append item
+		$items[] = $item;
+	}
+
+	return $items;
+}
+
+/**
+ * Setup details of nav menu item for plugin pages
+ *
+ * @since 2.0.0
+ *
+ * @param WP_Post $menu_item Nav menu item object
+ * @return WP_Post Nav menu item object
+ */
+function vgsr_entity_setup_nav_menu_item( $menu_item ) {
+
+	// Walk plugin nav items
+	foreach ( vgsr_entity_get_nav_menu_items() as $item ) {
+
+		// Skip for unmatched menu item
+		if ( $item['id'] !== $menu_item->object )
+			continue;
+
+		// Set item details
+		$menu_item->type_label = $item['type_label'];
+		$menu_item->url        = $item['url'];
+
+		// Set item classes
+		if ( ! is_array( $menu_item->classes ) ) {
+			$menu_item->classes = array();
+		}
+
+		// This is the current page
+		if ( $item['is_current'] ) {
+			$menu_item->classes[] = 'current_page_item';
+			$menu_item->classes[] = 'current-menu-item';
+
+		// This is the parent page
+		} elseif ( $item['is_parent'] ) {
+			$menu_item->classes[] = 'current_page_parent';
+			$menu_item->classes[] = 'current-menu-parent';
+
+		// This is an ancestor page
+		} elseif ( $item['is_ancestor'] ) {
+			$menu_item->classes[] = 'current_page_ancestor';
+			$menu_item->classes[] = 'current-menu-ancestor';
+		}
+
+		// Prevent rendering when the link is empty
+		if ( empty( $menu_item->url ) ) {
+			$menu_item->_invalid = true;
+		}
+	}
+
+	// Enable plugin filtering
+	return apply_filters( 'vgsr_entity_setup_nav_menu_item', $menu_item );
+}
+
+/**
  * Modify the nav item classes
  *
  * @since 2.0.0
