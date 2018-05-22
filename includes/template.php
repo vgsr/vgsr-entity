@@ -352,6 +352,20 @@ function vgsr_is_kast( $post = 0 ) {
 }
 
 /**
+ * Return whether the post is of the given entity type
+ *
+ * @since 2.0.0
+ *
+ * @param string $type Entity type name
+ * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post.
+ * @return bool Is post of the given type?
+ */
+function vgsr_entity_is_post_of_type( $type, $post = 0 ) {
+	$type = vgsr_entity_get_type( $type );
+	return $type && get_post_type( $post ) === vgsr_entity_get_post_type( $type );
+}
+
+/**
  * Return whether the post is an entity parent page
  *
  * @since 2.0.0
