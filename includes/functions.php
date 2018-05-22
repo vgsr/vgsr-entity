@@ -447,43 +447,24 @@ function vgsr_entity_setup_nav_menu_item( $menu_item ) {
 		}
 	}
 
-	// Enable plugin filtering
-	return apply_filters( 'vgsr_entity_setup_nav_menu_item', $menu_item );
-}
-
-/**
- * Modify the nav item classes
- *
- * @since 2.0.0
- *
- * @param array $classes
- * @param object $item
- * @param array $args
- * @param int $depth
- * @return array Nav item classes
- */
-function vgsr_entity_nav_menu_css_class( $classes, $item, $args, $depth ) {
-
-	// Current page is entity with parent
-	if ( 'post_type' == $item->type &&
-		! in_array( 'current-menu-ancestor', $classes ) &&
-		vgsr_is_entity() && ( $post_type = get_post_type() ) &&
-		( $parent = vgsr_entity()->{$post_type}->parent ) &&
-		( $parent = get_post( $parent ) )
+	// Mark entity parent page nav items
+	if ( 'post_type' === $menu_item->type
+		&& ( $type = vgsr_is_entity_parent( $menu_item->object_id ) )
+		&& vgsr_entity_is_post_of_type( $type )
 	) {
 
-		// Nav item is parent
-		if ( $item->object_id == $parent->ID ) {
-			$classes[] = 'current-menu-parent';
-			$classes[] = 'current-menu-ancestor';
-
-		// Nav item is ancestor
-		} elseif ( in_array( $item->object_id, $parent->ancestors ) ) {
-			$classes[] = 'current-menu-ancestor';
+		// Set item classes
+		if ( ! is_array( $menu_item->classes ) ) {
+			$menu_item->classes[] = array();
 		}
+
+		// This is the parent page
+		$menu_item->classes[] = 'current_page_parent';
+		$menu_item->classes[] = 'current-menu-parent';
 	}
 
-	return array_unique( $classes );
+	// Enable plugin filtering
+	return apply_filters( 'vgsr_entity_setup_nav_menu_item', $menu_item );
 }
 
 /** AJAX ***************************************************************/
