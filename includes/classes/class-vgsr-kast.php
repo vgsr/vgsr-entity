@@ -129,6 +129,7 @@ class VGSR_Kast extends VGSR_Entity_Type {
 
 		// Default
 		$includes = array(
+			'actions',
 			'functions',
 		);
 

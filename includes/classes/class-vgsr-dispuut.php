@@ -77,6 +77,7 @@ class VGSR_Dispuut extends VGSR_Entity_Type {
 
 		// Default
 		$includes = array(
+			'actions',
 			'functions',
 		);
 

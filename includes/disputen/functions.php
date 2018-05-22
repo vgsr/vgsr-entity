@@ -57,3 +57,50 @@ function vgsr_entity_get_dispuut_post_type_labels() {
 		'settings_title'        => esc_html__( 'Disputen Settings',          'vgsr-entity' ),
 	) );
 }
+
+/** Nav Menus **********************************************************/
+
+/**
+ * Return the available custom Dispuut nav menu items
+ *
+ * @since 2.0.0
+ *
+ * @return array Custom nav menu items
+ */
+function vgsr_entity_dispuut_nav_menu_items( $items ) {
+
+	// Get type object
+	$type   = vgsr_entity_get_type( 'dispuut', true );
+	$_items = array();
+
+	// Entity parent
+	if ( $parent = vgsr_entity_get_entity_parent( $type->type ) ) {
+		$_items['dispuut-parent'] = array(
+			'title'      => get_the_title( $parent ),
+			'type_label' => esc_html__( 'Dispuut Parent', 'vgsr-entity' ),
+			'url'        => get_permalink( $parent ),
+			'is_current' => vgsr_is_entity_parent() === $type->type,
+			'is_parent'  => vgsr_is_dispuut(),
+		);
+	}
+
+	// Setup nav menu items
+	$_items = (array) apply_filters( 'vgsr_entity_dispuut_nav_menu_get_items', $_items );
+
+	// Set default arguments
+	foreach ( $_items as $item_id => &$item ) {
+		$item = wp_parse_args( $item, array(
+			'id'           => $item_id,
+			'title'        => '',
+			'type'         => vgsr_entity_get_dispuut_post_type(),
+			'type_label'   => esc_html_x( 'Dispuut Page', 'Customizer menu type label', 'vgsr-entity' ),
+			'url'          => '',
+			'is_current'   => false,
+			'is_parent'    => false,
+			'is_ancestor'  => false,
+			'search_terms' => isset( $item['title'] ) ? strtolower( $item['title'] ) : 'dispuut'
+		) );
+	}
+
+	return array_merge( $items, $_items );
+}

@@ -58,3 +58,50 @@ function vgsr_entity_get_kast_post_type_labels() {
 		'settings_title'        => esc_html__( 'Kasten Settings',          'vgsr-entity' ),
 	) );
 }
+
+/** Nav Menus **********************************************************/
+
+/**
+ * Return the available custom Kast nav menu items
+ *
+ * @since 2.0.0
+ *
+ * @return array Custom nav menu items
+ */
+function vgsr_entity_kast_nav_menu_items( $items ) {
+
+	// Get type object
+	$type   = vgsr_entity_get_type( 'kast', true );
+	$_items = array();
+
+	// Entity parent
+	if ( $parent = vgsr_entity_get_entity_parent( $type->type ) ) {
+		$_items['kast-parent'] = array(
+			'title'      => get_the_title( $parent ),
+			'type_label' => esc_html__( 'Kast Parent', 'vgsr-entity' ),
+			'url'        => get_permalink( $parent ),
+			'is_current' => vgsr_is_entity_parent() === $type->type,
+			'is_parent'  => vgsr_is_kast(),
+		);
+	}
+
+	// Setup nav menu items
+	$_items = (array) apply_filters( 'vgsr_entity_kast_nav_menu_get_items', $_items );
+
+	// Set default arguments
+	foreach ( $_items as $item_id => &$item ) {
+		$item = wp_parse_args( $item, array(
+			'id'           => $item_id,
+			'title'        => '',
+			'type'         => vgsr_entity_get_kast_post_type(),
+			'type_label'   => esc_html_x( 'Kast Page', 'Customizer menu type label', 'vgsr-entity' ),
+			'url'          => '',
+			'is_current'   => false,
+			'is_parent'    => false,
+			'is_ancestor'  => false,
+			'search_terms' => isset( $item['title'] ) ? strtolower( $item['title'] ) : 'kast'
+		) );
+	}
+
+	return array_merge( $items, $_items );
+}
