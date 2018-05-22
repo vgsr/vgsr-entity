@@ -84,7 +84,44 @@ class VGSR_Dispuut extends VGSR_Entity_Type {
 		parent::includes( $includes );
 	}
 
+	/**
+	 * Setup default Kast actions and filters
+	 *
+	 * @since 2.0.0
+	 */
+	public function setup_actions() {
+		parent::setup_actions();
+
+		// Post
+		add_filter( "vgsr_{$this->type}_display_meta", array( $this, 'entity_display_meta' ), 10, 2 );
+	}
+
 	/** Meta ***********************************************************/
+
+	/**
+	 * Modify the display meta for Dispuut posts
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $meta Entity meta
+	 * @param WP_Post $post Post object
+	 * @return array Entity meta
+	 */
+	public function entity_display_meta( $meta, $post ) {
+
+		// When both since and ceased data is present
+		if ( isset( $meta['since'] ) && isset( $meta['ceased'] ) ) {
+
+			// Combine both data into a single display value
+			$meta['since']['value'] = array( $meta['since']['value'], $meta['ceased']['value'] );
+			$meta['since']['label'] = esc_html__( 'Active from %s to %s', 'vgsr-entity' );
+
+			// Remove individual value for ceased
+			unset( $meta['ceased'] );
+		}
+
+		return $meta;
+	}
 
 	/**
 	 * Return the requested entity meta value
