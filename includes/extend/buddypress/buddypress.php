@@ -155,7 +155,7 @@ class VGSR_Entity_BuddyPress {
 
 				// Field display
 				'is_entry_meta'     => true,
-				'meta_label'        => esc_html__( '%d Members', 'vgsr-entity' ),
+				'meta_label'        => _n_noop( '%d Member', '%d Members', 'vgsr-entity' ),
 				'detail_callback'   => 'vgsr_entity_bp_list_post_members',
 				'show_detail'       => $access,
 			);
@@ -174,7 +174,7 @@ class VGSR_Entity_BuddyPress {
 
 				// Field display
 				'is_entry_meta'     => true,
-				'meta_label'        => esc_html__( '%d Residents', 'vgsr-entity' ),
+				'meta_label'        => _n_noop( '%d Resident', '%d Residents', 'vgsr-entity' ),
 				'detail_callback'   => 'vgsr_entity_bp_list_post_residents',
 				'show_detail'       => $access,
 			);
@@ -303,7 +303,17 @@ class VGSR_Entity_BuddyPress {
 					$value = count( $value );
 				}
 
-				$meta[ $field ] = array( 'value' => $value, 'label' => $args['meta_label'] );
+				// Parse nooped plural
+				if ( is_array( $args['meta_label'] ) ) {
+					$args['meta_label'] = translate_nooped_plural( $args['meta_label'], $value );
+					$value = number_format_i18n( $value );
+				}
+
+				// Setup field
+				$meta[ $field ] = array(
+					'value' => $value,
+					'label' => $args['meta_label'],
+				);
 			}
 		}
 
