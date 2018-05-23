@@ -493,8 +493,11 @@ final class VGSR_Entity {
 	 */
 	public function pre_get_posts( $query ) {
 
+		// Get queryied post type
+		$post_type = isset( $query->query_vars['post_type'] ) ? $query->query_vars['post_type'] : false;
+
 		// Force entity ordering by menu_order
-		if ( isset( $query->query_vars['post_type'] ) && in_array( $query->query_vars['post_type'], $this->get_types() ) ) {
+		if ( is_string( $post_type ) && in_array( $post_type, vgsr_entity_get_post_types(), true ) ) {
 			$query->query_vars['orderby'] = 'menu_order';
 
 			// Define sort order
