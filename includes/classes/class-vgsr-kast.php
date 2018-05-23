@@ -119,6 +119,17 @@ class VGSR_Kast extends VGSR_Entity_Type {
 	}
 
 	/**
+	 * Define default Kast globals
+	 *
+	 * @since 1.0.0
+	 */
+	public function setup_globals() {
+		parent::setup_globals();
+
+		add_image_size( $this->args['thumbsize'], $this->args['mini_size'], $this->args['mini_size'], true );
+	}
+
+	/**
 	 * Include required files
 	 *
 	 * @since 2.0.0
@@ -140,17 +151,6 @@ class VGSR_Kast extends VGSR_Entity_Type {
 		}
 
 		parent::includes( $includes );
-	}
-
-	/**
-	 * Define default Kast globals
-	 *
-	 * @since 1.0.0
-	 */
-	public function setup_globals() {
-		parent::setup_globals();
-
-		add_image_size( $this->args['thumbsize'], $this->args['mini_size'], $this->args['mini_size'], true );
 	}
 
 	/**
