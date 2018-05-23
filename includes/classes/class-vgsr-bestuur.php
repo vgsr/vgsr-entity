@@ -82,12 +82,11 @@ class VGSR_Bestuur extends VGSR_Entity_Type {
 	 * @since 1.0.0
 	 */
 	public function setup_actions() {
+		parent::setup_actions();
 
 		// Current Bestuur
 		add_action( "save_post_{$this->post_type}", array( $this, 'save_current_bestuur' ), 10, 2 );
 		add_action( 'vgsr_entity_init',             array( $this, 'add_rewrite_rules'    )        );
-
-		parent::setup_actions();
 	}
 
 	/** Current Bestuur ********************************************/
