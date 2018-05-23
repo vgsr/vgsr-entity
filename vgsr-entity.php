@@ -587,15 +587,16 @@ final class VGSR_Entity {
 	 * @return array Entity meta
 	 */
 	public function get_meta( $post = 0 ) {
-		$post = get_post( $post );
-		$meta = array();
+
+		// Define return value
+		$retval = array();
 
 		// Get entity type from post
-		if ( $post && $type = vgsr_entity_get_type( $post, true ) ) {
-			$meta = $type->meta( $post, 'display' );
+		if ( $type = vgsr_entity_get_type( $post, true ) ) {
+			$retval = $type->meta( $post, 'display' );
 		}
 
-		return $meta;
+		return $retval;
 	}
 }
 
