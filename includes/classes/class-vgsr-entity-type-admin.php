@@ -265,7 +265,7 @@ class VGSR_Entity_Type_Admin {
 	public function post_states( $states, $post ) {
 
 		// Append a state for archived posts
-		if ( $this->post_type === $post->post_type && $this->has_archive && vgsr_entity_get_archive_status_id() === $post->post_status ) {
+		if ( $this->post_type === $post->post_type && $this->has_archive && vgsr_entity_get_archived_status_id() === $post->post_status ) {
 			$states[] = esc_html__( 'Archived', 'vgsr-entity' );
 		}
 
@@ -424,12 +424,12 @@ class VGSR_Entity_Type_Admin {
 				'l10n'   => array(
 
 					// Archive post status
-					'archiveStatusId' => vgsr_entity_get_archive_status_id(),
+					'archiveStatusId' => vgsr_entity_get_archived_status_id(),
 					'archiveLabel'    => esc_html__( 'Archived', 'vgsr-entity' ),
 					'publishStatusId' => 'publish',
 					'publishLabel'    => esc_html__( 'Published' ),
 					'hasArchive'      => (bool) $this->has_archive,
-					'isArchived'      => $is_post ? ( vgsr_entity_get_archive_status_id() === get_post()->post_status ) : false,
+					'isArchived'      => $is_post ? ( vgsr_entity_get_archived_status_id() === get_post()->post_status ) : false,
 
 					// Logo feature
 					'entityLogoTitle' => sprintf( esc_html__( '%s Logo',     'vgsr-entity' ), $this->labels->singular_name ),

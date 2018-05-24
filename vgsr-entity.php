@@ -117,7 +117,7 @@ final class VGSR_Entity {
 
 		/** Identifiers *******************************************************/
 
-		$this->archive_status_id = apply_filters( 'vgsr_entity_archive_status', 'archive' );
+		$this->archived_status_id = apply_filters( 'vgsr_entity_archived_status', 'archived' );
 
 		/** Misc **************************************************************/
 
@@ -401,17 +401,18 @@ final class VGSR_Entity {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @uses apply_filters() Calls 'vgsr_entity_register_archive_post_status'
+	 * @uses apply_filters() Calls 'vgsr_entity_register_archived_post_status'
 	 */
 	public function register_post_statuses() {
 
 		// Get whether the current user has access
 		$access = vgsr_entity_check_access();
 
-		/** Archive ****************************************************/
+		/** Archived ***************************************************/
 
-		register_post_status( vgsr_entity_get_archive_status_id(),
-			(array) apply_filters( 'vgsr_entity_register_archive_post_status', array(
+		register_post_status(
+			vgsr_entity_get_archived_status_id(),
+			(array) apply_filters( 'vgsr_entity_register_archived_post_status', array(
 				'label'               => esc_html__( 'Archived', 'vgsr-entity' ),
 				'label_count'         => _n_noop( 'Archived <span class="count">(%s)</span>', 'Archived <span class="count">(%s)</span>', 'vgsr-entity' ),
 

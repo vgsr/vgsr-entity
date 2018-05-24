@@ -236,14 +236,14 @@ function vgsr_entity_get_entity_parent( $type = '' ) {
 }
 
 /**
- * Return the archive post status id
+ * Return the archived post status id
  *
  * @since 2.0.0
  *
- * @return string Archive status id
+ * @return string Archived status id
  */
-function vgsr_entity_get_archive_status_id() {
-	return vgsr_entity()->archive_status_id;
+function vgsr_entity_get_archived_status_id() {
+	return vgsr_entity()->archived_status_id;
 }
 
 /**
