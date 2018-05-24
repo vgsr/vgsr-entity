@@ -58,6 +58,34 @@ function vgsr_entity_get_dispuut_post_type_labels() {
 	) );
 }
 
+/**
+ * Add post-type specific messages for post updates
+ *
+ * @since 2.0.0
+ *
+ * @param array $messages Messages
+ * @return array Messages
+ */
+function vgsr_entity_dispuut_post_updated_messages( $messages ) {
+
+	// Define post view link
+	$view_post_link = sprintf( ' <a href="%s">%s</a>',
+		esc_url( get_permalink() ),
+		esc_html__( 'View Dispuut', 'vgsr-entity' )
+	);
+
+	// Add post type messages
+	$messages[ vgsr_entity_get_dispuut_post_type() ] = array(
+		 1 => __( 'Dispuut updated.',   'vgsr-entity' ) . $view_post_link,
+		 4 => __( 'Dispuut updated.',   'vgsr-entity' ),
+		 6 => __( 'Dispuut created.',   'vgsr-entity' ) . $view_post_link,
+		 7 => __( 'Dispuut saved.',     'vgsr-entity' ),
+		 8 => __( 'Dispuut submitted.', 'vgsr-entity' ) . $view_post_link,
+	);
+
+	return $messages;
+}
+
 /** Nav Menus **********************************************************/
 
 /**

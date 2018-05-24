@@ -10,6 +10,10 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
+/** Post **********************************************************************/
+
+add_filter( 'post_updated_messages', 'vgsr_entity_bestuur_post_updated_messages' );
+
 /** Template ******************************************************************/
 
 add_action( 'vgsr_entity_bestuur_details', 'vgsr_entity_bestuur_positions_detail' );
