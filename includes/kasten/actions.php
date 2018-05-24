@@ -12,7 +12,8 @@ defined( 'ABSPATH' ) || exit;
 
 /** Post **********************************************************************/
 
-add_filter( 'post_updated_messages', 'vgsr_entity_kast_post_updated_messages' );
+add_filter( 'post_updated_messages', 'vgsr_entity_kast_post_updated_messages'    );
+add_action( 'updated_post_meta',     'vgsr_entity_kast_updated_post_meta', 10, 4 );
 
 /** Menus *********************************************************************/
 

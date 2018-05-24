@@ -86,6 +86,28 @@ function vgsr_entity_dispuut_post_updated_messages( $messages ) {
 	return $messages;
 }
 
+/**
+ * Runs after updating post metadata
+ *
+ * @since 2.0.0
+ *
+ * @param int    $meta_id    ID of updated metadata entry.
+ * @param int    $object_id  Object ID.
+ * @param string $meta_key   Meta key.
+ * @param mixed  $meta_value Meta value.
+ */
+function vgsr_entity_dispuut_updated_post_meta( $meta_id, $object_id, $meta_key, $meta_value ) {
+
+	// Bail when not a Dispuut was updated
+	if ( ! vgsr_is_dispuut( $object_id ) )
+		return;
+
+	// Archive a Dispuut when it is ceased
+	if ( 'ceased' === $meta_key && ! empty( $meta_value ) ) {
+		vgsr_entity_update_post_status( $object_id, vgsr_entity_get_archived_status_id() );
+	}
+}
+
 /** Nav Menus **********************************************************/
 
 /**
