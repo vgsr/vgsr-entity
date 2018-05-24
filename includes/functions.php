@@ -246,6 +246,52 @@ function vgsr_entity_get_archive_status_id() {
 	return vgsr_entity()->archive_status_id;
 }
 
+/**
+ * Update a post's status
+ *
+ * @see wp_publish_post()
+ *
+ * @since 2.0.0
+ *
+ * @param WP_Post|int $post Optional. Post object or ID. Defaults to the current post.
+ * @param string $post_status Optional. Post status name. Defaults to 'publish'.
+ */
+function vgsr_entity_update_post_status( $post = 0, $post_status = 'publish' ) {
+	global $wpdb;
+
+	if ( ! $post = get_post( $post ) ) {
+		return;
+	}
+
+	if ( ! get_post_status_object( $post_status ) ) {
+		return;
+	}
+
+	if ( $post_status === $post->post_status ) {
+		return;
+	}
+
+	$wpdb->update( $wpdb->posts, array( 'post_status' => $post_status ), array( 'ID' => $post->ID ) );
+
+	clean_post_cache( $post->ID );
+
+	$old_status        = $post->post_status;
+	$post->post_status = $post_status;
+	wp_transition_post_status( $post_status, $old_status, $post );
+
+	/** This action is documented in wp-includes/post.php */
+	do_action( 'edit_post', $post->ID, $post );
+
+	/** This action is documented in wp-includes/post.php */
+	do_action( "save_post_{$post->post_type}", $post->ID, $post, true );
+
+	/** This action is documented in wp-includes/post.php */
+	do_action( 'save_post', $post->ID, $post, true );
+
+	/** This action is documented in wp-includes/post.php */
+	do_action( 'wp_insert_post', $post->ID, $post, true );
+}
+
 /** Nav Menus **********************************************************/
 
 /**
