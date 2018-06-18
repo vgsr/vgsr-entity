@@ -86,7 +86,6 @@ class VGSR_Bestuur extends VGSR_Entity_Type {
 
 		// Current Bestuur
 		add_action( "save_post_{$this->post_type}", array( $this, 'save_current_bestuur' ), 10, 2 );
-		add_action( 'vgsr_entity_init',             array( $this, 'add_rewrite_rules'    )        );
 	}
 
 	/** Current Bestuur ********************************************/
@@ -113,29 +112,6 @@ class VGSR_Bestuur extends VGSR_Entity_Type {
 
 		// Update current bestuur
 		vgsr_entity_update_current_bestuur();
-
-		// Refresh rewrite rules to properly point to the current bestuur
-		add_action( "save_post_{$this->post_type}", array( $this, 'add_rewrite_rules' ), 99 );
-		add_action( "save_post_{$this->post_type}", 'flush_rewrite_rules',               99 );
-	}
-
-	/**
-	 * Define custom rewrite rules
-	 *
-	 * @since 1.0.0
-	 */
-	public function add_rewrite_rules() {
-
-		// Redirect requests for the entity parent page to the current bestuur
-		if ( $current = vgsr_entity_get_current_bestuur() ) {
-			add_rewrite_rule(
-				// The parent page ...
-				get_post_type_object( $this->post_type )->rewrite['slug'] . '/?$',
-				// ... should be interpreted as the current Bestuur
-				'index.php?p=' . $current,
-				'top'
-			);
-		}
 	}
 
 	/** Meta ***********************************************************/
