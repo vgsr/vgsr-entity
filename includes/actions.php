@@ -26,9 +26,11 @@ add_filter( 'customize_nav_menu_available_items', 'vgsr_entity_customize_nav_men
 add_filter( 'customize_nav_menu_searched_items',  'vgsr_entity_customize_nav_menu_searched_items',  10, 2 );
 add_filter( 'wp_setup_nav_menu_item',             'vgsr_entity_setup_nav_menu_item'                       );
 
-/** Theme *********************************************************************/
+/** Template ******************************************************************/
 
-add_action( 'template_include', 'vgsr_entity_template_include' );
+add_action( 'template_include',            'vgsr_entity_template_include'            );
+add_filter( 'get_the_archive_title',       'vgsr_entity_get_the_archive_title'       );
+add_filter( 'get_the_archive_description', 'vgsr_entity_get_the_archive_description' );
 
 /** AJAX **********************************************************************/
 

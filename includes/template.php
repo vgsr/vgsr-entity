@@ -384,3 +384,63 @@ function vgsr_is_entity_parent( $post = 0 ) {
 
 	return $type;
 }
+
+/** Archive ************************************************************/
+
+/**
+ * Modify the archive title
+ *
+ * @since 2.0.0
+ *
+ * @param  string $title Archive page title
+ * @return string Archive page title
+ */
+function vgsr_entity_get_the_archive_title( $title ) {
+
+	// Get current post type
+	$post_type = get_post_type();
+
+	// Bestuur archive
+	if ( is_post_type_archive( $post_type ) ) {
+		$type   = vgsr_entity_get_type( $post_type );
+		$parent = vgsr_entity_get_entity_parent( $type, true );
+
+		// Use parent post title
+		if ( $parent ) {
+			$title = get_the_title( $parent );
+
+		// Default to post type name
+		} else {
+			$title = get_post_type_object( $post_type )->labels->name;
+		}
+	}
+
+	return $title;
+}
+
+/**
+ * Modify the archive description
+ *
+ * @since 2.0.0
+ *
+ * @param  string $description Archive page description
+ * @return string Archive page description
+ */
+function vgsr_entity_get_the_archive_description( $description ) {
+
+	// Get current post type
+	$post_type = get_post_type();
+
+	// Bestuur archive
+	if ( is_post_type_archive( $post_type ) ) {
+		$type   = vgsr_entity_get_type( $post_type );
+		$parent = vgsr_entity_get_entity_parent( $type, true );
+
+		// Use parent post title
+		if ( $parent ) {
+			$description = apply_filters( 'the_content', $parent->post_content );
+		}
+	}
+
+	return $description;
+}
