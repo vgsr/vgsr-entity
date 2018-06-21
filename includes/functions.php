@@ -221,15 +221,21 @@ function vgsr_entity_get_entity_parents() {
  * @uses apply_filters() Calls 'vgsr_entity_get_entity_parent'
  *
  * @param string $type Optional. Entity type name. Defaults to the current entity type.
- * @return int|bool Post ID or False when not found
+ * @param bool $object Optional. Whether to return the post object. Defaults to false.
+ * @return int|WP_Post|bool Post ID or object or False when not found.
  */
-function vgsr_entity_get_entity_parent( $type = '' ) {
+function vgsr_entity_get_entity_parent( $type = '', $object = false ) {
 	$type   = vgsr_entity_get_type( $type );
 	$parent = false;
 
 	if ( $type ) {
 		$parents = vgsr_entity_get_entity_parents();
 		$parent  = $parents[ $type ];
+
+		// Get the parent's post object
+		if ( $object ) {
+			$parent = get_post( $parent );
+		}
 	}
 
 	return apply_filters( 'vgsr_entity_get_entity_parent', $parent, $type );
