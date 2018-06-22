@@ -388,6 +388,30 @@ function vgsr_is_entity_parent( $post = 0 ) {
 /** Archive ************************************************************/
 
 /**
+ * Modify globals after the main WP instance is setup
+ *
+ * Runs before the main `$wp_the_query` is set, which is used for admin bar links.
+ *
+ * @since 2.0.0
+ *
+ * @param WP $wp The main WordPres object
+ */
+function vgsr_entity_set_globals( $wp ) {
+
+	// Entity archive
+	if ( vgsr_is_entity() && is_post_type_archive( get_post_type() ) ) {
+		$parent = vgsr_entity_get_entity_parent( get_post_type(), true );
+
+		// Set the page's global post
+		if ( $parent ) {
+			$GLOBALS['post']                        = $parent;
+			$GLOBALS['wp_query']->queried_object    = $parent;
+			$GLOBALS['wp_query']->queried_object_id = $parent->ID;
+		}
+	}
+}
+
+/**
  * Modify the archive title
  *
  * @since 2.0.0
