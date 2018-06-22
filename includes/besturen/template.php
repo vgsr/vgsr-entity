@@ -46,10 +46,11 @@ function vgsr_entity_get_current_bestuur( $object = false ) {
  * @return bool Is this the current bestuur?
  */
 function vgsr_entity_is_current_bestuur( $post = 0 ) {
-	$post   = get_post( $post );
-	$retval = false;
+	$is_singular = 0 === $post ? is_singular() : true;
+	$post        = get_post( $post );
+	$retval      = false;
 
-	if ( $post && is_singular() && vgsr_entity_get_current_bestuur() === $post->ID ) {
+	if ( $post && $is_singular && vgsr_entity_get_current_bestuur() === $post->ID ) {
 		$retval = true;
 	}
 
