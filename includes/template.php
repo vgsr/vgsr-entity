@@ -444,3 +444,32 @@ function vgsr_entity_get_the_archive_description( $description ) {
 
 	return $description;
 }
+
+/**
+ * Output navigation markup to next/previous plugin pages
+ *
+ * @see the_posts_navigation()
+ *
+ * @since 2.0.0
+ *
+ * @param array $args Arguments for {@see get_the_posts_navigation()}
+ */
+function vgsr_entity_the_posts_navigation( $args = array() ) {
+	echo vgsr_entity_get_the_posts_navigation( $args );
+}
+
+	/**
+	 * Return navigation markup to next/previous plugin pages
+	 *
+	 * @see get_the_posts_navigation()
+	 *
+	 * @since 2.0.0
+	 *
+	 * @uses apply_filters() Calls 'vgsr_entity_get_the_posts_navigation'
+	 *
+	 * @param array $args Arguments for {@see get_the_posts_navigation()}
+	 * @return string Navigation markup
+	 */
+	function vgsr_entity_get_the_posts_navigation( $args = array() ) {
+		return get_the_posts_navigation( apply_filters( 'vgsr_entity_get_the_posts_navigation', $args ) );
+	}

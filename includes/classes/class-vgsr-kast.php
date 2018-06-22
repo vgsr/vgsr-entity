@@ -34,8 +34,13 @@ class VGSR_Kast extends VGSR_Entity_Type {
 		parent::__construct( $type, array(
 			'path'           => 'kasten',
 			'post_type_args' => array(
-				'description' => esc_html__( "A Kast is an initiated house where active VGSR members dwell.", 'vgsr-entity' ),
-				'menu_icon'   => 'dashicons-admin-home',
+				'description'      => esc_html__( "A Kast is an initiated house where active VGSR members dwell.", 'vgsr-entity' ),
+				'menu_icon'        => 'dashicons-admin-home',
+				'posts_navigation' => array(
+					'prev_text'          => esc_html__( 'Older kasten',      'vgsr-entity' ),
+					'next_text'          => esc_html__( 'Newer kasten',      'vgsr-entity' ),
+					'screen_reader_text' => esc_html__( 'Kasten navigation', 'vgsr-entity' )
+				)
 			),
 			'has_archive'    => true,
 			'thumbsize'      => 'mini-thumb',

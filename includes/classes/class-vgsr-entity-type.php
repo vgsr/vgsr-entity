@@ -260,6 +260,9 @@ abstract class VGSR_Entity_Type {
 		add_action( 'update_option',         array( $this, 'update_entity_parent' ), 10, 3 );
 		add_filter( 'wp_insert_post_parent', array( $this, 'filter_entity_parent' ), 10, 4 );
 
+		// Template
+		add_filter( 'vgsr_entity_get_the_posts_navigation', array( $this, 'get_the_posts_navigation' ) );
+
 		// Admin
 		if ( is_admin() ) {
 			add_action( 'vgsr_entity_init', array( $this, 'admin_init' ) );
@@ -301,7 +304,7 @@ abstract class VGSR_Entity_Type {
 		// Register this entity post type
 		register_post_type(
 			$this->post_type,
-			(array) apply_filters( "vgsr_entity_{$this->type}_register_post_type", wp_parse_args( $this->post_type_args, array(
+			(array) apply_filters( "vgsr_entity_{$this->type}_register_post_type", wp_parse_args( (array) $this->post_type_args, array(
 				'labels'               => $labels,
 				'public'               => true,
 				'menu_position'        => vgsr_entity()->menu_position,
@@ -507,6 +510,26 @@ abstract class VGSR_Entity_Type {
 		}
 
 		return $slug;
+	}
+
+	/** Template *******************************************************/
+
+	/**
+	 * Modify the paramaters for the posts navigation
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $args Posts navigation arguments
+	 * @return array Posts navigation arguments
+	 */
+	public function get_the_posts_navigation( $args ) {
+
+		// Post type archive navigation
+		if ( is_post_type_archive( $this->post_type ) && isset( $this->post_type_args['posts_navigation'] ) ) {
+			$args = wp_parse_args( $this->post_type_args['posts_navigation'], $args );
+		}
+
+		return $args;
 	}
 
 	/** Meta ***********************************************************/
