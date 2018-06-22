@@ -49,7 +49,7 @@ function vgsr_entity_is_current_bestuur( $post = 0 ) {
 	$post   = get_post( $post );
 	$retval = false;
 
-	if ( $post && vgsr_entity_get_current_bestuur() === $post->ID ) {
+	if ( $post && is_singular() && vgsr_entity_get_current_bestuur() === $post->ID ) {
 		$retval = true;
 	}
 
