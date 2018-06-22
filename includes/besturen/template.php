@@ -23,15 +23,14 @@ defined( 'ABSPATH' ) || exit;
 function vgsr_entity_get_current_bestuur( $object = false ) {
 
 	// Get post setting and validate
-	$post  = (int) get_option( '_bestuur-latest-bestuur' );
-	$_post = get_post( $post );
+	$post = (int) get_option( '_bestuur-latest-bestuur' );
 
 	// Get post object
-	if ( $_post && $object ) {
-		$post = $_post;
+	if ( $post && $object ) {
+		$post = get_post( $post );
 
 	// Default false for invalid post
-	} elseif ( ! $_post ) {
+	} elseif ( ! $post ) {
 		$post = false;
 	}
 
