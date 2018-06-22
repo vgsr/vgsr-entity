@@ -242,7 +242,7 @@ function vgsr_entity_bestuur_nav_menu_items( $items ) {
 			'type_label' => esc_html__( 'Current Bestuur', 'vgsr-entity' ),
 			'url'        => get_permalink( $current ),
 			'is_current' => vgsr_entity_is_current_bestuur(),
-			'is_parent'  => vgsr_is_entity_parent() === $type->type,
+			'is_parent'  => false,
 		);
 	}
 
