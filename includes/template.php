@@ -431,7 +431,7 @@ function vgsr_entity_get_the_archive_title( $title ) {
 
 		// Use parent post title
 		if ( $parent ) {
-			$title = get_the_title( $parent );
+			$title = vgsr_entity_call_with_post( $parent, 'get_the_title' );
 
 		// Default to post type name
 		} else {
@@ -460,9 +460,10 @@ function vgsr_entity_get_the_archive_description( $description ) {
 		$type   = vgsr_entity_get_type( $post_type );
 		$parent = vgsr_entity_get_entity_parent( $type, true );
 
-		// Use parent post title
+		// Use parent post content
 		if ( $parent ) {
-			$description = apply_filters( 'the_content', $parent->post_content );
+			// Get filtered parent post content
+			$description = vgsr_entity_call_with_post( $parent, 'apply_filters', array( 'the_content', $parent->post_content ) );
 		}
 	}
 

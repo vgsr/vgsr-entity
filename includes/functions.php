@@ -194,6 +194,37 @@ function vgsr_entity_get_meta( $post = 0, $field = '', $return_value = true ) {
 /** Post ***************************************************************/
 
 /**
+ * Utility function to call logic with a custom post context
+ *
+ * @since 2.0.0
+ *
+ * @param WP_Post $post Post object to set as the post context
+ * @param string|array $callable Callable function or method
+ * @param array $args Optional. Arguments for callable.
+ * @return mixed Callable return value
+ */
+function vgsr_entity_call_with_post( $post, $callable, $args = array() ) {
+
+	// Define return value
+	$retval = null;
+
+	// When callable and post are valid
+	if ( is_callable( $callable ) && is_a( $post, 'WP_Post' ) ) {
+
+		// Redefine the post global
+		$_post = $GLOBALS['post'];
+		$GLOBALS['post'] = $post;
+
+		$retval = call_user_func_array( $callable, $args );
+
+		// Reset the post global
+		$GLOBALS['post'] = $_post;
+	}
+
+	return $retval;
+}
+
+/**
  * Return all entity parent page ids
  *
  * @since 1.0.0
