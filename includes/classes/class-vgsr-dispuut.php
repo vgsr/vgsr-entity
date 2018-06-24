@@ -121,7 +121,7 @@ class VGSR_Dispuut extends VGSR_Entity_Type {
 
 			// Combine both data into a single display value
 			$meta['since']['value'] = array( $meta['since']['value'], $meta['ceased']['value'] );
-			$meta['since']['label'] = esc_html__( 'Active from %s to %s', 'vgsr-entity' );
+			$meta['since']['label'] = esc_html__( 'Active between %1$s and %2$s', 'vgsr-entity' );
 
 			// Remove individual value for ceased
 			unset( $meta['ceased'] );
