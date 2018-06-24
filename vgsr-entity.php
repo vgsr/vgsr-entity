@@ -431,11 +431,10 @@ final class VGSR_Entity {
 	 */
 	public function admin_menu() {
 
-		// Bail when there are no entities registered
-		if ( empty( $this->types ) )
-			return;
-
-		$this->add_separator( $this->menu_position - 1 );
+		// When entities were registered
+		if ( ! empty( $this->types ) ) {
+			$this->add_separator( $this->menu_position - 1 );
+		}
 	}
 
 	/**
@@ -450,15 +449,17 @@ final class VGSR_Entity {
 	 *
 	 * @global array $menu
 	 *
-	 * @param int $pos The position after which to add the sep
+	 * @param int $pos The position after which to add the separator
 	 */
 	public function add_separator( $pos ) {
 		global $menu;
 		$index = 1;
 
-		foreach( $menu as $offset => $item ) {
-			if ( substr( $item[2], 0, 9 ) == 'separator' )
+		// Walk all registered menu items
+		foreach ( $menu as $offset => $item ) {
+			if ( 'separator' === substr( $item[2], 0, 9 ) ) {
 				$index++;
+			}
 
 			if ( $offset >= $pos ) {
 				$menu[ $pos ] = array( '', 'read', "separator-pos{$index}", '', 'wp-menu-separator' );
@@ -517,7 +518,7 @@ final class VGSR_Entity {
 	 * @since 1.0.0
 	 * @since 2.0.0 Added support for the `$taxonomy` and `$post` params as per WP 4.4
 	 *
-	 * @global $wpdb
+	 * @global WPDB $wpdb
 	 * 
 	 * @param string $where WHERE clause
 	 * @param bool $in_same_term 
@@ -562,11 +563,8 @@ final class VGSR_Entity {
 	 */
 	public function adjacent_post_sort( $order_by, $post = null ) {
 
-		// Get the post
-		$post = get_post( $post );
-
 		// When this is an entity
-		if ( vgsr_is_entity( $post ) ) {
+		if ( vgsr_is_entity( get_post( $post ) ) ) {
 
 			// Order by the post menu order
 			$order_by = str_replace( 'p.post_date', 'p.menu_order', $order_by );
