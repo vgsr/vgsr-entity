@@ -344,6 +344,28 @@ function vgsr_entity_set_globals( $wp ) {
 }
 
 /**
+ * Modify the template hierarchy stack for archive pages
+ *
+ * @since 2.0.0
+ *
+ * @param array $templates Template hierarchy
+ * @return array Template hierarchy
+ */
+function vgsr_entity_archive_template_hierarchy( $templates ) {
+
+	// Entity archive
+	if ( $type = vgsr_entity_get_type() ) {
+
+		// Prepend the entity type's archive template file
+		array_splice( $templates, 0, 0, array(
+			"archive-{$type}.php"
+		) );
+	}
+
+	return $templates;
+}
+
+/**
  * Modify the post archive page title
  *
  * @since 2.0.0
