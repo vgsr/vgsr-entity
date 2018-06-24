@@ -173,7 +173,8 @@ class VGSR_Kast extends VGSR_Entity_Type {
 		add_action( 'vgsr_entity_meta_input_address-addition_field', array( $this, 'address_addition_input_field' ), 10, 3 );
 
 		// Post
-		add_action( "vgsr_entity_{$this->type}_details", array( $this, 'entity_details' ) );
+		add_filter( "vgsr_{$this->type}_display_meta",   array( $this, 'entity_display_meta' ), 10, 2 );
+		add_action( "vgsr_entity_{$this->type}_details", array( $this, 'entity_details'      )        );
 	}
 
 	/** Post ***********************************************************/
@@ -297,6 +298,40 @@ class VGSR_Kast extends VGSR_Entity_Type {
 	public function address_addition_input_field( $key, $post, $meta ) {
 		// Just output an HTML space, so the field is not empty while it is.
 		echo '&nbsp;';
+	}
+
+	/**
+	 * Modify the display meta for Kast posts
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $meta Entity meta
+	 * @param WP_Post $post Post object
+	 * @return array Entity meta
+	 */
+	public function entity_display_meta( $meta, $post ) {
+
+		// When since data is present
+		if ( isset( $meta['since'] ) ) {
+
+			// Get date from format, display year only
+			if ( $since = DateTime::createFromFormat( 'Y/m/d', $meta['since']['raw'] ) ) {
+				$meta['since']['value'] = sprintf( '<time datetime="%s">%s</time>', $since->format( 'Y-m-d' ), $since->format( 'Y' ) );
+			}
+
+			// When ceased data is also present
+			if ( isset( $meta['ceased'] ) ) {
+
+				// Combine both data into a single display value
+				$meta['since']['value'] = array( $meta['since']['value'], $meta['ceased']['value'] );
+				$meta['since']['label'] = esc_html__( 'Active between %1$s and %2$s', 'vgsr-entity' );
+
+				// Remove individual value for ceased
+				unset( $meta['ceased'] );
+			}
+		}
+
+		return $meta;
 	}
 
 	/**
