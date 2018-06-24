@@ -58,10 +58,11 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 		if ( vgsr_entity_query_entities( $qargs ) ) {
 
 			// Setup widget title
-			$title = vgsr_entity_get_post_type( $type, true )->labels->name;
+			$post_type_object = vgsr_entity_get_post_type( $type, true );
+			$title            = $post_type_object->labels->name;
 
 			// Provide link to parent page when we're not already there
-			if ( ! vgsr_is_entity_parent() ) {
+			if ( ! vgsr_is_entity_parent() && ! is_post_type_archive( $post_type_object->name ) ) {
 				$title = sprintf( '<a href="%s">%s</a>',
 					esc_url( get_permalink( vgsr_entity_get_entity_parent( $type ) ) ),
 					$title
