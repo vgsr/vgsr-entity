@@ -30,8 +30,8 @@ class VGSR_Bestuur extends VGSR_Entity_Type {
 			'path'           => 'besturen',
 			'post_type_args' => array(
 				'description'      => esc_html__( "A Bestuur is the VGSR's governing body which is re-elected each year.", 'vgsr-entity' ),
-				'menu_icon'        => 'dashicons-awards',
 				'has_archive'      => true,
+				'menu_icon'        => 'dashicons-awards',
 				'posts_navigation' => array(
 					'prev_text'          => esc_html__( 'Older besturen',      'vgsr-entity' ),
 					'next_text'          => esc_html__( 'Newer besturen',      'vgsr-entity' ),

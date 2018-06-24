@@ -216,83 +216,15 @@ function vgsr_entity_details( $post = 0 ) {
 	 */
 	do_action( "vgsr_entity_{$type}_details", $post );
 
-	// Close output buffer
+	// Stop output buffer
 	$details = ob_get_clean();
 
 	// Wrap details in div
 	if ( ! empty( $details ) ) {
-		$details = sprintf( '<div class="entity-details">%s</div>', $details );
+		$details = '<div class="entity-details">' . $details . '</div>';
 	}
 
 	return $details;
-}
-
-/** List ***************************************************************/
-
-/**
- * Return an entity parent's entity posts HTML markup
- *
- * Append the entity list to the parent's post content.
- *
- * @since 2.0.0
- *
- * @param string $content The post content
- * @return string $retval HTML
- */
-function vgsr_entity_list( $content ) {
-
-	// Bail when this is not an entity parent
-	if ( ! $post_type = is_entity_parent() )
-		return $content;
-
-	// Get all entity posts
-	if ( $entities = new WP_Query( array(
-		'post_type'   => $post_type,
-		'numberposts' => -1,
-	) ) ) {
-
-		// Make use of the read-more tag
-		global $more; $more = 0;
-
-		// Start output buffer
-		ob_start(); ?>
-
-		<div class="entity-list <?php echo $post_type; ?>-entities">
-
-		<?php while ( $entities->have_posts() ) : $entities->the_post(); ?>
-			<article <?php post_class(); ?>>
-
-				<?php // Display entity logo ?>
-				<?php if ( vgsr_entity_get_logo() ) : ?>
-				<div class="entity-logo">
-					<a href="<?php the_permalink(); ?>"><?php vgsr_entity_the_logo(); ?></a>
-				</div>
-				<?php endif; ?>
-
-				<h3 class="entity-title"><?php the_title( sprintf( '<a href="%s">', get_the_permalink() ), '</a>' ); ?></h3>
-
-				<?php // Display teaser content ?>
-				<?php if ( entity_has_more_tag() ) : ?>
-				<div class="entity-content">
-					<?php the_content( '' ); ?>
-				</div>
-				<?php endif; ?>
-				
-			</article>
-		<?php endwhile; ?>
-
-		</div>
-
-		<?php
-
-		// Append output buffer to content
-		$content .= ob_get_clean();
-
-		// Reste global `$post`
-		wp_reset_postdata();
-	}
-
-	return $content;
 }
 
 /** Is_* ***************************************************************/
@@ -468,6 +400,24 @@ function vgsr_entity_get_the_archive_description( $description ) {
 	}
 
 	return $description;
+}
+
+/**
+ * Modify early the post content for post archives
+ *
+ * @since 2.0.0
+ *
+ * @param  string $content Post content
+ * @return string Post content
+ */
+function vgsr_entity_the_archive_content( $content ) {
+
+	// Limit words in post type archives
+	if ( vgsr_is_entity() && is_post_type_archive() ) {
+		$content = wp_trim_words( $content );
+	}
+
+	return $content;
 }
 
 /**

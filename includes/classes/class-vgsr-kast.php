@@ -35,6 +35,7 @@ class VGSR_Kast extends VGSR_Entity_Type {
 			'path'           => 'kasten',
 			'post_type_args' => array(
 				'description'      => esc_html__( "A Kast is an initiated house where active VGSR members dwell.", 'vgsr-entity' ),
+				'has_archive'      => true,
 				'menu_icon'        => 'dashicons-admin-home',
 				'posts_navigation' => array(
 					'prev_text'          => esc_html__( 'Older kasten',      'vgsr-entity' ),
