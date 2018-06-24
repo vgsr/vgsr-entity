@@ -412,7 +412,7 @@ function vgsr_entity_set_globals( $wp ) {
 }
 
 /**
- * Modify the archive title
+ * Modify the post archive page title
  *
  * @since 2.0.0
  *
@@ -424,8 +424,8 @@ function vgsr_entity_get_the_archive_title( $title ) {
 	// Get current post type
 	$post_type = get_post_type();
 
-	// Bestuur archive
-	if ( is_post_type_archive( $post_type ) ) {
+	// Entity post archive
+	if ( vgsr_is_entity( $post_type ) && is_post_type_archive( $post_type ) ) {
 		$type   = vgsr_entity_get_type( $post_type );
 		$parent = vgsr_entity_get_entity_parent( $type, true );
 
@@ -443,7 +443,7 @@ function vgsr_entity_get_the_archive_title( $title ) {
 }
 
 /**
- * Modify the archive description
+ * Modify the post archive page description
  *
  * @since 2.0.0
  *
@@ -455,8 +455,8 @@ function vgsr_entity_get_the_archive_description( $description ) {
 	// Get current post type
 	$post_type = get_post_type();
 
-	// Bestuur archive
-	if ( is_post_type_archive( $post_type ) ) {
+	// Entity post archive
+	if ( vgsr_is_entity( $post_type ) && is_post_type_archive( $post_type ) ) {
 		$type   = vgsr_entity_get_type( $post_type );
 		$parent = vgsr_entity_get_entity_parent( $type, true );
 
