@@ -187,8 +187,8 @@ class VGSR_Kast extends VGSR_Entity_Type {
 	 */
 	public function entity_details( $post ) {
 
-		// Bail when the user has no access
-		if ( ! vgsr_entity_check_access() )
+		// Bail when the user has no access or this is not a singular post
+		if ( ! vgsr_entity_check_access() || ! is_singular() )
 			return;
 
 		// Define local variables

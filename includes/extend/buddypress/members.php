@@ -202,9 +202,13 @@ function vgsr_entity_bp_list_post_residents( $post ) {
  * @param WP_Post $post Post object
  */
 function vgsr_entity_bp_list_post_olim_residents( $post ) {
-	vgsr_entity_bp_the_members_list( $post, array(
-		'field'    => 'bp-olim-residents-field',
-		'label'    => esc_html__( 'Former Residents', 'vgsr-entity' ),
-		'multiple' => true,
-	) );
+
+	// For singular posts
+	if ( is_singular() ) {
+		vgsr_entity_bp_the_members_list( $post, array(
+			'field'    => 'bp-olim-residents-field',
+			'label'    => esc_html__( 'Former Residents', 'vgsr-entity' ),
+			'multiple' => true,
+		) );
+	}
 }
