@@ -577,17 +577,17 @@ abstract class VGSR_Entity_Type {
 					// Provide with meta value
 					foreach ( $meta as $key => $args ) {
 
-						// Get raw value
-						$raw_value = $this->get( $key, $post, 'raw' );
+						// Get display value
+						$value = $this->get( $key, $post, $context );
 
-						// Remove field from display when emtpy
-						if ( empty( $raw_value ) ) {
+						// Remove field from display when there's nothing to show
+						if ( empty( $value ) ) {
 							unset( $meta[ $key ] ) ;
 
 						// Add when there is a value to display
 						} else {
-							$meta[ $key ]['raw']   = $raw_value;
-							$meta[ $key ]['value'] = $this->get( $key, $post, $context );
+							$meta[ $key ]['raw']   = $this->get( $key, $post, 'raw' );
+							$meta[ $key ]['value'] = $value;
 						}
 					}
 
