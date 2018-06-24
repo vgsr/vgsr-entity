@@ -355,75 +355,50 @@ class VGSR_Entity_BuddyPress {
 		// For VGSR members
 		if ( vgsr_entity_check_access() ) {
 
-			// Bestuur: Replace Positions detail
-			remove_action( 'vgsr_entity_bestuur_details', 'vgsr_entity_bestuur_positions_detail' );
-			add_action( 'vgsr_entity_bestuur_details', array( $this, 'bestuur_positions_detail' ) );
+			// Bestuur: replace position name
+			add_action( 'vgsr_entity_bestuur_position_name', array( $this, 'bestuur_position_name' ), 10, 3 );
 		}
 	}
 
 	/** Details ***************************************************************/
 
 	/**
-	 * Display the Bestuur Positions entity detail with BP data
-	 *
-	 * Replaces the Positions detail with member profile links.
+	 * Modify the Bestuur's position name to link to the member's profile
 	 *
 	 * @since 2.0.0
 	 *
-	 * @see VGSR_Bestuur::positions_detail()
-	 *
-	 * @param WP_Post $post Post object
+	 * @param string $name Displayed name
+	 * @param WP_User|bool $user User object or False when not found
+	 * @param array $args Bestuur position arguments
 	 */
-	public function bestuur_positions_detail( $post ) {
+	public function bestuur_position_name( $name, $user, $args ) {
 
-		// Bail when no positions are signed for this entity
-		if ( ! $positions = vgsr_entity_bestuur_get_positions( $post ) )
-			return;
+		// For existing users
+		if ( is_a( $user, 'WP_User' ) ) {
 
-		?>
+			// Collect template global. Might not exist yet.
+			global $members_template;
+			$_members_template = $members_template;
 
-		<div class="bestuur-positions">
-			<h4><?php _ex( 'Members', 'Bestuur positions', 'vgsr-entity' ) ?></h4>
+			/**
+			 * Use BP member loop for using template tags
+			 *
+			 * Setting up the template loop per member is really
+			 * not efficient, but for now it does the job.
+			 */
+			if ( bp_has_members( array( 'type' => '', 'include' => $user->ID ) ) ) :
+				while ( bp_members() ) : bp_the_member();
 
-			<dl>
-				<?php foreach ( $positions as $args ) : ?>
-				<dt class="position position-<?php echo $args['slug']; ?>"><?php echo $args['label']; ?></dt>
-				<dd class="member"><?php
+					// Member profile link
+					$name = sprintf( '<a href="%s">%s</a>', bp_get_member_permalink(), bp_get_member_name() );
+				endwhile;
+			endif;
 
-					// Use existing user's display name
-					if ( $user = get_user_by( is_numeric( $args['user'] ) ? 'id' : 'slug', $args['user'] ) ) {
+			// Reset global
+			$members_template = $_members_template;
+		}
 
-						// Collect template global
-						global $members_template;
-						$_members_template = $members_template;
-
-						/**
-						 * Use BP member loop for using template tags
-						 *
-						 * Setting up the template loop per member is really
-						 * not efficient, but for now it does the job.
-						 */
-						if ( bp_has_members( array( 'type' => '', 'include' => $user->ID ) ) ) :
-							while ( bp_members() ) : bp_the_member();
-
-								// Member profile link
-								printf( '<a href="%s">%s</a>', bp_get_member_permalink(), bp_get_member_name() );
-							endwhile;
-						endif;
-
-						// Reset global
-						$members_template = $_members_template;
-
-					// Default to the provided 'user' name or content
-					} else {
-						echo $args['user'];
-					}
-				?></dd>
-				<?php endforeach; ?>
-			</dl>
-		</div>
-
-		<?php
+		return $name;
 	}
 }
 

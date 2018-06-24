@@ -57,49 +57,6 @@ function vgsr_entity_is_current_bestuur( $post = 0 ) {
 	return $retval;
 }
 
-/** Positions **********************************************************/
-
-/**
- * Display the bestuur positions entity detail
- *
- * @since 2.0.0
- *
- * @param WP_Post $post Post object
- */
-function vgsr_entity_bestuur_positions_detail( $post ) {
-
-	// Bail when no positions are signed for this entity
-	if ( ! $positions = vgsr_entity_bestuur_get_positions( $post ) )
-		return;
-
-	?>
-
-	<div class="bestuur-positions">
-		<h4><?php esc_html( _ex( 'Members', 'Bestuur positions', 'vgsr-entity' ) ); ?></h4>
-
-		<dl>
-			<?php foreach ( $positions as $args ) : ?>
-			<dt class="position position-<?php echo $args['slug']; ?>"><?php echo $args['label']; ?></dt>
-			<dd class="member"><?php
-
-				// Use existing user's display name
-				if ( $user = get_user_by( is_numeric( $args['user'] ) ? 'id' : 'slug', $args['user'] ) ) {
-					echo $user->display_name;
-
-				// Default to the provided 'user' name or content
-				} else {
-					echo $args['user'];
-				}
-			?></dd>
-			<?php endforeach; ?>
-		</dl>
-	</div>
-
-	<?php
-}
-
-/** Theme **************************************************************/
-
 /**
  * Modify the document title for our entity
  *
@@ -122,6 +79,65 @@ function vgsr_entity_bestuur_document_title_parts( $title ) {
 
 	return $title;
 }
+
+/** Positions **********************************************************/
+
+/**
+ * Add the bestuur positions entity detail to the post content
+ *
+ * @since 2.0.0
+ *
+ * @param string $content Post content
+ * @return string Post content
+ */
+function vgsr_entity_bestuur_positions_detail( $content ) {
+
+	// Bail when no positions are signed for this entity
+	if ( $positions = vgsr_entity_bestuur_get_positions( get_post() ) ) {
+
+		// Start output buffer
+		ob_start(); ?>
+
+		<div class="bestuur-positions">
+			<h4 class="detail-title"><?php echo esc_html_x( 'Members', 'Bestuur positions', 'vgsr-entity' ); ?></h4>
+
+			<dl>
+				<?php foreach ( $positions as $args ) : ?>
+				<dt class="position position-<?php echo $args['slug']; ?>"><?php echo $args['label']; ?></dt>
+				<dd class="member"><?php
+
+					// Display existing user's name, default to provided name
+					$user = isset( $args['user'] ) ? get_user_by( is_numeric( $args['user'] ) ? 'id' : 'slug', $args['user'] ) : false;
+					$name = $user ? $user->display_name : $args['user'];
+
+					/**
+					 * Filter the displayed name for the Bestuur's position
+					 *
+					 * @since 2.0.0
+					 *
+					 * @param string $name Displayed name
+					 * @param WP_User|bool $user User object or False when not found
+					 * @param array $args Bestuur position arguments
+					 */
+					echo apply_filters( 'vgsr_entity_bestuur_position_name', $name, $user, $args );
+				?></dd>
+				<?php endforeach; ?>
+			</dl>
+		</div>
+
+		<?php
+
+		// Get output buffer
+		$positions = ob_get_clean();
+
+		// Prefix content with positions
+		$content = $positions . $content;
+	}
+
+	return $content;
+}
+
+/** Theme **************************************************************/
 
 /**
  * Modify Entity Menu Widget posts arguments

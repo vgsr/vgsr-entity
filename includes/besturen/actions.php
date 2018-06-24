@@ -16,11 +16,11 @@ add_filter( 'post_updated_messages', 'vgsr_entity_bestuur_post_updated_messages'
 
 /** Template ******************************************************************/
 
-add_action( 'vgsr_entity_bestuur_details', 'vgsr_entity_bestuur_positions_detail' );
+add_filter( 'document_title_parts', 'vgsr_entity_bestuur_document_title_parts', 10 );
+add_action( 'the_content',          'vgsr_entity_bestuur_positions_detail',      5 );
 
 /** Theme *********************************************************************/
 
-add_filter( 'document_title_parts',                'vgsr_entity_bestuur_document_title_parts' );
 add_filter( 'vgsr_bestuur_menu_widget_query_args', 'vgsr_entity_bestuur_widget_menu_order'    );
 
 /** Menus *********************************************************************/
