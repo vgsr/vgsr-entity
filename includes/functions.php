@@ -264,7 +264,7 @@ function vgsr_entity_get_entity_parent( $type = '', $object = false ) {
 		$parent  = $parents[ $type ];
 
 		// Get the parent's post object
-		if ( $object ) {
+		if ( $parent && $object ) {
 			$parent = get_post( $parent );
 		}
 	}
