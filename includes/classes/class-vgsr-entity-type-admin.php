@@ -264,6 +264,11 @@ class VGSR_Entity_Type_Admin {
 	 */
 	public function post_states( $states, $post ) {
 
+		// Append state for the entity parent page
+		if ( 'page' === $post->post_type && vgsr_is_entity_parent( $post ) === $this->type ) {
+			$states[] = get_post_type_object( vgsr_entity_get_post_type( $this->type ) )->labels->name;
+		}
+
 		// Append a state for archived posts
 		if ( $this->post_type === $post->post_type && $this->has_archive && vgsr_entity_get_archived_status_id() === $post->post_status ) {
 			$states[] = esc_html__( 'Archived', 'vgsr-entity' );
