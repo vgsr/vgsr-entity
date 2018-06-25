@@ -97,6 +97,11 @@ function vgsr_entity_settings_fields_by_type( $type = '' ) {
  */
 function vgsr_entity_settings_display_entity_parent_field() {
 
+	// Flush rerwite rules if this setting is saved
+	if ( isset( $_GET['settings-updated'] ) && isset( $_GET['page'] ) ) {
+		flush_rewrite_rules();
+	}
+
 	// Get VGSR Entity
 	$post_type = get_current_screen()->post_type;
 	$type      = vgsr_entity_get_type( $post_type, true );
