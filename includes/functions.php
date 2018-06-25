@@ -680,23 +680,6 @@ function dutch_net_numbers() {
 }
 endif;
 
-/**
- * Return whether the post has a Read More tag
- *
- * @since 2.0.0
- *
- * @param WP_Post|int $post Optional. Post object or ID. Defaults to the current post.
- * @return bool Post has more tag
- */
-function vgsr_entity_has_more_tag( $post = 0 ) {
-
-	// Bail when the post is invalid
-	if ( ! $post = get_post( $post ) )
-		return false;
-
-	return (bool) preg_match( '/<!--more(.*?)?-->/', $post->post_content );
-}
-
 /** Features ***********************************************************/
 
 /**
