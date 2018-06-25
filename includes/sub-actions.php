@@ -11,6 +11,28 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Run dedicated activation hook for this plugin
+ *
+ * @since 2.0.0
+ *
+ * @uses do_action() Calls 'vgsr_entity_activation'
+ */
+function vgsr_entity_activation() {
+	do_action( 'vgsr_entity_activation' );
+}
+
+/**
+ * Run dedicated deactivation hook for this plugin
+ *
+ * @since 2.0.0
+ *
+ * @uses do_action() Calls 'vgsr_entity_deactivation'
+ */
+function vgsr_entity_deactivation() {
+	do_action( 'vgsr_entity_deactivation' );
+}
+
+/**
  * Run dedicated init hook for this plugin
  *
  * @since 1.0.0

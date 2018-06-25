@@ -602,6 +602,16 @@ function vgsr_entity_suggest_user() {
 
 /** Utilities **********************************************************/
 
+/**
+ * Delete a blogs rewrite rules, so that they are automatically rebuilt on
+ * the subsequent page load.
+ *
+ * @since 2.0.0
+ */
+function vgsr_entity_delete_rewrite_rules() {
+	delete_option( 'rewrite_rules' );
+}
+
 if ( ! function_exists( 'pow2' ) ) :
 /**
  * Return a single value by applying the power of 2

@@ -15,6 +15,11 @@ defined( 'ABSPATH' ) || exit;
 add_action( 'init',       'vgsr_entity_init'       );
 add_action( 'admin_init', 'vgsr_entity_admin_init' );
 
+/** Utility *******************************************************************/
+
+add_action( 'vgsr_entity_activation',   'vgsr_entity_delete_rewrite_rules' );
+add_action( 'vgsr_entity_deactivation', 'vgsr_entity_delete_rewrite_rules' );
+
 /** Main **********************************************************************/
 
 add_action( 'wp', 'vgsr_entity_set_globals' );

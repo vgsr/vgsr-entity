@@ -154,6 +154,10 @@ final class VGSR_Entity {
 	 */
 	private function setup_actions() {
 
+		// Add actions to plugin activation and deactivation hooks
+		add_action( 'activate_'   . $this->basename, 'vgsr_entity_activation'   );
+		add_action( 'deactivate_' . $this->basename, 'vgsr_entity_deactivation' );
+
 		// Plugin
 		add_action( 'plugins_loaded',         array( $this, 'load_textdomain'  ) );
 		add_action( 'vgsr_entity_admin_init', array( $this, 'check_for_update' ) );
@@ -174,9 +178,6 @@ final class VGSR_Entity {
 		add_filter( 'get_next_post_where',     array( $this, 'adjacent_post_where' ), 10, 5 );
 		add_filter( 'get_previous_post_sort',  array( $this, 'adjacent_post_sort'  ), 10, 2 );
 		add_filter( 'get_next_post_sort',      array( $this, 'adjacent_post_sort'  ), 10, 2 );
-
-		// Activation
-		add_action( "activate_{$this->basename}", array( $this, 'flush_rewrite_rules' ) );
 	}
 
 	/** Entities *******************************************************/
@@ -306,30 +307,6 @@ final class VGSR_Entity {
 	}
 
 	/** Plugin *********************************************************/
-
-	/**
-	 * Refresh permalink structure on activation
-	 *
-	 * @since 1.0.0
-	 */
-	public function flush_rewrite_rules() {
-
-		/**
-		 * On activation, the 'init' hook was already passed, so
-		 * our post types have not been registered at this point.
-		 */
-
-		// Setup entities
-		$this->setup_entities();
-
-		// Call post type registration
-		foreach ( $this->types as $type_obj ) {
-			$type_obj->register_post_type();
-		}
-
-		// Flush rules only on activation
-		flush_rewrite_rules();
-	}
 
 	/**
 	 * Loads the textdomain file for this plugin
