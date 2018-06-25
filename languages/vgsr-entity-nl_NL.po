@@ -1,187 +1,737 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: VGSR Entity\n"
-"POT-Creation-Date: 2012-11-07 06:53+0100\n"
-"PO-Revision-Date: 2012-11-07 16:38+0100\n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Language: Dutch\n"
+"POT-Creation-Date: 2018-06-24 19:15+0000\n"
+"PO-Revision-Date: 2018-06-25 06:38+0000\n"
+"Last-Translator: Laurens Offereins <lmoffereins@gmail.com>\n"
+"Language-Team: Nederlands\n"
+"Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Loco https://localise.biz/\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e;_x\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: ..\n"
+"Report-Msgid-Bugs-To: \n"
+"Plural-Forms: nplurals=2; plural=n != 1;"
 
-#: ../vgsr-entity.php:53 ../vgsr-entity.php:218
-msgid "Settings"
-msgstr ""
+#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:416
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:269
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:428
+msgid "Archived"
+msgstr "Gearchiveerd"
 
-#: ../vgsr-entity.php:120 ../vgsr-entity.php:123 ../entities/kast.php:66
+#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:417
 #, php-format
-msgid "New %s"
-msgstr ""
+msgid "Archived <span class=\"count\">(%s)</span>"
+msgid_plural "Archived <span class=\"count\">(%s)</span>"
+msgstr[0] "Gearchiveerd <span class=\"count\">(%s)</span>"
+msgstr[1] "Gearchiveerd <span class=\"count\">(%s)</span>"
 
-#: ../vgsr-entity.php:121
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:355
+msgctxt "Customizer menu type label"
+msgid "Entity Page"
+msgstr "Entiteitpagina"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:780
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:921
+msgid "Logo"
+msgstr "Logo"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:806
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:436
 #, php-format
-msgid "Add new %s"
-msgstr ""
+msgid "Set %s Logo"
+msgstr "%slogo instellen"
 
-#: ../vgsr-entity.php:122
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:820
 #, php-format
-msgid "Edit %s"
-msgstr ""
+msgid "Remove %s Logo"
+msgstr "%slogo verwijderen"
 
-#: ../vgsr-entity.php:124
-#, php-format
-msgid "All %s"
-msgstr ""
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:26
+msgid "Main Settings"
+msgstr "Hoofdinstellingen"
 
-#: ../vgsr-entity.php:125
-#, php-format
-msgid "View %s"
-msgstr ""
-
-#: ../vgsr-entity.php:126
-#, php-format
-msgid "Search %s"
-msgstr ""
-
-#: ../vgsr-entity.php:127
-#, php-format
-msgid "No %s found"
-msgstr ""
-
-#: ../vgsr-entity.php:128
-#, php-format
-msgid "No %s found in trash"
-msgstr ""
-
-#: ../vgsr-entity.php:234
-msgid "Another section title"
-msgstr "Weer een sectie titel"
-
-#: ../vgsr-entity.php:237
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:49
 msgid "Parent Page"
-msgstr "Moederpagina"
+msgstr "Hoofdpagina"
 
-#: ../vgsr-entity.php:242
-msgid "Some blabla about the settings here below. Fill 'em and enjoy!"
-msgstr "Wat blabla over de instellingen hieronder. Vul ze en veel plezier!"
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:115
+msgid "&mdash; No Parent &mdash;"
+msgstr "&mdash; Geen hoofd &mdash;"
 
-#: ../vgsr-entity.php:270
-msgid "None"
-msgstr ""
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:122
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:43
+msgid "View"
+msgstr "Bekijken"
 
-#: ../vgsr-entity.php:273
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:125
 #, php-format
-msgid "Pick the parent page you want to have your %s appear on."
-msgstr "Kies de moederpagina waarvan je wil dat je %s er op verschijnen."
+msgid "Select the page that should act as the parent page for %s."
+msgstr "Selecteer de hoofdpagina voor %s."
 
-#: ../widgets/widget-menu.php:30
-msgid "Display VGSR Entity menu list"
-msgstr "Toon VGSR Entity menu lijst"
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:102
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:54
+msgid "Remove position"
+msgstr "Verwijder positie"
 
-#: ../widgets/widget-menu.php:112
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:106
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:26
+msgid "Positions"
+msgstr "Posities"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:113
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:138
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:154
+msgid "&mdash; Select position &mdash;"
+msgstr "&mdash; Positie &mdash;"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:171
 msgid ""
-"This widget will only be shown on a VGSR Entity page and on it's parent page."
+"Assign a site user (by ID or login) to a position or provide a full name. A "
+"green border indicates a verified site user."
 msgstr ""
-"Deze widget is alleen zichtbaar op een VGSR Entity pagina of op haar "
-"moederpagina."
+"Koppel een site-account (middels ID of login) aan een positie of vul een "
+"volledige naam in. Een groene rand signaleert een bestaand site-account."
 
-#: ../widgets/widget-menu.php:114
-msgid "There are no settings for this widget"
-msgstr "Er zijn geen instellingen voor deze widget"
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:173
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:67
+msgid "Add position"
+msgstr "Positie toevoegen"
 
-#: ../entities/bestuur.php:69
-msgid "Widget menu order"
-msgstr "Widget menu volgorde"
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:251
+msgid "Current"
+msgstr "Huidig"
 
-#: ../entities/bestuur.php:85
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:36
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:37
+msgid "Besturen"
+msgstr "Besturen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:38
+msgid "Bestuur"
+msgstr "Bestuur"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:39
+msgid "All Besturen"
+msgstr "Alle besturen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:40
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:44
+msgid "New Bestuur"
+msgstr "Nieuw bestuur"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:41
+msgid "Add new Bestuur"
+msgstr "Bestuur toevoegen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:42
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:41
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:42
+msgid "Edit"
+msgstr "Bewerken"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:43
+msgid "Edit Bestuur"
+msgstr "Bestuur bewerken"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:45
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:46
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:75
+msgid "View Bestuur"
+msgstr "Bestuur bekijken"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:47
+msgid "View Besturen"
+msgstr "Bekijk besturen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:48
+msgid "Search Besturen"
+msgstr "Zoek besturen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:49
+msgid "No Besturen found"
+msgstr "Geen besturen gevonden"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:50
+msgid "No Besturen found in trash"
+msgstr "Geen besturen gevonden in de prullenbak"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:51
+msgid "Insert into bestuur"
+msgstr "Invoegen in bestuur"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:52
+msgid "Uploaded to this bestuur"
+msgstr "Ge&#252;pload naar dit bestuur"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:53
+msgid "Filter besturen list"
+msgstr "Besturen filteren"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:54
+msgid "Besturen list navigation"
+msgstr "Navigatie door besturenlijst"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:55
+msgid "Besturen list"
+msgstr "Besturenlijst"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:58
+msgid "Besturen Settings"
+msgstr "Bestuursinstellingen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:80
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:81
+msgid "Bestuur updated."
+msgstr "Bestuur bijgewerkt."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:82
+msgid "Bestuur created."
+msgstr "Bestuur aangemaakt."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:83
+msgid "Bestuur saved."
+msgstr "Bestuur opgeslagen."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:84
+msgid "Bestuur submitted."
+msgstr "Bestuur ingediend."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:231
+msgid "Bestuur Parent"
+msgstr "Bestuurhoofd"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:241
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:242
+msgid "Current Bestuur"
+msgstr "Huidig bestuur"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:258
+msgctxt "Customizer menu type label"
+msgid "Bestuur Page"
+msgstr "Bestuurpagina"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:36
+msgid "Menu Widget Order"
+msgstr "Menu Widget volgorde"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:64
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:73
+msgid "Label"
+msgstr "Label"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:65
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:74
+msgid "Slug"
+msgstr "Slug"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:118
 msgid "Seniority"
 msgstr "Anci&#235;nniteit"
 
-#: ../entities/bestuur.php:86
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:119
 msgid "Reverse seniority"
 msgstr "Omgekeerde anci&#235;nniteit"
 
-#: ../entities/bestuur.php:89
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:122
+msgid "The order in which the Besturen will be displayed in the Menu Widget."
+msgstr "De volgorde waarop besturen worden getoond in het Menu Widget"
+
+#. 1. Bestuur title, 2. Bestuur season
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/template.php:74
 #, php-format
-msgid "The order in which the %s will be displayed in the Menu Widget."
-msgstr "De volgorde waarop de %s zullen worden getoond in het Menu Widget."
+msgid "%1$s (%2$s)"
+msgstr "%1$s (%2$s)"
 
-#: ../entities/bestuur.php:102
-msgid "Bestuur Data"
-msgstr "Bestuursgegevens"
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/template.php:102
+msgctxt "Bestuur positions"
+msgid "Members"
+msgstr "Bestuursleden"
 
-#: ../entities/bestuur.php:134 ../entities/bestuur.php:208
-#: ../entities/bestuur.php:302
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-bestuur.php:32
+msgid "A Bestuur is the VGSR's governing body which is re-elected each year."
+msgstr ""
+"Een bestuur is het leidende orgaan van de VGSR en wordt elk jaar herkozen."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-bestuur.php:36
+msgid "Older besturen"
+msgstr "Voorgaande besturen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-bestuur.php:37
+msgid "Newer besturen"
+msgstr "Volgende besturen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-bestuur.php:38
+msgid "Besturen navigation"
+msgstr "Bestuurnavigatie"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-bestuur.php:48
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-bestuur.php:57
 msgid "Season"
 msgstr "Seizoen"
 
-#: ../entities/bestuur.php:137
-msgid "The required format is yyyy/yyyy."
-msgstr "Het vereiste format is yyyy/yyyy."
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-bestuur.php:49
+#, php-format
+msgid "Season %s"
+msgstr "Seizoen %s"
 
-#: ../entities/bestuur.php:208 ../entities/dispuut.php:216
-#: ../entities/dispuut.php:217 ../entities/kast.php:324
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-bestuur.php:57
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:31
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:31
 #, php-format
 msgid "The submitted value for %s is not given in the valid format."
 msgstr "De waarde voor %s is niet in het juiste format gegeven."
 
-#: ../entities/dispuut.php:60
-msgid "Dispuut Data"
-msgstr "Dispuutsgegevens"
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:37
+msgid ""
+"A Dispuut is part of the VGSR's social structure for discussing topics in "
+"small groups."
+msgstr ""
+"Een dispuut is onderdeel van de sociale structuur van de VGSR, gericht op "
+"het bespreken van onderwerpen in kleine groepen."
 
-#: ../entities/dispuut.php:92 ../entities/dispuut.php:216
-#: ../entities/dispuut.php:237 ../entities/kast.php:250
-#: ../entities/kast.php:324 ../entities/kast.php:344
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:41
+msgid "Older disputen"
+msgstr "Oudere disputen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:42
+msgid "Newer disputen"
+msgstr "Nieuwere disputen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:43
+msgid "Disputen navigation"
+msgstr "Dispuutnavigatie"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:53
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:71
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:105
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:123
 msgid "Since"
 msgstr "Sinds"
 
-#: ../entities/dispuut.php:95 ../entities/dispuut.php:119
-msgid "The required format is yyyy."
-msgstr "Het vereiste format is yyyy."
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:54
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:106
+#, php-format
+msgid "Since %s"
+msgstr "Sinds %s"
 
-#: ../entities/dispuut.php:116 ../entities/dispuut.php:217
-#: ../entities/dispuut.php:248
-msgid "Died"
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:62
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:72
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:114
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:124
+msgid "Ceased"
 msgstr "Opgeheven"
 
-#: ../entities/kast.php:77
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:63
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:115
+#, php-format
+msgid "Ceased %s"
+msgstr "Opgeven in %s"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-dispuut.php:124
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:327
+#, php-format
+msgid "Active between %1$s and %2$s"
+msgstr "Actief van %1$s tot %2$s"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-menu-widget.php:29
+msgid "VGSR Entity Menu"
+msgstr "VGSR Entity Menu"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-menu-widget.php:30
+msgid "Display a list of all the entities of the type of the current page"
+msgstr ""
+"Toon een lijst van alle entiteiten die horen bij het type van de huidige "
+"pagina"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-menu-widget.php:120
+msgid ""
+"This widget will only display a list of entities on a entity related page."
+msgstr ""
+"Dit widget toont de lijst van entiteiten alleen op een gerelateerde pagina."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-menu-widget.php:121
+msgid "There are no settings for this widget."
+msgstr "Er zijn geen instellingen voor dit widget."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:325
+msgid "Settings"
+msgstr "Instellingen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:435
+#, php-format
+msgid "%s Logo"
+msgstr "%slogo"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:717
+msgid "YYYY"
+msgstr "YYYY"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:728
+msgid "DD/MM/YYYY"
+msgstr "DD/MM/YYYY"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type.php:119
+msgid "Some of the provided values were not given in the valid format."
+msgstr "Enkele gegevens zijn niet in het juiste format gegeven."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type.php:334
+#, php-format
+msgid "%s Details"
+msgstr "%sdetails"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:37
+msgid "A Kast is an initiated house where active VGSR members dwell."
+msgstr ""
+"Een kast is een ingewijd verenigingshuis waar actieve leden van de VGSR "
+"wonen."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:41
+msgid "Older kasten"
+msgstr "Oudere kasten"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:42
+msgid "Newer kasten"
+msgstr "Nieuwere kasten"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:43
+msgid "Kasten navigation"
+msgstr "Kastnavigatie"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:56
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:57
+msgid "Street"
+msgstr "Straat"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:64
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:65
+msgid "Number"
+msgstr "Huisnummer"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:73
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:74
+msgid "Addition"
+msgstr "Toevoeging"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:81
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:82
+msgid "Postcode"
+msgstr "Postcode"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:89
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:90
+msgid "City"
+msgstr "Stad"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:97
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:98
+msgid "Phone"
+msgstr "Telefoon"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-kast.php:221
+msgid "Address"
+msgstr "Adres"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:35
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:36
+msgid "Disputen"
+msgstr "Disputen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:37
+msgid "Dispuut"
+msgstr "Dispuut"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:38
+msgid "All Disputen"
+msgstr "Alle disputen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:39
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:43
+msgid "New Dispuut"
+msgstr "Nieuw dispuut"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:40
+msgid "Add new Dispuut"
+msgstr "Nieuw dispuut toevoegen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:42
+msgid "Edit Dispuut"
+msgstr "Dispuut bewerken"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:44
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:45
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:74
+msgid "View Dispuut"
+msgstr "Dispuut bekijken"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:46
+msgid "View Disputen"
+msgstr "Bekijk disputen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:47
+msgid "Search Disputen"
+msgstr "Zoek disputen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:48
+msgid "No Disputen found"
+msgstr "Geen disputen gevonden"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:49
+msgid "No Disputen found in trash"
+msgstr "Geen disputen gevonden in de prullenbak"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:50
+msgid "Insert into dispuut"
+msgstr "Invoegen in dispuut"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:51
+msgid "Uploaded to this dispuut"
+msgstr "Ge&#252;pload naar dit dispuut"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:52
+msgid "Filter disputen list"
+msgstr "Disputen filteren"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:53
+msgid "Disputen list navigation"
+msgstr "Navigatie door disputenlijst"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:54
+msgid "Disputen list"
+msgstr "Disputenlijst"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:57
+msgid "Disputen Settings"
+msgstr "Dispuutsinstellingen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:79
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:80
+msgid "Dispuut updated."
+msgstr "Dispuut bijgewerkt."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:81
+msgid "Dispuut created."
+msgstr "Dispuut aangemaakt."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:82
+msgid "Dispuut saved."
+msgstr "Dispuut opgeslagen."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:83
+msgid "Dispuut submitted."
+msgstr "Dispuut ingediend."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:130
+msgid "Dispuut Parent"
+msgstr "Dispuuthoofd"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/disputen/functions.php:146
+msgctxt "Customizer menu type label"
+msgid "Dispuut Page"
+msgstr "Dispuutpagina"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:36
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:37
+msgid "Kasten"
+msgstr "Kasten"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:38
+msgid "Kast"
+msgstr "Kast"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:39
+msgid "All Kasten"
+msgstr "Alle kasten"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:40
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:44
+msgid "New Kast"
+msgstr "Nieuwe kast"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:41
+msgid "Add new Kast"
+msgstr "Nieuwe kast toevoegen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:43
+msgid "Edit Kast"
+msgstr "Kast bewerken"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:45
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:46
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:75
+msgid "View Kast"
+msgstr "Kast bekijken"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:47
+msgid "View Kasten"
+msgstr "Bekijk kasten"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:48
+msgid "Search Kasten"
+msgstr "Zoek kasten"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:49
+msgid "No Kasten found"
+msgstr "Geen kasten gevonden"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:50
+msgid "No Kasten found in trash"
+msgstr "Geen kasten gevonden in de prullenbak"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:51
+msgid "Insert into kast"
+msgstr "Invoegen in kast"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:52
+msgid "Uploaded to this kast"
+msgstr "Ge&#252;pload naar deze kast"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:53
+msgid "Filter kasten list"
+msgstr "Kasten filteren"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:54
+msgid "Kasten list navigation"
+msgstr "Kastnavigatie"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:55
+msgid "Kasten list"
+msgstr "Kastenlijst"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:58
+msgid "Kasten Settings"
+msgstr "Kastinstellingen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:80
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:81
+msgid "Kast updated."
+msgstr "Kast bijgewerkt."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:82
+msgid "Kast created."
+msgstr "Kast aangemaakt."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:83
+msgid "Kast saved."
+msgstr "Kast opgeslagen."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:84
+msgid "Kast submitted."
+msgstr "Kast ingediend."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:131
+msgid "Kast Parent"
+msgstr "Kasthoofd"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/functions.php:147
+msgctxt "Customizer menu type label"
+msgid "Kast Page"
+msgstr "Kastpagina"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/settings.php:26
 msgid "Recreate Thumbnails"
 msgstr "Maak nieuwe thumbnails"
 
-#: ../entities/kast.php:87
-#, php-format
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/settings.php:45
 msgid ""
-"This is a one time resizing of thumbs for %s. NOTE: This option only "
-"<strong>adds</strong> new image sizes, it doesn't remove old ones."
+"This is a one time resizing of thumbs for Kasten. NOTE: This option only "
+"adds new image sizes, it does not remove old ones."
 msgstr ""
-"Hiermee kan je in een keer thumbnails herschalen voor %s. LET OP: Deze optie "
-"<strong>voegt</strong> alleen nieuwe afbeeldingformaten <strong>toe</"
-"strong>. Het verwijdert niet oude formaten."
+"Hiermee kan je eenmalig nieuwe afmetingen voor thumbnails voor kasten maken. "
+"Dit verwijdert geen oude afmetingen."
 
-#: ../entities/kast.php:218
-msgid "Kast Data"
-msgstr "Kastgegevens"
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:120
+msgid "BuddyPress Settings"
+msgstr "BuddyPressinstellingen"
 
-#: ../entities/kast.php:253
-msgid "The required format is dd/mm/yyyy."
-msgstr "Het vereiste format is dd/mm/yyyy."
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:146
+msgid "Members Field"
+msgstr "Ledenveld"
 
-#~ msgid ""
-#~ "The submitted value for <strong>Season</strong> is not given in the valid "
-#~ "format."
-#~ msgstr ""
-#~ "De waarde voor <strong>Seizoen</strong> is niet in het juiste format "
-#~ "gegeven."
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:150
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:136
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:179
+msgid "Members"
+msgstr "Leden"
 
-#~ msgid ""
-#~ "The submitted value for <strong>Since</strong> is not given in the valid "
-#~ "format."
-#~ msgstr ""
-#~ "De waarde voor <strong>Sinds</strong> is niet in het juiste format "
-#~ "gegeven."
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:153
+msgid "Select the field that holds the Dispuut's members."
+msgstr "Selecteer het profielveld dat de leden van een dispuut bevat."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:158
+#, php-format
+msgid "%d Member"
+msgid_plural "%d Members"
+msgstr[0] "%d lid"
+msgstr[1] "%d leden"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:165
+msgid "Residents Field"
+msgstr "Bewonersveld"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:169
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:193
+msgid "Residents"
+msgstr "Bewoners"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:172
+msgid "Select the field that holds the Kast's residents."
+msgstr "Selecteer het profielveld dat de bewoners van een kast bevat."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:177
+#, php-format
+msgid "%d Resident"
+msgid_plural "%d Residents"
+msgstr[0] "%d bewoner"
+msgstr[1] "%d bewoners"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:184
+msgid "Former Residents Field"
+msgstr "Oud-bewonersveld"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:188
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:210
+msgid "Former Residents"
+msgstr "Oud-bewoners"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:191
+msgid "Select the field that holds the Kast's former residents."
+msgstr "Selecteer het profielveld dat de oud-bewoners van een kast bevat."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:202
+#, php-format
+msgid "Address Map: %s"
+msgstr "Adres mapping: %s"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:208
+#, php-format
+msgid "Select the profile field that holds this address detail: %s."
+msgstr "Selecteer het profielveld dat dit adresdetail bevat: %s."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:81
+msgid "&mdash; No Field &mdash;"
+msgstr "&mdash; Geen veld &mdash;"
+
+#. Name of the plugin
+msgid "VGSR Entity"
+msgstr "VGSR Entity"
+
+#. Description of the plugin
+msgid "Custom post type management for community entities"
+msgstr "Beheer aparte verenigingsentiteiten in WordPress"
+
+#. URI of the plugin
+msgid "https://github.com/vgsr/vgsr-entity"
+msgstr "https://github.com/vgsr/vgsr-entity"
+
+#. Author of the plugin
+msgid "Laurens Offereins"
+msgstr "Laurens Offereins"
+
+#. Author URI of the plugin
+msgid "https://github.com/lmoffereins"
+msgstr "https://github.com/lmoffereins"
