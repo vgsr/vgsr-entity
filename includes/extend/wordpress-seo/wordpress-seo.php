@@ -103,9 +103,9 @@ class VGSR_Entity_WPSEO {
 				if ( is_post_type_archive( $post_type ) ) {
 					array_pop( $_crumbs );
 				}
-			}
 
-			$crumbs = array_values( $_crumbs );
+				$crumbs = array_values( $_crumbs );
+			}
 		}
 
 		return $crumbs;
