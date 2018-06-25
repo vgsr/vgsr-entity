@@ -64,7 +64,7 @@ class VGSR_Entity_Menu_Widget extends WP_Widget {
 			// Provide link to parent page when we're not already there
 			if ( ! vgsr_is_entity_parent() && ! is_post_type_archive( $post_type_object->name ) ) {
 				$title = sprintf( '<a href="%s">%s</a>',
-					esc_url( get_permalink( vgsr_entity_get_entity_parent( $type ) ) ),
+					esc_url( get_post_type_archive_link( $post_type_object->name ) ),
 					$title
 				);
 			}
