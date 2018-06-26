@@ -393,6 +393,17 @@ function vgsr_entity_update_post_status( $post = 0, $post_status = 'publish' ) {
 	do_action( 'wp_insert_post', $post->ID, $post, true );
 }
 
+/**
+ * Return whether we're filtering the excerpt
+ *
+ * @since 2.0.0
+ *
+ * @return bool Are we filtering the excerpt?
+ */
+function vgsr_entity_is_the_excerpt() {
+	return in_array( 'get_the_excerpt', (array) $GLOBALS['wp_current_filter'] );
+}
+
 /** Nav Menus **********************************************************/
 
 /**

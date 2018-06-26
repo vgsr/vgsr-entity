@@ -171,7 +171,7 @@ function vgsr_entity_get_entity( $type = '' ) {
 function vgsr_entity_filter_content( $content ) {
 
 	// When in the main query's single entity
-	if ( vgsr_entity_is_main_query() && vgsr_is_entity() ) {
+	if ( ! vgsr_entity_is_the_excerpt() && vgsr_entity_is_main_query() && vgsr_is_entity() ) {
 
 		// Prepend details to content
 		$content = vgsr_entity_details() . $content;
@@ -435,7 +435,7 @@ function vgsr_entity_get_the_archive_description( $description ) {
 function vgsr_entity_the_archive_content( $content ) {
 
 	// Limit words in post type archives
-	if ( vgsr_is_entity() && is_post_type_archive() ) {
+	if ( ! vgsr_entity_is_the_excerpt() && vgsr_is_entity() && is_post_type_archive() ) {
 		$content = wp_trim_words( $content );
 	}
 

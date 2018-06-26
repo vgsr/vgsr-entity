@@ -92,6 +92,10 @@ function vgsr_entity_bestuur_document_title_parts( $title ) {
  */
 function vgsr_entity_bestuur_positions_detail( $content ) {
 
+	// Bail when filtering the excerpt
+	if ( vgsr_entity_is_the_excerpt() )
+		return $content;
+
 	// Bail when no positions are signed for this entity
 	if ( $positions = vgsr_entity_bestuur_get_positions( get_post() ) ) {
 
