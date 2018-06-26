@@ -10,6 +10,70 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
+/** Versions ***********************************************************/
+
+/**
+ * Output the plugin version
+ *
+ * @since 2.0.0
+ */
+function vgsr_entity_version() {
+	echo vgsr_entity_get_version();
+}
+
+	/**
+	 * Return the plugin version
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return string The plugin version
+	 */
+	function vgsr_entity_get_version() {
+		return vgsr_entity()->version;
+	}
+
+/**
+ * Output the plugin database version
+ *
+ * @since 2.0.0
+ */
+function vgsr_entity_db_version() {
+	echo vgsr_entity_get_db_version();
+}
+
+	/**
+	 * Return the plugin database version
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return string The plugin version
+	 */
+	function vgsr_entity_get_db_version() {
+		return vgsr_entity()->db_version;
+	}
+
+/**
+ * Output the plugin database version directly from the database
+ *
+ * @since 2.0.0
+ */
+function vgsr_entity_db_version_raw() {
+	echo vgsr_entity_get_db_version_raw();
+}
+
+	/**
+	 * Return the plugin database version directly from the database
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return string The current plugin version
+	 */
+	function vgsr_entity_get_db_version_raw() {
+		return get_option( 'vgsr_entity_db_version', '' );
+	}
+
+/** User ***************************************************************/
+
 /**
  * Return whether the user has access to hidden parts
  *
@@ -955,51 +1019,4 @@ function vgsr_entity_feature_logo_detail( $post ) {
 	$size = has_image_size( 'entity-logo' ) ? 'entity-logo' : array( 250, 250 );
 
 	printf( '<div class="entity-logo">%s</div>', wp_get_attachment_image( $logo_id, $size ) );
-}
-
-/** Update *************************************************************/
-
-/**
- * Update routine for version 2.0.0
- *
- * @since 2.0.0
- *
- * @global $wpdb WPDB
- */
-function vgsr_entity_update_20000() {
-	global $wpdb;
-
-	// Get VGSR Entity
-	$entity = vgsr_entity();
-
-	// Bestuur: Update old-style menu-order (+ 1950)
-	$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->posts} p SET p.menu_order = ( p.menu_order + %d ) WHERE p.post_type = %s AND p.menu_order < %d", $entity->base_year, 'bestuur', $entity->base_year ) );
-
-	// Kast: Rename 'since' meta key
-	$wpdb->update(
-		$wpdb->postmeta,
-		array( 'meta_key' => 'since' ),
-		array( 'meta_key' => 'vgsr_entity_kast_since' ),
-		array( '%s' ),
-		array( '%s' )
-	);
-
-	// Kast: Change 'since' date format from d/m/Y to Y-m-d
-	if ( $query = new WP_Query( array(
-		'post_type'      => 'kast',
-		'fields'         => 'ids',
-		'posts_per_page' => -1,
-	) ) ) {
-		foreach ( $query->posts as $post_id ) {
-			$value = get_post_meta( $post_id, 'since', true );
-
-			if ( $value ) {
-				$date  = DateTime::createFromFormat( 'd/m/Y', $value );
-				if ( $date ) {
-					$value = $date->format( 'Y-m-d' );
-					update_post_meta( $post_id, 'since', $value );
-				}
-			}
-		}
-	}
 }

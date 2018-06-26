@@ -46,6 +46,12 @@ add_filter( 'get_the_archive_description', 'vgsr_entity_get_the_archive_descript
 
 add_action( 'wp_ajax_vgsr_entity_suggest_user', 'vgsr_entity_suggest_user' );
 
+/** Admin *********************************************************************/
+
+if ( is_admin() ) {
+	add_action( 'vgsr_entity_admin_init', 'vgsr_entity_setup_updater', 999 );
+}
+
 /** Extensions ****************************************************************/
 
 add_action( 'bp_loaded',        'vgsr_entity_setup_buddypress', 10 );

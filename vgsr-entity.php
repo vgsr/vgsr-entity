@@ -86,7 +86,7 @@ final class VGSR_Entity {
 		/** Versions **********************************************************/
 
 		$this->version       = '2.0.0-beta-2';
-		$this->db_version    = '20000';
+		$this->db_version    = 20000;
 
 		/** Paths *************************************************************/
 
@@ -140,6 +140,7 @@ final class VGSR_Entity {
 		require( $this->includes_dir . 'sub-actions.php'  );
 		require( $this->includes_dir . 'template.php'     );
 		require( $this->includes_dir . 'theme-compat.php' );
+		require( $this->includes_dir . 'update.php'       );
 
 		// Admin
 		if ( is_admin() ) {
@@ -157,6 +158,10 @@ final class VGSR_Entity {
 		// Add actions to plugin activation and deactivation hooks
 		add_action( 'activate_'   . $this->basename, 'vgsr_entity_activation'   );
 		add_action( 'deactivate_' . $this->basename, 'vgsr_entity_deactivation' );
+
+		// Bail when plugin is being deactivated
+		if ( vgsr_entity_is_deactivation() )
+			return;
 
 		// Plugin
 		add_action( 'plugins_loaded',         array( $this, 'load_textdomain'  ) );
