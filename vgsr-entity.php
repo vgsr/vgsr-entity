@@ -9,7 +9,7 @@
 
 /**
  * Plugin Name:       VGSR Entity
- * Description:       Custom post type management for community entities
+ * Description:       Structured organization and presentation of VGSR entities
  * Plugin URI:        https://github.com/vgsr/vgsr-entity
  * Author:            Laurens Offereins
  * Author URI:        https://github.com/lmoffereins
