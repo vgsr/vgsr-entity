@@ -36,6 +36,9 @@ This plugin is not hosted in the official WordPress repository. Instead, updatin
 = 2.0.0 =
 * Full rewrite of entity logic and entity metadata
 * Added Archived post status
+* Changed template for entity parent page to user archive.php
+* Added integration with BuddyPress
+* Added support for Yoast SEO breadcrumbs
 
 = 1.0.2 =
 * Fixed bug in adjacency logic
