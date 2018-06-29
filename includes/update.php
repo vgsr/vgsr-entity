@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Econozel Updater
+ * VGSR Entity Updater
  *
- * @package Econozel
+ * @package VGSR Entity
  * @subpackage Updater
  */
 
