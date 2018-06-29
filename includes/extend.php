@@ -45,7 +45,7 @@ function vgsr_entity_setup_wpseo() {
 		return;
 
 	// Include the WordPress SEO component
-	require( vgsr_entity()->extend_dir . 'wordpress-seo/wordpress-seo.php' );
+	require( vgsr_entity()->extend_dir . 'wordpress-seo.php' );
 
 	// Instantiate WordPress SEO for VGSR Entity
 	vgsr_entity()->extend->wpseo = new VGSR_Entity_WPSEO;

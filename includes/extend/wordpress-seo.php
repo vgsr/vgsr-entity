@@ -113,7 +113,7 @@ class VGSR_Entity_WPSEO {
 }
 
 /**
- * Setup the extension logic for BuddyPress
+ * Setup the extension logic for WP SEO
  *
  * @since 2.0.0
  *
