@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: VGSR Entity\n"
-"POT-Creation-Date: 2018-06-24 19:15+0000\n"
+"POT-Creation-Date: 2018-06-29 16:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,36 +17,36 @@ msgstr ""
 "Language: \n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:416
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:269
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:428
+#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:398
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:274
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:433
 msgid "Archived"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:417
+#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:399
 #, php-format
 msgid "Archived <span class=\"count\">(%s)</span>"
 msgid_plural "Archived <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:355
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:430
 msgctxt "Customizer menu type label"
 msgid "Entity Page"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:780
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:921
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:848
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:989
 msgid "Logo"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:806
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:436
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:874
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:441
 #, php-format
 msgid "Set %s Logo"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:820
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:888
 #, php-format
 msgid "Remove %s Logo"
 msgstr ""
@@ -59,16 +59,16 @@ msgstr ""
 msgid "Parent Page"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:115
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:120
 msgid "&mdash; No Parent &mdash;"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:122
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:127
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:43
 msgid "View"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:125
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:130
 #, php-format
 msgid "Select the page that should act as the parent page for %s."
 msgstr ""
@@ -245,7 +245,7 @@ msgstr ""
 msgid "%1$s (%2$s)"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/template.php:102
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/template.php:106
 msgctxt "Bestuur positions"
 msgid "Members"
 msgstr ""
@@ -350,20 +350,20 @@ msgstr ""
 msgid "There are no settings for this widget."
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:325
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:330
 msgid "Settings"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:435
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:440
 #, php-format
 msgid "%s Logo"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:717
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:722
 msgid "YYYY"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:728
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:733
 msgid "DD/MM/YYYY"
 msgstr ""
 
@@ -709,7 +709,7 @@ msgid "VGSR Entity"
 msgstr ""
 
 #. Description of the plugin
-msgid "Custom post type management for community entities"
+msgid "Structured organization and presentation of VGSR entities"
 msgstr ""
 
 #. URI of the plugin
