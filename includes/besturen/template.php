@@ -97,7 +97,7 @@ function vgsr_entity_bestuur_positions_detail( $content ) {
 		return $content;
 
 	// Bail when no positions are signed for this entity
-	if ( $positions = vgsr_entity_bestuur_get_positions( get_post() ) ) {
+	if ( $positions = vgsr_entity_bestuur_get_positions( 0 ) ) {
 
 		// Start output buffer
 		ob_start(); ?>

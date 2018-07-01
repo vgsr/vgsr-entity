@@ -140,19 +140,23 @@ function vgsr_entity_bestuur_get_positions( $post = null ) {
 	$positions = (array) get_option( '_bestuur-positions', array() );
 
 	// Get signed positions for a single bestuur
-	if ( null !== $post && $post = get_post( $post ) ) {
+	if ( null !== $post ) {
 
-		// Walk positions
-		foreach ( $positions as $position => $args ) {
+		// Walk positions for this post
+		if ( $post = get_post( $post ) ) {
+			foreach ( $positions as $position => $args ) {
 
-			// Position slot is signed
-			if ( $user = get_post_meta( $post->ID, "position_{$args['slug']}", true ) ) {
-				$positions[ $position ]['user'] = $user ? $user : false;
+				// Position slot is signed
+				if ( $user = get_post_meta( $post->ID, "position_{$args['slug']}", true ) ) {
+					$positions[ $position ]['user'] = $user ? $user : false;
 
-			// Unsigned position
-			} else {
-				unset( $positions[ $position ] );
+				// Unsigned position
+				} else {
+					unset( $positions[ $position ] );
+				}
 			}
+		} else {
+			$positions = array();
 		}
 	}
 
