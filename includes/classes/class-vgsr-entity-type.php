@@ -422,7 +422,13 @@ abstract class VGSR_Entity_Type {
 
 		// Get the parent post ID
 		if ( null === $this->args['parent'] ) {
-			$this->args['parent'] = (int) get_option( "_{$this->type}-parent-page", 0 );
+
+			// Get and check the parent post
+			$post = (int) get_option( "_{$this->type}-parent-page" );
+			$post = $post ? get_post( $post ) : false;
+
+			// Default non-parents to false
+			$this->args['parent'] = $post ? (int) $post->ID : false;
 		}
 
 		return $this->args['parent'];
