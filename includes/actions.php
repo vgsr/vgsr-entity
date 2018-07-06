@@ -49,6 +49,7 @@ add_action( 'wp_ajax_vgsr_entity_suggest_user', 'vgsr_entity_suggest_user' );
 /** Admin *********************************************************************/
 
 if ( is_admin() ) {
+	add_action( 'vgsr_entity_init',       'vgsr_entity_admin',          10 );
 	add_action( 'vgsr_entity_admin_init', 'vgsr_entity_setup_updater', 999 );
 }
 

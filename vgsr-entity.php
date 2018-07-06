@@ -122,7 +122,6 @@ final class VGSR_Entity {
 		/** Misc **************************************************************/
 
 		$this->extend        = new stdClass();
-		$this->menu_position = 35;
 		$this->base_year     = 1950; // 'Al sinds 1950!'
 	}
 
@@ -135,6 +134,7 @@ final class VGSR_Entity {
 
 		// Core
 		require( $this->includes_dir . 'actions.php'      );
+		require( $this->includes_dir . 'admin.php'        );
 		require( $this->includes_dir . 'extend.php'       );
 		require( $this->includes_dir . 'functions.php'    );
 		require( $this->includes_dir . 'sub-actions.php'  );
@@ -170,8 +170,7 @@ final class VGSR_Entity {
 		add_action( 'plugins_loaded',   array( $this, 'setup_entities'         ) );
 		add_action( 'vgsr_entity_init', array( $this, 'register_post_statuses' ) );
 
-		// Admin & Widgets
-		add_action( 'admin_menu',   array( $this, 'admin_menu'   ) );
+		// Widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
 
 		// Query
@@ -367,54 +366,6 @@ final class VGSR_Entity {
 				'exclude_from_search' => ! $access,
 				'public'              => $access,
 		) ) );
-	}
-
-	/** Admin **********************************************************/
-
-	/**
-	 * Filters the admin menu to add a separator
-	 *
-	 * @since 1.0.0
-	 */
-	public function admin_menu() {
-
-		// When entities were registered
-		if ( ! empty( $this->types ) ) {
-			$this->add_separator( $this->menu_position - 1 );
-		}
-	}
-
-	/**
-	 * Runs through the admin menu to add a separator at given position
-	 *
-	 * The separator name can affect the order of the separators,
-	 * therefor the separator{$index} naming is changed.
-	 *
-	 * @link http://wordpress.stackexchange.com/questions/2666/add-a-separator-to-the-admin-menu
-	 *
-	 * @since 1.0.0
-	 *
-	 * @global array $menu
-	 *
-	 * @param int $pos The position after which to add the separator
-	 */
-	public function add_separator( $pos ) {
-		global $menu;
-		$index = 1;
-
-		// Walk all registered menu items
-		foreach ( $menu as $offset => $item ) {
-			if ( 'separator' === substr( $item[2], 0, 9 ) ) {
-				$index++;
-			}
-
-			if ( $offset >= $pos ) {
-				$menu[ $pos ] = array( '', 'read', "separator-pos{$index}", '', 'wp-menu-separator' );
-				break;
-			}
-		}
-
-		ksort( $menu );
 	}
 
 	/**
