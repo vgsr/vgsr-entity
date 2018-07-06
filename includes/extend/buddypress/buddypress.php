@@ -94,6 +94,10 @@ class VGSR_Entity_BuddyPress {
 	 */
 	private function setup_actions() {
 
+		// Bail when plugin is being deactivated
+		if ( vgsr_entity_is_deactivation() )
+			return;
+
 		// Settings
 		add_filter( 'vgsr_entity_settings_sections', array( $this, 'add_settings_sections' ) );
 		add_filter( 'vgsr_entity_settings_fields',   array( $this, 'add_settings_fields'   ) );
