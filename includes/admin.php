@@ -24,17 +24,7 @@ class VGSR_Entity_Admin {
 	 * @since 2.0.0
 	 */
 	public function __construct() {
-		$this->setup_globals();
 		$this->setup_actions();
-	}
-
-	/**
-	 * Define class globals
-	 *
-	 * @since 2.0.0
-	 */
-	private function setup_globals() {
-		$this->menu_position = 35;
 	}
 
 	/**
@@ -69,7 +59,7 @@ class VGSR_Entity_Admin {
 			 */
 			global $menu;
 
-			$position = $this->menu_position - 1;
+			$position = vgsr_entity()->menu_position - 1;
 			$index    = 1;
 
 			// Walk all registered menu items

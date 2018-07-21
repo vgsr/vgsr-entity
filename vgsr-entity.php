@@ -122,6 +122,7 @@ final class VGSR_Entity {
 		/** Misc **************************************************************/
 
 		$this->extend        = new stdClass();
+		$this->menu_position = 35;
 		$this->base_year     = 1950; // 'Al sinds 1950!'
 	}
 
