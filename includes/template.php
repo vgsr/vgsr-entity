@@ -401,6 +401,8 @@ function vgsr_entity_get_the_archive_title( $title ) {
  *
  * @since 2.0.0
  *
+ * @uses apply_filters() Calls 'vgsr_entity_get_the_archive_description'
+ *
  * @param  string $description Archive page description
  * @return string Archive page description
  */
@@ -408,6 +410,7 @@ function vgsr_entity_get_the_archive_description( $description ) {
 
 	// Get current post type
 	$post_type = get_post_type();
+	$type      = false;
 
 	// Entity post archive
 	if ( vgsr_is_entity( $post_type ) && is_post_type_archive( $post_type ) ) {
@@ -421,7 +424,7 @@ function vgsr_entity_get_the_archive_description( $description ) {
 		}
 	}
 
-	return $description;
+	return apply_filters( 'vgsr_entity_get_the_archive_description', $description, $type );
 }
 
 /**
