@@ -256,8 +256,8 @@
 	#vgsr-entity-details .positions .position-remove:before {
 		width: 36px;
 		height: 36px;
-		font-size: 36px;
-		margin: 1px 0 0;
+		font-size: 28px;
+		margin: 5px 0 0;
 	}
 
 	#vgsr-entity-details .positions .input-text-wrap select {
@@ -266,6 +266,14 @@
 
 	#vgsr-entity-details .positions .input-text-wrap input[type="text"] {
 		height: auto;
+	}
+}
+
+/* Suggest.js */
+@media only screen and (min-width: 850px) {
+	.ac_results.bestuur-positions {
+		left: auto !important;
+		right: 33px;
 	}
 }
 

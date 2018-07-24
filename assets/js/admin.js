@@ -48,11 +48,12 @@
 	// Bestuur Positions
 	var $bestuurPositions = $( '.post-type-bestuur .positions' ),
 		suggestAjaxUrl = $bestuurPositions.find( 'input[name="positions-ajax-url"]' ).val(),
-	    suggestArgs = {
+		suggestArgs = {
+			resultsClass: 'ac_results bestuur-positions',
 			onSelect: function() {
 				this.value = this.value.substr( 0, this.value.indexOf( ' (' ) );
 			}
-	    };
+		};
 
 	$bestuurPositions
 		// Add row
@@ -62,17 +63,18 @@
 					.clone()
 					.removeClass( 'positions-add-row' )
 					.insertBefore( '.positions-add-row' )
-					.show();
+					.show()
 					// Add suggest UI to cloned user input
-					// .suggest( suggestAjaxUrl, suggestArgs );
+					.find( '.positions-user-name' )
+						.suggest( suggestAjaxUrl, suggestArgs );
 		})
 		// Remove row
 		.on( 'click', '.position-remove', function() {
 			$(this).parent().remove();
-		});
+		})
 		// Add suggest UI to user input
-		// .find( '.positions-user-name' )
-			// .suggest( suggestAjaxUrl, suggestArgs );
+		.find( '.positions-user-name' )
+			.suggest( suggestAjaxUrl, suggestArgs );
 
 	/* wp-admin/edit.php */
 

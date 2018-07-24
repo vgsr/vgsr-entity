@@ -631,6 +631,8 @@ function vgsr_entity_setup_nav_menu_item( $menu_item ) {
  * Output a list of suggested users for a $.suggest AJAX call
  *
  * @since 2.0.0
+ *
+ * @uses WPDB $wpdb
  */
 function vgsr_entity_suggest_user() {
 	global $wpdb;
