@@ -165,6 +165,17 @@ function vgsr_entity_get_post_type( $type, $object = false ) {
 }
 
 /**
+ * Output the entity type or post's entity type
+ *
+ * @since 2.0.0
+ *
+ * @param WP_Post|int|string $post Optional. Post object or ID or post type or entity type. Defaults to the current post.
+ */
+function vgsr_entity_the_type( $post = 0 ) {
+	echo vgsr_entity_get_type( $post );
+}
+
+/**
  * Return the entity type or post's entity type
  *
  * @since 2.0.0
