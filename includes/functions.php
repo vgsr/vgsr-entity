@@ -848,6 +848,18 @@ function vgsr_entity_get_logo( $post = 0 ) {
 }
 
 /**
+ * Return whether the entity has a logo
+ *
+ * @since 2.0.0
+ *
+ * @param WP_Post|int $post Optional. Post object or ID. Defaults to the current post.
+ * @return bool Entity has a logo?
+ */
+function vgsr_entity_has_logo( $post = 0 ) {
+	return (bool) vgsr_entity_get_logo( $post );
+}
+
+/**
  * Output the logo feature metabox input field
  *
  * @since 2.0.0
