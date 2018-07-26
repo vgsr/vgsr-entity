@@ -123,11 +123,25 @@ function vgsr_entity_get_types( $object = false ) {
  *
  * @since 2.0.0
  *
- * @param  string $type Entity type name
+ * @param VGSR_Entity_Type|string $type Entity type object or name
  * @return bool Is this a valid entity type?
  */
 function vgsr_entity_exists( $type ) {
-	return in_array( $type, vgsr_entity_get_types(), true );
+
+	// Define return value
+	$retval = false;
+
+	// Check object type
+	if ( is_a( $type, 'VGSR_Entity_Type' ) ) {
+		$retval = vgsr_entity_exists( $type->type );
+	}
+
+	// Check type name
+	if ( in_array( $type, vgsr_entity_get_types(), true ) ) {
+		$retval = true;
+	}
+
+	return $retval;
 }
 
 /**
@@ -180,7 +194,7 @@ function vgsr_entity_the_type( $post = 0 ) {
  *
  * @since 2.0.0
  *
- * @param WP_Post|int|string $post Optional. Post object or ID or post type or entity type. Defaults to the current post.
+ * @param WP_Post|int|string|VGSR_Entity_Type $post Optional. Post object or ID, or post type, or entity type name or object. Defaults to the current post.
  * @param bool $object Optional. Whether to return the registered entity type object. Defaults to false.
  * @return string|VGSR_Entity_Type|bool Entity type name or object or False when not found.
  */
@@ -188,7 +202,7 @@ function vgsr_entity_get_type( $post = 0, $object = false ) {
 
 	// Bail early when a type was already provided
 	if ( vgsr_entity_exists( $post ) ) {
-		return $object ? vgsr_entity()->{$post} : $post;
+		return $object ? ( is_a( $post, 'VGSR_Entity_Type' ) ? $post : vgsr_entity()->{$post} ) : $post;
 	}
 
 	// Setup return variable
