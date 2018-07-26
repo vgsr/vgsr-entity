@@ -158,7 +158,7 @@ function vgsr_entity_get_entity( $type = '' ) {
 	return $post;
 }
 
-/** Details ************************************************************/
+/** Post ***************************************************************/
 
 /**
  * Modify the post content by adding entity details
@@ -225,6 +225,36 @@ function vgsr_entity_details( $post = 0 ) {
 	}
 
 	return $details;
+}
+
+/**
+ * Modify the post's CSS classes
+ *
+ * @since 2.0.0
+ *
+ * @uses apply_filters() Calls vgsr_entity_{$type}_post_class
+ *
+ * @param array $classes Post CSS classes
+ * @param array $class Additional class names
+ * @param int $post_id Post ID
+ * @return array Post CSS classes
+ */
+function vgsr_entity_filter_post_class( $classes, $class, $post_id ) {
+
+	// This is an entity
+	if ( $type = vgsr_entity_get_type( $post_id ) ) {
+
+		// Entity type
+		$classes[] = "entity-{$type}";
+
+		// Entity logo
+		$classes[] = vgsr_entity_has_logo( $post_id ) ? 'entity-logo' : 'entity-no-logo';
+
+		// Enable filtering
+		$classes = (array) apply_filters( "vgsr_entity_{$type}_post_class", $classes, $post_id );
+	}
+
+	return $classes;
 }
 
 /** Is_* ***************************************************************/

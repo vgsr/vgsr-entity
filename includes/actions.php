@@ -26,8 +26,9 @@ add_action( 'wp', 'vgsr_entity_set_globals' );
 
 /** Post **********************************************************************/
 
-add_action( 'the_content', 'vgsr_entity_the_archive_content', -1 );
-add_filter( 'the_content', 'vgsr_entity_filter_content',      10 );
+add_filter( 'post_class',  'vgsr_entity_filter_post_class',   10, 3 );
+add_action( 'the_content', 'vgsr_entity_the_archive_content', -1    );
+add_filter( 'the_content', 'vgsr_entity_filter_content',      10    );
 
 /** Nav menus *****************************************************************/
 
