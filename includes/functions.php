@@ -785,25 +785,34 @@ endif;
 /** Features ***********************************************************/
 
 /**
- * Return whether the given entity supports the given feature
+ * Return whether the given feature is supported for the entity type
  *
  * @since 2.0.0
  *
+ * @uses apply_filters() Calls 'vgsr_entity_supports_{type}_{feature}'
  * @uses apply_filters() Calls 'vgsr_entity_supports'
  *
  * @param string $feature Feature name
- * @param string|WP_Post $type Optional. Entity type name or post object. Defaults to the current post.
- * @return bool Is feature supported for type?
+ * @param WP_Post|int|string|VGSR_Entity_Type $post Optional. Post object or ID, or post type, or entity type name or object. Defaults to the current post.
+ * @return bool Is feature supported?
  */
 function vgsr_entity_supports( $feature, $type = 0 ) {
 
-	// Get entity type
-	$type = vgsr_entity_get_type( $type, true );
+	// Sanitize parameters
+	$feature  = sanitize_key( $feature );
+	$type     = vgsr_entity_get_type( $type, true );
 
-	// Is feature supported?
-	$supports = $type ? in_array( $feature, $type->features, true ) : false;
+	// Define return value
+	$supports = false;
 
-	return apply_filters( 'vgsr_entity_supports', $supports, $type );
+	if ( $type ) {
+		$supports = in_array( $feature, $type->features, true );
+
+		// Feature-specific filtering
+		$supports = (bool) apply_filters( "vgsr_entity_supports_{$type->type}_{$feature}", $supports );
+	}
+
+	return (bool) apply_filters( 'vgsr_entity_supports', $supports, $feature, $type );
 }
 
 /**
