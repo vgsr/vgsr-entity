@@ -347,6 +347,35 @@ function vgsr_is_entity_parent( $post = 0 ) {
 	return $type;
 }
 
+/**
+ * Return whether we're on a plugin page
+ *
+ * @since 2.0.0
+ *
+ * @return bool On a plugin page
+ */
+function is_vgsr_entity() {
+
+	// Default to false
+	$retval = false;
+
+	/** Entity ****************************************************************/
+
+	if ( is_singular() && vgsr_is_entity() ) {
+		$retval = true;
+
+	/** Archives **************************************************************/
+
+	} elseif ( vgsr_is_entity_parent() ) {
+		$retval = true;
+
+	} elseif ( is_post_type_archive( vgsr_entity_get_post_types() ) ) {
+		$retval = true;
+	}
+
+	return $retval;
+}
+
 /** Archive ************************************************************/
 
 /**
