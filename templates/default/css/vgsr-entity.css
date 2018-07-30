@@ -1,0 +1,51 @@
+/**
+ * VGSR Entity Default Theme-Compat Styles
+ *
+ * @package VGSR Entity
+ * @subpackage Theme
+ */
+
+.entity-shortlist.feature-logo {
+	list-style: none;
+	padding: 0px;
+	display: -ms-grid; /* IE 10+ */
+	display: grid;
+	-ms-grid-gap: 25px; /* IE 10+ */
+	grid-gap: 25px;
+	-ms-grid-columns: repeat( auto-fill, minmax( 120px, 1fr ) ); /* IE 10+ */
+	grid-template-columns: repeat( auto-fill, minmax( 120px, 1fr ) );
+}
+
+.entity-shortlist.feature-logo li {
+	display: inline-block;
+	margin: 0px;
+	vertical-align: top;
+	text-align: center;
+}
+
+.entity-shortlist.feature-logo li .entity-logo a:hover {
+	border: none;
+	text-decoration: none;
+}
+
+.entity-shortlist.feature-logo li.entity-no-logo:before {
+	content: '';
+	display: block;
+	width: 100px;
+	height: 100px;
+	padding: 10px;
+	margin: 10px auto;
+	background: #f1f1f1;
+	border-radius: 50%;
+}
+
+.entity-shortlist.feature-logo li .entity-logo {
+	display: inline-block;
+	width: 120px;
+	height: 120px;
+	padding: 10px;
+}
+
+.entity-shortlist.feature-logo li .entity-logo img {
+	border-radius: 50%;
+}

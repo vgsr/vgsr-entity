@@ -248,7 +248,7 @@ function vgsr_entity_filter_post_class( $classes, $class, $post_id ) {
 		$classes[] = "entity-{$type}";
 
 		// Entity logo
-		$classes[] = vgsr_entity_has_logo( $post_id ) ? 'entity-logo' : 'entity-no-logo';
+		$classes[] = vgsr_entity_has_logo( $post_id ) ? 'entity-has-logo' : 'entity-no-logo';
 
 		// Enable filtering
 		$classes = (array) apply_filters( "vgsr_entity_{$type}_post_class", $classes, $post_id );
@@ -487,18 +487,106 @@ function vgsr_entity_get_the_archive_description( $description ) {
 }
 
 /**
- * Modify early the post content for post archives
+ * Output the entity type shortlist class
  *
  * @since 2.0.0
  *
- * @param  string $content Post content
+ * @param string|array $class Optional. One or more classes to add to the class list.
+ * @param string $type Optional. Entity type name. Defaults to the current type.
+ */
+function vgsr_entity_shortlist_class( $class = '', $type = '' ) {
+	echo ' class="' . join( ' ', vgsr_entity_get_shortlist_class( $class, $type ) ) . '"';
+}
+
+/**
+ * Return the entity type shortlist classes
+ *
+ * @since 2.0.0
+ *
+ * @param string|array $class Optional. One or more classes to add to the class list.
+ * @param string $type Optional. Entity type name. Defaults to the current type.
+ * @return array Entity shortlist classes
+ */
+function vgsr_entity_get_shortlist_class( $class = '', $type = '' ) {
+	$type    = vgsr_entity_get_type( $type );
+	$classes = array();
+
+	if ( $class ) {
+		if ( ! is_array( $class ) ) {
+			$class = preg_split( '#\s+#', $class );
+		}
+		$classes = array_map( 'esc_attr', $class );
+	} else {
+		$class = array();
+	}
+
+	$classes[] = 'entity-shortlist';
+
+	if ( $type ) {
+		$classes[] = "entity-shortlist-{$type}";
+
+		// Entity logo
+		$classes[] = vgsr_entity_supports( 'logo', $type ) ? 'feature-logo' : 'no-feature-logo';
+	}
+
+	$classes = array_map( 'esc_attr', $classes );
+
+	// Enable filtering
+	$classes = (array) apply_filters( 'vgsr_entity_get_shortlist_class', $classes, $class, $type );
+
+	return array_unique( $classes );
+}
+
+/**
+ * Output markup for the entity type shortlist
+ *
+ * @since 2.0.0
+ *
+ * @param string $type Optional. Entity type name. Defaults to the current type.
+ */
+function vgsr_entity_the_shortlist( $type = '' ) {
+	echo vgsr_entity_get_shortlist( $type );
+}
+
+/**
+ * Return markup for the entity type shortlist
+ *
+ * @since 2.0.0
+ *
+ * @uses apply_filters() Calls vgsr_entity_get_shortlist
+ *
+ * @param string $type Optional. Entity type name. Defaults to the current type.
+ * @return string Shortlist markup
+ */
+function vgsr_entity_get_shortlist( $type = '' ) {
+	$type = vgsr_entity_get_type( $type );
+	$html = '';
+
+	// Get entity type shortlist
+	if ( $type ) {
+		$html = vgsr_entity_buffer_template_part( 'entity-shortlist', $type );
+	}
+
+	return apply_filters( 'vgsr_entity_get_shortlist', $html, $type );
+}
+
+/**
+ * Modify the content to add the entity type shortlist
+ *
+ * @since 2.0.0
+ *
+ * @uses apply_filtesr() Calls vgsr_entity_{$type}_archive_add_shortlist
+ *
+ * @param string $content Post content
+ * @param string $type Optional. Entity type name. Defaults to the current type.
  * @return string Post content
  */
-function vgsr_entity_the_archive_content( $content ) {
+function vgsr_entity_archive_add_shortlist( $content, $type = '' ) {
+	$type = vgsr_entity_get_type( $type );
 
-	// Limit words in post type archives
-	if ( ! vgsr_entity_is_the_excerpt() && vgsr_is_entity() && is_post_type_archive() ) {
-		$content = wp_trim_words( $content );
+	// Enable shortlist addition through filter
+	if ( $type && apply_filters( "vgsr_entity_{$type}_archive_add_shortlist", false ) ) {
+		$content .= vgsr_entity_get_shortlist( $type );
 	}
 
 	return $content;

@@ -28,7 +28,6 @@ add_action( 'wp', 'vgsr_entity_set_globals' );
 /** Post **********************************************************************/
 
 add_filter( 'post_class',  'vgsr_entity_filter_post_class',   10, 3 );
-add_action( 'the_content', 'vgsr_entity_the_archive_content', -1    );
 add_filter( 'the_content', 'vgsr_entity_filter_content',      10    );
 
 /** Nav menus *****************************************************************/
@@ -44,6 +43,10 @@ add_filter( 'archive_template_hierarchy',    'vgsr_entity_archive_template_hiera
 add_action( 'template_include',              'vgsr_entity_template_include'            );
 add_filter( 'get_the_archive_title',         'vgsr_entity_get_the_archive_title'       );
 add_filter( 'get_the_archive_description',   'vgsr_entity_get_the_archive_description' );
+
+/** Archive *******************************************************************/
+
+add_filter( 'vgsr_entity_get_the_archive_description', 'vgsr_entity_archive_add_shortlist', 10, 2 );
 
 /** AJAX **********************************************************************/
 
