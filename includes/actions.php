@@ -12,8 +12,9 @@ defined( 'ABSPATH' ) || exit;
 
 /** Sub-actions ***************************************************************/
 
-add_action( 'init',       'vgsr_entity_init'       );
-add_action( 'admin_init', 'vgsr_entity_admin_init' );
+add_action( 'init',              'vgsr_entity_init'              );
+add_action( 'admin_init',        'vgsr_entity_admin_init'        );
+add_action( 'after_setup_theme', 'vgsr_entity_after_setup_theme' );
 
 /** Utility *******************************************************************/
 
@@ -38,10 +39,11 @@ add_filter( 'wp_setup_nav_menu_item',             'vgsr_entity_setup_nav_menu_it
 
 /** Template ******************************************************************/
 
-add_filter( 'archive_template_hierarchy',  'vgsr_entity_archive_template_hierarchy'  ); // Since WP 4.7
-add_action( 'template_include',            'vgsr_entity_template_include'            );
-add_filter( 'get_the_archive_title',       'vgsr_entity_get_the_archive_title'       );
-add_filter( 'get_the_archive_description', 'vgsr_entity_get_the_archive_description' );
+add_action( 'vgsr_entity_after_setup_theme', 'vgsr_entity_load_theme_functions'        );
+add_filter( 'archive_template_hierarchy',    'vgsr_entity_archive_template_hierarchy'  ); // Since WP 4.7
+add_action( 'template_include',              'vgsr_entity_template_include'            );
+add_filter( 'get_the_archive_title',         'vgsr_entity_get_the_archive_title'       );
+add_filter( 'get_the_archive_description',   'vgsr_entity_get_the_archive_description' );
 
 /** AJAX **********************************************************************/
 

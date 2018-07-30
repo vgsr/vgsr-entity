@@ -54,3 +54,14 @@ function vgsr_entity_init() {
 function vgsr_entity_admin_init() {
 	do_action( 'vgsr_entity_admin_init' );
 }
+
+/**
+ * Run dedicated hook after theme setup for this plugin
+ *
+ * @since 2.0.0
+ *
+ * @uses do_action() Calls 'vgsr_entity_after_setup_theme'
+ */
+function vgsr_entity_after_setup_theme() {
+	do_action( 'vgsr_entity_after_setup_theme' );
+}

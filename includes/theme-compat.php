@@ -214,3 +214,23 @@ function vgsr_entity_template_include( $template ) {
 
 	return $template;
 }
+
+/**
+ * Load a custom plugin functions file, similar to each theme's functions.php file.
+ *
+ * @since 2.0.0
+ *
+ * @global string $pagenow
+ */
+function vgsr_entity_load_theme_functions() {
+	global $pagenow;
+
+	// When plugin is being deactivated, do not load any more files
+	if ( vgsr_entity_is_deactivation() )
+		return;
+
+	// Load file when not installing
+	if ( ! defined( 'WP_INSTALLING' ) || ( ! empty( $pagenow ) && ( 'wp-activate.php' !== $pagenow ) ) ) {
+		vgsr_entity_locate_template( 'vgsr-entity-functions.php', true );
+	}
+}
