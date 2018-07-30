@@ -477,7 +477,7 @@ abstract class VGSR_Entity_Type {
 		$wpdb->update(
 			$wpdb->posts,
 			array( 'post_parent' => $value ),
-			array( 'post_type' => $this->type ),
+			array( 'post_type' => $this->post_type ),
 			array( '%d' ),
 			array( '%s' )
 		);
