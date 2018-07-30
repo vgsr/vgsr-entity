@@ -202,7 +202,8 @@ function vgsr_entity_get_type( $post = 0, $object = false ) {
 
 	// Bail early when a type was already provided
 	if ( vgsr_entity_exists( $post ) ) {
-		return $object ? ( is_a( $post, 'VGSR_Entity_Type' ) ? $post : vgsr_entity()->{$post} ) : $post;
+		$type = is_a( $post, 'VGSR_Entity_Type' ) ? $post->type : $post;
+		return $object ? vgsr_entity()->{$type} : $type;
 	}
 
 	// Setup return variable
