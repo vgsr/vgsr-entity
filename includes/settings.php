@@ -24,7 +24,7 @@ function vgsr_entity_settings_sections() {
 		// Main Settings
 		'main' => array(
 			'title'    => esc_html__( 'Main Settings', 'vgsr-entity' ),
-			'callback' => '',
+			'callback' => 'vgsr_entity_settings_main_section',
 			'page'     => '',
 		),
 	) );
@@ -49,6 +49,14 @@ function vgsr_entity_settings_fields() {
 				'title'             => esc_html__( 'Parent Page', 'vgsr-entity' ),
 				'callback'          => 'vgsr_entity_settings_display_entity_parent_field',
 				'sanitize_callback' => 'intval',
+				'args'              => array()
+			),
+
+			// Entity slug
+			'entity-slug' => array(
+				'title'             => esc_html__( 'Entity Slug', 'vgsr-entity' ),
+				'callback'          => 'vgsr_entity_settings_display_entity_slug_field',
+				'sanitize_callback' => 'sanitize_key',
 				'args'              => array()
 			),
 		)
@@ -91,16 +99,28 @@ function vgsr_entity_settings_fields_by_type( $type = '' ) {
 }
 
 /**
- * Output entity parent page settings field
+ * Output the content of the main settings section
  *
- * @since 1.0.0
+ * @since 2.0.0
  */
-function vgsr_entity_settings_display_entity_parent_field() {
+function vgsr_entity_settings_main_section() {
 
 	// Flush rerwite rules if this setting is saved
 	if ( isset( $_GET['settings-updated'] ) && isset( $_GET['page'] ) ) {
 		flush_rewrite_rules();
-	}
+	} ?>
+
+	<p><?php esc_html_e( 'Customize the entity page and permalink structure here.', 'vgsr-entity' ); ?></p>
+
+	<?php
+}
+
+/**
+ * Output the content of the entity parent page settings field
+ *
+ * @since 1.0.0
+ */
+function vgsr_entity_settings_display_entity_parent_field() {
 
 	// Get VGSR Entity
 	$post_type = get_current_screen()->post_type;
@@ -127,7 +147,37 @@ function vgsr_entity_settings_display_entity_parent_field() {
 	<a class="button button-secondary" href="<?php echo esc_url( get_permalink( $parent ) ); ?>" target="_blank"><?php esc_html_e( 'View', 'vgsr-entity' ); ?></a>
 	<?php endif; ?>
 
-	<p class="description"><?php printf( esc_html__( 'Select the page that should act as the parent page for %s.', 'vgsr-entity' ), get_post_type_object( $post_type )->labels->name ); ?></p>
+	<p class="description"><?php printf( esc_html__( 'Select the page that should act as the parent page for %s.', 'vgsr-entity' ), '"' . get_post_type_object( $post_type )->labels->name . '"' ); ?></p>
 
 	<?php
+}
+
+/**
+ * Output the content of the entity slug settings field
+ *
+ * @since 2.0.0
+ */
+function vgsr_entity_settings_display_entity_slug_field() {
+
+	// Get VGSR Entity
+	$post_type = get_current_screen()->post_type;
+	$type      = vgsr_entity_get_type( $post_type, true );
+
+	// Bail when this is not an entity
+	if ( ! $type )
+		return;
+
+	// Define setting name
+	$input = "_{$type->type}-entity-slug";
+
+	// Only when no parent page is selected
+	if ( ! vgsr_entity_get_entity_parent( $type->type ) ) : ?>
+
+		<input name="<?php echo $input; ?>" id="<?php echo $input; ?>" type="text" class="regular-text code" value="<?php echo $type->get_setting( 'entity-slug' ); ?>" />
+
+	<?php else : ?>
+
+		<p><?php esc_html_e( 'When a parent page is selected, there is no slug to define.', 'vgsr-entity' ); ?></p>
+
+	<?php endif;
 }

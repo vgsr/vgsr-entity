@@ -284,6 +284,46 @@ function vgsr_entity_get_meta( $post = 0, $field = '', $return_value = true ) {
 /** Post ***************************************************************/
 
 /**
+ * Return the slug (path) for the entity type
+ *
+ * @since 2.0.0
+ *
+ * @return string Entity type slug
+ */
+function vgsr_entity_get_type_slug( $type = '' ) {
+	$type = vgsr_entity_get_type( $type, true );
+	$slug = '';
+
+	if ( $type ) {
+
+		// Get slug from parent
+		if ( $post = vgsr_entity_get_entity_parent( $type, true ) ) {
+			$slug = $post->post_name;
+
+			// Loop over all next parents
+			while ( ! empty( $post->post_parent ) ) {
+
+				// Get next parent
+				$post = get_post( $post->post_parent );
+
+				// Prepend parent slug
+				$slug = $post->post_name . '/' . $slug;
+			}
+
+		// Get slug from setting
+		} elseif ( $setting = $type->get_setting( 'entity-slug' ) ) {
+			$slug = $setting;
+
+		// Default to the type name
+		} else {
+			$slug = $type->type;
+		}
+	}
+
+	return $slug;
+}
+
+/**
  * Utility function to call logic with a custom post context
  *
  * @since 2.0.0

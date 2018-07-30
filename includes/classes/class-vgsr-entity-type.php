@@ -289,7 +289,7 @@ abstract class VGSR_Entity_Type {
 
 		// Setup rewrite
 		$rewrite = array(
-			'slug' => $this->get_entity_parent_slug()
+			'slug' => vgsr_entity_get_type_slug( $this->type )
 		);
 
 		// Setup post type support
@@ -486,36 +486,6 @@ abstract class VGSR_Entity_Type {
 		$this->args['parent'] = $value;
 		$this->register_post_type();
 		flush_rewrite_rules();
-	}
-
-	/**
-	 * Return the slug for the entity parent page
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string Parent page slug
-	 */
-	public function get_entity_parent_slug() {
-
-		// Define retval
-		$slug = '';
-
-		// Find entity parent page
-		if ( $post = get_post( $this->get_entity_parent() ) ) {
-			$slug = $post->post_name;
-
-			// Loop over all next parents
-			while ( ! empty( $post->post_parent ) ) {
-
-				// Get next parent
-				$post = get_post( $post->post_parent );
-
-				// Prepend parent slug
-				$slug = $post->post_name . '/' . $slug;
-			}
-		}
-
-		return $slug;
 	}
 
 	/** Template *******************************************************/
