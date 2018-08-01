@@ -348,6 +348,28 @@ function vgsr_is_entity_parent( $post = 0 ) {
 }
 
 /**
+ * Return whether we're on an/the entity archive page
+ *
+ * @since 2.0.0
+ *
+ * @param string $type Optional. Entity type name to check the archive for. Defaults to none.
+ * @return bool Is page an/the entity archive?
+ */
+function vgsr_is_entity_archive( $type = '' ) {
+
+	// Default to false
+	$retval = false;
+
+	if ( vgsr_is_entity_parent() || is_post_type_archive( vgsr_entity_get_post_types() ) ) {
+
+		// Check requested entity type
+		$retval = $type ? vgsr_entity_get_type( $type ) === vgsr_entity_get_type() : true;
+	}
+
+	return $retval;
+}
+
+/**
  * Return whether we're on a plugin page
  *
  * @since 2.0.0
@@ -366,10 +388,7 @@ function is_vgsr_entity() {
 
 	/** Archives **************************************************************/
 
-	} elseif ( vgsr_is_entity_parent() ) {
-		$retval = true;
-
-	} elseif ( is_post_type_archive( vgsr_entity_get_post_types() ) ) {
+	} elseif ( vgsr_is_entity_archive() ) {
 		$retval = true;
 	}
 
