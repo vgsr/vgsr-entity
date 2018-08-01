@@ -691,6 +691,36 @@ function vgsr_entity_setup_nav_menu_item( $menu_item ) {
 	return apply_filters( 'vgsr_entity_setup_nav_menu_item', $menu_item );
 }
 
+/** Template ***********************************************************/
+
+/**
+ * Modify the document title
+ *
+ * @since 2.0.0
+ *
+ * @param array $title Title parts
+ * @return array Title parts
+ */
+function vgsr_entity_document_title_parts( $title ) {
+
+	// Single entity
+	if ( is_singular() && vgsr_is_entity() ) {
+
+		// Define parent title part
+		$parent = array( 'parent' => vgsr_entity_get_archive_title() );
+
+		// Insert 'Archive title' part after title part, creating 'Title - Archive title - Site'
+		$title = array_slice( $title, 0, 1, true ) + $parent + array_slice( $title, 1, count( $title ) - 1, true );
+	}
+
+	// Entity archive
+	if ( vgsr_is_entity_archive() ) {
+		$title['title'] = vgsr_entity_get_archive_title();
+	}
+
+	return $title;
+}
+
 /** AJAX ***************************************************************/
 
 /**

@@ -458,7 +458,29 @@ function vgsr_entity_get_the_archive_title( $title ) {
 
 	// Entity post archive
 	if ( vgsr_is_entity( $post_type ) && is_post_type_archive( $post_type ) ) {
-		$type   = vgsr_entity_get_type( $post_type );
+		$title = vgsr_entity_get_archive_title( $post_type );
+	}
+
+	return $title;
+}
+
+/**
+ * Return the entity type's post archive title
+ *
+ * @since 2.0.0
+ *
+ * @uses apply_filters() Calls 'vgsr_entity_get_archive_title'
+ *
+ * @param  string $type Optional. Entity type name. Defaults to the current type.
+ * @return string Entity type's archive title.
+ */
+function vgsr_entity_get_archive_title( $type = '' ) {
+
+	// Define return value
+	$type  = vgsr_entity_get_type( $type );
+	$title = '';
+
+	if ( $type ) {
 		$parent = vgsr_entity_get_entity_parent( $type, true );
 
 		// Use parent post title
@@ -467,11 +489,11 @@ function vgsr_entity_get_the_archive_title( $title ) {
 
 		// Default to post type name
 		} else {
-			$title = get_post_type_object( $post_type )->labels->name;
+			$title = vgsr_entity_get_post_type( $type, true )->labels->name;
 		}
 	}
 
-	return $title;
+	return apply_filters( 'vgsr_entity_get_archive_title', $title, $type );	
 }
 
 /**

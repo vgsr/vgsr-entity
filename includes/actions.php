@@ -39,6 +39,7 @@ add_filter( 'wp_setup_nav_menu_item',             'vgsr_entity_setup_nav_menu_it
 /** Template ******************************************************************/
 
 add_action( 'vgsr_entity_after_setup_theme', 'vgsr_entity_load_theme_functions'        );
+add_filter( 'document_title_parts',          'vgsr_entity_document_title_parts'        ); // Since WP 4.4
 add_filter( 'archive_template_hierarchy',    'vgsr_entity_archive_template_hierarchy'  ); // Since WP 4.7
 add_action( 'template_include',              'vgsr_entity_template_include'            );
 add_filter( 'get_the_archive_title',         'vgsr_entity_get_the_archive_title'       );
