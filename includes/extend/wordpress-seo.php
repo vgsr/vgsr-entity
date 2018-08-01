@@ -44,12 +44,44 @@ class VGSR_Entity_WPSEO {
 	/**
 	 * Modify the page title for WP SEO
 	 *
+	 * @see WPSEO_Frontend::generate_title()
+	 *
 	 * @since 2.0.0
 	 *
 	 * @param  string $title Page title
 	 * @return string Page title
 	 */
 	public function wpseo_title( $title ) {
+
+		// Get separator token
+		$replacer  = new WPSEO_Replace_Vars();
+		$separator = $replacer->replace( '%%sep%%', array() );
+		$separator = ' ' . trim( $separator ) . ' ';
+
+		// Get separator position
+		$site_title = WPSEO_Utils::get_site_name();
+		$sepleft    = 0 !== strpos( $title, $site_title );
+
+		// When on a plugin page
+		if ( is_vgsr_entity() ) {
+			$_parts = vgsr_entity_document_title_parts( array() );
+
+			// Single entity
+			if ( is_singular() && vgsr_is_entity() ) {
+
+				// Insert 'Archive title' part after title part, creating 'Title - Archive title - Site'
+				$title = str_replace(
+					$sepleft ? $separator . $site_title : $site_title . $separator,
+					$sepleft ? $separator . $_parts['parent'] . $separator . $site_title :  $site_title . $separator . $_parts['parent'] . $separator,
+					$title
+				);
+			}
+
+			// Entity archives. Replace page name
+			if ( vgsr_is_entity_archive() ) {
+				$title = $sepleft ? $_parts['title'] . $separator . $site_title : $site_title . $separator . $_parts['title'];
+			}
+		}
 
 		// Bestuur
 		if ( vgsr_is_bestuur() ) {
