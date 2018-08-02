@@ -449,7 +449,7 @@ abstract class VGSR_Entity_Type {
 
 		// When this is our post type, set the post parent
 		if ( $new_postarr['post_type'] === $this->post_type ) {
-			$parent_id = $this->get_entity_parent();
+			$parent_id = vgsr_entity_get_entity_parent( $this->type );
 		}
 
 		return $parent_id;

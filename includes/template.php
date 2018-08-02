@@ -409,7 +409,7 @@ function is_vgsr_entity() {
 function vgsr_entity_set_globals( $wp ) {
 
 	// Entity archive
-	if ( vgsr_is_entity() && is_post_type_archive( get_post_type() ) ) {
+	if ( is_post_type_archive( vgsr_entity_get_post_types() ) ) {
 		$parent = vgsr_entity_get_entity_parent( get_post_type(), true );
 
 		// Set the page's global post
