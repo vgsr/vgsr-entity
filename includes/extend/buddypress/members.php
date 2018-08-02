@@ -130,6 +130,10 @@ function vgsr_entity_bp_filter_user_query_post_users( $query ) {
  */
 function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 
+	// Bail when the post is invalid
+	if ( ! $post = get_post( $post ) )
+		return;
+
 	// Parse list args
 	$args = wp_parse_args( $args, array(
 		'field'    => '',

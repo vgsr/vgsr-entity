@@ -210,7 +210,7 @@ final class VGSR_Entity {
 		foreach ( $entities as $type => $class ) {
 
 			// Load class file
-			$class_file = $this->includes_dir . 'classes/class-' . str_replace('_', '-', strtolower( $class ) ) . '.php';
+			$class_file = $this->includes_dir . 'classes/class-' . str_replace( '_', '-', strtolower( $class ) ) . '.php';
 			if ( file_exists( $class_file ) ) {
 				require_once( $class_file );
 			}

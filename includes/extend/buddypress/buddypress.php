@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VGSR Entity BuddyPress Functions
+ * VGSR Entity Extension for BuddyPress
  * 
  * @package VGSR Entity
  * @subpackage BuddyPress

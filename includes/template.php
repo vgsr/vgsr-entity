@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
 function vgsr_entity_query_entities( $args = array() ) {
 
 	// Parse args
-	$args = wp_parse_args( $args, array(
+	$r = wp_parse_args( $args, array(
 		'type'           => vgsr_entity_get_type(),
 		'post_type'      => false,
 		'post_status'    => 'publish',
@@ -31,20 +31,20 @@ function vgsr_entity_query_entities( $args = array() ) {
 	) );
 
 	// Bail when entity type is invalid
-	if ( ! vgsr_entity_exists( $args['type'] ) ) {
+	if ( ! vgsr_entity_exists( $r['type'] ) ) {
 		return false;
 	}
 
 	// Get entity type object
-	$type = vgsr_entity_get_type( $args['type'], true );
+	$type = vgsr_entity_get_type( $r['type'], true );
 
 	// Default to entity post type
-	if ( ! $args['post_type'] ) {
-		$args['post_type'] = $type->post_type;
+	if ( ! $r['post_type'] ) {
+		$r['post_type'] = $type->post_type;
 	}
 
 	// Get query and store in type object
-	$type->query = new WP_Query( $args );
+	$type->query = new WP_Query( $r );
 
 	return $type->query->have_posts();
 }
