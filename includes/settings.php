@@ -81,23 +81,22 @@ function vgsr_entity_settings_fields() {
 function vgsr_entity_settings_fields_by_type( $type = '' ) {
 
 	// Get entity type
-	$type = vgsr_entity_get_type( $type );
+	$type   = vgsr_entity_get_type( $type );
+	$fields = array();
 
-	// Bail when this is not an entity
-	if ( ! $type ) {
-		return array();
-	}
+	if ( $type ) {
 
-	// Get settings fields
-	$fields = vgsr_entity_settings_fields();
+		// Get settings fields
+		$fields = vgsr_entity_settings_fields();
 
-	// Walk all section's fields
-	foreach ( array_keys( $fields ) as $section ) {
-		foreach ( $fields[ $section ] as $field => $args ) {
+		// Walk all section's fields
+		foreach ( array_keys( $fields ) as $section ) {
+			foreach ( $fields[ $section ] as $field => $args ) {
 
-			// Remove fields from the set when they do not apply
-			if ( isset( $args['entity'] ) && ! in_array( $type, (array) $args['entity'], true ) ) {
-				unset( $fields[ $section ][ $field ] );
+				// Remove fields from the set when they do not apply
+				if ( isset( $args['entity'] ) && ! in_array( $type, (array) $args['entity'], true ) ) {
+					unset( $fields[ $section ][ $field ] );
+				}
 			}
 		}
 	}
@@ -200,7 +199,7 @@ function vgsr_entity_settings_display_entity_slug_field() {
  */
 function vgsr_entity_settings_attribute_section() { ?>
 
-	<p><?php esc_html_e( 'Customize the settigs for entity attributes here.', 'vgsr-entity' ); ?></p>
+	<p><?php esc_html_e( 'Customize the settings for entity attributes here.', 'vgsr-entity' ); ?></p>
 
 	<?php
 }
