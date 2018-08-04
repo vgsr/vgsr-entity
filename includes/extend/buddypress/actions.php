@@ -22,3 +22,10 @@ add_filter( 'bp_get_profile_field_data',      'vgsr_entity_bp_kast_address_profi
 if ( is_admin() ) {
 	add_action( 'vgsr_entity_init', 'vgsr_entity_buddypress_admin' );
 }
+
+/**
+ * Settings fields should be available outside of `is_admin()` in order to make
+ * their data available in entity details in the frontend.
+ */
+add_filter( 'vgsr_entity_settings_sections', 'vgsr_entity_bp_settings_sections' );
+add_filter( 'vgsr_entity_settings_fields',   'vgsr_entity_bp_settings_fields'   );

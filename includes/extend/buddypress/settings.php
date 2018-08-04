@@ -11,7 +11,133 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Display an XProfile field selector settings field
+ * Modify the admin settings sections for BuddyPress settings
+ *
+ * @since 2.0.0
+ *
+ * @param array $sections Settings sections
+ * @return array Settings sections
+ */
+function vgsr_entity_bp_settings_sections( $sections = array() ) {
+
+	// Add Profile section
+	if ( bp_is_active( 'xprofile' ) ) {
+		$sections['bp-profile'] = array(
+			'title'    => esc_html__( 'Profile Settings', 'vgsr-entity' ),
+			'callback' => 'vgsr_entity_bp_settings_profile_section',
+		);
+	}
+
+	return $sections;
+}
+
+/**
+ * Modify the admin settings fields for BuddyPress settings
+ *
+ * @since 2.0.0
+ *
+ * @param array $fields Settings fields
+ * @return array Settings fields
+ */
+function vgsr_entity_bp_settings_fields( $fields ) {
+
+	// Define local vars
+	$access = vgsr_entity_check_access();
+
+	// Add Profile settings
+	if ( bp_is_active( 'xprofile' ) ) {
+		$fields['bp-profile'] = array(
+
+			// Dispuut members
+			'bp-members-field' => array(
+				'title'             => esc_html__( 'Members Field', 'vgsr-entity' ),
+				'callback'          => 'vgsr_entity_bp_xprofile_field_setting',
+				'sanitize_callback' => 'intval',
+				'entity'            => array( 'dispuut' ),
+				'column_title'      => esc_html__( 'Members', 'vgsr-entity' ),
+				'args'              => array(
+					'setting'     => 'bp-members-field',
+					'description' => esc_html__( "Select the field that holds the Dispuut's members.", 'vgsr-entity' ),
+				),
+
+				// Field display
+				'is_entry_meta'     => true,
+				'meta_label'        => _n_noop( '%d Member', '%d Members', 'vgsr-entity' ),
+				'detail_callback'   => 'vgsr_entity_bp_list_post_members',
+				'show_detail'       => $access,
+			),
+
+			// Kast residents
+			'bp-residents-field' => array(
+				'title'             => esc_html__( 'Residents Field', 'vgsr-entity' ),
+				'callback'          => 'vgsr_entity_bp_xprofile_field_setting',
+				'sanitize_callback' => 'intval',
+				'entity'            => array( 'kast' ),
+				'column_title'      => esc_html__( 'Residents', 'vgsr-entity' ),
+				'args'              => array(
+					'setting'     => 'bp-residents-field',
+					'description' => esc_html__( "Select the field that holds the Kast's residents.", 'vgsr-entity' ),
+				),
+
+				// Field display
+				'is_entry_meta'     => true,
+				'meta_label'        => _n_noop( '%d Resident', '%d Residents', 'vgsr-entity' ),
+				'detail_callback'   => 'vgsr_entity_bp_list_post_residents',
+				'show_detail'       => $access,
+			),
+
+			// Kast former residents
+			'bp-olim-residents-field' => array(
+				'title'             => esc_html__( 'Former Residents Field', 'vgsr-entity' ),
+				'callback'          => 'vgsr_entity_bp_xprofile_field_setting',
+				'sanitize_callback' => 'intval',
+				'entity'            => array( 'kast' ),
+				'column_title'      => esc_html__( 'Former Residents', 'vgsr-entity' ),
+				'args'              => array(
+					'setting'     => 'bp-olim-residents-field',
+					'description' => esc_html__( "Select the field that holds the Kast's former residents.", 'vgsr-entity' ),
+				),
+
+				// Field display
+				'detail_callback'   => 'vgsr_entity_bp_list_post_olim_residents',
+				'show_detail'       => $access,
+			)
+		);
+
+		// Kast Address fields
+		foreach ( vgsr_entity()->kast->address_meta() as $meta ) {
+			$fields['bp-profile']["bp-address-map-{$meta['name']}"] = array(
+				'title'             => sprintf( esc_html__( 'Address: %s', 'vgsr-entity' ), $meta['column_title'] ),
+				'callback'          => 'vgsr_entity_bp_xprofile_field_setting',
+				'sanitize_callback' => 'intval',
+				'entity'            => array( 'kast' ),
+				'args'              => array(
+					'setting'     => "bp-address-map-{$meta['name']}",
+					'description' => sprintf( esc_html__( "Select the profile field that holds this address detail: %s.", 'vgsr-entity' ), $meta['column_title'] ),
+				),
+			);
+		}
+	}
+
+	return $fields;
+}
+
+/** Profile *******************************************************************/
+
+/**
+ * Output the content of the BuddyPress Profile settings section
+ *
+ * @since 2.0.0
+ */
+function vgsr_entity_bp_settings_profile_section() { ?>
+
+	<p><?php esc_html_e( 'Customize the settings that relate entities to member profiles.', 'vgsr-entity' ); ?></p>
+
+	<?php
+}
+
+/**
+ * Display a BuddyPress XProfile field selector settings field
  *
  * @since 2.0.0
  */
@@ -50,7 +176,7 @@ function vgsr_entity_bp_xprofile_field_setting( $args = array() ) {
 }
 
 /**
- * Output or return a dropdown with XProfile fields
+ * Output or return a dropdown with BuddyPress XProfile fields
  *
  * @since 2.0.0
  *
