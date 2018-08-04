@@ -27,6 +27,13 @@ function vgsr_entity_settings_sections() {
 			'callback' => 'vgsr_entity_settings_main_section',
 			'page'     => '',
 		),
+
+		// Attribute Settings
+		'attributes' => array(
+			'title'    => esc_html__( 'Attribute Settings', 'vgsr-entity' ),
+			'callback' => 'vgsr_entity_settings_attribute_section',
+			'page'     => '',
+		),
 	) );
 }
 
@@ -97,6 +104,8 @@ function vgsr_entity_settings_fields_by_type( $type = '' ) {
 
 	return $fields;
 }
+
+/** Main ***************************************************************/
 
 /**
  * Output the content of the main settings section
@@ -180,4 +189,18 @@ function vgsr_entity_settings_display_entity_slug_field() {
 		<p><?php esc_html_e( 'When a parent page is selected, there is no slug to define.', 'vgsr-entity' ); ?></p>
 
 	<?php endif;
+}
+
+/** Attributes *********************************************************/
+
+/**
+ * Output the content of the attributes settings section
+ *
+ * @since 2.0.0
+ */
+function vgsr_entity_settings_attribute_section() { ?>
+
+	<p><?php esc_html_e( 'Customize the settigs for entity attributes here.', 'vgsr-entity' ); ?></p>
+
+	<?php
 }

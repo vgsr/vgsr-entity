@@ -21,16 +21,6 @@ defined( 'ABSPATH' ) || exit;
 function vgsr_entity_bestuur_settings_fields() {
 	return (array) apply_filters( 'vgsr_entity_bestuur_settings_fields', array(
 
-		// Bestuur Positions
-		'positions' => array(
-			'title'             => esc_html__( 'Positions', 'vgsr-entity' ),
-			'callback'          => 'vgsr_entity_bestuur_setting_positions_field',
-			'sanitize_callback' => 'vgsr_entity_bestuur_sanitize_positions_field',
-			'entity'            => 'bestuur',
-			'section'           => 'main',
-			'args'              => array(),
-		),
-
 		// Menu Order
 		'menu-order' => array(
 			'title'             => esc_html__( 'Menu Widget Order', 'vgsr-entity' ),
@@ -39,8 +29,39 @@ function vgsr_entity_bestuur_settings_fields() {
 			'entity'            => 'bestuur',
 			'section'           => 'main',
 			'args'              => array(),
-		)
+		),
+
+		// Bestuur Positions
+		'positions' => array(
+			'title'             => esc_html__( 'Positions', 'vgsr-entity' ),
+			'callback'          => 'vgsr_entity_bestuur_setting_positions_field',
+			'sanitize_callback' => 'vgsr_entity_bestuur_sanitize_positions_field',
+			'entity'            => 'bestuur',
+			'section'           => 'attributes',
+			'args'              => array(),
+		),
 	) );
+}
+
+/**
+ * Output the Bestuur Menu Order settings field
+ *
+ * @since 1.0.0
+ */
+function vgsr_entity_bestuur_setting_menu_order_field() {
+
+	// Define local variables
+	$option_name = "_bestuur-menu-order";
+	$value       = (int) get_option( $option_name ); ?>
+
+	<select name="<?php echo esc_attr( $option_name ); ?>" id="<?php echo esc_attr( $option_name ); ?>">
+		<option value="0" <?php selected( $value, 0 ); ?>><?php esc_html_e( 'Seniority',         'vgsr-entity' ); ?></option>
+		<option value="1" <?php selected( $value, 1 ); ?>><?php esc_html_e( 'Reverse seniority', 'vgsr-entity' ); ?></option>
+	</select>
+
+	<p for="<?php echo esc_attr( $option_name ); ?>" class="description"><?php esc_html_e( 'The order in which the Besturen will be displayed in the Menu Widget.', 'vgsr-entity' ); ?></p>
+
+	<?php
 }
 
 /**
@@ -99,27 +120,6 @@ function vgsr_entity_bestuur_setting_positions_field() {
 			</tr>
 		</tbody>
 	</table>
-
-	<?php
-}
-
-/**
- * Output the Bestuur Menu Order settings field
- *
- * @since 1.0.0
- */
-function vgsr_entity_bestuur_setting_menu_order_field() {
-
-	// Define local variables
-	$option_name = "_bestuur-menu-order";
-	$value       = (int) get_option( $option_name ); ?>
-
-	<select name="<?php echo esc_attr( $option_name ); ?>" id="<?php echo esc_attr( $option_name ); ?>">
-		<option value="0" <?php selected( $value, 0 ); ?>><?php esc_html_e( 'Seniority',         'vgsr-entity' ); ?></option>
-		<option value="1" <?php selected( $value, 1 ); ?>><?php esc_html_e( 'Reverse seniority', 'vgsr-entity' ); ?></option>
-	</select>
-
-	<p for="<?php echo esc_attr( $option_name ); ?>" class="description"><?php esc_html_e( 'The order in which the Besturen will be displayed in the Menu Widget.', 'vgsr-entity' ); ?></p>
 
 	<?php
 }
