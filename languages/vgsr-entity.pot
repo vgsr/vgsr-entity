@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: VGSR Entity\n"
-"POT-Creation-Date: 2018-06-29 16:45+0000\n"
+"POT-Creation-Date: 2018-08-04 14:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,36 +17,36 @@ msgstr ""
 "Language: \n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:398
+#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:363
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:274
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:433
 msgid "Archived"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:399
+#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:364
 #, php-format
 msgid "Archived <span class=\"count\">(%s)</span>"
 msgid_plural "Archived <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:430
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:496
 msgctxt "Customizer menu type label"
 msgid "Entity Page"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:848
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:989
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:966
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:1107
 msgid "Logo"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:874
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:992
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:441
 #, php-format
 msgid "Set %s Logo"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:888
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:1006
 #, php-format
 msgid "Remove %s Logo"
 msgstr ""
@@ -55,31 +55,51 @@ msgstr ""
 msgid "Main Settings"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:49
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:33
+msgid "Attribute Settings"
+msgstr ""
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:56
 msgid "Parent Page"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:120
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:64
+msgid "Entity Slug"
+msgstr ""
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:121
+msgid "Customize the entity page and permalink structure here."
+msgstr ""
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:148
 msgid "&mdash; No Parent &mdash;"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:127
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:43
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:155
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:169
 msgid "View"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:130
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:158
 #, php-format
 msgid "Select the page that should act as the parent page for %s."
 msgstr ""
 
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:188
+msgid "When a parent page is selected, there is no slug to define."
+msgstr ""
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:202
+msgid "Customize the settings for entity attributes here."
+msgstr ""
+
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:102
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:54
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:75
 msgid "Remove position"
 msgstr ""
 
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:106
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:26
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:36
 msgid "Positions"
 msgstr ""
 
@@ -96,7 +116,7 @@ msgid ""
 msgstr ""
 
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:173
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:67
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:88
 msgid "Add position"
 msgstr ""
 
@@ -199,44 +219,44 @@ msgstr ""
 msgid "Bestuur submitted."
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:231
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:235
 msgid "Bestuur Parent"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:241
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:242
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:245
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:246
 msgid "Current Bestuur"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:258
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:262
 msgctxt "Customizer menu type label"
 msgid "Bestuur Page"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:36
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:26
 msgid "Menu Widget Order"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:64
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:73
-msgid "Label"
-msgstr ""
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:65
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:74
-msgid "Slug"
-msgstr ""
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:118
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:58
 msgid "Seniority"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:119
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:59
 msgid "Reverse seniority"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:122
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:62
 msgid "The order in which the Besturen will be displayed in the Menu Widget."
+msgstr ""
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:85
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:94
+msgid "Label"
+msgstr ""
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:86
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:95
+msgid "Slug"
 msgstr ""
 
 #. 1. Bestuur title, 2. Bestuur season
@@ -622,85 +642,79 @@ msgctxt "Customizer menu type label"
 msgid "Kast Page"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/settings.php:26
-msgid "Recreate Thumbnails"
-msgstr ""
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/settings.php:45
-msgid ""
-"This is a one time resizing of thumbs for Kasten. NOTE: This option only "
-"adds new image sizes, it does not remove old ones."
-msgstr ""
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:120
-msgid "BuddyPress Settings"
-msgstr ""
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:146
-msgid "Members Field"
-msgstr ""
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:150
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:136
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:179
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:140
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:205
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:57
 msgid "Members"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:153
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:219
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:76
+msgid "Residents"
+msgstr ""
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:236
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:95
+msgid "Former Residents"
+msgstr ""
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:26
+msgid "Profile Settings"
+msgstr ""
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:53
+msgid "Members Field"
+msgstr ""
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:60
 msgid "Select the field that holds the Dispuut's members."
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:158
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:65
 #, php-format
 msgid "%d Member"
 msgid_plural "%d Members"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:165
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:72
 msgid "Residents Field"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:169
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:193
-msgid "Residents"
-msgstr ""
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:172
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:79
 msgid "Select the field that holds the Kast's residents."
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:177
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:84
 #, php-format
 msgid "%d Resident"
 msgid_plural "%d Residents"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:184
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:91
 msgid "Former Residents Field"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:188
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:210
-msgid "Former Residents"
-msgstr ""
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:191
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:98
 msgid "Select the field that holds the Kast's former residents."
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:202
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:110
 #, php-format
-msgid "Address Map: %s"
+msgid "Address: %s"
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:208
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:116
 #, php-format
 msgid "Select the profile field that holds this address detail: %s."
 msgstr ""
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:81
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:134
+msgid "Customize the settings that relate entities to member profiles."
+msgstr ""
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:207
 msgid "&mdash; No Field &mdash;"
 msgstr ""
 

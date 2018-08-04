@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: VGSR Entity\n"
-"POT-Creation-Date: 2018-06-29 16:45+0000\n"
-"PO-Revision-Date: 2018-06-29 16:46+0000\n"
+"POT-Creation-Date: 2018-08-04 14:56+0000\n"
+"PO-Revision-Date: 2018-08-04 14:59+0000\n"
 "Last-Translator: Laurens Offereins <lmoffereins@gmail.com>\n"
 "Language-Team: Nederlands\n"
 "Language: nl_NL\n"
@@ -17,36 +17,36 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:398
+#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:363
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:274
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:433
 msgid "Archived"
 msgstr "Gearchiveerd"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:399
+#: ../../../../src/wp-content/plugins/vgsr-entity/vgsr-entity.php:364
 #, php-format
 msgid "Archived <span class=\"count\">(%s)</span>"
 msgid_plural "Archived <span class=\"count\">(%s)</span>"
 msgstr[0] "Gearchiveerd <span class=\"count\">(%s)</span>"
 msgstr[1] "Gearchiveerd <span class=\"count\">(%s)</span>"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:430
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:496
 msgctxt "Customizer menu type label"
 msgid "Entity Page"
 msgstr "Entiteitpagina"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:848
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:989
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:966
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:1107
 msgid "Logo"
 msgstr "Logo"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:874
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:992
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/classes/class-vgsr-entity-type-admin.php:441
 #, php-format
 msgid "Set %s Logo"
 msgstr "%slogo instellen"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:888
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/functions.php:1006
 #, php-format
 msgid "Remove %s Logo"
 msgstr "%slogo verwijderen"
@@ -55,31 +55,53 @@ msgstr "%slogo verwijderen"
 msgid "Main Settings"
 msgstr "Hoofdinstellingen"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:49
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:33
+msgid "Attribute Settings"
+msgstr "Attribuutinstellingen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:56
 msgid "Parent Page"
 msgstr "Hoofdpagina"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:120
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:64
+msgid "Entity Slug"
+msgstr "Entity verkorte naam"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:121
+msgid "Customize the entity page and permalink structure here."
+msgstr "Wijzig hier de entity pagina- en linkstructuur."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:148
 msgid "&mdash; No Parent &mdash;"
 msgstr "&mdash; Geen hoofd &mdash;"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:127
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:43
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:155
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:169
 msgid "View"
 msgstr "Bekijken"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:130
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:158
 #, php-format
 msgid "Select the page that should act as the parent page for %s."
 msgstr "Selecteer de hoofdpagina voor %s."
 
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:188
+msgid "When a parent page is selected, there is no slug to define."
+msgstr ""
+"Wanneer een hoofdpagina is geselecteerd, hoef je geen verkorte naam in te "
+"stellen."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/settings.php:202
+msgid "Customize the settings for entity attributes here."
+msgstr "Wijzig hier de instellingen voor entiteitattributen."
+
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:102
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:54
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:75
 msgid "Remove position"
 msgstr "Verwijder positie"
 
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:106
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:26
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:36
 msgid "Positions"
 msgstr "Posities"
 
@@ -98,7 +120,7 @@ msgstr ""
 "volledige naam in. Een groene rand signaleert een bestaand site-account."
 
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/admin.php:173
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:67
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:88
 msgid "Add position"
 msgstr "Positie toevoegen"
 
@@ -201,45 +223,45 @@ msgstr "Bestuur opgeslagen."
 msgid "Bestuur submitted."
 msgstr "Bestuur ingediend."
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:231
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:235
 msgid "Bestuur Parent"
 msgstr "Bestuurhoofd"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:241
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:242
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:245
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:246
 msgid "Current Bestuur"
 msgstr "Huidig bestuur"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:258
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/functions.php:262
 msgctxt "Customizer menu type label"
 msgid "Bestuur Page"
 msgstr "Bestuurpagina"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:36
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:26
 msgid "Menu Widget Order"
 msgstr "Menu Widget volgorde"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:64
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:73
-msgid "Label"
-msgstr "Label"
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:65
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:74
-msgid "Slug"
-msgstr "Slug"
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:118
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:58
 msgid "Seniority"
 msgstr "Anci&#235;nniteit"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:119
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:59
 msgid "Reverse seniority"
 msgstr "Omgekeerde anci&#235;nniteit"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:122
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:62
 msgid "The order in which the Besturen will be displayed in the Menu Widget."
 msgstr "De volgorde waarop besturen worden getoond in het Menu Widget"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:85
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:94
+msgid "Label"
+msgstr "Label"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:86
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/settings.php:95
+msgid "Slug"
+msgstr "Slug"
 
 #. 1. Bestuur title, 2. Bestuur season
 #: ../../../../src/wp-content/plugins/vgsr-entity/includes/besturen/template.php:74
@@ -632,87 +654,79 @@ msgctxt "Customizer menu type label"
 msgid "Kast Page"
 msgstr "Kastpagina"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/settings.php:26
-msgid "Recreate Thumbnails"
-msgstr "Maak nieuwe thumbnails"
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/kasten/settings.php:45
-msgid ""
-"This is a one time resizing of thumbs for Kasten. NOTE: This option only "
-"adds new image sizes, it does not remove old ones."
-msgstr ""
-"Hiermee kan je eenmalig nieuwe afmetingen voor thumbnails voor kasten maken. "
-"Dit verwijdert geen oude afmetingen."
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:120
-msgid "BuddyPress Settings"
-msgstr "BuddyPressinstellingen"
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:146
-msgid "Members Field"
-msgstr "Ledenveld"
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:150
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:136
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:179
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:140
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:205
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:57
 msgid "Members"
 msgstr "Leden"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:153
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:219
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:76
+msgid "Residents"
+msgstr "Bewoners"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:236
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:95
+msgid "Former Residents"
+msgstr "Oud-bewoners"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:26
+msgid "Profile Settings"
+msgstr "Profielinstellingen"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:53
+msgid "Members Field"
+msgstr "Ledenveld"
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:60
 msgid "Select the field that holds the Dispuut's members."
 msgstr "Selecteer het profielveld dat de leden van een dispuut bevat."
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:158
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:65
 #, php-format
 msgid "%d Member"
 msgid_plural "%d Members"
 msgstr[0] "%d lid"
 msgstr[1] "%d leden"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:165
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:72
 msgid "Residents Field"
 msgstr "Bewonersveld"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:169
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:193
-msgid "Residents"
-msgstr "Bewoners"
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:172
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:79
 msgid "Select the field that holds the Kast's residents."
 msgstr "Selecteer het profielveld dat de bewoners van een kast bevat."
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:177
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:84
 #, php-format
 msgid "%d Resident"
 msgid_plural "%d Residents"
 msgstr[0] "%d bewoner"
 msgstr[1] "%d bewoners"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:184
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:91
 msgid "Former Residents Field"
 msgstr "Oud-bewonersveld"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:188
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/members.php:210
-msgid "Former Residents"
-msgstr "Oud-bewoners"
-
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:191
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:98
 msgid "Select the field that holds the Kast's former residents."
 msgstr "Selecteer het profielveld dat de oud-bewoners van een kast bevat."
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:202
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:110
 #, php-format
-msgid "Address Map: %s"
-msgstr "Adres mapping: %s"
+msgid "Address: %s"
+msgstr "Adres: %s"
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/buddypress.php:208
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:116
 #, php-format
 msgid "Select the profile field that holds this address detail: %s."
 msgstr "Selecteer het profielveld dat dit adresdetail bevat: %s."
 
-#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:81
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:134
+msgid "Customize the settings that relate entities to member profiles."
+msgstr "Wijzig hier de instellingen die entiteiten met profielen verbinden."
+
+#: ../../../../src/wp-content/plugins/vgsr-entity/includes/extend/buddypress/settings.php:207
 msgid "&mdash; No Field &mdash;"
 msgstr "&mdash; Geen veld &mdash;"
 
