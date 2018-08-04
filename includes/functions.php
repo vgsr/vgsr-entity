@@ -671,10 +671,9 @@ function vgsr_entity_setup_nav_menu_item( $menu_item ) {
 		}
 	}
 
-	// Mark entity parent page nav items
-	if ( 'post_type' === $menu_item->type
-		&& ( $type = vgsr_is_entity_parent( $menu_item->object_id ) )
-		&& vgsr_entity_is_post_of_type( $type )
+	// Mark entity parent (page or archive) nav items
+	if ( ( 'post_type' === $menu_item->type && ( $type = vgsr_is_entity_parent( $menu_item->object_id ) ) && vgsr_entity_is_post_of_type( $type ) )
+		|| ( 'post_type_archive' === $menu_item->type && is_singular( $menu_item->object ) )
 	) {
 
 		// Set item classes
