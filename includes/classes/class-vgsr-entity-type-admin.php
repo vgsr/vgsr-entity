@@ -113,9 +113,10 @@ class VGSR_Entity_Type_Admin {
 	protected function setup_actions() {
 
 		// Core
-		add_action( 'admin_menu',            array( $this, 'entity_admin_menu'     ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-		add_action( 'admin_notices',         array( $this, 'admin_display_errors'  ) );
+		add_action( 'admin_menu',            array( $this, 'entity_admin_menu'     )     );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' )     );
+		add_action( 'admin_notices',         array( $this, 'admin_display_errors'  )     );
+		add_action( 'admin_bar_menu',        array( $this, 'admin_bar_menu'        ), 80 );
 
 		// Settings
 		add_action( 'vgsr_entity_admin_init',      array( $this, 'entity_register_settings' ) );
@@ -535,6 +536,34 @@ class VGSR_Entity_Type_Admin {
 			// Register non-empty section
 			if ( $fields_count > 0 ) {
 				add_settings_section( $section_name, $s_args['title'], $s_args['callback'], $page_name );
+			}
+		}
+	}
+
+	/**
+	 * Modify the admin bar menu
+	 *
+	 * @since 2.0.1
+	 *
+	 * @global string $hook_suffix
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar The admin bar object
+	 */
+	public function admin_bar_menu( $wp_admin_bar ) {
+		global $hook_suffix;
+
+		if ( is_admin() ) {
+
+			// Add View Items menu for the settings page
+			if ( $hook_suffix === $this->settings_page ) {
+				$post_type_object = get_post_type_object( $this->post_type );
+				$wp_admin_bar->add_node(
+					array(
+						'id'    => 'archive',
+						'title' => $post_type_object->labels->view_items,
+						'href'  => get_post_type_archive_link( $this->post_type ),
+					)
+				);
 			}
 		}
 	}
