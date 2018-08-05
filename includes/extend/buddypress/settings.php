@@ -129,9 +129,10 @@ function vgsr_entity_bp_settings_fields( $fields ) {
  *
  * @since 2.0.0
  */
-function vgsr_entity_bp_settings_profile_section() { ?>
+function vgsr_entity_bp_settings_profile_section() {
+	$post_type = get_current_screen()->post_type; ?>
 
-	<p><?php esc_html_e( 'Customize the settings that relate entities to member profiles.', 'vgsr-entity' ); ?></p>
+	<p><?php printf( esc_html__( 'Customize the settings that relate %s to member profiles.', 'vgsr-entity' ), get_post_type_object( $post_type )->labels->name ); ?></p>
 
 	<?php
 }
