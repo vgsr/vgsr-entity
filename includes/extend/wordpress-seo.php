@@ -107,7 +107,7 @@ class VGSR_Entity_WPSEO {
 	public function breadcrumb_links( $crumbs ) {
 
 		// Entity page. Fully overwrite crumb paths
-		if ( vgsr_is_entity() ) {
+		if ( is_vgsr_entity() ) {
 			$post_type = get_post_type();
 			$type      = vgsr_entity_get_type( $post_type );
 			$parent    = vgsr_entity_get_entity_parent( $type, true );
