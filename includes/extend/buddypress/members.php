@@ -125,6 +125,8 @@ function vgsr_entity_bp_filter_user_query_post_users( $query ) {
  *
  * @since 2.0.0
  *
+ * @uses apply_filters() Calls 'vgsr_entity_bp_members_list_limit'
+ *
  * @param WP_Post $post Post object
  * @param array $args List arguments
  */
@@ -145,25 +147,43 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 	if ( ! vgsr_entity_bp_has_members_for_post( $args['field'], $post->ID, $args['multiple'] ) )
 		return;
 
+	// Define list limits
+	$total_count = $GLOBALS['members_template']->total_member_count;
+	$list_limit  = apply_filters( 'vgsr_entity_bp_members_list_limit', 12, $post );
+	$apply_limit = ! is_singular() && $total_count > $list_limit;
+	$limit_count = $apply_limit ? ( $list_limit - 1 ) : $total_count;
+
 	?>
 
 	<div class="entity-members">
 		<h4><?php echo $args['label']; ?></h4>
 
 		<ul class="bp-item-list">
-			<?php while ( bp_members() ) : bp_the_member(); ?>
-			<li <?php bp_member_class( array( 'member' ) ); ?>>
-				<div class="item-avatar">
-					<a href="<?php bp_member_permalink(); ?>"><?php bp_member_avatar(); ?></a>
-				</div>
+			<?php while ( bp_members() && ( ! $apply_limit || $GLOBALS['members_template']->current_member < ( $limit_count - 1 ) ) ) : bp_the_member(); ?>
 
-				<div class="item">
-					<div class="item-title">
-						<a href="<?php bp_member_permalink(); ?>"><?php bp_member_name(); ?></a>
+				<li <?php bp_member_class( array( 'member' ) ); ?>>
+					<div class="item-avatar">
+						<a href="<?php bp_member_permalink(); ?>"><?php bp_member_avatar(); ?></a>
 					</div>
-				</div>
-			</li>
+
+					<div class="item">
+						<div class="item-title">
+							<a href="<?php bp_member_permalink(); ?>"><?php bp_member_name(); ?></a>
+						</div>
+					</div>
+				</li>
+
 			<?php endwhile; ?>
+
+			<?php if ( $apply_limit ) : ?>
+
+				<li class="bp-list-limit <?php echo $limit_count % 2 ? 'even' : 'odd'; ?>">
+					<div class="item">
+						<a href="<?php the_permalink( $post ); ?>"><?php echo '&plus;' . ( $total_count - $limit_count ); ?></a>
+					</div>
+				</li>
+
+			<?php endif; ?>
 		</ul>
 	</div>
 
