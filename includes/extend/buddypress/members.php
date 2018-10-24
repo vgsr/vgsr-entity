@@ -159,15 +159,22 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 	if ( ! $post = get_post( $post ) )
 		return;
 
-	// Parse list args
+	// Parse args
 	$args = wp_parse_args( $args, array(
 		'field'    => '',
 		'label'    => esc_html__( 'Members', 'vgsr-entity' ),
 		'multiple' => false,
+		'vgsr'     => true
 	) );
 
+	// Extract values
+	$field = $args['field'];
+	$label = $args['label'];
+	unset( $args['field'], $args['label'] );
+	$args['post'] = $post->ID;
+
 	// Bail when this post has no members
-	if ( ! vgsr_entity_bp_has_members_for_post( $args['field'], $post->ID, $args['multiple'] ) )
+	if ( ! vgsr_entity_bp_has_members_for_post( $field, $args ) )
 		return;
 
 	// Define list limits
@@ -179,7 +186,7 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 	?>
 
 	<div class="entity-members">
-		<h4><?php echo $args['label']; ?></h4>
+		<h4><?php echo esc_html( $label ); ?></h4>
 
 		<ul class="bp-item-list">
 			<?php while ( bp_members() && ( ! $apply_limit || $GLOBALS['members_template']->current_member < ( $limit_count - 1 ) ) ) : bp_the_member(); ?>
@@ -220,11 +227,11 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
  *
  * @param WP_Post $post Post object
  */
-function vgsr_entity_bp_list_post_members( $post ) {
-	vgsr_entity_bp_the_members_list( $post, array(
+function vgsr_entity_bp_list_post_members( $post, $args = array() ) {
+	vgsr_entity_bp_the_members_list( $post, wp_parse_args( $args, array(
 		'field' => 'bp-members-field',
 		'label' => esc_html__( 'Members', 'vgsr-entity' ),
-	) );
+	) ) );
 }
 
 /**
@@ -238,6 +245,7 @@ function vgsr_entity_bp_list_post_residents( $post ) {
 	vgsr_entity_bp_the_members_list( $post, array(
 		'field' => 'bp-residents-field',
 		'label' => esc_html__( 'Residents', 'vgsr-entity' ),
+		'vgsr'  => true
 	) );
 }
 
@@ -256,6 +264,7 @@ function vgsr_entity_bp_list_post_olim_residents( $post ) {
 			'field'    => 'bp-olim-residents-field',
 			'label'    => esc_html__( 'Former Residents', 'vgsr-entity' ),
 			'multiple' => true,
+			'vgsr'     => true
 		) );
 	}
 }
