@@ -18,16 +18,33 @@ defined( 'ABSPATH' ) || exit;
  * When the post has users, the `$members_template` global is setup for use.
  *
  * @since 2.0.0
+ * @since 2.1.0 Modified parameters to accept a list of arguments as the second parameter
  *
  * @param string $field Settings field name
- * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post.
- * @param bool $multiple Optional. Whether the profile field holds multiple values.
+ * @param array $args Query arguments, supports these args:
+ *  - int|WP_Post $post     Post ID or object. Defaults to the current post.
+ *  - bool        $multiple Whether the profile field holds multiple values. Defaults to False.
  * @return bool Whether the post has any users
  */
-function vgsr_entity_bp_has_members_for_post( $field, $post = 0, $multiple = false ) {
+function vgsr_entity_bp_has_members_for_post( $field, $args = array() ) {
+
+	// Back-compat
+	if ( ! is_array( $args ) ) {
+		$args = array( 'post' => $args );
+
+		if ( func_num_args() > 2 ) {
+			$args['multiple'] = func_get_arg( 2 );
+		}
+	}
+
+	// Parse args
+	$args = wp_parse_args( $args, array(
+		'post'     => 0,
+		'multiple' => false
+	) );
 
 	// Bail when the post is invalid
-	if ( ! $post = get_post( $post ) )
+	if ( ! $post = get_post( $args['post'] ) )
 		return false;
 
 	$type = vgsr_entity_get_type( $post, true );
@@ -43,18 +60,21 @@ function vgsr_entity_bp_has_members_for_post( $field, $post = 0, $multiple = fal
 	vgsr_entity()->extend->bp->set_post_query_vars( array(
 		'field_id' => $field_id,
 		'post'     => $post,
-		'multiple' => $multiple
+		'multiple' => $args['multiple']
 	) );
 
 	// Setup query modifier
 	add_action( 'bp_pre_user_query_construct', 'vgsr_entity_bp_filter_user_query_post_users' );
 
+	// Remove non-query arguments
+	unset( $args['post'], $args['multiple'] );
+
 	// Query members and setup members template
-	$has_members = bp_has_members( array(
+	$has_members = bp_has_members( wp_parse_args( $args, array(
 		'type'            => '',    // Query $wpdb->users, order by ID
 		'per_page'        => 0,     // No limit
 		'populate_extras' => false,
-	) );
+	) ) );
 
 	// Unhook query modifier
 	remove_action( 'bp_pre_user_query_construct', 'vgsr_entity_bp_filter_user_query_post_users' );
@@ -128,7 +148,10 @@ function vgsr_entity_bp_filter_user_query_post_users( $query ) {
  * @uses apply_filters() Calls 'vgsr_entity_bp_members_list_limit'
  *
  * @param WP_Post $post Post object
- * @param array $args List arguments
+ * @param array $args List arguments, supports these args:
+ *  - string $field    Option name of the field
+ *  - string $label    Label of the list. Defaults to 'Members'.
+ *  - bool   $multiple Whether the field supports multiple values. Defaults to False.
  */
 function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 
