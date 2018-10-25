@@ -36,17 +36,19 @@ function vgsr_entity_bp_get_field( $field, $post = 0, $context = 'display' ) {
 		// Consider settings field
 		switch ( $field ) {
 
-			// Public members
+			// Post members
 			case 'bp-members-field' :
-			case 'bp-residents-field' :
-				if ( $display ) {
-					// For non-VGSR, discount oud-leden
-					$query_args = vgsr_entity_check_access() ? array() : array( 'member_type__not_in' => array( vgsr_bp_oudlid_member_type() ) );
-					$value = vgsr_entity_bp_get_post_users( $value, $post, $query_args );
-				}
+				// Only count leden when displaying
+				$query_args = $display ? array( 'vgsr' => 'lid' ) : array();
+				$value = vgsr_entity_bp_get_post_users( $value, $post, $query_args );
 				break;
 
-			// Private members
+			// Residents
+			case 'bp-residents-field' :
+				$value = vgsr_entity_bp_get_post_users( $value, $post );
+				break;
+
+			// Olim-residents
 			case 'bp-olim-residents-field' :
 				$value = vgsr_entity_bp_get_post_users( $value, $post, array(), true );
 				break;
