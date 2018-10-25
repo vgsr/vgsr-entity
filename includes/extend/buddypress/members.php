@@ -227,11 +227,21 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
  *
  * @param WP_Post $post Post object
  */
-function vgsr_entity_bp_list_post_members( $post, $args = array() ) {
-	vgsr_entity_bp_the_members_list( $post, wp_parse_args( $args, array(
+function vgsr_entity_bp_list_post_members( $post ) {
+	vgsr_entity_bp_the_members_list( $post, array(
 		'field' => 'bp-members-field',
 		'label' => esc_html__( 'Members', 'vgsr-entity' ),
-	) ) );
+		'vgsr'  => 'lid'
+	) );
+
+	// For singular posts, display oud-leden
+	if ( is_singular() ) {
+		vgsr_entity_bp_the_members_list( $post, array(
+			'field' => 'bp-members-field',
+			'label' => esc_html__( 'Oud-leden', 'vgsr-entity' ),
+			'vgsr'  => 'oud-lid'
+		) );
+	}
 }
 
 /**
