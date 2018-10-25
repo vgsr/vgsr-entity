@@ -10,6 +10,11 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
+// Load base class
+if ( ! class_exists( 'VGSR_Entity_Type' ) ) {
+	require( vgsr_entity()->includes_dir . 'classes/class-vgsr-entity-type.php' );
+}
+
 if ( ! class_exists( 'VGSR_Kast' ) ) :
 /**
  * VGSR Kast Entity Class

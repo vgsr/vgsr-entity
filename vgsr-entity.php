@@ -133,9 +133,9 @@ final class VGSR_Entity {
 	 */
 	private function includes() {
 
-		// Core
+		/** Core **************************************************************/
+
 		require( $this->includes_dir . 'actions.php'      );
-		require( $this->includes_dir . 'admin.php'        );
 		require( $this->includes_dir . 'extend.php'       );
 		require( $this->includes_dir . 'functions.php'    );
 		require( $this->includes_dir . 'sub-actions.php'  );
@@ -143,8 +143,16 @@ final class VGSR_Entity {
 		require( $this->includes_dir . 'theme-compat.php' );
 		require( $this->includes_dir . 'update.php'       );
 
-		// Admin
+		/** Entities **********************************************************/
+
+		require( $this->includes_dir . 'besturen/besturen.php' );
+		require( $this->includes_dir . 'disputen/disputen.php' );
+		require( $this->includes_dir . 'kasten/kasten.php'     );
+
+		/** Admin *************************************************************/
+
 		if ( is_admin() ) {
+			require( $this->includes_dir . 'admin.php'    );
 			require( $this->includes_dir . 'settings.php' );
 		}
 	}
@@ -208,12 +216,6 @@ final class VGSR_Entity {
 
 		// Walk registered entity types
 		foreach ( $entities as $type => $class ) {
-
-			// Load class file
-			$class_file = $this->includes_dir . 'classes/class-' . str_replace( '_', '-', strtolower( $class ) ) . '.php';
-			if ( file_exists( $class_file ) ) {
-				require_once( $class_file );
-			}
 
 			// Load entity class
 			if ( ! array_key_exists( $type, $this->types ) && class_exists( $class ) ) {
