@@ -32,7 +32,7 @@ class VGSR_Bestuur extends VGSR_Entity_Type {
 	 */
 	public function __construct( $type ) {
 		parent::__construct( $type, array(
-			'path'           => 'besturen',
+			'_builtin'       => __FILE__,
 			'post_type_args' => array(
 				'description'      => esc_html__( "A Bestuur is the VGSR's governing body which is re-elected each year.", 'vgsr-entity' ),
 				'has_archive'      => true,

@@ -37,7 +37,7 @@ class VGSR_Dispuut extends VGSR_Entity_Type {
 
 		// Construct entity
 		parent::__construct( $type, array(
-			'path'           => 'disputen',
+			'_builtin'       => __FILE__,
 			'post_type_args' => array(
 				'description'      => esc_html__( "A Dispuut is part of the VGSR's social structure for discussing topics in small groups.", 'vgsr-entity' ),
 				'has_archive'      => true,

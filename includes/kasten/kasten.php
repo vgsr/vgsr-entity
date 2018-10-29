@@ -37,7 +37,7 @@ class VGSR_Kast extends VGSR_Entity_Type {
 
 		// Construct entity
 		parent::__construct( $type, array(
-			'path'           => 'kasten',
+			'_builtin'       => __FILE__,
 			'post_type_args' => array(
 				'description'      => esc_html__( "A Kast is an initiated house where active VGSR members dwell.", 'vgsr-entity' ),
 				'has_archive'      => true,
@@ -138,7 +138,7 @@ class VGSR_Kast extends VGSR_Entity_Type {
 	public function setup_globals() {
 		parent::setup_globals();
 
-		add_image_size( $this->args['thumbsize'], $this->args['mini_size'], $this->args['mini_size'], true );
+		add_image_size( $this->thumbsize, $this->mini_size, $this->mini_size, true );
 	}
 
 	/**

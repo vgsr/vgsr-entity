@@ -50,8 +50,6 @@ class VGSR_Entity_Type_Admin {
 	 * @param string $type Entity type name
 	 */
 	public function __construct( $type ) {
-
-		// Set entity type
 		$this->type = $type;
 
 		$this->setup_globals();
@@ -68,11 +66,7 @@ class VGSR_Entity_Type_Admin {
 	 * @return bool Value isset
 	 */
 	public function __isset( $key ) {
-		if ( array_key_exists( $key, $this->type()->args ) ) {
-			return true;
-		} else {
-			return isset( $this->{$key} );
-		}
+		return null !== $this->type()->{$key} || isset( $this->{$key} );
 	}
 
 	/**
@@ -84,11 +78,13 @@ class VGSR_Entity_Type_Admin {
 	 * @return bool Value isset
 	 */
 	public function __get( $key ) {
-		if ( array_key_exists( $key, $this->type()->args ) ) {
-			return $this->type()->{$key};
-		} else {
-			return $this->{$key};
+		$value = $this->type()->{$key};
+
+		if ( null === $value && isset( $this->{$key} ) ) {
+			$value = $this->{$key};
 		}
+
+		return $value;
 	}
 
 	/**

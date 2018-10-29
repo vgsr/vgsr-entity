@@ -56,8 +56,6 @@ abstract class VGSR_Entity_Type {
 	 * @since 1.0.0
 	 * @since 2.0.0 Rearranged parameters and added `$meta` parameter.
 	 *
-	 * @uses apply_filters() Calls 'vgsr_entity_{$type}_post_type'
-	 *
 	 * @param string $type Post type name. Required
 	 * @param array $args {
 	 *     Optional. Array of entity arguments
@@ -85,13 +83,34 @@ abstract class VGSR_Entity_Type {
 			return;
 		}
 
-		// Set entity type
-		$this->type = $type;
+		// Set entity type and custom properties
+		$this->type      = $type;
+		$this->query     = new WP_Query;
+		$this->meta      = $meta;
+		$this->errors    = wp_parse_args( $errors, array(
+			1 => esc_html__( 'Some of the provided values were not given in the valid format.', 'vgsr-entity' ),
+		) );
 
-		// Set entity args
-		$this->args = wp_parse_args( $args, array(
-			'path'           => '',
-			'post_type'      => $type,
+		// Setup entity logic
+		$this->set_props( $args );
+		$this->setup_globals();
+		$this->includes();
+		$this->setup_actions();
+	}
+
+	/**
+	 * Setup class properties
+	 *
+	 * @since 2.1.0
+	 *
+	 * @uses apply_filters() Calls 'vgsr_entity_{$type}_post_type'
+	 *
+	 * @param array $props Class properties
+	 */
+	private function set_props( $props = array() ) {
+		$props = wp_parse_args( $props, array(
+			'_builtin'       => false,
+			'post_type'      => $this->type,
 			'post_type_args' => array(),
 			'has_archive'    => false,
 			'features'       => array( 'logo' ),
@@ -100,40 +119,36 @@ abstract class VGSR_Entity_Type {
 
 			// Admin
 			'admin_class'    => 'VGSR_Entity_Type_Admin',
-			'posts_page'     => "edit.php?post_type={$type}",
+			'posts_page'     => "edit.php?post_type={$this->type}",
 			'settings_page'  => '',
 
 			// Back-compat
 			'labels'         => array(),
-			'menu_icon'      => '',
+			'menu_icon'      => null
 		) );
 
-		// Set post type
-		$this->post_type = apply_filters( "vgsr_entity_{$this->type}_post_type", $this->args['post_type'] );
+		$props['post_type'] = apply_filters( "vgsr_entity_{$this->type}_post_type", $props['post_type'] );
 
-		// Set meta fields
-		$this->meta = $meta;
+		// Back-compat: post type labels
+		if ( $props['labels'] ) {
+			$props['post_type_args']['labels'] = $props['labels'];
+		}
 
-		// Set error messages
-		$this->errors = wp_parse_args( $errors, array(
-			1 => esc_html__( 'Some of the provided values were not given in the valid format.', 'vgsr-entity' ),
-		) );
+		// Back-compat: post type menu icon
+		if ( $props['menu_icon'] ) {
+			$props['post_type_args']['menu_icon'] = $props['menu_icon'];
+		}
 
-		// Set entity query
-		$this->query = new WP_Query;
+		// Remove back-compat keys
+		unset( $props['labels'], $props['menu_icon'] );
 
-		// Setup entity globals
-		$this->setup_globals();
-
-		// Include entity files
-		$this->includes();
-
-		// Setup entity actions
-		$this->setup_actions();
+		foreach ( $props as $key => $value ) {
+			$this->{$key} = $value;
+		}
 	}
 
 	/**
-	 * Magic isset-er
+	 * Magic issetter
 	 *
 	 * @since 2.0.0
 	 *
@@ -141,10 +156,13 @@ abstract class VGSR_Entity_Type {
 	 * @return bool Value isset
 	 */
 	public function __isset( $key ) {
-		if ( array_key_exists( $key, $this->args ) ) {
-			return true;
-		} else {
-			return isset( $this->{$key} );
+		switch ( $key ) {
+			case 'parent' :
+			case 'labels' :
+			case 'menu_icon' :
+				return null !== $this->get_prop( $key );
+			default :
+				return isset( $this->{$key} );
 		}
 	}
 
@@ -154,49 +172,30 @@ abstract class VGSR_Entity_Type {
 	 * @since 2.0.0
 	 *
 	 * @param string $key
-	 * @return bool Value isset
+	 * @return mixed Value
 	 */
 	public function __get( $key ) {
-		if ( array_key_exists( $key, $this->args ) ) {
-			switch ( $key ) {
-				case 'parent' :
-					return $this->get_entity_parent();
-				case 'labels' :
-					return get_post_type_object( $this->post_type )->labels;
-				case 'menu_icon' :
-					return get_post_type_object( $this->post_type )->menu_icon;
-				default :
-					return $this->args[ $key ];
-			}
-		} else {
-			return $this->{$key};
-		}
+		return $this->get_prop( $key );
 	}
 
 	/**
-	 * Magic setter
+	 * Getter for class properties
 	 *
-	 * @since 2.0.0
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 */
-	public function __set( $key, $value ) {
-		if ( ! array_key_exists( $key, $this->args ) ) {
-			$this->{$key} = $value;
-		}
-	}
-
-	/**
-	 * Magic unsetter
-	 *
-	 * @since 2.0.0
+	 * @since 2.1.0
 	 *
 	 * @param string $key
+	 * @return mixed Value
 	 */
-	public function __unset( $key ) {
-		if ( ! array_key_exists( $key, $this->args ) ) {
-			unset( $this->{$key} );
+	private function get_prop( $key ) {
+		switch ( $key ) {
+			case 'parent' :
+				return $this->get_entity_parent();
+			case 'labels' :
+			case 'menu_icon' :
+				$post_type = get_post_type_object( $this->post_type );
+				return $post_type ? $post_type->{$key} : $this->post_type_args[ $key ];
+			default :
+				return $this->{$key};
 		}
 	}
 
@@ -211,13 +210,16 @@ abstract class VGSR_Entity_Type {
 	 */
 	public function setup_globals() {
 
-		/** Paths ******************************************************/
+		// Define includes for native entity types
+		if ( $this->_builtin ) {
 
-		if ( ! empty( $this->args['path'] ) ) {
+			/** Paths ******************************************************/
 
-			// Includes
-			$this->includes_dir  = trailingslashit( vgsr_entity()->includes_dir . $this->args['path']  );
-			$this->includes_url  = trailingslashit( vgsr_entity()->includes_url . $this->args['path']  );
+			// Setup base path information
+			$this->dirname       = basename( dirname( $this->_builtin ) );
+
+			$this->includes_dir  = trailingslashit( vgsr_entity()->includes_dir . $this->dirname );
+			$this->includes_url  = trailingslashit( vgsr_entity()->includes_url . $this->dirname );
 		}
 
 		do_action( "vgsr_entity_{$this->type}_setup_globals" );
@@ -285,7 +287,7 @@ abstract class VGSR_Entity_Type {
 		// Setup labels
 		$labels = function_exists( "vgsr_entity_get_{$this->type}_post_type_labels" )
 			? call_user_func( "vgsr_entity_get_{$this->type}_post_type_labels" )
-			: $this->args['labels'];
+			: $this->get_prop( 'labels' );
 
 		// Setup rewrite
 		$rewrite = array(
@@ -312,7 +314,7 @@ abstract class VGSR_Entity_Type {
 				'capability_type'      => 'page',
 				'rewrite'              => $rewrite,
 				'supports'             => $supports,
-				'menu_icon'            => $this->args['menu_icon'],
+				'menu_icon'            => $this->get_prop( 'menu_icon' ),
 				'register_meta_box_cb' => array( $this, 'add_metabox' ),
 				'vgsr-entity'          => $this->type
 			) ) )
@@ -331,7 +333,7 @@ abstract class VGSR_Entity_Type {
 		// Details metabox
 		add_meta_box(
 			'vgsr-entity-details',
-			sprintf( esc_html__( '%s Details', 'vgsr-entity' ), $this->labels->singular_name ),
+			sprintf( esc_html__( '%s Details', 'vgsr-entity' ), $this->get_prop( 'labels' )->singular_name ),
 			/**
 			 * Run only a dedicated action in the metabox
 			 *
@@ -402,8 +404,9 @@ abstract class VGSR_Entity_Type {
 		require_once( vgsr_entity()->includes_dir . 'classes/class-vgsr-entity-type-admin.php' );
 
 		// Load entity admin class
-		if ( ! empty( $this->args['admin_class'] ) && class_exists( $this->args['admin_class'] ) ) {
-			$this->admin = new $this->args['admin_class']( $this->type );
+		if ( ! empty( $this->admin_class ) && class_exists( $this->admin_class ) ) {
+			$class_name  = $this->admin_class;
+			$this->admin = new $class_name( $this->type );
 		}
 
 		do_action( "vgsr_entity_{$this->type}_admin_init" );
@@ -421,17 +424,17 @@ abstract class VGSR_Entity_Type {
 	public function get_entity_parent() {
 
 		// Get the parent post ID
-		if ( null === $this->args['parent'] ) {
+		if ( null === $this->parent ) {
 
 			// Get and check the parent post
 			$post = (int) get_option( "_{$this->type}-parent-page" );
 			$post = $post ? get_post( $post ) : false;
 
 			// Default non-parents to false
-			$this->args['parent'] = $post ? (int) $post->ID : false;
+			$this->parent = $post ? (int) $post->ID : false;
 		}
 
-		return $this->args['parent'];
+		return $this->parent;
 	}
 
 	/**
@@ -483,7 +486,7 @@ abstract class VGSR_Entity_Type {
 		);
 
 		// Renew rewrite rules
-		$this->args['parent'] = $value;
+		$this->parent = $value;
 		$this->register_post_type();
 		flush_rewrite_rules();
 	}
