@@ -751,7 +751,7 @@ abstract class VGSR_Entity_Type {
 
 				// Report error and unset value
 				if ( $error ) {
-					$this->add_error( 1 );
+					$this->admin->add_error( 1 );
 					$value = null;
 				}
 
