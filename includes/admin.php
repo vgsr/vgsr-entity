@@ -33,7 +33,8 @@ class VGSR_Entity_Admin {
 	 * @since 2.0.0
 	 */
 	private function setup_actions() {
-		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+		add_action( 'admin_menu',          array( $this, 'admin_menu'          )        );
+		add_action( 'wp_insert_post_data', array( $this, 'wp_insert_post_data' ), 10, 2 );
 	}
 
 	/** Public methods **************************************************/
@@ -77,6 +78,33 @@ class VGSR_Entity_Admin {
 
 			ksort( $menu );
 		}
+	}
+
+	/**
+	 * Modify the data of a post to be saved
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $data Post data
+	 * @param array $postarr Initial post data
+	 * @return array Post data
+	 */
+	public function wp_insert_post_data( $data, $postarr ) {
+
+		// Get archived status
+		$archived = vgsr_entity_get_archived_status_id();
+
+		/**
+		 * Article was archived and should remain so. This is however interpreted by
+		 * WP in a different way. See {@see _wp_translate_postdata()}, where the post
+		 * status is reset to 'publish' when the 'Publish' button was used, even when
+		 * a different/custom post status was provided.
+		 */
+		if ( isset( $_REQUEST['publish'] ) && $archived === $postarr['original_post_status'] && $archived === $_REQUEST['post_status'] ) {
+			$data['post_status'] = $archived;
+		}
+
+		return $data;
 	}
 }
 
