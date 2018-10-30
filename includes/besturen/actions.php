@@ -21,7 +21,7 @@ add_action( 'the_content',          'vgsr_entity_bestuur_positions_detail',     
 
 /** Theme *********************************************************************/
 
-add_filter( 'vgsr_bestuur_menu_widget_query_args', 'vgsr_entity_bestuur_widget_menu_order'    );
+add_filter( 'vgsr_entity_bestuur_menu_widget_query_args', 'vgsr_entity_bestuur_widget_menu_order'    );
 
 /** Menus *********************************************************************/
 
