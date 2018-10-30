@@ -33,9 +33,7 @@ class VGSR_Entity_WPSEO {
 	 * @since 2.0.0
 	 */
 	private function setup_actions() {
-		add_filter( 'wpseo_title', array( $this, 'wpseo_title' ) );
-
-		// Breadcrumbs
+		add_filter( 'wpseo_title',            array( $this, 'wpseo_title'      ) );
 		add_filter( 'wpseo_breadcrumb_links', array( $this, 'breadcrumb_links' ) );
 	}
 
@@ -64,7 +62,7 @@ class VGSR_Entity_WPSEO {
 
 		// When on a plugin page
 		if ( is_vgsr_entity() ) {
-			$_parts = vgsr_entity_document_title_parts( array() );
+			$parts = vgsr_entity_document_title_parts( array() );
 
 			// Single entity
 			if ( is_singular() && vgsr_is_entity() ) {
@@ -72,14 +70,14 @@ class VGSR_Entity_WPSEO {
 				// Insert 'Archive title' part after title part, creating 'Title - Archive title - Site'
 				$title = str_replace(
 					$sepleft ? $separator . $site_title : $site_title . $separator,
-					$sepleft ? $separator . $_parts['parent'] . $separator . $site_title :  $site_title . $separator . $_parts['parent'] . $separator,
+					$sepleft ? $separator . $parts['parent'] . $separator . $site_title :  $site_title . $separator . $parts['parent'] . $separator,
 					$title
 				);
 			}
 
 			// Entity archives. Replace page name
 			if ( vgsr_is_entity_archive() ) {
-				$title = $sepleft ? $_parts['title'] . $separator . $site_title : $site_title . $separator . $_parts['title'];
+				$title = $sepleft ? $parts['title'] . $separator . $site_title : $site_title . $separator . $parts['title'];
 			}
 		}
 
