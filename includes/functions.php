@@ -368,7 +368,7 @@ function vgsr_entity_get_entity_parents() {
 
 	// Fetch registered parents
 	foreach ( vgsr_entity_get_types( true ) as $name => $type ) {
-		$parents[ $name ] = $type->parent;
+		$parents[ $name ] = $type->parent();
 	}
 
 	return $parents;

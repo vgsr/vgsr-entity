@@ -158,6 +158,7 @@ abstract class VGSR_Entity_Type {
 	public function __isset( $key ) {
 		switch ( $key ) {
 			case 'parent' :
+				return false !== $this->parent();
 			case 'labels' :
 			case 'menu_icon' :
 				return null !== $this->get_prop( $key );
@@ -186,10 +187,8 @@ abstract class VGSR_Entity_Type {
 	 * @param string $key
 	 * @return mixed Value
 	 */
-	private function get_prop( $key ) {
+	public function get_prop( $key ) {
 		switch ( $key ) {
-			case 'parent' :
-				return $this->get_entity_parent();
 			case 'labels' :
 			case 'menu_icon' :
 				$post_type = get_post_type_object( $this->post_type );
@@ -415,26 +414,29 @@ abstract class VGSR_Entity_Type {
 	/** Parent Page ****************************************************/
 
 	/**
-	 * Return the entity's parent post ID
+	 * Return the entity type parent page
 	 *
-	 * @since 2.0.0
+	 * @since 2.1.0
 	 *
-	 * @return int Post ID
+	 * @return int|bool Post ID or False when not found
 	 */
-	public function get_entity_parent() {
+	public function parent() {
+
+		// Store parent locally so we have to query once
+		static $parent = null;
 
 		// Get the parent post ID
-		if ( null === $this->parent ) {
+		if ( null === $parent ) {
 
 			// Get and check the parent post
 			$post = (int) get_option( "_{$this->type}-parent-page" );
 			$post = $post ? get_post( $post ) : false;
 
 			// Default non-parents to false
-			$this->parent = $post ? (int) $post->ID : false;
+			$parent = $post ? (int) $post->ID : false;
 		}
 
-		return $this->parent;
+		return $parent;
 	}
 
 	/**
@@ -486,7 +488,6 @@ abstract class VGSR_Entity_Type {
 		);
 
 		// Renew rewrite rules
-		$this->parent = $value;
 		$this->register_post_type();
 		flush_rewrite_rules();
 	}

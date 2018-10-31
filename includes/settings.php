@@ -138,7 +138,7 @@ function vgsr_entity_settings_display_entity_parent_field() {
 		return;
 
 	// Get the entity parent page ID
-	$parent = $type->get_entity_parent();
+	$parent = $type->parent();
 
 	// Display select box
 	wp_dropdown_pages( array(
