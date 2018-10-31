@@ -111,7 +111,7 @@ class VGSR_Entity_WPSEO {
 			$parent    = vgsr_entity_get_entity_parent( $type, true );
 
 			// Collect first and last
-			$_crumbs = array( $crumbs[0], $crumbs[ count( $crumbs ) - 1] );
+			$_crumbs = array( $crumbs[0], $crumbs[ count( $crumbs ) - 1 ] );
 
 			// With entity parent
 			if ( $parent ) {
@@ -129,13 +129,19 @@ class VGSR_Entity_WPSEO {
 					$parent = get_post( $parent->post_parent );
 				} while ( $continue );
 
-				// Correct last/current item for post type archives
-				if ( is_post_type_archive( $post_type ) ) {
-					array_pop( $_crumbs );
-				}
-
-				$crumbs = array_values( $_crumbs );
+			// Prepend post type archive
+			} else {
+				array_splice( $_crumbs, 1, 0, array(
+					array( 'ptarchive' => $post_type )
+				) );
 			}
+
+			// If we're on the post type archive, correct last/current item
+			if ( is_post_type_archive( $post_type ) ) {
+				array_pop( $_crumbs );
+			}
+
+			$crumbs = array_values( $_crumbs );
 		}
 
 		return $crumbs;
