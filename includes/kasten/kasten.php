@@ -112,6 +112,8 @@ class VGSR_Kast extends VGSR_Entity_Type {
 				'type'         => 'date',
 				'name'         => 'vgsr_entity_kast_since',
 				'display'      => true,
+				'column-after' => 'title',
+				'column-hide'  => false,
 			),
 
 			// Ceased
