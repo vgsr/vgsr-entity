@@ -78,12 +78,18 @@ function vgsr_entity_bp_get_post_users( $field, $post = 0, $query_args = array()
 	if ( ! $field || ! $post = get_post( $post ) )
 		return $users;
 
+	// Get the field id when passed a field setting's name
+	if ( ! is_numeric( $field ) ) {
+		$field = vgsr_entity_get_type_object( $post )->get_setting( $field );
+	}
+
 	// Parse query args
-	$query_args = wp_parse_args( $query_args, array(
+	$r = wp_parse_args( $query_args, array(
 		'type'            => '',    // Query $wpdb->users, sort by ID
 		'per_page'        => 0,     // No limit
 		'populate_extras' => false,
-		'count_total'     => false
+		'count_total'     => false,
+		'fields'          => 'all', // Accepts 'ids' or 'all'. Defaults to 'all'.
 	) );
 
 	/**
@@ -102,7 +108,7 @@ function vgsr_entity_bp_get_post_users( $field, $post = 0, $query_args = array()
 
 		// Limit member query to the found users
 		if ( ! empty( $user_ids ) ) {
-			$query_args['include'] = $user_ids;
+			$r['include'] = $user_ids;
 
 		// Bail when no users were found
 		} else {
@@ -113,18 +119,23 @@ function vgsr_entity_bp_get_post_users( $field, $post = 0, $query_args = array()
 	} else {
 
 		// Define XProfile query args
-		$xprofile_query   = isset( $query_args['xprofile_query'] ) ? $query_args['xprofile_query'] : array();
+		$xprofile_query   = isset( $r['xprofile_query'] ) ? $r['xprofile_query'] : array();
 		$xprofile_query[] = array(
 			'field' => $field,
 			// Compare against post ID, title or slug
 			'value' => array( $post->ID, $post->post_title, $post->post_name ),
 		);
-		$query_args['xprofile_query'] = $xprofile_query;
+		$r['xprofile_query'] = $xprofile_query;
 	}
 
 	// Query users that are connected to this entity
-	if ( $query = new BP_User_Query( $query_args ) ) {
+	if ( $query = new BP_User_Query( $r ) ) {
 		$users = $query->results;
+
+		// Return ids only
+		if ( 'ids' === $r['fields'] ) {
+			$users = wp_list_pluck( $users, 'ID' );
+		}
 	}
 
 	return $users;

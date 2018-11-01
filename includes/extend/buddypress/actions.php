@@ -10,6 +10,10 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
+/** Query *********************************************************************/
+
+add_filter( 'bp_user_query_uid_clauses', 'vgsr_entity_bp_user_query_uid_clauses', 10, 2 );
+
 /** Kast **********************************************************************/
 
 add_filter( 'bp_xprofile_get_groups',         'vgsr_entity_bp_filter_kast_address_profile_groups_fields',  5, 2 );

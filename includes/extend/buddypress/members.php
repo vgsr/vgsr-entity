@@ -13,6 +13,73 @@ defined( 'ABSPATH' ) || exit;
 /** Query *********************************************************************/
 
 /**
+ * Modify the query clauses for the user ids query
+ *
+ * @since 2.1.0
+ *
+ * @param array $clauses UID query clauses
+ * @param BP_User_Query $query Query object
+ * @return array UID query clauses
+ */
+function vgsr_entity_bp_user_query_uid_clauses( $clauses, $query ) {
+
+	/**
+	 * Support members search based on entity posts matches
+	 */
+	if ( $search_terms = $query->query_vars['search_terms'] ) {
+
+		// Try to match an entity post by title
+		$post_query = new WP_Query( array(
+			'post_type' => vgsr_entity_get_post_types(),
+			'title'     => $search_terms,
+			'per_page'  => 1
+		) );
+
+		// Post was found
+		if ( $post_query->posts ) {
+			$post             = $post_query->posts[0];
+			$matched_user_ids = array();
+
+			switch ( vgsr_entity_get_type( $post ) ) {
+				case 'bestuur' :
+					$matched_user_ids = array_filter(
+						wp_list_pluck(
+							vgsr_entity_bestuur_get_positions( $post ),
+							'user'
+						), 'is_numeric' // Remove entries that are not user ids
+					);
+					break;
+				case 'dispuut' :
+					$matched_user_ids = vgsr_entity_bp_get_post_users(
+						'bp-members-field',
+						$post,
+						array(
+							'fields' => 'ids'
+						)
+					);
+					break;
+				case 'kast' :
+					$matched_user_ids = vgsr_entity_bp_get_post_users(
+						'bp-residents-field',
+						$post,
+						array(
+							'fields' => 'ids'
+						)
+					);
+					break;
+			}
+
+			// Append search clause
+			if ( $matched_user_ids ) {
+				$clauses['where']['search'] = '(' . $clauses['where']['search'] . " OR u.{$query->uid_name} IN (" . implode( ',', $matched_user_ids ) . ') )';
+			}
+		}
+	}
+
+	return $clauses;
+}
+
+/**
  * Run a modified version of {@see bp_has_members()} for the given post users
  *
  * When the post has users, the `$members_template` global is setup for use.
