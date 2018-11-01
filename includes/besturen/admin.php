@@ -83,6 +83,53 @@ class VGSR_Bestuur_Admin extends VGSR_Entity_Type_Admin {
 		<?php
 	}
 
+	/** List Table ******************************************************/
+
+	/**
+	 * Modify the current screen's columns
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param array $columns Columns
+	 * @return array Columns
+	 */
+	public function table_columns( $columns ) {
+
+		// Positions
+		$columns['positions'] = esc_html__( 'Positions', 'vgsr-entity' );
+
+		return parent::table_columns( $columns );
+	}
+
+	/**
+	 * Output the list table column content
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $column Column name
+	 * @param int $post_id Post ID
+	 */
+	public function column_content( $column, $post_id ) {
+		parent::column_content( $column, $post_id );
+
+		// Handle other fields
+		switch ( $column ) {
+
+			// Positions
+			case 'positions' :
+				$positions = vgsr_entity_bestuur_get_positions( $post_id );
+
+				if ( $positions ) {
+					$positions = array_filter( array_map( 'vgsr_entity_bestuur_get_position_name', $positions ) );
+					echo implode( "<br />\n", $positions );
+				} else {
+					echo '&mdash;';
+				}
+
+				break;
+		}
+	}
+
 	/** Post ************************************************************/
 
 	/**

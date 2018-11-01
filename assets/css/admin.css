@@ -386,16 +386,16 @@
 		line-height: 1; /* correct forms.css inheriting from list-table.css */
 	}
 
-.column-entity-logo {
+.fixed .column-entity-logo {
 	width: 38px; /* logo image width */
 }
 
-	th.column-entity-logo {
+	.fixed th.column-entity-logo {
 		position: relative;
 		text-indent: -100%;
 	}
 
-		th.column-entity-logo:after {
+		.fixed th.column-entity-logo:after {
 			content: '\f128';
 			position: absolute;
 			right: 0;
@@ -403,6 +403,12 @@
 			font-size: 20px;
 			color: #555;
 		}
+
+/** Entity: Bestuur **/
+
+.fixed .column-positions {
+	width: 15%;
+}
 
 /* Small screen */
 @media screen and (max-width: 782px) {
