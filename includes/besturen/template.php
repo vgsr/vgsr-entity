@@ -83,6 +83,45 @@ function vgsr_entity_bestuur_document_title_parts( $title ) {
 /** Positions **********************************************************/
 
 /**
+ * Output the single name of a signed Bestuur's position
+ *
+ * @since 2.1.0
+ *
+ * @param array $args Position data
+ */
+function vgsr_entity_bestuur_the_position_name( $args ) {
+	echo vgsr_entity_bestuur_get_position_name( $args );
+}
+
+/**
+ * Return the single name of a signed Bestuur's position
+ *
+ * @since 2.1.0
+ *
+ * @uses apply_filters() Calls 'vgsr_entity_bestuur_position_name'
+ *
+ * @param array $args Position data
+ * @return string Signed name of the position
+ */
+function vgsr_entity_bestuur_get_position_name( $args ) {
+
+	// Display existing user's name, default to provided name
+	$user = isset( $args['user'] ) ? get_user_by( is_numeric( $args['user'] ) ? 'id' : 'slug', $args['user'] ) : false;
+	$name = $user ? $user->display_name : $args['user'];
+
+	/**
+	 * Filter the displayed name for the Bestuur's position
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $name Displayed name
+	 * @param WP_User|bool $user User object or False when not found
+	 * @param array $args Bestuur position arguments
+	 */
+	return apply_filters( 'vgsr_entity_bestuur_position_name', $name, $user, $args );
+}
+
+/**
  * Add the bestuur positions entity detail to the post content
  *
  * @since 2.0.0
@@ -106,25 +145,9 @@ function vgsr_entity_bestuur_positions_detail( $content ) {
 			<h4 class="detail-title"><?php echo esc_html_x( 'Members', 'Bestuur positions', 'vgsr-entity' ); ?></h4>
 
 			<dl>
-				<?php foreach ( $positions as $args ) : ?>
-				<dt class="position position-<?php echo $args['slug']; ?>"><?php echo $args['label']; ?></dt>
-				<dd class="member"><?php
-
-					// Display existing user's name, default to provided name
-					$user = isset( $args['user'] ) ? get_user_by( is_numeric( $args['user'] ) ? 'id' : 'slug', $args['user'] ) : false;
-					$name = $user ? $user->display_name : $args['user'];
-
-					/**
-					 * Filter the displayed name for the Bestuur's position
-					 *
-					 * @since 2.0.0
-					 *
-					 * @param string $name Displayed name
-					 * @param WP_User|bool $user User object or False when not found
-					 * @param array $args Bestuur position arguments
-					 */
-					echo apply_filters( 'vgsr_entity_bestuur_position_name', $name, $user, $args );
-				?></dd>
+				<?php foreach ( $positions as $position ) : ?>
+				<dt class="position position-<?php echo $position['slug']; ?>"><?php echo $position['label']; ?></dt>
+				<dd class="member"><?php vgsr_entity_bestuur_the_position_name( $position ); ?></dd>
 				<?php endforeach; ?>
 			</dl>
 		</div>
