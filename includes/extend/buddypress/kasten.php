@@ -10,6 +10,37 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
+/** Template **************************************************************/
+
+/**
+ * Return the member's registered Kast
+ *
+ * @since 2.0.0
+ *
+ * @param int $user_id Optional. User ID. Defaults to displayed user ID.
+ * @return WP_Post|bool Post object, False when not found.
+ */
+function vgsr_entity_bp_get_member_kast( $user_id = 0 ) {
+
+	// Get Kast setting
+	$field_id = vgsr_entity_get_type_object( 'kast' )->get_setting( 'bp-residents-field' );
+
+	// Bail when the Kast field is not found
+	if ( ! $field_id || ! xprofile_get_field( $field_id ) )
+		return false;
+
+	// Default to the displayed user
+	if ( empty( $user_id ) ) {
+		$user_id = bp_displayed_user_id();
+	}
+
+	// Get the member's kast post ID
+	$post_id = xprofile_get_field_data( $field_id, $user_id );
+	$post    = $post_id ? get_post( $post_id ) : false;
+
+	return $post;
+}
+
 /** Address ***************************************************************/
 
 /**
@@ -75,35 +106,6 @@ function vgsr_entity_bp_get_kast_address_field_data( $user_id = 0 ) {
 	}
 
 	return $data;
-}
-
-/**
- * Return the member's registered Kast
- *
- * @since 2.0.0
- *
- * @param int $user_id Optional. User ID. Defaults to displayed user ID.
- * @return WP_Post|bool Post object when found, False when not found.
- */
-function vgsr_entity_bp_get_member_kast( $user_id = 0 ) {
-
-	// Get Kast setting
-	$field_id = vgsr_entity_get_type( 'kast', true )->get_setting( 'bp-residents-field' );
-
-	// Bail when the Kast field is not found
-	if ( ! $field_id || ! xprofile_get_field( $field_id ) )
-		return false;
-
-	// Default to the displayed user
-	if ( empty( $user_id ) ) {
-		$user_id = bp_displayed_user_id();
-	}
-
-	// Get the member's kast post ID
-	$post_id = xprofile_get_field_data( $field_id, $user_id );
-	$post    = $post_id ? get_post( $post_id ) : false;
-
-	return $post;
 }
 
 /**
@@ -250,7 +252,7 @@ function vgsr_entity_bp_filter_kast_address_profile_groups_fields( $groups, $arg
 }
 
 /**
- * Replace a member's address details when they're a Kast habitant
+ * Replace a member's address details when they're a Kast resident
  *
  * Filters {@see bp_get_the_profile_field_value()}
  *
@@ -278,7 +280,7 @@ function vgsr_entity_bp_kast_address_profile_field_value( $value, $field_type, $
 }
 
 /**
- * Replace a member's address details when they're a Kast habitant
+ * Replace a member's address details when they're a Kast resident
  *
  * Filters {@see bp_get_member_profile_data()} and {@see bp_get_profile_field_data()}.
  *
