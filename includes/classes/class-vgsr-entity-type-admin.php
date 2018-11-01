@@ -404,7 +404,7 @@ class VGSR_Entity_Type_Admin {
 			// Define additional column styles
 			$css = '';
 			foreach ( $type_meta as $key => $args ) {
-				$width = isset( $args['column-width'] ) ? $args['column-width'] : '10%';
+				$width = ! empty( $args['column-width'] ) ? $args['column-width'] : '10%';
 				$css .= ".fixed .column-{$key} { width: {$width} }\n";
 			}
 

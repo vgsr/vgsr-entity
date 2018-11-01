@@ -86,13 +86,13 @@ abstract class VGSR_Entity_Type {
 		// Set entity type and custom properties
 		$this->type      = $type;
 		$this->query     = new WP_Query;
-		$this->meta      = $meta;
 		$this->errors    = wp_parse_args( $errors, array(
 			1 => esc_html__( 'Some of the provided values were not given in the valid format.', 'vgsr-entity' ),
 		) );
 
 		// Setup entity logic
 		$this->set_props( $args );
+		$this->set_meta( $meta );
 		$this->setup_globals();
 		$this->includes();
 		$this->setup_actions();
@@ -145,6 +145,34 @@ abstract class VGSR_Entity_Type {
 		foreach ( $props as $key => $value ) {
 			$this->{$key} = $value;
 		}
+	}
+
+	/**
+	 * Setup entity metadata
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param array $meta Metadata structure
+	 */
+	private function set_meta( $meta = array() ) {
+
+		// Parse metadata arguments
+		foreach ( $meta as $key => $args ) {
+			$meta[ $key ] = wp_parse_args( $args, array(
+
+				// Core
+				'label'   => '%s',
+				'type'    => false,
+				'name'    => false,
+				'display' => false,
+
+				// Admin-column
+				'column_title' => '',
+				'column-width' => false
+			) );
+		}
+
+		$this->meta = $meta;
 	}
 
 	/**
