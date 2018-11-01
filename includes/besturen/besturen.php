@@ -50,14 +50,14 @@ class VGSR_Bestuur extends VGSR_Entity_Type {
 
 			// Season
 			'season' => array(
-				'column_title'  => esc_html__( 'Season',    'vgsr-entity' ),
-				'label'         => esc_html__( 'Season %s', 'vgsr-entity' ),
-				'type'          => 'year',
-				'name'          => 'menu_order',
-				'display'       => true,
-				'column-width'  => '80px',
-				'column-before' => 'title',
-				'column-hide'   => false,
+				'column_title' => esc_html__( 'Season',    'vgsr-entity' ),
+				'label'        => esc_html__( 'Season %s', 'vgsr-entity' ),
+				'type'         => 'year',
+				'name'         => 'menu_order',
+				'display'      => true,
+				'column-width' => '80px',
+				'column-after' => 'title',
+				'column-hide'  => false,
 			)
 
 		// Errors
