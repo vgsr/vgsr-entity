@@ -302,10 +302,18 @@ function vgsr_entity_bp_list_post_members( $post ) {
 
 	// For singular posts, display oud-leden
 	if ( is_singular() ) {
+
+		// Construct limit link
+		$query_arg  = bp_core_get_component_search_query_arg( 'members' );
+		$limit_link = add_query_arg( $query_arg, urlencode( get_post( $post )->post_title ), bp_get_members_directory_permalink() );
+
 		vgsr_entity_bp_the_members_list( $post, array(
-			'field' => 'bp-members-field',
-			'label' => esc_html__( 'Oud-leden', 'vgsr-entity' ),
-			'vgsr'  => 'oud-lid'
+			'field'       => 'bp-members-field',
+			'label'       => esc_html__( 'Oud-leden', 'vgsr-entity' ),
+			'type'        => 'random',
+			'vgsr'        => 'oud-lid',
+			'apply_limit' => true,
+			'limit_link'  => $limit_link
 		) );
 	}
 }
