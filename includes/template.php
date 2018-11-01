@@ -328,6 +328,20 @@ function vgsr_entity_is_post_of_type( $type, $post = 0 ) {
 }
 
 /**
+ * Return the post of a given entity type
+ *
+ * @since 2.1.0
+ *
+ * @param string $type Entity type name
+ * @param int|WP_Post $post Optional. Post ID or object. Defaults to the current post.
+ * @return WP_Post|bool Post object, False when not found.
+ */
+function vgsr_entity_get_post_of_type( $type, $post = 0 ) {
+	$post = get_post( $post );
+	return vgsr_entity_is_post_of_type( $type, $post ) ? $post : false;
+}
+
+/**
  * Return whether the post is an entity parent page
  *
  * @since 2.0.0
