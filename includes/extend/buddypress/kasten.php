@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
 function vgsr_entity_bp_kast_get_address_field_ids() {
 
 	// Define local variables
-	$type   = vgsr_entity_get_type( 'kast', true );
+	$type   = vgsr_entity_get_type_object( 'kast' );
 	$fields = array();
 
 	foreach ( $type->address_meta() as $meta ) {
@@ -55,7 +55,7 @@ function vgsr_entity_bp_get_kast_address_field_data( $user_id = 0 ) {
 
 	// Define local variable
 	$data = array();
-	$type = vgsr_entity_get_type( 'kast', true );
+	$type = vgsr_entity_get_type_object( 'kast' );
 
 	// When member has a registered Kast
 	if ( $post = vgsr_entity_bp_get_member_kast( $user_id ) ) {

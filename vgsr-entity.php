@@ -492,7 +492,7 @@ final class VGSR_Entity {
 		$retval = array();
 
 		// Get entity type from post
-		if ( $type = vgsr_entity_get_type( $post, true ) ) {
+		if ( $type = vgsr_entity_get_type_object( $post ) ) {
 			$retval = $type->meta( $post, 'display' );
 		}
 

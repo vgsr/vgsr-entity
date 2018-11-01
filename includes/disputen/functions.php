@@ -120,7 +120,7 @@ function vgsr_entity_dispuut_updated_post_meta( $meta_id, $object_id, $meta_key,
 function vgsr_entity_dispuut_nav_menu_items( $items ) {
 
 	// Get type object
-	$type   = vgsr_entity_get_type( 'dispuut', true );
+	$type   = vgsr_entity_get_type_object( 'dispuut' );
 	$_items = array();
 
 	// Entity parent

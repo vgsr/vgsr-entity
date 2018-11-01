@@ -131,7 +131,7 @@ function vgsr_entity_settings_main_section() {
  */
 function vgsr_entity_settings_display_entity_parent_field() {
 	$post_type = get_current_screen()->post_type;
-	$type      = vgsr_entity_get_type( $post_type, true );
+	$type      = vgsr_entity_get_type_object( $post_type );
 
 	// Bail when this is not an entity
 	if ( ! $type )
@@ -166,7 +166,7 @@ function vgsr_entity_settings_display_entity_parent_field() {
  */
 function vgsr_entity_settings_display_entity_slug_field() {
 	$post_type = get_current_screen()->post_type;
-	$type      = vgsr_entity_get_type( $post_type, true );
+	$type      = vgsr_entity_get_type_object( $post_type );
 
 	// Bail when this is not an entity
 	if ( ! $type )

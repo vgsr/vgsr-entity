@@ -36,7 +36,7 @@ function vgsr_entity_query_entities( $args = array() ) {
 	}
 
 	// Get entity type object
-	$type = vgsr_entity_get_type( $r['type'], true );
+	$type = vgsr_entity_get_type_object( $r['type'] );
 
 	// Default to entity post type
 	if ( ! $r['post_type'] ) {
@@ -58,7 +58,7 @@ function vgsr_entity_query_entities( $args = array() ) {
  * @return bool Query has entities
  */
 function vgsr_entity_has_entities( $type = '' ) {
-	$type = vgsr_entity_get_type( $type, true );
+	$type = vgsr_entity_get_type_object( $type );
 
 	// Has query a next post?
 	$has_next = $type ? $type->query->have_posts() : false;
@@ -79,7 +79,7 @@ function vgsr_entity_has_entities( $type = '' ) {
  * @param string $type Optional. Entity type name. Defaults to current entity type.
  */
 function vgsr_entity_the_entity( $type = '' ) {
-	$type = vgsr_entity_get_type( $type, true );
+	$type = vgsr_entity_get_type_object( $type );
 
 	if ( $type ) {
 		$type->query->the_post();
@@ -94,7 +94,7 @@ function vgsr_entity_the_entity( $type = '' ) {
  * @param string $type Optional. Entity type name. Defaults to current entity type.
  */
 function vgsr_entity_rewind_entities( $type = '' ) {
-	$type = vgsr_entity_get_type( $type, true );
+	$type = vgsr_entity_get_type_object( $type );
 
 	if ( $type ) {
 		$type->query->rewind_posts();
@@ -110,7 +110,7 @@ function vgsr_entity_rewind_entities( $type = '' ) {
  * @return bool Are we in the entity loop?
  */
 function vgsr_entity_in_the_entity_loop( $type = '' ) {
-	$type = vgsr_entity_get_type( $type, true );
+	$type = vgsr_entity_get_type_object( $type );
 
 	return $type ? $type->query->in_the_loop : false;
 }
@@ -147,7 +147,7 @@ function vgsr_entity_is_main_query() {
  * @return WP_Post|bool Post object or False when not found
  */
 function vgsr_entity_get_entity( $type = '' ) {
-	$type = vgsr_entity_get_type( $type, true );
+	$type = vgsr_entity_get_type_object( $type );
 	$post = false;
 
 	// When in the loop, get the post

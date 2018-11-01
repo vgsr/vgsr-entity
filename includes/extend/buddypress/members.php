@@ -47,7 +47,7 @@ function vgsr_entity_bp_has_members_for_post( $field, $args = array() ) {
 	if ( ! $post = get_post( $args['post'] ) )
 		return false;
 
-	$type = vgsr_entity_get_type( $post, true );
+	$type = vgsr_entity_get_type_object( $post );
 
 	// Bail when the field is invalid
 	if ( ! $type || ! $field_id = $type->get_setting( $field ) )

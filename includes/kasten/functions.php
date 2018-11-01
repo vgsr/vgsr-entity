@@ -121,7 +121,7 @@ function vgsr_entity_kast_updated_post_meta( $meta_id, $object_id, $meta_key, $m
 function vgsr_entity_kast_nav_menu_items( $items ) {
 
 	// Get type object
-	$type   = vgsr_entity_get_type( 'kast', true );
+	$type   = vgsr_entity_get_type_object( 'kast' );
 	$_items = array();
 
 	// Entity parent

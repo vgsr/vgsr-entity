@@ -168,7 +168,7 @@ function vgsr_entity_get_post_types( $output = 'names' ) {
 function vgsr_entity_get_post_type( $type, $object = false ) {
 
 	// Get post type from entity
-	$post_type = vgsr_entity_exists( $type ) ? vgsr_entity_get_type( $type, true )->post_type : false;
+	$post_type = vgsr_entity_exists( $type ) ? vgsr_entity_get_type_object( $type )->post_type : false;
 
 	// Get post type object
 	if ( $post_type && $object ) {
@@ -244,6 +244,18 @@ function vgsr_entity_get_type( $post = 0, $object = false ) {
 }
 
 /**
+ * Return the entity type object
+ *
+ * @since 2.1.0
+ *
+ * @param WP_Post|int|string|VGSR_Entity_Type $post Optional. Post object or ID, or post type, or entity type name or object. Defaults to the current post.
+ * @return VGSR_Entity_Type|bool Entity type object or False when not found.
+ */
+function vgsr_entity_get_type_object( $post = 0 ) {
+	return vgsr_entity_get_type( $post, true );
+}
+
+/**
  * Return the entity post's display meta
  *
  * @since 2.0.0
@@ -291,7 +303,7 @@ function vgsr_entity_get_meta( $post = 0, $field = '', $return_value = true ) {
  * @return string Entity type slug
  */
 function vgsr_entity_get_type_slug( $type = '' ) {
-	$type = vgsr_entity_get_type( $type, true );
+	$type = vgsr_entity_get_type_object( $type );
 	$slug = '';
 
 	if ( $type ) {
@@ -870,7 +882,7 @@ function vgsr_entity_supports( $feature, $type = 0 ) {
 
 	// Sanitize parameters
 	$feature  = sanitize_key( $feature );
-	$type     = vgsr_entity_get_type( $type, true );
+	$type     = vgsr_entity_get_type_object( $type );
 
 	// Define return value
 	$supports = false;

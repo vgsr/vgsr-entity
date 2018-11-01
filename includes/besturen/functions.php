@@ -225,7 +225,7 @@ function vgsr_entity_bestuur_get_user_position( $user_id = 0 ) {
 function vgsr_entity_bestuur_nav_menu_items( $items ) {
 
 	// Get type object
-	$type   = vgsr_entity_get_type( 'bestuur', true );
+	$type   = vgsr_entity_get_type_object( 'bestuur' );
 	$_items = array();
 
 	// Entity parent

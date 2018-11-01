@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
 function vgsr_entity_bp_get_field( $field, $post = 0, $context = 'display' ) {
 
 	// Get the entity type object
-	$type = vgsr_entity_get_type( $post, true );
+	$type = vgsr_entity_get_type_object( $post );
 	$post = get_post( $post );
 
 	// Get settings field's value
