@@ -199,9 +199,24 @@ class VGSR_Entity_Type_Admin {
 	 */
 	public function table_columns( $columns ) {
 
-		// Append meta columns
+		// Add meta columns
 		foreach ( $this->get_type_meta() as $key => $args ) {
-			$columns[ $key ] = $args['column_title'];
+
+			// Define column
+			$column = array( $key => $args['column_title'] );
+
+			// Requested special position
+			if ( ! empty( $args['column-before'] ) || ! empty( $args['column-after'] ) ) {
+
+				// Move column to either before or after the given column
+				$before  = ! empty( $args['column-before'] );
+				$pos     = array_search( $args[ $before ? 'column-before' : 'column-after' ], array_keys( $columns ) ) + ( $before ? 0 : 1 );
+				$columns = array_slice( $columns, 0, $pos, true ) + $column + array_slice( $columns, $pos, count( $columns ) - 1, true );
+
+			// Append by default
+			} else {
+				$columns = array_merge( $columns, $column );
+			}
 		}
 
 		return $columns;
