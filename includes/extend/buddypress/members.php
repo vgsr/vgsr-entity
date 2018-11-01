@@ -105,13 +105,13 @@ function vgsr_entity_bp_has_members_for_post( $field, $args = array() ) {
 	}
 
 	// Parse args
-	$args = wp_parse_args( $args, array(
+	$r = wp_parse_args( $args, array(
 		'post'     => 0,
 		'multiple' => false
 	) );
 
 	// Bail when the post is invalid
-	if ( ! $post = get_post( $args['post'] ) )
+	if ( ! $post = get_post( $r['post'] ) )
 		return false;
 
 	$type = vgsr_entity_get_type_object( $post );
@@ -127,17 +127,14 @@ function vgsr_entity_bp_has_members_for_post( $field, $args = array() ) {
 	vgsr_entity()->extend->bp->set_post_query_vars( array(
 		'field_id' => $field_id,
 		'post'     => $post,
-		'multiple' => $args['multiple']
+		'multiple' => $r['multiple']
 	) );
 
 	// Setup query modifier
 	add_action( 'bp_pre_user_query_construct', 'vgsr_entity_bp_filter_user_query_post_users' );
 
-	// Remove non-query arguments
-	unset( $args['post'], $args['multiple'] );
-
 	// Query members and setup members template
-	$has_members = bp_has_members( wp_parse_args( $args, array(
+	$has_members = bp_has_members( wp_parse_args( $r, array(
 		'type'            => '',    // Query $wpdb->users, order by ID
 		'per_page'        => 0,     // No limit
 		'populate_extras' => false,
@@ -227,33 +224,32 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 		return;
 
 	// Parse args
-	$args = wp_parse_args( $args, array(
-		'field'    => '',
-		'label'    => esc_html__( 'Members', 'vgsr-entity' ),
-		'multiple' => false,
-		'vgsr'     => true
+	$r = wp_parse_args( $args, array(
+		'field'       => '',
+		'label'       => esc_html__( 'Members', 'vgsr-entity' ),
+		'multiple'    => false,
+		'vgsr'        => true,
+		'apply_limit' => ! is_singular(),
+		'limit_link'  => get_permalink( $post )
 	) );
 
-	// Extract values
-	$field = $args['field'];
-	$label = $args['label'];
-	unset( $args['field'], $args['label'] );
-	$args['post'] = $post->ID;
+	// Add post argument
+	$r['post'] = $post->ID;
 
 	// Bail when this post has no members
-	if ( ! vgsr_entity_bp_has_members_for_post( $field, $args ) )
+	if ( ! vgsr_entity_bp_has_members_for_post( $r['field'], $r ) )
 		return;
 
 	// Define list limits
 	$total_count = $GLOBALS['members_template']->total_member_count;
 	$list_limit  = apply_filters( 'vgsr_entity_bp_members_list_limit', 12, $post );
-	$apply_limit = ! is_singular() && $total_count > $list_limit;
+	$apply_limit = $r['apply_limit'] && $total_count > $list_limit;
 	$limit_count = $apply_limit ? ( $list_limit - 1 ) : $total_count;
 
 	?>
 
 	<div class="entity-members">
-		<h4><?php echo esc_html( $label ); ?></h4>
+		<h4><?php echo esc_html( $r['label'] ); ?></h4>
 
 		<ul class="bp-item-list">
 			<?php while ( bp_members() && ( ! $apply_limit || $GLOBALS['members_template']->current_member < ( $limit_count - 1 ) ) ) : bp_the_member(); ?>
@@ -276,7 +272,10 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 
 				<li class="bp-list-limit <?php echo $limit_count % 2 ? 'even' : 'odd'; ?>">
 					<div class="item">
-						<a href="<?php the_permalink( $post ); ?>"><?php echo '&plus;' . ( $total_count - $limit_count ); ?></a>
+						<?php printf( $r['limit_link'] ? '<a href="%1$s">%2$s</a>' : '<span>%2$s</span>',
+							esc_url( $r['limit_link'] ),
+							'&plus;' . ( $total_count - $limit_count )
+						); ?>
 					</div>
 				</li>
 
