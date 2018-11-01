@@ -2,7 +2,7 @@
 Contributors: offereins
 Tags: vgsr, bestuur, dispuut, kast
 Requires at least: 4.6
-Tested up to: 4.9
+Tested up to: 4.9.8
 Stable tag: 2.0.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -32,6 +32,16 @@ Activate VGSR Entity in the "Plugins" admin panel using the "Activate" link.
 This plugin is not hosted in the official WordPress repository. Instead, updating is supported through use of the [GitHub Updater](https://github.com/afragen/github-updater/) plugin by @afragen and friends.
 
 == Changelog ==
+
+= 2.1.0 =
+* Bestuur: Added column to the All Posts admin page list to display signed positions
+* Kast: Fixed errors when opening the New Post admin page
+* Fixed losing the correct post status when updating an archived entity
+* BuddyPress: the displayed entity members count includes only current leden/residents
+* BuddyPress: enable searching member profiles by entity post title
+* BuddyPress: limit the members avatar list when on non-singular pages
+* BuddyPress: separate display of leden and oud-leden
+* WPSEO: fixed breadcrumb issues on plugin and non-plugin pages
 
 = 2.0.0 =
 * Full rewrite of entity logic and entity metadata
