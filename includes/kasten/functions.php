@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
  * @return string Post type name
  */
 function vgsr_entity_get_kast_post_type() {
-	return vgsr_entity_get_type( 'kast', true )->post_type;
+	return vgsr_entity_get_post_type( 'kast' );
 }
 
 /**
