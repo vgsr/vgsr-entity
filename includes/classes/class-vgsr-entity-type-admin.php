@@ -218,9 +218,9 @@ class VGSR_Entity_Type_Admin {
 	 */
 	public function hide_columns( $columns, $screen ) {
 
-		// Append meta columns for our entity's edit.php page
+		// Hide entity meta columns for our entity's edit.php page
 		if ( "edit-{$this->post_type}" === $screen->id ) {
-			$columns = array_merge( $columns, array_keys( $this->get_type_meta() ) );
+			$columns = array_merge( $columns, array_keys( wp_list_filter( $this->get_type_meta(), array( 'column-hide' => true ) ) ) );
 		}
 
 		return $columns;

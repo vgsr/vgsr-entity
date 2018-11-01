@@ -168,7 +168,8 @@ abstract class VGSR_Entity_Type {
 
 				// Admin-column
 				'column_title' => '',
-				'column-width' => false
+				'column-width' => false,
+				'column-hide'  => true
 			) );
 		}
 
