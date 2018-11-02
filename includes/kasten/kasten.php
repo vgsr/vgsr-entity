@@ -113,6 +113,7 @@ class VGSR_Kast extends VGSR_Entity_Type {
 				'name'         => 'vgsr_entity_kast_since',
 				'display'      => true,
 				'column-after' => 'title',
+				'column-width' => '80px',
 				'column-hide'  => false,
 			),
 
@@ -123,6 +124,7 @@ class VGSR_Kast extends VGSR_Entity_Type {
 				'type'         => 'year',
 				'name'         => 'vgsr_entity_kast_ceased',
 				'display'      => true,
+				'column-width' => '80px',
 			),
 
 		// Errors
