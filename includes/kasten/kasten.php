@@ -158,6 +158,7 @@ class VGSR_Kast extends VGSR_Entity_Type {
 		$includes = array(
 			'actions',
 			'functions',
+			'template',
 		);
 
 		// Admin
@@ -183,64 +184,6 @@ class VGSR_Kast extends VGSR_Entity_Type {
 
 		// Post
 		add_filter( "vgsr_{$this->type}_display_meta",   array( $this, 'entity_display_meta' ), 10, 2 );
-		add_action( "vgsr_entity_{$this->type}_details", array( $this, 'entity_details'      )        );
-	}
-
-	/** Post ***********************************************************/
-
-	/**
-	 * Output the entity's details
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param WP_Post $post Post object
-	 */
-	public function entity_details( $post ) {
-
-		// Bail when the user has no access or this is not a singular post
-		if ( ! vgsr_entity_check_access() || ! is_singular() )
-			return;
-
-		// Define local variables
-		$address = array();
-
-		// Walk address details
-		foreach ( array(
-			'address-street', 'address-number', 'address-addition',
-			'address-postcode', 'address-city', 'address-phone'
-		) as $detail ) {
-			$address[ $detail ] = $this->get( $detail, $post );
-		}
-
-		// Bail when whithout details
-		if ( ! array_filter( $address ) )
-			return;
-
-		// Concat street detail
-		$street = "{$address['address-street']} {$address['address-number']}{$address['address-addition']}";
-
-		/**
-		 * Define address markup using schema.org's PostalAddress definition
-		 * @see http://www.iandevlin.com/blog/2012/01/html/marking-up-a-postal-address-with-html
-		 */
-
-		?>
-
-		<div class="entity-address" itemscope itemtype="http://schema.org/ContactPoint">
-			<h4><?php esc_html_e( 'Address', 'vgsr-entity' ); ?></h4>
-
-			<div itemscope itemtype="http://schema.org/PostalAddress">
-				<span itemprop="streetAddress" class="address-street"><?php echo $street; ?></span><br/>
-				<span itemprop="postalCode" class="address-postcode"><?php echo $address['address-postcode']; ?></span>
-				<span itemprop="addressLocality" class="address-city"><?php echo $address['address-city']; ?></span><br/>
-			</div>
-
-			<?php if ( ! empty( $addressp['address-phone'] ) ) : ?>
-			<span itemprop="telephone" class="address-phone"><?php echo $address['address-phone']; ?></span>
-			<?php endif; ?>
-		</div>
-
-		<?php
 	}
 
 	/** Meta ***********************************************************/
