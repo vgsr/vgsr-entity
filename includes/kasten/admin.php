@@ -101,6 +101,50 @@ class VGSR_Kast_Admin extends VGSR_Entity_Type_Admin {
 		// Downsizing done, set option off
 		update_option( '_kast-downsize-thumbs', 0 );
 	}
+
+	/** List Table ******************************************************/
+
+	/**
+	 * Modify the current screen's columns
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param array $columns Columns
+	 * @return array Columns
+	 */
+	public function table_columns( $columns ) {
+
+		// Address
+		$columns['address'] = esc_html__( 'Address', 'vgsr-entity' );
+
+		return parent::table_columns( $columns );
+	}
+
+	/**
+	 * Output the list table column content
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $column Column name
+	 * @param int $post_id Post ID
+	 */
+	public function column_content( $column, $post_id ) {
+		parent::column_content( $column, $post_id );
+
+		// Handle other fields
+		switch ( $column ) {
+
+			// Address
+			case 'address' :
+				if ( vgsr_entity_kast_get_address( $post_id ) ) {
+					vgsr_entity_kast_the_address( $post_id );
+				} else {
+					echo '&mdash;';
+				}
+
+				break;
+		}
+	}
 }
 
 endif; // class_exists

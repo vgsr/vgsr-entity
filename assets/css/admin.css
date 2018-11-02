@@ -413,6 +413,12 @@
 	width: 15%;
 }
 
+/** Entity: Kast **/
+
+.fixed .column-address {
+	width: 15%;
+}
+
 /* Small screen */
 @media screen and (max-width: 782px) {
 
