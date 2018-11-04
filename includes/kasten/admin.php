@@ -136,7 +136,7 @@ class VGSR_Kast_Admin extends VGSR_Entity_Type_Admin {
 
 			// Address
 			case 'address' :
-				if ( vgsr_entity_kast_get_address( $post_id ) ) {
+				if ( array_filter( vgsr_entity_kast_get_address( $post_id ) ) ) {
 					vgsr_entity_kast_the_address( $post_id );
 				} else {
 					echo '&mdash;';
