@@ -62,7 +62,7 @@ function vgsr_entity_kast_get_address( $post = 0 ) {
 function vgsr_entity_kast_the_address( $args = 0 ) {
 
 	// Get address details
-	if ( ! array( $args ) ) {
+	if ( ! is_array( $args ) ) {
 		$args = vgsr_entity_kast_get_address( $args );
 	}
 
