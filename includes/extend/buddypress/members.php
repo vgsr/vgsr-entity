@@ -209,7 +209,7 @@ function vgsr_entity_bp_filter_user_query_post_users( $query ) {
  *
  * @since 2.0.0
  *
- * @uses apply_filters() Calls 'vgsr_entity_bp_members_list_limit'
+ * @uses apply_filters() Calls 'vgsr_entity_bp_the_members_list_limit'
  *
  * @param WP_Post $post Post object
  * @param array $args List arguments, supports these args:
@@ -229,7 +229,7 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 		'label'       => esc_html__( 'Members', 'vgsr-entity' ),
 		'multiple'    => false,
 		'vgsr'        => true,
-		'apply_limit' => ! is_singular(),
+		'apply_limit' => ( ! is_singular() ) ? 12 : false,
 		'limit_link'  => get_permalink( $post )
 	) );
 
@@ -241,10 +241,7 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 		return;
 
 	// Define list limits
-	$total_count = $GLOBALS['members_template']->total_member_count;
-	$list_limit  = apply_filters( 'vgsr_entity_bp_members_list_limit', 12, $post );
-	$apply_limit = $r['apply_limit'] && $total_count > $list_limit;
-	$limit_count = $apply_limit ? ( $list_limit - 1 ) : $total_count;
+	$limit = (int) apply_filters( 'vgsr_entity_bp_the_members_list_limit', $r['apply_limit'], $r );
 
 	?>
 
@@ -252,7 +249,7 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 		<h4><?php echo esc_html( $r['label'] ); ?></h4>
 
 		<ul class="bp-item-list">
-			<?php while ( bp_members() && ( ! $apply_limit || $GLOBALS['members_template']->current_member < ( $limit_count - 1 ) ) ) : bp_the_member(); ?>
+			<?php while ( bp_members() && vgsr_entity_bp_members_list_limit( $limit ) ) : bp_the_member(); ?>
 
 				<li <?php bp_member_class( array( 'member' ) ); ?>>
 					<div class="item-avatar">
@@ -268,13 +265,13 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 
 			<?php endwhile; ?>
 
-			<?php if ( $apply_limit ) : ?>
+			<?php if ( vgsr_entity_bp_members_list_is_limited( $limit ) ) : ?>
 
-				<li class="bp-list-limit <?php echo $limit_count % 2 ? 'even' : 'odd'; ?>">
+				<li class="bp-list-limit <?php echo $limit % 2 ? 'odd' : 'even'; ?>">
 					<div class="item">
 						<?php printf( $r['limit_link'] ? '<a href="%1$s">%2$s</a>' : '<span>%2$s</span>',
 							esc_url( $r['limit_link'] ),
-							'&plus;' . ( $total_count - $limit_count )
+							'&plus;' . vgsr_entity_bp_members_list_limited_count( $limit )
 						); ?>
 					</div>
 				</li>
@@ -284,6 +281,81 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 	</div>
 
 	<?php
+}
+
+/**
+ * Return whether the profiles list limit is applied
+ *
+ * @since 1.0.0
+ *
+ * @uses BP_Core_Members_Template $members_template
+ *
+ * @param int|bool $limit Optional. Custom limit value to check against. Defaults to 0 for no limit.
+ * @return bool Is list limit applied?
+ */
+function vgsr_entity_bp_members_list_is_limited( $limit = 0 ) {
+	global $members_template;
+
+	// Define return variable
+	$retval = false;
+	$limit  = (int) $limit;
+
+	// Determine whether to limit hte
+	if ( $limit > 0 ) {
+		$retval = $members_template->member_count > $limit;
+	}
+
+	return $retval;
+}
+
+/**
+ * Return whether the profiles list limit is reached
+ *
+ * @since 1.0.0
+ *
+ * @uses BP_Core_Members_Template $members_template
+ *
+ * @param int|bool $limit Optional. Custom limit value to check against. Defaults to 0 for no limit.
+ * @return bool Is list limit reached?
+ */
+function vgsr_entity_bp_members_list_limit( $limit = 0 ) {
+	global $members_template;
+
+	// Define return variable
+	$retval = true;
+	$limit  = (int) $limit;
+
+	// Determine limit reached by current loop iteration
+	if ( $limit > 0 && vgsr_entity_bp_members_list_is_limited( $limit ) ) {
+		$retval = $members_template->current_member < ( $limit - 2 );
+	}
+
+	return $retval;
+}
+
+/**
+ * Return the limited count for the profiles list
+ *
+ * @since 1.0.0
+ *
+ * @uses BP_Core_Members_Template $members_template
+ *
+ * @param int|bool $limit Optional. Custom limit value to check against. Defaults to 0 for no limit.
+ * @return int Limited list count
+ */
+function vgsr_entity_bp_members_list_limited_count( $limit = 0 ) {
+	global $members_template;
+
+	// Define return variable
+	$retval = 0;
+	$limit  = (int) $limit;
+
+	// Determine whether to limit hte
+	if ( $limit > 0 && vgsr_entity_bp_members_list_is_limited( $limit ) ) {
+		$retval = $members_template->member_count - $limit + 1;
+	}
+
+	return $retval;
 }
 
 /**
