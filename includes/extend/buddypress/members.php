@@ -213,9 +213,12 @@ function vgsr_entity_bp_filter_user_query_post_users( $query ) {
  *
  * @param WP_Post $post Post object
  * @param array $args List arguments, supports these args:
- *  - string $field    Option name of the field
- *  - string $label    Label of the list. Defaults to 'Members'.
- *  - bool   $multiple Whether the field supports multiple values. Defaults to False.
+ *  - string      $field      Option name of the field
+ *  - string      $label      Label of the list. Defaults to 'Members'.
+ *  - bool        $multiple   Whether the field supports multiple values. Defaults to False.
+ *  - string|bool $vgsr       Whether to query for vgsr users. Defaults to True.
+ *  - int         $per_page   Query limit. Defaults to 12 for non-singular pages, else 0.
+ *  - string      $limit_link The link used for limited lists. Defaults to the post permalink.
  */
 function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 
@@ -225,23 +228,25 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 
 	// Parse args
 	$r = wp_parse_args( $args, array(
-		'field'       => '',
-		'label'       => esc_html__( 'Members', 'vgsr-entity' ),
-		'multiple'    => false,
-		'vgsr'        => true,
-		'apply_limit' => ( ! is_singular() ) ? 12 : false,
-		'limit_link'  => get_permalink( $post )
+		'field'      => '',
+		'label'      => esc_html__( 'Members', 'vgsr-entity' ),
+		'multiple'   => false,
+		'vgsr'       => true,
+
+		// Limit
+		'per_page'   => ( ! is_singular() ) ? 12 : 0,
+		'limit_link' => get_permalink( $post )
 	) );
 
 	// Add post argument
-	$r['post'] = $post->ID;
+	$r['post']     = $post->ID;
+
+	// Define list limit
+	$r['per_page'] = (int) apply_filters( 'vgsr_entity_bp_the_members_list_limit', $r['per_page'], $r );
 
 	// Bail when this post has no members
 	if ( ! vgsr_entity_bp_has_members_for_post( $r['field'], $r ) )
 		return;
-
-	// Define list limits
-	$limit = (int) apply_filters( 'vgsr_entity_bp_the_members_list_limit', $r['apply_limit'], $r );
 
 	?>
 
@@ -249,7 +254,7 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 		<h4><?php echo esc_html( $r['label'] ); ?></h4>
 
 		<ul class="bp-item-list">
-			<?php while ( bp_members() && vgsr_entity_bp_members_list_limit( $limit ) ) : bp_the_member(); ?>
+			<?php while ( bp_members() && vgsr_entity_bp_members_list_limiting() ) : bp_the_member(); ?>
 
 				<li <?php bp_member_class( array( 'member' ) ); ?>>
 					<div class="item-avatar">
@@ -265,13 +270,13 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
 
 			<?php endwhile; ?>
 
-			<?php if ( vgsr_entity_bp_members_list_is_limited( $limit ) ) : ?>
+			<?php if ( vgsr_entity_bp_members_list_is_limited() ) : ?>
 
-				<li class="bp-list-limit <?php echo $limit % 2 ? 'odd' : 'even'; ?>">
+				<li class="bp-list-limit <?php echo $GLOBALS['members_template']->total_member_count % 2 ? 'odd' : 'even'; ?>">
 					<div class="item">
 						<?php printf( $r['limit_link'] ? '<a href="%1$s">%2$s</a>' : '<span>%2$s</span>',
 							esc_url( $r['limit_link'] ),
-							'&plus;' . vgsr_entity_bp_members_list_limited_count( $limit )
+							'&plus;' . vgsr_entity_bp_members_list_limited_count()
 						); ?>
 					</div>
 				</li>
@@ -288,21 +293,21 @@ function vgsr_entity_bp_the_members_list( $post, $args = array() ) {
  *
  * @since 1.0.0
  *
- * @uses BP_Core_Members_Template $members_template
+ * @global BP_Core_Members_Template $members_template
  *
- * @param int|bool $limit Optional. Custom limit value to check against. Defaults to 0 for no limit.
+ * @param int|bool $limit Optional. Custom limit value to check against. Defaults to the member count.
  * @return bool Is list limit applied?
  */
-function vgsr_entity_bp_members_list_is_limited( $limit = 0 ) {
+function vgsr_entity_bp_members_list_is_limited( $limit = null ) {
 	global $members_template;
 
 	// Define return variable
 	$retval = false;
-	$limit  = (int) $limit;
+	$limit  = null === $limit ? $members_template->member_count : (int) $limit;
 
 	// Determine whether to limit hte
 	if ( $limit > 0 ) {
-		$retval = $members_template->member_count > $limit;
+		$retval = $members_template->total_member_count > $limit;
 	}
 
 	return $retval;
@@ -313,17 +318,17 @@ function vgsr_entity_bp_members_list_is_limited( $limit = 0 ) {
  *
  * @since 1.0.0
  *
- * @uses BP_Core_Members_Template $members_template
+ * @global BP_Core_Members_Template $members_template
  *
- * @param int|bool $limit Optional. Custom limit value to check against. Defaults to 0 for no limit.
+ * @param int|bool $limit Optional. Custom limit value to check against. Defaults to the member count.
  * @return bool Is list limit reached?
  */
-function vgsr_entity_bp_members_list_limit( $limit = 0 ) {
+function vgsr_entity_bp_members_list_limiting( $limit = null ) {
 	global $members_template;
 
 	// Define return variable
 	$retval = true;
-	$limit  = (int) $limit;
+	$limit  = null === $limit ? $members_template->member_count : (int) $limit;
 
 	// Determine limit reached by current loop iteration
 	if ( $limit > 0 && vgsr_entity_bp_members_list_is_limited( $limit ) ) {
@@ -338,21 +343,21 @@ function vgsr_entity_bp_members_list_limit( $limit = 0 ) {
  *
  * @since 1.0.0
  *
- * @uses BP_Core_Members_Template $members_template
+ * @global BP_Core_Members_Template $members_template
  *
- * @param int|bool $limit Optional. Custom limit value to check against. Defaults to 0 for no limit.
+ * @param int|bool $limit Optional. Custom limit value to check against. Defaults to the member count.
  * @return int Limited list count
  */
-function vgsr_entity_bp_members_list_limited_count( $limit = 0 ) {
+function vgsr_entity_bp_members_list_limited_count( $limit = null ) {
 	global $members_template;
 
 	// Define return variable
 	$retval = 0;
-	$limit  = (int) $limit;
+	$limit  = null === $limit ? $members_template->member_count : (int) $limit;
 
 	// Determine whether to limit hte
 	if ( $limit > 0 && vgsr_entity_bp_members_list_is_limited( $limit ) ) {
-		$retval = $members_template->member_count - $limit + 1;
+		$retval = $members_template->total_member_count - $limit + 1;
 	}
 
 	return $retval;
@@ -380,12 +385,12 @@ function vgsr_entity_bp_list_post_members( $post ) {
 		$limit_link = add_query_arg( $query_arg, urlencode( get_post( $post )->post_title ), bp_get_members_directory_permalink() );
 
 		vgsr_entity_bp_the_members_list( $post, array(
-			'field'       => 'bp-members-field',
-			'label'       => esc_html__( 'Oud-leden', 'vgsr-entity' ),
-			'type'        => 'random',
-			'vgsr'        => 'oud-lid',
-			'apply_limit' => true,
-			'limit_link'  => $limit_link
+			'field'      => 'bp-members-field',
+			'label'      => esc_html__( 'Oud-leden', 'vgsr-entity' ),
+			'type'       => 'random',
+			'vgsr'       => 'oud-lid',
+			'per_page'   => 12,
+			'limit_link' => $limit_link
 		) );
 	}
 }
