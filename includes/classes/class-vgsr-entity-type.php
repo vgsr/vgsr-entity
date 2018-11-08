@@ -86,9 +86,9 @@ abstract class VGSR_Entity_Type {
 		// Set entity type and custom properties
 		$this->type      = $type;
 		$this->query     = new WP_Query;
-		$this->errors    = wp_parse_args( $errors, array(
+		$this->errors    = $errors + array( // Losing numeric keys when using `array_merge()` in `wp_parse_args()`
 			1 => esc_html__( 'Some of the provided values were not given in the valid format.', 'vgsr-entity' ),
-		) );
+		);
 
 		// Setup entity logic
 		$this->set_props( $args );

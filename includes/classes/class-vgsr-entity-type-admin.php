@@ -589,7 +589,7 @@ class VGSR_Entity_Type_Admin {
 	 * @param int $error_id Error ID
 	 */
 	public function add_error( $error_id = 0 ) {
-		if ( ! empty( $error_id ) && array_key_exists( $error_id, $this->errors ) ) {
+		if ( ! empty( $error_id ) && array_key_exists( $error_id, $this->type()->errors ) ) {
 			$this->_errors[] = $error_id;
 		}
 	}
@@ -610,7 +610,7 @@ class VGSR_Entity_Type_Admin {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param bool $combine Optional. Whether to comine the reported error ids
+	 * @param bool $combine Optional. Whether to combine the reported error ids
 	 * @return array|int Reported errors or combined reported errors
 	 */
 	public function get_errors( $combine = false ) {
@@ -641,16 +641,16 @@ class VGSR_Entity_Type_Admin {
 	public function admin_display_errors() {
 
 		// Bail when no valid errors are reported
-		if ( ! isset( $_REQUEST[ "{$this->type}-error" ] ) )
+		if ( ! isset( $_REQUEST["{$this->type}-error"] ) )
 			return;
 
 		// Get the errors
-		$errors = (array) unpow2( (int) $_REQUEST[ "{$this->type}-error" ] );
+		$errors = (array) unpow2( (int) $_REQUEST["{$this->type}-error"] );
 		foreach ( $errors as $k => $error_id ) {
-			if ( ! array_key_exists( $error_id, $this->errors ) ) {
+			if ( ! array_key_exists( $error_id, $this->type()->errors ) ) {
 				unset( $errors[ $k ] );
 			} else {
-				$errors[ $k ] = sprintf( '<p>%s</p>', $this->errors[ $error_id ] );
+				$errors[ $k ] = sprintf( '<p>%s</p>', $this->type()->errors[ $error_id ] );
 			}
 		}
 

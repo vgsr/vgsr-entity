@@ -827,8 +827,8 @@ if ( ! function_exists( 'unpow2' ) ) :
 function unpow2( $value = 0 ) {
 	$retval = array();
 	if ( is_numeric( $value ) && (int) $value > 0 ) {
-		foreach ( array_reverse( str_split( (string) decbin( (int) $value ) ) ) as $pow => $bi ) {
-			if ( $bi ) $retval[] = $pow;
+		foreach ( array_reverse( str_split( (string) decbin( (int) $value ) ) ) as $pow => $bin ) {
+			if ( $bin ) $retval[] = $pow;
 		}
 	}
 
