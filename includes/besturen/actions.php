@@ -10,6 +10,10 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
+/** Query *********************************************************************/
+
+add_filter( 'posts_search', 'vgsr_entity_bestuur_posts_search', 10, 2 );
+
 /** Post **********************************************************************/
 
 add_filter( 'post_updated_messages', 'vgsr_entity_bestuur_post_updated_messages' );

@@ -187,12 +187,15 @@ function vgsr_entity_bestuur_get_user_position( $user_id = 0 ) {
 
 	// Get registered positions
 	if ( $positions = vgsr_entity_bestuur_get_positions() ) {
-		$position_map = implode( ', ', array_map( function( $value ) {
-			return "'position_{$value['slug']}'";
+		$position_map = implode( ',', array_map( function( $value ) {
+			return "'position_{$value['slug']}'"; // Return quoted, to use for IN statement
 		}, $positions ) );
 
 		// Define query for the user's position(s)
-		$sql = $wpdb->prepare( "SELECT p.ID, pm.meta_key FROM {$wpdb->posts} p JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id WHERE 1=1 AND post_type = %s AND pm.meta_key IN ($position_map) AND pm.meta_value = %d", 'bestuur', $user_id );
+		$sql = $wpdb->prepare( "SELECT p.ID, pm.meta_key FROM {$wpdb->posts} p JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id WHERE 1=1 AND post_type = %s AND pm.meta_key IN ($position_map) AND pm.meta_value = %d",
+			vgsr_entity_get_bestuur_post_type(),
+			$user_id
+		);
 
 		// Run query
 		if ( $query = $wpdb->get_results( $sql ) ) {
@@ -211,6 +214,65 @@ function vgsr_entity_bestuur_get_user_position( $user_id = 0 ) {
 	 * @param array $query   Query results
 	 */
 	return (array) apply_filters( 'vgsr_entity_bestuur_get_user_position', $retval, $user_id, $query );
+}
+
+/**
+ * Modify the search part of the posts query WHERE clause
+ *
+ * @see WP_Query::parse_search()
+ *
+ * @since 2.1.0
+ *
+ * @global WPDB $wpdb
+ *
+ * @param string $search Search SQL
+ * @param WP_Query $posts_query Query object
+ * @return Search SQL
+ */
+function vgsr_entity_bestuur_posts_search( $search, $posts_query ) {
+	global $wpdb;
+
+	// When searching posts and positions are defined
+	if ( $posts_query->is_search() && $positions = vgsr_entity_bestuur_get_positions() ) {
+
+		// Get searched term(s)
+		$term = $posts_query->get( 's' );
+		$n_p  = $posts_query->get( 'exact' ) ? '' : '%';
+		$n_u  = $posts_query->get( 'exact' ) ? '' : '*';
+
+		// Setup post meta search for name match
+		$search_meta = $wpdb->prepare( "meta_value LIKE %s", $n_p . $wpdb->esc_like( $term ) . $n_p );
+
+		// Query users by searched name
+		$users_query = new WP_User_Query( array(
+			'fields'         => 'ID',
+			'search'         => $n_u . $term . $n_u,
+			'search_columns' => array( 'user_login', 'display_name' )
+		) );
+
+		// Extend post meta search for found user ids
+		if ( $users_query->results ) {
+			$user_ids     = implode( ',', $users_query->results );
+			$search_meta .= " OR meta_value IN ($user_ids)";
+		}
+
+		// Collect positions
+		$position_map = implode( ',', array_map( function( $value ) {
+			return "'position_{$value['slug']}'"; // Return quoted, to use for IN statement
+		}, $positions ) );
+
+		// Replace the search WHERE clause
+		$search = sprintf( " AND (%s OR %s)",
+			// Use existing definition, but strip leading ' AND '
+			substr( $search, 5 ),
+			// Search for Besturen that have defined for any position either 1. one of the found user ids or 2. a matched name
+			$wpdb->prepare( "({$wpdb->posts}.post_type = %s AND {$wpdb->posts}.ID IN ( SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key IN ($position_map) AND ($search_meta) ))",
+				vgsr_entity_get_bestuur_post_type()
+			)
+		);
+	}
+
+	return $search;
 }
 
 /** Nav Menus **********************************************************/
