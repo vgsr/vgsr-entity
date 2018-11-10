@@ -77,6 +77,7 @@ class VGSR_Entity_BuddyPress {
 		// Core
 		require( $this->includes_dir . 'actions.php'   );
 		require( $this->includes_dir . 'besturen.php'  );
+		require( $this->includes_dir . 'disputen.php'  );
 		require( $this->includes_dir . 'functions.php' );
 		require( $this->includes_dir . 'kasten.php'    );
 		require( $this->includes_dir . 'members.php'   );

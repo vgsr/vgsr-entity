@@ -13,6 +13,8 @@ defined( 'ABSPATH' ) || exit;
 /** Query *********************************************************************/
 
 add_filter( 'bp_user_query_uid_clauses', 'vgsr_entity_bp_user_query_uid_clauses', 10, 2 );
+add_filter( 'posts_search',              'vgsr_entity_bp_dispuut_posts_search',   10, 2 );
+add_filter( 'posts_search',              'vgsr_entity_bp_kast_posts_search',      10, 2 );
 
 /** Kast **********************************************************************/
 
