@@ -21,7 +21,8 @@ add_filter( 'post_updated_messages', 'vgsr_entity_bestuur_post_updated_messages'
 /** Template ******************************************************************/
 
 add_filter( 'document_title_parts', 'vgsr_entity_bestuur_document_title_parts', 10 );
-add_action( 'the_content',          'vgsr_entity_bestuur_positions_detail',      5 );
+add_filter( 'the_content',          'vgsr_entity_bestuur_positions_detail',      5 );
+add_filter( 'the_excerpt',          'vgsr_entity_bestuur_positions_detail',     99 );
 
 /** Theme *********************************************************************/
 

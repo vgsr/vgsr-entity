@@ -131,7 +131,9 @@ function vgsr_entity_bestuur_get_position_name( $args ) {
  */
 function vgsr_entity_bestuur_positions_detail( $content ) {
 
-	// Bail when filtering the excerpt
+	// Bail when setting up the excerpt in the `get_the_excerpt` filter. This
+	// is done to prevent adding markup to the excerpt's content while later
+	// any markup elements are stripped, though the text remains.
 	if ( vgsr_entity_is_the_excerpt() )
 		return $content;
 
