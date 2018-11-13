@@ -34,13 +34,17 @@ This plugin is not hosted in the official WordPress repository. Instead, updatin
 == Changelog ==
 
 = 2.1.0 =
+* Bestuur: Added post search results for matched (user) names assigned in positions
 * Bestuur: Added column to the All Posts admin page list to display signed positions
+* Dispuut: Added post search results for matched user names assigned as members
+* Kast: Added post search results for matched user names assigned as residents
+* Kast: Added column to the All Posts admin page list to display address details
 * Kast: Fixed errors when opening the New Post admin page
 * Fixed losing the correct post status when updating an archived entity
-* BuddyPress: the displayed entity members count includes only current leden/residents
-* BuddyPress: enable searching member profiles by entity post title
-* BuddyPress: limit the members avatar list when on non-singular pages
-* BuddyPress: separate display of leden and oud-leden
+* BuddyPress: include only current members/residents in the displayed entity members count
+* BuddyPress: enabled searching member profiles by entity post title
+* BuddyPress: limited the members avatar list when on non-singular pages
+* BuddyPress: separated display of leden and oud-leden in avatar lists
 * WPSEO: fixed breadcrumb issues on plugin and non-plugin pages
 
 = 2.0.0 =
