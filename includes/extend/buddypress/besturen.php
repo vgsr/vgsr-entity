@@ -33,10 +33,14 @@ function vgsr_entity_bp_bestuur_position_name( $name, $user, $args ) {
 		/**
 		 * Use BP member loop for using template tags
 		 *
-		 * Setting up the template loop per member is really
-		 * not efficient, but for now it does the job.
+		 * Setting up the template loop for each member is really not efficient,
+		 * but for now it does the job.
 		 */
-		if ( bp_has_members( array( 'type' => '', 'include' => $user->ID ) ) ) :
+		if ( bp_has_members( array(
+			'type'         => '',
+			'include'      => $user->ID,
+			'search_terms' => false      // Ignore global search terms
+		) ) ) :
 			while ( bp_members() ) : bp_the_member();
 
 				// Member profile link

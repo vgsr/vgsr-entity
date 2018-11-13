@@ -138,6 +138,7 @@ function vgsr_entity_bp_has_members_for_post( $field, $args = array() ) {
 		'type'            => '',    // Query $wpdb->users, order by ID
 		'per_page'        => 0,     // No limit
 		'populate_extras' => false,
+		'search_terms'    => false  // Ignore global search terms
 	) ) );
 
 	// Unhook query modifier
