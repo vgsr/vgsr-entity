@@ -36,7 +36,7 @@ class VGSR_Entity_Default {
 	 */
 	public function setup_actions() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles'      )    );
-		add_action( 'the_content',        array( $this, 'the_archive_content' ), 2 );
+		add_filter( 'the_content',        array( $this, 'the_archive_content' ), 2 );
 	}
 
 	/**
